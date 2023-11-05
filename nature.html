@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Jan Levínský</title>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+
+    <body>
+        <div id="content">
+            <a href="./index.html"><img src="./assets/LOGO.svg" alt="LOGO"></a>
+            <nav>
+                <a class="underline-animation" href="people.html">People</a>
+                <a class="underline-animation"href="architecture.html">Architecture</a>
+                <a1 class="underlined">Nature</a1>
+                <a class="underline-animation"href="art.html">Fine Art / Personal</a>
+                <div id="info">
+                    <a class="underline-animation"href="about.html">About + Contact</a>
+                </div>  
+                <div id="copyright">
+                    <p>&copy; 2023 Jan Levínský Photography</p>
+                </div> 
+            </nav>
+            <div id="gallery">
+                <div class="row">
+                    <div class="column">
+                        <img>
+                        <img>
+                        <img>
+                        <img>
+                        <img>
+                    </div>
+                    <div class="column">
+                        <img>
+                        <img>
+                        <img>
+                        <img>
+                        <img>
+                    </div>
+                    <div class="column">
+                        <img>
+                        <img>
+                        <img>
+                        <img>
+                        <img>
+                    </div>
+                    <script>
+                        window.addEventListener('load', () => {
+                            const columns = document.querySelectorAll('.column');
+                            const totalImages = 14; 
+                            const availableImages = Array.from({ length: totalImages }, (_, i) => i + 1); 
+                            
+                            columns.forEach(column => {
+                                const images = Array.from(column.querySelectorAll('img'));
+                                images.forEach(img => {
+                                    const randomIndex = Math.floor(Math.random() * availableImages.length); // Vybere náhodný index z pole dostupných obrázků
+                                    const randomImageNumber = availableImages.splice(randomIndex, 1)[0]; // Odstraní vybraný obrázek z pole
+                                    img.src = `./img/nature/nature (${randomImageNumber}).webp`; 
+                                });
+                            });
+                        });
+                    </script>
+                </div>
+            </div>
+            
+        </div>
+    </body>
+
+</html>
