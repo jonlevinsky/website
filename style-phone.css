@@ -127,7 +127,7 @@ body {
 .column img {
     margin-top: 20px;
     vertical-align: middle;
-    min-width: 400px;
+    min-width: 300px;
     background-color: black;
     cursor: default;
   }
