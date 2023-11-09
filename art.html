@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Jan Levínský</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jan Levínský</title>
+    <link id="cssLink" rel="stylesheet" href="style.css">
+</head>
 
-    <body>
-        <div id="content">
-            <a href="./index.html"><img src="./assets/LOGO.svg" alt="LOGO"></a>
-            <nav>
-                <a class="underline-animation" href="people.html">People</a>
-                <a class="underline-animation"href="architecture.html">Architecture</a>
-                <a class="underline-animation"href="nature.html">Nature</a>
-                <a class="underlined">Fine Art / Personal</a>
-                <div id="info">
-                    <a class="underline-animation"href="about.html">About + Contact</a>
-                </div>  
-                <div id="copyright">
-                    <p>&copy; 2023 Jan Levínský Photography</p>
-                </div> 
-            </nav>
-            <div id="gallery">
+<body>
+    <div id="content">
+        <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
+        <div id="mobile-close-icon" class="close-icon">&#10006;</div>
+        <a href="./index.html"><img src="./assets/LOGO.svg" alt="LOGO"></a>
+
+        <nav>
+            <a class="underline-animation" href="people.html">People</a>
+            <a class="underline-animation" href="architecture.html">Architecture</a>
+            <a class="underline-animation" href="nature.html">Nature</a>
+            <a class="underline-animation" href="art.html">Fine Art / Personal</a>
+            <div id="info">
+                <a class="underline-animation" href="about.html">About + Contact</a>
+            </div>
+            <div id="copyright">
+                <p>&copy; 2023 Jan Levínský Photography</p>
+            </div>
+        </nav>
+
+        <div id="gallery">
                 <div class="row">
                     <div class="column">
                         <img>
@@ -66,6 +70,44 @@
             </div>
             
         </div>
+
+        <script>
+            function changeStyle(velikost) {
+                const odkaz = document.getElementById('cssLink');
+                if (velikost < 600) {
+                    odkaz.href = 'style-phone.css';
+                } else {
+                    odkaz.href = 'style.css';
+                }
+            }
+    
+            changeStyle(window.innerWidth);
+    
+            window.addEventListener('resize', function() {
+                changeStyle(window.innerWidth);
+            });
+        </script>    
+
+        <script>
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileCloseIcon = document.getElementById('mobile-close-icon');
+            const nav = document.querySelector('nav');
+            const gallery = document.getElementById('gallery');
+
+            mobileMenuToggle.addEventListener('click', () => {
+                nav.classList.toggle('show');
+                gallery.classList.toggle('move');
+                mobileMenuToggle.classList.toggle('hide');
+                mobileCloseIcon.classList.toggle('show');
+            });
+
+            mobileCloseIcon.addEventListener('click', () => {
+                nav.classList.remove('show');
+                gallery.classList.toggle('move');
+                mobileMenuToggle.classList.remove('hide');
+                mobileCloseIcon.classList.remove('show');
+            });
+        </script>
     </body>
 
 </html>

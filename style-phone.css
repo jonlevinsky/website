@@ -29,18 +29,33 @@ body {
 }
 
 #content img {
-    max-width: 200px;
+    max-width: 300px;
 }
 
 #content {
     margin-left: 60px;
     margin-top: 80px;
+    justify-content: center;
 }
 
 #content nav {
+    margin-left: -100px;
     margin-top: 50px;
     display: flex;
     flex-direction: column;
+    opacity: 0;
+    transition: all 0.3s ease-in-out;
+    z-index: 10;
+}
+
+#content nav.show {
+    margin-left: 0;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    opacity: 1;
+    transition: all 0.3s ease-in-out;
+    z-index: 10;
 }
 
 #content nav a {
@@ -85,8 +100,14 @@ body {
 
 #gallery {
     height: 100%;
-    margin-top: -350px;
-    margin-left: 300px;
+    margin-top: -230px;
+    transition: all 0.3s ease-in-out;
+}
+
+#gallery.move {
+    height: 100%;
+    margin-top: 50px;
+    transition: all 0.3s ease-in-out;
 }
 
 .row {
@@ -94,35 +115,24 @@ body {
     display: flex;
     -ms-flex-wrap: wrap; /* IE10 */
     flex-wrap: wrap;
-    padding: 0 4px;
   }
   
 .column {
-    -ms-flex: 29%;
-    flex: 29%;
-    max-width: 30%;
-    margin-left: 40px;
+    -ms-flex: 90%;
+    flex: 90%;
+    max-width: 50%;
+    margin-left: 5px;
   }
   
 .column img {
     margin-top: 20px;
     vertical-align: middle;
-    min-width: 470px; 
+    min-width: 400px;
     background-color: black;
     cursor: default;
   }
 
-  /* Responsive layout - makes a two column-layout instead of four columns */
-  @media screen and (max-width: 800px) {
-    .column {
-      -ms-flex: 29%;
-      flex: 29%;
-      max-width: 30%;
-      margin: 0;
-    }
-  }
-
-.underline-animation {
+  .underline-animation {
     position: relative;
     display: flex;
     width: max-content;
@@ -176,10 +186,30 @@ body {
     font-weight: 900;
 }
 
-#mobile-menu-toggle {
-    display: none;
+  #mobile-menu-toggle {
+    display: block; /* Zobrazit na mobilu */
+    font-size: 24px;
+    cursor: pointer;
+    margin: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#mobile-menu-toggle.hide {
+    display: none; /* Skrýt na desktopu */
 }
 
 #mobile-close-icon {
     display: none;
+}
+
+#mobile-close-icon.show {
+    display: block; /* Zobrazit na mobilu */
+    font-size: 24px;
+    cursor: pointer;
+    margin: 10px;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
