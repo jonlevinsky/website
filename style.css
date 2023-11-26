@@ -54,6 +54,17 @@ body {
     color: black;
 }
 
+#content nav a img{
+    max-width: 40px;
+    filter: grayscale(1);
+    transition: all 0.3s ease-in-out;
+}
+
+#content nav a img:hover{
+    filter: grayscale(0);
+    transform: scale(1.1);
+}
+
 #content nav a1 {
     cursor: pointer;
     color: #738584;
@@ -90,9 +101,9 @@ body {
 }
 
 .row {
-    display: -ms-flexbox; /* IE10 */
+    display: -ms-flexbox;
     display: flex;
-    -ms-flex-wrap: wrap; /* IE10 */
+    -ms-flex-wrap: wrap;
     flex-wrap: wrap;
     padding: 0 4px;
   }
@@ -112,7 +123,6 @@ body {
     cursor: default;
   }
 
-  /* Responsive layout - makes a two column-layout instead of four columns */
   @media screen and (max-width: 800px) {
     .column {
       -ms-flex: 29%;

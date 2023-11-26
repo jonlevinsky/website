@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Jan Levínský</title>
-        <link rel="stylesheet" type="text/css" href="style.css">
+        <link id="cssLink" rel="stylesheet" href="style.css">
     </head>
 
     <body>
@@ -26,11 +26,52 @@
             
             <div id="text">
                 <img src="">
-                <h2>Photographer / Videomaker / Editor / Designer</h2>
-                <p></p>
+                <h2>Photographer / Videomaker / Designer</h2>
+                <p>I'm 17 years old student of SPŠST Panská in Prague, Czech Republic.
+                   <br>I also live in Prague.
+                </p>
             </div>
             
         </div>
+
+        <script>
+            function changeStyle(velikost) {
+                const odkaz = document.getElementById('cssLink');
+                if (velikost < 1080) {
+                    odkaz.href = 'style-phone.css';
+                } else {
+                    odkaz.href = 'style.css';
+                }
+            }
+    
+            changeStyle(window.innerWidth);
+    
+            window.addEventListener('resize', function() {
+                changeStyle(window.innerWidth);
+            });
+        </script>    
+
+        <script>
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const mobileCloseIcon = document.getElementById('mobile-close-icon');
+            const nav = document.querySelector('nav');
+            const gallery = document.getElementById('gallery');
+
+            mobileMenuToggle.addEventListener('click', () => {
+                nav.classList.toggle('show');
+                gallery.classList.toggle('move');
+                mobileMenuToggle.classList.toggle('hide');
+                mobileCloseIcon.classList.toggle('show');
+            });
+
+            mobileCloseIcon.addEventListener('click', () => {
+                nav.classList.remove('show');
+                gallery.classList.toggle('move');
+                mobileMenuToggle.classList.remove('hide');
+                mobileCloseIcon.classList.remove('show');
+            });
+        </script>
+
     </body>
 
 </html>
