@@ -108,6 +108,25 @@
                 mobileCloseIcon.classList.remove('show');
             });
         </script>
+
+<script>
+    function changeTitle() {
+    var title = document.querySelector('title');
+    var originalTitle = "Jan Levínský";
+    var newTitle = "People";
+
+    setTimeout(function() {
+        if (title.textContent === originalTitle) {
+        title.textContent = newTitle;
+        } else {
+        title.textContent = originalTitle;
+        }
+        changeTitle();
+    }, 1000);
+    }
+
+    changeTitle();
+</script>
     </body>
 
 </html>
