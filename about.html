@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Jan Levínský</title>
-        <link id="favicon" rel="icon" href="./assets/icon.svg">
+        <link id="favicon" rel="icon" href='./assets/icon.svg'>
         <link id="cssLink" rel="stylesheet" href="style.css">
     </head>
 
@@ -82,18 +82,18 @@
 
         <script>
             function changeTitle() {
-            var title = document.querySelector('title');
-            var originalTitle = "Jan Levínský";
-            var newTitle = "About";
-        
-            setTimeout(function() {
-                if (title.textContent === originalTitle) {
-                title.textContent = newTitle;
-                } else {
-                title.textContent = originalTitle;
-                }
-                changeTitle();
-            }, 1000);
+                var title = document.querySelector('title');
+                var originalTitle = "Jan Levínský";
+                var newTitle = "About";
+            
+                setTimeout(function() {
+                    if (title.textContent === originalTitle) {
+                    title.textContent = newTitle;
+                    } else {
+                    title.textContent = originalTitle;
+                    }
+                    changeTitle();
+                }, 1000);
             }
         
             changeTitle();
@@ -101,18 +101,18 @@
 
         <script>
             function changeIcon() {
-            var icon = document.getElementById('favicon');
-            var originalIcon = "./assets/icon.svg";
-            var newIcon = "./assets/icon-flash.svg";
+                var icon = document.getElementById('favicon');
+                var originalIcon = "./assets/icon.svg";
+                var flashIcon = "./assets/icon-flash.svg";
 
-            setTimeout(function() {
-                if (favicon.href === originalIcon) {
-                icon.href = newIcon;
-                } else {
-                icon.href = originalIcon;
-                }
-                changeIcon();
-            }, 1500);
+                setTimeout(function() {
+                    if (icon.href = './assets/icon.svg') {
+                    icon.href = './assets/icon-flash.svg';
+                    } else {
+                        icon.href = './assets/icon.svg';
+                    }
+                    changeIcon();
+                }, 10000);
             }
 
             changeIcon();
