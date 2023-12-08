@@ -119,7 +119,7 @@ body {
     margin-top: 20px;
     vertical-align: middle;
     min-width: 470px; 
-    background-color: black;
+    background-color: none;
     cursor: default;
   }
 

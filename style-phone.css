@@ -39,7 +39,7 @@ body {
 }
 
 #content nav {
-    margin-left: -100px;
+    margin-left: -200px;
     margin-top: 50px;
     display: flex;
     flex-direction: column;
@@ -128,7 +128,7 @@ body {
     margin-top: 20px;
     vertical-align: middle;
     min-width: 300px;
-    background-color: black;
+    background-color: none;
     cursor: default;
   }
 
@@ -176,14 +176,24 @@ body {
 
 #text {
     height: 100%;
-    margin-top: -350px;
-    margin-left: 300px;
+    margin-top: -230px;
+    transition: all 0.3s ease-in-out;
+}
+
+#text.move {
+    height: 100%;
+    margin-top: 50px;
+    transition: all 0.3s ease-in-out;
 }
 
 #text h2 {
     font-family: 'cmu';
     font-size: medium;
     font-weight: 900;
+}
+
+#text a{
+    flex-direction: column;
 }
 
   #mobile-menu-toggle {

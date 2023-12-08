@@ -10,26 +10,33 @@
 
     <body>
         <div id="content">
+            <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
+            <div id="mobile-close-icon" class="close-icon">&#10006;</div>
             <a href="./index.html"><img src="./assets/LOGO.svg" alt="LOGO"></a>
+    
             <nav>
-                <a class="underline-animation" href="people.html">People</a>
-                <a class="underline-animation"href="architecture.html">Architecture</a>
-                <a class="underline-animation"href="nature.html">Nature</a>
-                <a class="underline-animation"href="art.html">Fine Art / Personal</a>
+                <a class="underline-animation" href="people.html" id="href">People</a>
+                <a class="underline-animation" href="architecture.html" id="href">Architecture</a>
+                <a class="underline-animation" href="nature.html" id="href">Nature</a>
+                <a class="underline-animation" href="art.html" id="href">Fine Art / Personal</a>
                 <div id="info">
-                    <a class="underlined">About + Contact</a>
-                </div>  
+                    <a class="underline-animation" href="about.html">About + Contact</a>
+                </div>
                 <div id="copyright">
                     <p>&copy; 2023 Jan Levínský Photography</p>
-                </div> 
+                </div>
             </nav>
             
             <div id="text">
-                <img src="">
                 <h2>Photographer / Videomaker / Designer</h2>
                 <p>I'm 17 years old student of SPŠST Panská in Prague, Czech Republic.
                    <br>I also live in Prague.
                 </p>
+                <h2>Contact me via:</h2>
+                <a href="mailto:jon.levinsky@gmail.com" target="_blank">E-mail</a>
+                <a href="https://www.instagram.com/jon.levinsky.cr3/" target="_blank">Instagram</a>
+                <a href="https://www.linkedin.com/in/jan-lev%C3%ADnsk%C3%BD-53267624a/" target="_blank">LinkedIn</a>
+                <a href="https://www.facebook.com/kuldysak/" target="_blank">Facebook</a>
             </div>
             
         </div>
@@ -55,18 +62,18 @@
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const mobileCloseIcon = document.getElementById('mobile-close-icon');
             const nav = document.querySelector('nav');
-            const gallery = document.getElementById('gallery');
+            const text = document.getElementById('text');
 
             mobileMenuToggle.addEventListener('click', () => {
                 nav.classList.toggle('show');
-                gallery.classList.toggle('move');
+                text.classList.toggle('move');
                 mobileMenuToggle.classList.toggle('hide');
                 mobileCloseIcon.classList.toggle('show');
             });
 
             mobileCloseIcon.addEventListener('click', () => {
                 nav.classList.remove('show');
-                gallery.classList.toggle('move');
+                text.classList.toggle('move');
                 mobileMenuToggle.classList.remove('hide');
                 mobileCloseIcon.classList.remove('show');
             });
