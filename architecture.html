@@ -12,8 +12,8 @@
 <body>
     <div id="content">
         <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
-        <div id="mobile-close-icon" class="close-icon">&#10006;</div>
-        <a href="./index.html"><img src="./assets/LOGO.svg" alt="LOGO"></a>
+            <div id="mobile-close-icon" class="close-icon">&#10006;</div>
+            <a href="./index.html"><img id="changelogo" src="./assets/LOGO.png" alt="LOGO"></a>
 
         <nav>
             <a class="underline-animation" href="people.html">People</a>
@@ -153,6 +153,30 @@
         });
     });
 </script>
-    </body>
+    
+<script>
+    function changeImageSource() {
+      const image = document.getElementById('changelogo');
+      const imageSources = [
+        './assets/logo.png',
+        './assets/logo.gif'
+      ];
+      
+      let currentIndex = 0;
+      let originalSource = image.src;
+      
+      const changeSourceInterval = setInterval(() => {
+        image.src = imageSources[currentIndex];
+        currentIndex = (currentIndex + 1) % imageSources.length;
+  
+
+        setTimeout(() => {
+          image.src = originalSource;
+        }, 600);
+  
+      }, 10000);}
+  
+    window.onload = changeImageSource;
+  </script>
 
 </html>
