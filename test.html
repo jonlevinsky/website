@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Zabezpečená fotografie</title>
+  <script>
+    function checkPassword() {
+      var enteredPassword = document.getElementById("password").value;
+      var correctPassword = "tajneHeslo123"; // Změňte heslo podle potřeby
+
+      if (enteredPassword === correctPassword) {
+        document.getElementById("imageDiv").innerHTML = '<img src="url_k_vasi_fotografii.jpg" alt="Fotografie">';
+      } else {
+        alert("Nesprávné heslo. Zadejte platné heslo pro zobrazení fotografie.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Zadejte heslo pro zobrazení fotografie</h1>
+  <input type="password" id="password" placeholder="Zadejte heslo">
+  <button onclick="checkPassword()">Potvrdit</button>
+
+  <div id="imageDiv"></div>
+</body>
+</html>

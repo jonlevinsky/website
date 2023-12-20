@@ -100,22 +100,20 @@
         </script>
 
         <script>
-            function changeIcon() {
-                var icon = document.getElementById('favicon');
-                var originalIcon = "./assets/icon.svg";
-                var flashIcon = "./assets/icon-flash.svg";
-
-                setTimeout(function() {
-                    if (icon.href = './assets/icon.svg') {
-                    icon.href = './assets/icon-flash.svg';
-                    } else {
-                        icon.href = './assets/icon.svg';
-                    }
-                    changeIcon();
-                }, 10000);
+            function changeFavicon() {
+            const favicon = document.getElementById('favicon');
+            
+            const favicons = ['./assets/icon.svg', './assets/icon-flash.svg'];
+            
+            let index = 0;
+            
+            setInterval(() => {
+                favicon.href = favicons[index];
+                index = (index + 1) % favicons.length;
+            }, 1000);
             }
-
-            changeIcon();
+            
+            window.onload = changeFavicon;
         </script>
 
     </body>
