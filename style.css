@@ -121,7 +121,15 @@ body {
     min-width: 470px; 
     background-color: none;
     cursor: default;
+    transition: all 0.3s ease-in-out;
   }
+
+  .column img:hover {
+    transform: scale(1.01);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
 
   @media screen and (max-width: 800px) {
     .column {

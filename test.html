@@ -21,5 +21,13 @@
   <button onclick="checkPassword()">Potvrdit</button>
 
   <div id="imageDiv"></div>
-</body>
+<script>
+    const images = document.querySelectorAll('#gallery img');
+    images.forEach(img => {
+        img.addEventListener('click', function() {
+            window.open(this.src, '_blank');
+        });
+    });
+</script>
+    </body>
 </html>

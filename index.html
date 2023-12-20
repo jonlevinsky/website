@@ -86,7 +86,6 @@
             </div>
             
         </div>
-
         <script>
             function changeStyle(velikost) {
                 const odkaz = document.getElementById('cssLink');
@@ -159,6 +158,15 @@
     }
     
     window.onload = changeFavicon;
+</script>
+
+<script>
+    const images = document.querySelectorAll('#gallery img');
+    images.forEach(img => {
+        img.addEventListener('click', function() {
+            window.open(this.src, '_blank');
+        });
+    });
 </script>
     </body>
 
