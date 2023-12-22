@@ -70,46 +70,45 @@
                     </script>
                 </div>
             </div>
-            
         </div>
 
-        <script>
-            function changeStyle(velikost) {
-                const odkaz = document.getElementById('cssLink');
-                if (velikost < 1080) {
-                    odkaz.href = 'style-phone.css';
-                } else {
-                    odkaz.href = 'style.css';
-                }
-            }
-    
-            changeStyle(window.innerWidth);
-    
-            window.addEventListener('resize', function() {
-                changeStyle(window.innerWidth);
-            });
-        </script>    
+<script>
+    function changeStyle(velikost) {
+        const odkaz = document.getElementById('cssLink');
+        if (velikost < 1080) {
+            odkaz.href = 'style-phone.css';
+        } else {
+            odkaz.href = 'style.css';
+        }
+    }
 
-        <script>
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const mobileCloseIcon = document.getElementById('mobile-close-icon');
-            const nav = document.querySelector('nav');
-            const gallery = document.getElementById('gallery');
+    changeStyle(window.innerWidth);
 
-            mobileMenuToggle.addEventListener('click', () => {
-                nav.classList.toggle('show');
-                gallery.classList.toggle('move');
-                mobileMenuToggle.classList.toggle('hide');
-                mobileCloseIcon.classList.toggle('show');
-            });
+    window.addEventListener('resize', function() {
+        changeStyle(window.innerWidth);
+    });
+</script>    
 
-            mobileCloseIcon.addEventListener('click', () => {
-                nav.classList.remove('show');
-                gallery.classList.toggle('move');
-                mobileMenuToggle.classList.remove('hide');
-                mobileCloseIcon.classList.remove('show');
-            });
-        </script>
+<script>
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileCloseIcon = document.getElementById('mobile-close-icon');
+    const nav = document.querySelector('nav');
+    const gallery = document.getElementById('gallery');
+
+    mobileMenuToggle.addEventListener('click', () => {
+        nav.classList.toggle('show');
+        gallery.classList.toggle('move');
+        mobileMenuToggle.classList.toggle('hide');
+        mobileCloseIcon.classList.toggle('show');
+    });
+
+    mobileCloseIcon.addEventListener('click', () => {
+        nav.classList.remove('show');
+        gallery.classList.toggle('move');
+        mobileMenuToggle.classList.remove('hide');
+        mobileCloseIcon.classList.remove('show');
+    });
+</script>
 
 <script>
     function changeTitle() {
@@ -154,33 +153,6 @@
         });
     });
 </script>
-    
-<script>
-    function changeImageSource() {
-      const image = document.getElementById('changelogo');
-      const imageSources = [
-        './assets/logo.webp',
-        './assets/logo.gif'
-      ];
-      
-      let currentIndex = 0;
-      let originalSource = image.src;
-      
-      const changeSourceInterval = setInterval(() => {
-        image.src = imageSources[currentIndex];
-        currentIndex = (currentIndex + 1) % imageSources.length;
-  
-
-        setTimeout(() => {
-          image.src = originalSource;
-        }, 600);
-  
-      }, 10000);}
-  
-    window.onload = changeImageSource;
-  </script>
-
-
 
 <script>
     const modeToggle = document.getElementById('mode-toggle');

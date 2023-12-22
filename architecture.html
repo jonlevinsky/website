@@ -156,33 +156,6 @@
 </script>
     
 <script>
-    function changeImageSource() {
-      const image = document.getElementById('changelogo');
-      const imageSources = [
-        './assets/logo.webp',
-        './assets/logo.gif'
-      ];
-      
-      let currentIndex = 0;
-      let originalSource = image.src;
-      
-      const changeSourceInterval = setInterval(() => {
-        image.src = imageSources[currentIndex];
-        currentIndex = (currentIndex + 1) % imageSources.length;
-  
-
-        setTimeout(() => {
-          image.src = originalSource;
-        }, 600);
-  
-      }, 10000);}
-  
-    window.onload = changeImageSource;
-  </script>
-
-
-
-<script>
     const modeToggle = document.getElementById('mode-toggle');
     const body = document.body;
 

@@ -30,8 +30,8 @@
             </nav>
             
             <div id="text">
+                <img id="changelogo" src="./assets/photo.webp">
                 <h2>Photographer / Videomaker / Designer</h2>
-                <img id="changelogo" src="./assets/logo.webp">
                 <p>I'm 17 years old student of SPŠST Panská in Prague, Czech Republic.
                    <br>I also live in Prague.
                 </p>
@@ -40,113 +40,83 @@
                 <a href="https://www.instagram.com/jon.levinsky.cr3/" target="_blank">Instagram</a>
                 <a href="https://www.linkedin.com/in/jan-lev%C3%ADnsk%C3%BD-53267624a/" target="_blank">LinkedIn</a>
                 <a href="https://www.facebook.com/kuldysak/" target="_blank">Facebook</a>
-            </div>
-            
+            </div>           
         </div>
-
-        <script>
-            function changeStyle(velikost) {
-                const odkaz = document.getElementById('cssLink');
-                if (velikost < 1080) {
-                    odkaz.href = 'style-phone.css';
-                } else {
-                    odkaz.href = 'style.css';
-                }
-            }
-    
-            changeStyle(window.innerWidth);
-    
-            window.addEventListener('resize', function() {
-                changeStyle(window.innerWidth);
-            });
-        </script>    
-
-        <script>
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const mobileCloseIcon = document.getElementById('mobile-close-icon');
-            const nav = document.querySelector('nav');
-            const text = document.getElementById('text');
-
-            mobileMenuToggle.addEventListener('click', () => {
-                nav.classList.toggle('show');
-                text.classList.toggle('move');
-                mobileMenuToggle.classList.toggle('hide');
-                mobileCloseIcon.classList.toggle('show');
-            });
-
-            mobileCloseIcon.addEventListener('click', () => {
-                nav.classList.remove('show');
-                text.classList.toggle('move');
-                mobileMenuToggle.classList.remove('hide');
-                mobileCloseIcon.classList.remove('show');
-            });
-        </script>
-
-        <script>
-            function changeTitle() {
-                var title = document.querySelector('title');
-                var originalTitle = "Jan Levínský";
-                var newTitle = "About";
-            
-                setTimeout(function() {
-                    if (title.textContent === originalTitle) {
-                    title.textContent = newTitle;
-                    } else {
-                    title.textContent = originalTitle;
-                    }
-                    changeTitle();
-                }, 1000);
-            }
-        
-            changeTitle();
-        </script>
-
-        <script>
-            function changeFavicon() {
-            const favicon = document.getElementById('favicon');
-            
-            const favicons = ['./assets/icon.svg', './assets/icon-flash.svg'];
-            
-            let index = 0;
-            
-            setInterval(() => {
-                favicon.href = favicons[index];
-                index = (index + 1) % favicons.length;
-            }, 1000);
-            }
-            
-            window.onload = changeFavicon;
-        </script>
-
-<script>
-    function changeImageSource() {
-      const image = document.getElementById('changelogo');
-      const imageSources = [
-        './assets/logo.webp',
-        './assets/logo.gif'
-      ];
-      
-      let currentIndex = 0;
-      let originalSource = image.src;
-      
-      const changeSourceInterval = setInterval(() => {
-        image.src = imageSources[currentIndex];
-        currentIndex = (currentIndex + 1) % imageSources.length;
-  
-
-        setTimeout(() => {
-          image.src = originalSource;
-        }, 600);
-  
-      }, 10000);}
-  
-    window.onload = changeImageSource;
-  </script>
-  
-
     </body>
 
+<script>
+    function changeStyle(velikost) {
+        const odkaz = document.getElementById('cssLink');
+        if (velikost < 1080) {
+            odkaz.href = 'style-phone.css';
+        } else {
+            odkaz.href = 'style.css';
+        }
+    }
 
+    changeStyle(window.innerWidth);
+
+    window.addEventListener('resize', function() {
+        changeStyle(window.innerWidth);
+    });
+</script>    
+
+<script>
+    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+    const mobileCloseIcon = document.getElementById('mobile-close-icon');
+    const nav = document.querySelector('nav');
+    const text = document.getElementById('text');
+
+    mobileMenuToggle.addEventListener('click', () => {
+        nav.classList.toggle('show');
+        text.classList.toggle('move');
+        mobileMenuToggle.classList.toggle('hide');
+        mobileCloseIcon.classList.toggle('show');
+    });
+
+    mobileCloseIcon.addEventListener('click', () => {
+        nav.classList.remove('show');
+        text.classList.toggle('move');
+        mobileMenuToggle.classList.remove('hide');
+        mobileCloseIcon.classList.remove('show');
+    });
+</script>
+
+<script>
+    function changeTitle() {
+        var title = document.querySelector('title');
+        var originalTitle = "Jan Levínský";
+        var newTitle = "About";
+    
+        setTimeout(function() {
+            if (title.textContent === originalTitle) {
+            title.textContent = newTitle;
+            } else {
+            title.textContent = originalTitle;
+            }
+            changeTitle();
+        }, 1000);
+    }
+
+    changeTitle();
+</script>
+
+<script>
+    function changeFavicon() {
+    const favicon = document.getElementById('favicon');
+    
+    const favicons = ['./assets/icon.svg', './assets/icon-flash.svg'];
+    
+    let index = 0;
+    
+    setInterval(() => {
+        favicon.href = favicons[index];
+        index = (index + 1) % favicons.length;
+    }, 1000);
+    }
+    
+    window.onload = changeFavicon;
+</script>
 
 <script>
     const modeToggle = document.getElementById('mode-toggle');
@@ -181,7 +151,7 @@
     updateToggleText();
 
     const photos = document.getElementById('photos');
-    const img = document.querySelectorAll('#gallery img');
+    const img = document.querySelectorAll('#text img');
 
     function toggleGalleryDarkMode() {
         const userMode = localStorage.getItem('mode');
@@ -198,6 +168,5 @@
 
     toggleGalleryDarkMode();
 </script>
-
 
 </html>
