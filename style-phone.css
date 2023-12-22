@@ -29,7 +29,8 @@ body {
 }
 
 #content img {
-    max-width: 100px;
+    margin-left: 1vw;
+    max-width: 80vw;
 }
 
 #content {
@@ -60,7 +61,7 @@ body {
 
 #content nav a {
     cursor: pointer;
-    font-size: 15px;
+    font-size: 3vh;
     margin-bottom: 10px;
     letter-spacing: 2px;
     transition: all 0.3s ease-in-out;
@@ -72,7 +73,7 @@ body {
 #content nav a1 {
     cursor: pointer;
     color: #738584;
-    font-size: 15px;
+    font-size: 0.8vw;
     margin-bottom: 10px;
     letter-spacing: 2px;
     transition: all 0.3s ease-in-out;
@@ -121,13 +122,13 @@ body {
     -ms-flex: 90%;
     flex: 90%;
     max-width: 50%;
-    margin-left: 5px;
+    margin-left: 1vw;
   }
   
 .column img {
     margin-top: 20px;
     vertical-align: middle;
-    min-width: 300px;
+    min-width: 90vw;
     background-color: none;
     cursor: default;
   }
@@ -198,7 +199,7 @@ body {
 
   #mobile-menu-toggle {
     display: block; /* Zobrazit na mobilu */
-    font-size: 24px;
+    font-size: 5vw;
     cursor: pointer;
     margin: 10px;
     position: absolute;
@@ -216,10 +217,21 @@ body {
 
 #mobile-close-icon.show {
     display: block; /* Zobrazit na mobilu */
-    font-size: 24px;
+    font-size: 5vw;
     cursor: pointer;
     margin: 10px;
     position: absolute;
     top: 0;
     left: 0;
+}
+
+
+.dark-mode {
+    position: absolute;
+    background-color: #161616;
+    filter: invert(1);
+}
+
+.dark-mode-img {
+    filter: invert(1);
 }

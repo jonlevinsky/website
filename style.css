@@ -29,12 +29,12 @@ body {
 }
 
 #content img {
-    max-width: 100px;
+    max-width: 10vw;
 }
 
 #content {
-    margin-left: 60px;
-    margin-top: 80px;
+    margin-left: 3vw;
+    margin-top: 4vw;
 }
 
 #content nav {
@@ -45,7 +45,7 @@ body {
 
 #content nav a {
     cursor: pointer;
-    font-size: 15px;
+    font-size: 0,8vw;
     margin-bottom: 10px;
     letter-spacing: 2px;
     transition: all 0.3s ease-in-out;
@@ -116,9 +116,9 @@ body {
   }
   
 .column img {
-    margin-top: 20px;
+    margin-top: 1vw;
     vertical-align: middle;
-    min-width: 470px; 
+    min-width: 25vw; 
     background-color: none;
     cursor: default;
     transition: all 0.3s ease-in-out;
@@ -200,4 +200,27 @@ body {
 
 #mobile-close-icon {
     display: none;
+}
+
+
+
+#mode-toggle {
+    width: 10vw;
+    margin-top: 1vw;
+    padding: 10px 15px;
+    background-color: #333333;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.dark-mode {
+    background-color: #161616;
+    filter: invert(1);
+}
+
+.dark-mode-img {
+    filter: invert(1);
 }

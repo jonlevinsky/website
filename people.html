@@ -13,7 +13,7 @@
     <div id="content">
         <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
             <div id="mobile-close-icon" class="close-icon">&#10006;</div>
-            <a href="./index.html"><img id="changelogo" src="./assets/logo.webp" alt="LOGO"></a>
+            <a href="./index.html"><img src="./assets/logo.svg" alt="LOGO"></a>
 
         <nav>
             <a class="underlined">People</a>
@@ -26,6 +26,7 @@
             <div id="copyright">
                 <p>&copy; 2023 Jan Levínský Photography</p>
             </div>
+            <button id="mode-toggle">Dark/Light Mode</button>
         </nav>
 
         <div id="gallery">
@@ -178,5 +179,59 @@
   
     window.onload = changeImageSource;
   </script>
+
+
+
+<script>
+    const modeToggle = document.getElementById('mode-toggle');
+    const body = document.body;
+
+    function updateToggleText() {
+        if (body.classList.contains('dark-mode')) {
+            modeToggle.textContent = 'Light Mode';
+        } else {
+            modeToggle.textContent = 'Dark Mode';
+        }
+    }
+
+    modeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('mode', 'dark');
+        } else {
+            localStorage.setItem('mode', 'light');
+        }
+
+        updateToggleText();
+        toggleGalleryDarkMode();
+    });
+
+    const userMode = localStorage.getItem('mode');
+    if (userMode === 'dark') {
+        body.classList.add('dark-mode');
+    }
+
+    updateToggleText();
+
+    const photos = document.getElementById('photos');
+    const img = document.querySelectorAll('#gallery img');
+
+    function toggleGalleryDarkMode() {
+        const userMode = localStorage.getItem('mode');
+        if (userMode === 'dark') {
+            img.forEach(image => {
+                image.classList.add('dark-mode-img');
+            });
+        } else {
+            img.forEach(image => {
+                image.classList.remove('dark-mode-img');
+            });
+        }
+    }
+
+    toggleGalleryDarkMode();
+</script>
+
 
 </html>
