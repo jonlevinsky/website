@@ -197,6 +197,13 @@ body {
     flex-direction: column;
 }
 
+#text a img{
+    width: 50vw;
+    margin-top: 2vh;
+    margin-left: 20vw;
+    transition: all 0.3s ease-in-out;
+}
+
   #mobile-menu-toggle {
     display: block; /* Zobrazit na mobilu */
     font-size: 5vw;
