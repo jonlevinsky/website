@@ -178,6 +178,8 @@ body {
 #text {
     height: 100%;
     margin-top: -230px;
+    width: 90vw;
+    margin-left: 5vw;
     transition: all 0.3s ease-in-out;
 }
 
@@ -190,7 +192,16 @@ body {
 #text h2 {
     font-family: 'cmu';
     font-size: medium;
+    width: 80vw;
+    text-align: center;
     font-weight: 900;
+}
+
+
+#text p{
+    width: 80vw;
+    text-indent: 10vw;
+    text-align: justify;
 }
 
 #text a{
