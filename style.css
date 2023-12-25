@@ -186,13 +186,11 @@ body {
 
 #text a img{
     width: 5vw;
-    filter: grayscale(1);
     transition: all 0.3s ease-in-out;
 }
 
 #text a img:hover{
-    filter: grayscale(0);
-    transform: translateY(-0.5vw);
+    transform: translateY(-0.1vw);
     transition: all 0.3s ease-in-out;
 }
 
