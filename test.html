@@ -1,33 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Zabezpečená fotografie</title>
-  <script>
-    function checkPassword() {
-      var enteredPassword = document.getElementById("password").value;
-      var correctPassword = "tajneHeslo123"; // Změňte heslo podle potřeby
-
-      if (enteredPassword === correctPassword) {
-        document.getElementById("imageDiv").innerHTML = '<img src="url_k_vasi_fotografii.jpg" alt="Fotografie">';
-      } else {
-        alert("Nesprávné heslo. Zadejte platné heslo pro zobrazení fotografie.");
-      }
-    }
-  </script>
+  <meta charset="UTF-8">
+  <title>Výběr jazyka</title>
 </head>
 <body>
-  <h1>Zadejte heslo pro zobrazení fotografie</h1>
-  <input type="password" id="password" placeholder="Zadejte heslo">
-  <button onclick="checkPassword()">Potvrdit</button>
 
-  <div id="imageDiv"></div>
+<h1 id="heading">Výběr jazyka</h1>
+<p id="language-selected">Vyberte jazyk:</p>
+
+<button onclick="selectLanguage('english')">Angličtina</button>
+<button onclick="selectLanguage('czech')">Čeština</button>
+
 <script>
-    const images = document.querySelectorAll('#gallery img');
-    images.forEach(img => {
-        img.addEventListener('click', function() {
-            window.open(this.src, '_blank');
-        });
-    });
+  const texts = {
+    english: {
+      heading: 'Language Selection',
+      languageSelected: 'Select a language:',
+    },
+    czech: {
+      heading: 'Výběr jazyka',
+      languageSelected: 'Vyberte jazyk:',
+    },
+  };
+
+  function selectLanguage(language) {
+    document.getElementById('heading').textContent = texts[language].heading;
+    document.getElementById('language-selected').textContent = texts[language].languageSelected;
+
+    // Zde by byl kód pro změnu všeho dalšího obsahu stránky podle výběru
+  }
 </script>
-    </body>
+
+</body>
 </html>

@@ -99,10 +99,10 @@ body {
   }
   
 .column {
-    -ms-flex: 29%;
-    flex: 29%;
-    max-width: 30%;
-    margin-left: 40px;
+    -ms-flex: 29vw;
+    flex: 29vw;
+    max-width: 30vw;
+    margin-left: 1vw;
   }
   
 .column img {
@@ -119,16 +119,6 @@ body {
     transition: all 0.3s ease-in-out;
     cursor: pointer;
 }
-
-
-  @media screen and (max-width: 800px) {
-    .column {
-      -ms-flex: 29%;
-      flex: 29%;
-      max-width: 30%;
-      margin: 0;
-    }
-  }
 
 .underline-animation {
     position: relative;
