@@ -101,7 +101,7 @@ body {
 .column {
     -ms-flex: 29vw;
     flex: 29vw;
-    max-width: 30vw;
+    max-width: 25vw;
     margin-left: 1vw;
   }
   
