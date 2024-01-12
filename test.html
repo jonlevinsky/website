@@ -1,36 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Výběr jazyka</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webovka s počtem zhlédnutí za 24 hodin</title>
 </head>
 <body>
 
-<h1 id="heading">Výběr jazyka</h1>
-<p id="language-selected">Vyberte jazyk:</p>
+    <h1>Vítejte na naší webové stránce!</h1>
+    
+    <p>Počet zhlédnutí za posledních 24 hodin: <span id="viewCount">0</span></p>
 
-<button onclick="selectLanguage('english')">Angličtina</button>
-<button onclick="selectLanguage('czech')">Čeština</button>
+    <script>
+        // Načtení stávajícího počtu zhlédnutí z local storage
+        let viewCount = localStorage.getItem('viewCount');
 
-<script>
-  const texts = {
-    english: {
-      heading: 'Language Selection',
-      languageSelected: 'Select a language:',
-    },
-    czech: {
-      heading: 'Výběr jazyka',
-      languageSelected: 'Vyberte jazyk:',
-    },
-  };
+        // Aktualizace počtu zhlédnutí
+        if (viewCount === null) {
+            viewCount = 1;
+        } else {
+            viewCount = parseInt(viewCount) + 1;
+        }
 
-  function selectLanguage(language) {
-    document.getElementById('heading').textContent = texts[language].heading;
-    document.getElementById('language-selected').textContent = texts[language].languageSelected;
+        // Uložení aktualizovaného počtu zhlédnutí do local storage
+        localStorage.setItem('viewCount', viewCount);
 
-    // Zde by byl kód pro změnu všeho dalšího obsahu stránky podle výběru
-  }
-</script>
+        // Zobrazení počtu zhlédnutí na stránce
+        document.getElementById('viewCount').innerText = viewCount;
+    </script>
 
 </body>
 </html>
