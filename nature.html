@@ -61,8 +61,8 @@
                             columns.forEach(column => {
                                 const images = Array.from(column.querySelectorAll('img'));
                                 images.forEach(img => {
-                                    const randomIndex = Math.floor(Math.random() * availableImages.length); // Vybere náhodný index z pole dostupných obrázků
-                                    const randomImageNumber = availableImages.splice(randomIndex, 1)[0]; // Odstraní vybraný obrázek z pole
+                                    const randomIndex = Math.floor(Math.random() * availableImages.length);
+                                    const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
                                     img.src = `./img/nature/nature (${randomImageNumber}).webp`; 
                                 });
                             });

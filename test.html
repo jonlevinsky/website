@@ -47,13 +47,12 @@
 </div>
 
 <script>
-    // Počkáme 2 vteřiny a skryjeme první stránku a zobrazíme hlavní obsah
     setTimeout(function () {
         document.querySelector('.hidden-content').style.opacity = '0';
         setTimeout(function () {
             document.querySelector('.hidden-content').style.display = 'none';
             document.querySelector('.main-content').style.display = 'block';
-        }, 1000); // Počkáme 1 sekundu (doba trvání animace) a pak zobrazíme hlavní obsah
+        }, 1000);
     }, 2000);
 </script>
 
