@@ -237,6 +237,10 @@
 
 <script>
     setTimeout(function () {
+        setTimeout(function () {
+            document.getElementById('content').style.display = 'none';
+        document.getElementById('content').style.opacity = '0';
+        }, 10);
         document.getElementById('first-page').style.opacity = '0';
         setTimeout(function () {
             document.getElementById('content').style.display = 'block';
