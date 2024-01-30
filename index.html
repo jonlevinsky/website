@@ -237,19 +237,19 @@
 
 <script>
     setTimeout(function () {
-        setTimeout(function () {
-            document.getElementById('content').style.display = 'none';
         document.getElementById('content').style.opacity = '0';
-        }, 10);
+        document.getElementById('content').style.display = 'none';
+    }, 10);
+
+    setTimeout(function () {
+        document.getElementById('content').style.display = 'block';
         document.getElementById('first-page').style.opacity = '0';
-        setTimeout(function () {
-            document.getElementById('content').style.display = 'block';
-            document.getElementById('first-page').style.display = 'none';
-            setTimeout(function () {
-                document.getElementById('content').style.opacity = '1';   
-            }, 300);
-        }, 1000)
-    }, 2000);
+        document.getElementById('first-page').style.display = 'none';
+    }, 2500);
+
+    setTimeout(function () {    
+        document.getElementById('content').style.opacity = '1';   
+    }, 100)
 </script>
 
 </html>
