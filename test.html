@@ -3,31 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webovka s počtem zhlédnutí za 24 hodin</title>
+    <title>Ukázkový Web</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .main-content {
+            display: none;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        .hidden-content {
+            height: 100vh;
+            background-color: #f0f0f0;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <h1>Vítejte na naší webové stránce!</h1>
-    
-    <p>Počet zhlédnutí za posledních 24 hodin: <span id="viewCount">0</span></p>
+<div class="hidden-content">
+    <h1>Vítejte na první stránce!</h1>
+</div>
 
-    <script>
-        // Načtení stávajícího počtu zhlédnutí z local storage
-        let viewCount = localStorage.getItem('viewCount');
+<div class="main-content">
+    <h1>Hlavní obsah stránky</h1>
+    <p>Tady je váš hlavní obsah stránky.</p>
+</div>
 
-        // Aktualizace počtu zhlédnutí
-        if (viewCount === null) {
-            viewCount = 1;
-        } else {
-            viewCount = parseInt(viewCount) + 1;
-        }
-
-        // Uložení aktualizovaného počtu zhlédnutí do local storage
-        localStorage.setItem('viewCount', viewCount);
-
-        // Zobrazení počtu zhlédnutí na stránce
-        document.getElementById('viewCount').innerText = viewCount;
-    </script>
+<script>
+    // Počkáme 2 vteřiny a skryjeme první stránku a zobrazíme hlavní obsah
+    setTimeout(function () {
+        document.querySelector('.hidden-content').style.opacity = '0';
+        setTimeout(function () {
+            document.querySelector('.hidden-content').style.display = 'none';
+            document.querySelector('.main-content').style.display = 'block';
+        }, 1000); // Počkáme 1 sekundu (doba trvání animace) a pak zobrazíme hlavní obsah
+    }, 2000);
+</script>
 
 </body>
 </html>
