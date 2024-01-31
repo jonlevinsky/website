@@ -17,9 +17,9 @@
 
         <nav>
             <a class="underline-animation" href="people.html">People</a>
+            <a class="underlined">Product</a>
             <a class="underline-animation" href="architecture.html">Architecture</a>
             <a class="underline-animation" href="nature.html">Nature</a>
-            <a class="underlined">Fine Art / Personal</a>
             <div id="info">
                 <a class="underline-animation" href="about.html">About + Contact</a>
             </div>
@@ -63,7 +63,7 @@
                                 images.forEach(img => {
                                     const randomIndex = Math.floor(Math.random() * availableImages.length);
                                     const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
-                                    img.src = `./img/art/art (${randomImageNumber}).webp`; 
+                                    img.src = `./img/product/product (${randomImageNumber}).webp`; 
                                 });
                             });
                         });
