@@ -13,7 +13,7 @@
     <div id="content">
         <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
             <div id="mobile-close-icon" class="close-icon">&#10006;</div>
-            <a href="./index.html"><img src="./assets/logo.webp" alt="LOGO"></a>
+            <a href="./home.html"><img src="./assets/logo.webp" alt="LOGO"></a>
 
         <nav>
             <a class="underlined">People</a>
@@ -30,50 +30,44 @@
         </nav>
 
         <div id="gallery">
-                <div class="row">
-                    <div class="column">
-                        <img>
-                        <img>
-                        <img>
-                        <img>
-                        <img>
-                    </div>
-                    <div class="column">
-                        <img>
-                        <img>
-                        <img>
-                        <img>
-                        <img>
-                    </div>
-                    <div class="column">
-                        <img>
-                        <img>
-                        <img>
-                        <img>
-                        <img>
-                    </div>
-                    <script>
-                        window.addEventListener('load', () => {
-                            const columns = document.querySelectorAll('.column');
-                            const totalImages = 27; 
-                            const availableImages = Array.from({ length: totalImages }, (_, i) => i + 1); 
-                            
-                            columns.forEach(column => {
-                                const images = Array.from(column.querySelectorAll('img'));
-                                images.forEach(img => {
-                                    const randomIndex = Math.floor(Math.random() * availableImages.length);
-                                    const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
-                                    img.src = `./img/people/people (${randomImageNumber}).webp`; 
-                                });
-                            });
-                        });
-                    </script>
-                </div>
+            <div class="row">
+                <div class="column"></div>
+                <div class="column"></div>
+                <div class="column"></div>
             </div>
-            
         </div>
 
         <script>
+            window.addEventListener('load', () => {
+            const columns = document.querySelectorAll('.column');
+            const totalImages = 32;
+            const imagesPerColumn = Math.floor(totalImages / columns.length); // Počet obrázků na sloupec
+            const remainder = totalImages % columns.length; // Zbytek obrázků, které se nevejdou rovnoměrně
+
+            const availableImages = Array.from({ length: totalImages }, (_, i) => i + 1);
+
+            columns.forEach((column, index) => {
+                const columnImages = imagesPerColumn + (index === Math.floor(columns.length / 2) ? remainder : 0);
+
+                for (let i = 0; i < columnImages; i++) {
+                    const img = document.createElement('img');
+                    img.classList.add('gallery-img'); // Přidání třídy pro zachování stylu
+                    const randomIndex = Math.floor(Math.random() * availableImages.length);
+                    const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
+                    const imgSrc = `./img/people/people (${randomImageNumber}).webp`;
+
+                    const tempImg = new Image();
+                    tempImg.src = imgSrc;
+                    tempImg.onerror = function () {
+                        img.parentNode.removeChild(img);
+                    };
+
+                    img.src = imgSrc;
+                    column.appendChild(img);
+                }
+            });
+        });
+
             function changeStyle(velikost) {
                 const odkaz = document.getElementById('cssLink');
                 if (velikost < 1080) {
@@ -82,13 +76,13 @@
                     odkaz.href = 'style.css';
                 }
             }
-    
+
             changeStyle(window.innerWidth);
-    
-            window.addEventListener('resize', function() {
+
+            window.addEventListener('resize', function () {
                 changeStyle(window.innerWidth);
             });
-        </script>    
+        </script>
 
         <script>
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
@@ -111,100 +105,92 @@
             });
         </script>
 
-<script>
-    function changeTitle() {
-    var title = document.querySelector('title');
-    var originalTitle = "Jan Levínský";
-    var newTitle = "People";
+        <script>
+            function changeTitle() {
+                var title = document.querySelector('title');
+                var originalTitle = "Jan Levínský";
+                var newTitle = "Home";
 
-    setTimeout(function() {
-        if (title.textContent === originalTitle) {
-        title.textContent = newTitle;
-        } else {
-        title.textContent = originalTitle;
-        }
-        changeTitle();
-    }, 1000);
-    }
+                setTimeout(function () {
+                    if (title.textContent === originalTitle) {
+                        title.textContent = newTitle;
+                    } else {
+                        title.textContent = originalTitle;
+                    }
+                    changeTitle();
+                }, 1000);
+            }
 
-    changeTitle();
-</script>
+            changeTitle();
+        </script>
 
-<script>
-    function changeFavicon() {
-    const favicon = document.getElementById('favicon');
-    
-const favicons = ['./assets/logo0.png', './assets/logo1.png'];
-    
-    let index = 0;
-    
-    setInterval(() => {
-        favicon.href = favicons[index];
-        index = (index + 1) % favicons.length;
-    }, 1000);
-    }
-    
-    window.onload = changeFavicon;
-</script>
-    <script>
-    const images = document.querySelectorAll('#gallery img');
-    images.forEach(img => {
-        img.addEventListener('click', function() {
-            window.open(this.src, '_blank');
-        });
-    });
-</script>
+        <script>
+            function changeFavicon() {
+                const favicon = document.getElementById('favicon');
 
-<script>
-    const modeToggle = document.getElementById('mode-toggle');
-    const body = document.body;
+                const favicons = ['./assets/logo0.png', './assets/logo1.png'];
 
-    function updateToggleText() {
-        if (body.classList.contains('dark-mode')) {
-            modeToggle.textContent = 'Light Mode';
-        } else {
-            modeToggle.textContent = 'Dark Mode';
-        }
-    }
+                let index = 0;
 
-    modeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
+                setInterval(() => {
+                    favicon.href = favicons[index];
+                    index = (index + 1) % favicons.length;
+                }, 1000);
+            }
 
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('mode', 'dark');
-        } else {
-            localStorage.setItem('mode', 'light');
-        }
+            window.onload = changeFavicon;
+        </script>
 
-        updateToggleText();
-        toggleGalleryDarkMode();
-    });
+        <script>
+            const modeToggle = document.getElementById('mode-toggle');
+            const body = document.body;
+            let galleryImages = document.querySelectorAll('.gallery-img');
 
-    const userMode = localStorage.getItem('mode');
-    if (userMode === 'dark') {
-        body.classList.add('dark-mode');
-    }
+            function updateToggleText() {
+                if (body.classList.contains('dark-mode')) {
+                    modeToggle.textContent = 'Light Mode';
+                } else {
+                    modeToggle.textContent = 'Dark Mode';
+                }
+            }
 
-    updateToggleText();
+            modeToggle.addEventListener('click', () => {
+                body.classList.toggle('dark-mode');
 
-    const photos = document.getElementById('photos');
-    const img = document.querySelectorAll('#gallery img');
+                if (body.classList.contains('dark-mode')) {
+                    localStorage.setItem('mode', 'dark');
+                } else {
+                    localStorage.setItem('mode', 'light');
+                }
 
-    function toggleGalleryDarkMode() {
-        const userMode = localStorage.getItem('mode');
-        if (userMode === 'dark') {
-            img.forEach(image => {
-                image.classList.add('dark-mode-img');
+                updateToggleText();
+                toggleGalleryDarkMode();
             });
-        } else {
-            img.forEach(image => {
-                image.classList.remove('dark-mode-img');
-            });
-        }
-    }
 
-    toggleGalleryDarkMode();
-</script>
+            const userMode = localStorage.getItem('mode');
+            if (userMode === 'dark') {
+                body.classList.add('dark-mode');
+                toggleGalleryDarkMode(); // Zavolání funkce pro správné nastavení obrázků v galerii v režimu dark mode
+            }
+
+            updateToggleText();
+
+            function toggleGalleryDarkMode() {
+                galleryImages = document.querySelectorAll('.gallery-img');
+                const userMode = localStorage.getItem('mode');
+                if (userMode === 'dark') {
+                    galleryImages.forEach(image => {
+                        image.classList.add('dark-mode-img');
+                    });
+                } else {
+                    galleryImages.forEach(image => {
+                        image.classList.remove('dark-mode-img');
+                    });
+                }
+            }
+
+            window.onload = toggleGalleryDarkMode;
+        </script>
 
 
 </html>

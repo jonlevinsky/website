@@ -12,12 +12,12 @@
 <body>
     <div id="content">
         <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
-            <div id="mobile-close-icon" class="close-icon">&#10006;</div>
-            <a href="./home.html"><img src="./assets/logo.webp" alt="LOGO"></a>
+        <div id="mobile-close-icon" class="close-icon">&#10006;</div>
+        <a><img src="./assets/logo.webp" alt="LOGO"></a>
 
         <nav>
             <a class="underline-animation" href="people.html">People</a>
-            <a class="underlined">Product</a>
+            <a class="underline-animation" href="product.html">Product</a>
             <a class="underline-animation" href="architecture.html">Architecture</a>
             <a class="underline-animation" href="nature.html">Nature</a>
             <div id="info">
@@ -40,7 +40,7 @@
         <script>
             window.addEventListener('load', () => {
             const columns = document.querySelectorAll('.column');
-            const totalImages = 5;
+            const totalImages = 56;
             const imagesPerColumn = Math.floor(totalImages / columns.length); // Počet obrázků na sloupec
             const remainder = totalImages % columns.length; // Zbytek obrázků, které se nevejdou rovnoměrně
 
@@ -54,7 +54,7 @@
                     img.classList.add('gallery-img'); // Přidání třídy pro zachování stylu
                     const randomIndex = Math.floor(Math.random() * availableImages.length);
                     const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
-                    const imgSrc = `./img/product/product (${randomImageNumber}).webp`;
+                    const imgSrc = `./img/top (${randomImageNumber}).webp`;
 
                     const tempImg = new Image();
                     tempImg.src = imgSrc;
@@ -67,7 +67,6 @@
                 }
             });
         });
-
 
             function changeStyle(velikost) {
                 const odkaz = document.getElementById('cssLink');
@@ -192,4 +191,7 @@
 
             window.onload = toggleGalleryDarkMode;
         </script>
+
+</body>
+
 </html>

@@ -3,58 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ukázkový Web</title>
+    <title>My Linktree</title>
     <style>
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
         }
-
-        .main-content {
-            display: none;
-            animation: fadeIn 1s ease-in-out;
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-
-        .hidden-content {
-            height: 100vh;
-            background-color: #f0f0f0;
+        .profile {
             text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 1;
+            margin-bottom: 20px;
         }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
+        .profile img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 5px solid #fff; /* Tento řádek přidá bílý okraj kolem profilové fotky */
+        }
+        .banner img {
+            max-width: 100%;
+            border-radius: 5px;
+        }
+        .banner {
+            overflow: hidden; /* Tento řádek zajistí, aby se banner nepřekrýval s profilovou fotkou */
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .link-item {
+            margin-bottom: 20px;
+        }
+        .link-item:last-child {
+            margin-bottom: 0;
+        }
+        .link-item a {
+            display: block;
+            padding: 15px;
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .link-item a:hover {
+            background-color: #ddd;
         }
     </style>
 </head>
 <body>
-
-<div class="hidden-content">
-    <h1>Vítejte na první stránce!</h1>
-</div>
-
-<div class="main-content">
-    <h1>Hlavní obsah stránky</h1>
-    <p>Tady je váš hlavní obsah stránky.</p>
-</div>
-
-<script>
-    setTimeout(function () {
-        document.querySelector('.hidden-content').style.opacity = '0';
-        setTimeout(function () {
-            document.querySelector('.hidden-content').style.display = 'none';
-            document.querySelector('.main-content').style.display = 'block';
-        }, 1000);
-    }, 2000);
-</script>
-
+    <div class="container">
+        <div class="profile">
+            <img src="profile.jpg" alt="Profile Picture">
+            <h2>John Doe</h2>
+        </div>
+        <div class="banner">
+            <img src="banner.jpg" alt="Banner">
+        </div>
+        <div class="link-item">
+            <a href="https://example.com">Example Website</a>
+        </div>
+        <div class="link-item">
+            <a href="https://twitter.com/example">Twitter</a>
+        </div>
+        <div class="link-item">
+            <a href="https://instagram.com/example">Instagram</a>
+        </div>
+        <!-- Add more link items as needed -->
+    </div>
 </body>
 </html>
