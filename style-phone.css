@@ -24,6 +24,25 @@
     font-family: 'nixieone';
 }
 
+::-webkit-scrollbar{
+    width: 1vw;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 1vw;
+  }
+
+::-webkit-scrollbar-thumb{
+    background: #c7c7c7;
+    border-radius: 1vw;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background: #aaaaaa;
+}
+
+
 body {
     background-color: white;
 }
@@ -291,4 +310,22 @@ body {
 
 .dark-mode-img {
     filter: invert(1);
+}
+
+.dark-mode::-webkit-scrollbar{
+    width: 0.6vw;
+}
+
+.dark-mode::-webkit-scrollbar-track {
+    background: #0f0f0f;
+    border-radius: 1vw;
+  }
+
+  .dark-mode::-webkit-scrollbar-thumb{
+    background: #383838;
+    border-radius: 1vw;
+}
+
+.dark-mode::-webkit-scrollbar-thumb:hover{
+    background: #555555;
 }
