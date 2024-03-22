@@ -10,6 +10,11 @@
 </head>
 
 <body>
+    <noscript>
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 2.5vw; font-weight: bold;">
+            <p>For the full functionality of this website, JavaScript is required.</p>
+        </div>
+    </noscript>
     <div id="content">
         <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
         <div id="mobile-close-icon" class="close-icon">&#10006;</div>
@@ -24,8 +29,12 @@
                 <a class="underline-animation" href="about.html">About + Contact</a>
             </div>
             <div id="copyright">
-                <p>&copy; 2023 Jan Levínský Photography</p>
+                <p>&copy; <span id="currentYear"></span> Jan Levínský Photography</p>
             </div>
+            <script>
+                const currentYear = new Date().getFullYear();
+                document.getElementById('currentYear').textContent = currentYear;
+            </script>
             <button id="mode-toggle">Dark/Light Mode</button>
         </nav>
 
@@ -39,34 +48,41 @@
 
         <script>
             window.addEventListener('load', () => {
-            const columns = document.querySelectorAll('.column');
-            const totalImages = 56;
-            const imagesPerColumn = Math.floor(totalImages / columns.length); // Počet obrázků na sloupec
-            const remainder = totalImages % columns.length; // Zbytek obrázků, které se nevejdou rovnoměrně
-
-            const availableImages = Array.from({ length: totalImages }, (_, i) => i + 1);
-
-            columns.forEach((column, index) => {
-                const columnImages = imagesPerColumn + (index === Math.floor(columns.length / 2) ? remainder : 0);
-
-                for (let i = 0; i < columnImages; i++) {
-                    const img = document.createElement('img');
-                    img.classList.add('gallery-img'); // Přidání třídy pro zachování stylu
-                    const randomIndex = Math.floor(Math.random() * availableImages.length);
-                    const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
-                    const imgSrc = `./img/top (${randomImageNumber}).webp`;
-
-                    const tempImg = new Image();
-                    tempImg.src = imgSrc;
-                    tempImg.onerror = function () {
-                        img.parentNode.removeChild(img);
-                    };
-
-                    img.src = imgSrc;
-                    column.appendChild(img);
-                }
+                const columns = document.querySelectorAll('.column');
+                const totalImages = 60; // Počet fotek
+                const imagesPerColumn = Math.floor(totalImages / columns.length); 
+                const remainder = totalImages % columns.length; 
+        
+                const availableImages = Array.from({ length: totalImages }, (_, i) => i + 1);
+        
+                columns.forEach((column, index) => {
+                    const columnImages = imagesPerColumn + (index === Math.floor(columns.length / 2) ? remainder : 0);
+        
+                    for (let i = 0; i < columnImages; i++) {
+                        const img = document.createElement('img');
+                        img.classList.add('gallery-img'); 
+                        const randomIndex = Math.floor(Math.random() * availableImages.length);
+                        const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
+                        const imgSrc = `./img/top (${randomImageNumber}).webp`;
+        
+                        const tempImg = new Image();
+                        tempImg.src = imgSrc;
+                        tempImg.onerror = function () {
+                            img.parentNode.removeChild(img);
+                        };
+        
+                        img.src = imgSrc;
+                        column.appendChild(img);
+                    }
+                });
+        
+                const galleryImages = document.querySelectorAll('.gallery-img');
+                galleryImages.forEach(img => {
+                    img.addEventListener('click', () => {
+                        window.open(img.src, '_blank');
+                    });
+                });
             });
-        });
 
             function changeStyle(velikost) {
                 const odkaz = document.getElementById('cssLink');
@@ -170,7 +186,7 @@
             const userMode = localStorage.getItem('mode');
             if (userMode === 'dark') {
                 body.classList.add('dark-mode');
-                toggleGalleryDarkMode(); // Zavolání funkce pro správné nastavení obrázků v galerii v režimu dark mode
+                toggleGalleryDarkMode();
             }
 
             updateToggleText();

@@ -10,6 +10,11 @@
 </head>
 
 <body>
+    <noscript>
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 2.5vw; font-weight: bold;">
+            <p>For the full functionality of this website, JavaScript is required.</p>
+        </div>
+    </noscript>
     <div id="first-page">
         <img src="./assets/logo0.png">
     </div>
@@ -28,8 +33,12 @@
                 <a class="underline-animation" href="about.html">About + Contact</a>
             </div>
             <div id="copyright">
-                <p>&copy; 2023 Jan Levínský Photography</p>
+                <p>&copy; <span id="currentYear"></span> Jan Levínský Photography</p>
             </div>
+            <script>
+                const currentYear = new Date().getFullYear();
+                document.getElementById('currentYear').textContent = currentYear;
+            </script>
             <button id="mode-toggle">Dark/Light Mode</button>
         </nav>
 
@@ -74,7 +83,7 @@
                     <script>
                         window.addEventListener('load', () => {
                             const columns = document.querySelectorAll('.column');
-                            const totalImages = 50; 
+                            const totalImages = 60; 
                             const availableImages = Array.from({ length: totalImages }, (_, i) => i + 1); 
                             
                             columns.forEach(column => {
