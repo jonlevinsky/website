@@ -6,8 +6,8 @@
 }
 
 @font-face {
-    font-family: 'nixieone';
-    src: url('./fonts/NixieOne.ttf') format('truetype');
+    font-family: 'weezer';
+    src: url('./fonts/weezerfont.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
@@ -21,7 +21,7 @@
 
 
 *{
-    font-family: 'nixieone';
+    font-family: 'weezer';
 }
 
 ::-webkit-scrollbar{
@@ -130,7 +130,7 @@ body {
 
 #content nav p {
     max-width: 150px;
-    font-family: 'nixieone';
+    font-family: 'weezer';
     color: gray;
     font-size: small;
     font-weight: 400;

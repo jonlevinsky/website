@@ -6,8 +6,8 @@
 }
 
 @font-face {
-    font-family: 'nixieone';
-    src: url('./fonts/NixieOne.ttf') format('truetype');
+    font-family: 'weezer';
+    src: url('./fonts/weezerfont.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
@@ -21,7 +21,8 @@
 
 
 *{
-    font-family: 'nixieone';
+    font-family: 'weezer';
+    transition: all 0.2s ease-in-out;
 }
 
 ::-webkit-scrollbar{
@@ -114,7 +115,7 @@ body {
 
 #content nav p {
     max-width: 150px;
-    font-family: 'nixieone';
+    font-family: 'weezer';
     color: gray;
     font-size: small;
     font-weight: 400;
@@ -133,16 +134,15 @@ body {
 
 #gallery {
     height: 100%;
-    margin-top: -350px;
-    margin-left: 300px;
+    margin-top: -400px;
+    margin-left: 15vw;
 }
 
 .row {
-    display: -ms-flexbox;
     display: flex;
     -ms-flex-wrap: wrap;
     flex-wrap: wrap;
-    padding: 0 4px;
+    margin-left: 1vw;
   }
   
 .column {
