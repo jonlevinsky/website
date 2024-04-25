@@ -227,7 +227,7 @@ body {
     height: 100%;
     margin-top: -230px;
     width: 90vw;
-    margin-left: 5vw;
+    margin-left: 3vw;
     transition: all 0.3s ease-in-out;
 }
 
@@ -237,19 +237,17 @@ body {
     transition: all 0.3s ease-in-out;
 }
 
-#text h2 {
-    font-family: 'cmu';
-    font-size: medium;
-    width: 80vw;
-    text-align: center;
-    font-weight: 900;
-}
-
-
 #text p{
     width: 80vw;
-    text-indent: 10vw;
+    text-indent: 5vw;
     text-align: justify;
+}
+
+#text h2 a{
+    font-size: large;
+    width: 100vw;
+    text-align: center;
+    font-weight: 900;
 }
 
 #text a{

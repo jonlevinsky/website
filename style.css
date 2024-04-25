@@ -210,7 +210,7 @@ body {
 
 #text {
     height: 100%;
-    width: 30vw;
+    width: 40vw;
     align-items: center;
     justify-content: center;
     margin-top: -350px;
@@ -223,16 +223,16 @@ body {
     text-align: justify;
 }
 
-#text h2 {
-    font-family: 'cmu';
-    font-size: medium;
-    width: 30vw;
+#text h2 a{
+    font-size: large;
+    width: 100vw;
     text-align: center;
     font-weight: 900;
 }
 
-#text img{
-    margin-left: 10vw;
+#text h2 a:hover{
+    color: #738584;
+    font-size: x-large;
 }
 
 a img{
