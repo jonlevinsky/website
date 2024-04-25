@@ -57,7 +57,6 @@ body {
 }
 
 #first-page img {
-    filter: invert(1);
     max-width: 20vw;
     animation: bounce 1.5s infinite;
 }

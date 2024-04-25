@@ -16,7 +16,7 @@
         </div>
     </noscript>
     <div id="first-page">
-        <img src="./assets/logo0.png">
+        <img src="./assets/logo0.png" id="loading">
     </div>
 
     <div id="content">
@@ -175,6 +175,7 @@
     const modeToggle = document.getElementById('mode-toggle');
     const body = document.body;
     let galleryImages = document.querySelectorAll('.gallery-img');
+    let loadingImg = document.getElementById('loading')
 
     function updateToggleText() {
         if (body.classList.contains('dark-mode')) {
@@ -207,6 +208,7 @@
 
     function toggleGalleryDarkMode() {
         galleryImages = document.querySelectorAll('.gallery-img');
+        loadingImg = document.getElementById('loading')
         const userMode = localStorage.getItem('mode');
         if (userMode === 'dark') {
             galleryImages.forEach(image => {
