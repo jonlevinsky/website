@@ -235,8 +235,8 @@ body {
     font-size: x-large;
 }
 
-a img{
-    max-width: 5vw;
+#text a img{
+    max-width: 10vw;
     margin-bottom: 1vw;
     transition: all 0.3s ease-in-out;
 }
