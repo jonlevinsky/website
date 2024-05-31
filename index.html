@@ -36,11 +36,12 @@
                 <p>&copy; 2024</span> Jan Levínský</p>
             </div>
             <div class="toggle-switch">
-                    <label class="switch-label">
-                      <input type="checkbox" class="checkbox" id="mode-toggle">
-                      <span class="slider"></span>
-                    </label>
-                </div>
+                <label class="switch-label">
+                    <input type="checkbox" class="checkbox" id="mode-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="mode-text" style="display: none;">Dark Mode</span>
+            </div>
         </nav>
 
         <div id="gallery">
@@ -143,103 +144,76 @@
     }
 
     changeTitle();
-</script>
 
-<script>
-    function changeFavicon() {
-    const favicon = document.getElementById('favicon');
-    
-    const favicons = ['./assets/logo0.png', './assets/logo1.png'];
-    
-    let index = 0;
-    
-    setInterval(() => {
-        favicon.href = favicons[index];
-        index = (index + 1) % favicons.length;
-    }, 1000);
-    }
-    
-    window.onload = changeFavicon;
-</script>
+        function changeFavicon() {
+            const favicon = document.getElementById('favicon');
 
-<script>
-    const images = document.querySelectorAll('#gallery img');
-    images.forEach(img => {
-        img.addEventListener('click', function() {
-            window.open(this.src, '_blank');
-        });
-    });
-</script>
+            const favicons = ['./assets/logo0.png', './assets/logo1.png'];
 
+            let index = 0;
 
-<script>
-    const modeToggle = document.getElementById('mode-toggle');
-    const body = document.body;
-    let galleryImages = document.querySelectorAll('.gallery-img');
-    let loadingImg = document.getElementById('loading')
-
-    function updateToggleText() {
-        if (body.classList.contains('dark-mode')) {
-            modeToggle.textContent = 'Light Mode';
-        } else {
-            modeToggle.textContent = 'Dark Mode';
+            setInterval(() => {
+                favicon.href = favicons[index];
+                index = (index + 1) % favicons.length;
+            }, 1000);
         }
-    }
 
-    modeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
+        window.onload = changeFavicon;
 
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('mode', 'dark');
-        } else {
-            localStorage.setItem('mode', 'light');
+        const modeToggle = document.getElementById('mode-toggle');
+        const body = document.body;
+        let galleryImages = document.querySelectorAll('.gallery-img');
+
+        function updateToggleText() {
+            if (body.classList.contains('dark-mode')) {
+                document.getElementById('mode-text').textContent = 'Light Mode';
+            } else {
+                document.getElementById('mode-text').textContent = 'Dark Mode';
+            }
+        }
+
+        modeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('mode', 'dark');
+            } else {
+                localStorage.setItem('mode', 'light');
+            }
+
+            updateToggleText();
+            toggleGalleryDarkMode();
+        });
+
+        const userMode = localStorage.getItem('mode');
+        if (userMode === 'dark') {
+            body.classList.add('dark-mode');
+            modeToggle.checked = true; // Přidáno, aby přepínač odpovídal uloženému stavu
+            toggleGalleryDarkMode();
         }
 
         updateToggleText();
-        toggleGalleryDarkMode();
-    });
 
-    const userMode = localStorage.getItem('mode');
-    if (userMode === 'dark') {
-        body.classList.add('dark-mode');
-        toggleGalleryDarkMode();
-    }
-
-    updateToggleText();
-
-    function toggleGalleryDarkMode() {
-        galleryImages = document.querySelectorAll('.gallery-img');
-        loadingImg = document.getElementById('loading')
-        const userMode = localStorage.getItem('mode');
-        if (userMode === 'dark') {
-            galleryImages.forEach(image => {
-                image.classList.add('dark-mode-img');
-            });
-        } else {
-            galleryImages.forEach(image => {
-                image.classList.remove('dark-mode-img');
-            });
+        function toggleGalleryDarkMode() {
+            galleryImages = document.querySelectorAll('.gallery-img');
+            const userMode = localStorage.getItem('mode');
+            if (userMode === 'dark') {
+                galleryImages.forEach(image => {
+                    image.classList.add('dark-mode-img');
+                });
+            } else {
+                galleryImages.forEach(image => {
+                    image.classList.remove('dark-mode-img');
+                });
+            }
         }
-    }
 
-    window.onload = toggleGalleryDarkMode;
-</script>
-
-<script>
-    setTimeout(function () {
-        document.getElementById('content').style.opacity = '0';
-        document.getElementById('content').style.display = 'none';
-    }, 10);
-
-    setTimeout(function () {
-        document.getElementById('content').style.display = 'block';
-        document.getElementById('first-page').style.opacity = '0';
-        document.getElementById('first-page').style.display = 'none';
-    }, 2500);
-
-    setTimeout(function () {    
-        document.getElementById('content').style.opacity = '1';   
-    }, 100)
-</script>
+        window.onload = function() {
+            toggleGalleryDarkMode();
+            // Aktualizace přepínače dle uloženého stavu
+            modeToggle.checked = body.classList.contains('dark-mode');
+        };
+    </script>
+</body>
 
 </html>

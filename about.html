@@ -1,180 +1,195 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Jan Levínský</title>
-        <link id="favicon" rel="icon" href='./assets/logo0.png'>
-        <link id="cssLink" rel="stylesheet" href="style.css">
-    </head>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jan Levínský</title>
+    <link id="favicon" rel="icon" href='./assets/logo0.png'>
+    <link id="cssLink" rel="stylesheet" href="style.css">
+    <style>
+        .dark-mode-img {
+            filter: invert(1);
+        }
+    </style>
+</head>
 
-    <body>
+<body>
     <noscript>
         <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 2.5vw; font-weight: bold;">
             <p>For the full functionality of this website, JavaScript is required.</p>
         </div>
     </noscript>
-        <div id="content">
-            <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
-            <div id="mobile-close-icon" class="close-icon">&#10006;</div>
-            <a href="./home.html"><img src="./assets/logo.webp" alt="LOGO"></a>
-    
-            <nav>
-                <a class="underline-animation" href="people.html" id="href">People</a>
-                <a class="underline-animation" href="product.html">Product</a>
-                <a class="underline-animation" href="architecture.html" id="href">Architecture</a>
-                <a class="underline-animation" href="nature.html" id="href">Nature</a>
-                <div id="info">
-                    <a class="underlined">About + Contact</a>
-                </div>
-                <div id="copyright">
-                <p>&copy; 2024</span> Jan Levínský</p></div>
-                <div class="toggle-switch">
-                    <label class="switch-label">
-                      <input type="checkbox" class="checkbox" id="mode-toggle">
-                      <span class="slider"></span>
-                    </label>
-                </div>
-            </nav>  
-            
-            <div id="text">
-                <center><img src="./assets/photo.webp">
+    <div id="content">
+        <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
+        <div id="mobile-close-icon" class="close-icon">&#10006;</div>
+        <a href="./home.html"><img src="./assets/logo.webp" alt="LOGO"></a>
+
+        <nav>
+            <a class="underline-animation" href="people.html" id="href">People</a>
+            <a class="underline-animation" href="product.html">Product</a>
+            <a class="underline-animation" href="architecture.html" id="href">Architecture</a>
+            <a class="underline-animation" href="nature.html" id="href">Nature</a>
+            <div id="info">
+                <a class="underlined">About + Contact</a>
+            </div>
+            <div id="copyright">
+                <p>&copy; 2024 Jan Levínský</p>
+            </div>
+            <div class="toggle-switch">
+                <label class="switch-label">
+                    <input type="checkbox" class="checkbox" id="mode-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="mode-text" style="display: none;">Dark Mode</span>
+            </div>
+        </nav>
+
+        <div id="text">
+            <center><img src="./assets/photo.webp" class="text-img">
                 <h2><a>Photographer</a> | <a>Videomaker</a></h2>
-                <p>Hello and welcome to my personal webpage!
-                   I am Jan Levínský, a 17-year-old student at SPŠST Panská in Prague, Czech Republic, specializing in film creation. Within my studies, I demonstrate excellence in technical and vocational subjects pertinent to my field of study, encompassing photography, studio technique, English, and art history. Speaking of art history, I have a profound fondness for artistic expression, particularly favoring the styles of Impressionism and Expressionism. Additionally, I have an interest in creating traditional art forms, although it's an area where I'm still developing my skills and expertise. Proficiency in English is a strong suit of mine, as I speak it fluently (almost), alongside Czech, which I speak perfectly as my native language. If you wish to get in touch, rest assured that I am more than capable of effectively communicating in both languages.
-                </p></center>
-                <h2>Get in touch:</h2>
-                <center><a href="mailto:jon.levinsky@gmail.com" target="_blank"><img src="./assets/mailicon.png"></a>
-                <a href="https://www.instagram.com/jan.levinsky.cr3/" target="_blank"><img src="./assets/iglogo.png"></a>
-                <a href="https://www.facebook.com/kuldysak/" target="_blank"><img src="./assets/facebooklogo.png"></a></center>
-            </div>           
+                <p>Hello and welcome to my personal webpage! I am Jan Levínský, a 17-year-old student at SPŠST Panská in Prague, Czech Republic, specializing in film creation. Within my studies, I demonstrate excellence in technical and vocational subjects pertinent to my field of study, encompassing photography, studio technique, English, and art history. Speaking of art history, I have a profound fondness for artistic expression, particularly favoring the styles of Impressionism and Expressionism. Additionally, I have an interest in creating traditional art forms, although it's an area where I'm still developing my skills and expertise. Proficiency in English is a strong suit of mine, as I speak it fluently (almost), alongside Czech, which I speak perfectly as my native language. If you wish to get in touch, rest assured that I am more than capable of effectively communicating in both languages.</p>
+            </center>
+            <h2>Get in touch:</h2>
+            <center><a href="mailto:jon.levinsky@gmail.com" target="_blank"><img src="./assets/mailicon.png" class="text-img"></a>
+                <a href="https://www.instagram.com/jan.levinsky.cr3/" target="_blank"><img src="./assets/iglogo.png" class="text-img"></a>
+                <a href="https://www.facebook.com/kuldysak/" target="_blank"><img src="./assets/facebooklogo.png" class="text-img"></a></center>
         </div>
-    </body>
+    </div>
 
-<script>
-    function changeStyle(velikost) {
-        const odkaz = document.getElementById('cssLink');
-        if (velikost < 1080) {
-            odkaz.href = 'style-phone.css';
-        } else {
-            odkaz.href = 'style.css';
-        }
-    }
-
-    changeStyle(window.innerWidth);
-
-    window.addEventListener('resize', function() {
-        changeStyle(window.innerWidth);
-    });
-</script>    
-
-<script>
-    const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-    const mobileCloseIcon = document.getElementById('mobile-close-icon');
-    const nav = document.querySelector('nav');
-    const text = document.getElementById('text');
-
-    mobileMenuToggle.addEventListener('click', () => {
-        nav.classList.toggle('show');
-        text.classList.toggle('move');
-        mobileMenuToggle.classList.toggle('hide');
-        mobileCloseIcon.classList.toggle('show');
-    });
-
-    mobileCloseIcon.addEventListener('click', () => {
-        nav.classList.remove('show');
-        text.classList.toggle('move');
-        mobileMenuToggle.classList.remove('hide');
-        mobileCloseIcon.classList.remove('show');
-    });
-</script>
-
-<script>
-    function changeTitle() {
-        var title = document.querySelector('title');
-        var originalTitle = "Jan Levínský";
-        var newTitle = "About";
-    
-        setTimeout(function() {
-            if (title.textContent === originalTitle) {
-            title.textContent = newTitle;
+    <script>
+        function changeStyle(velikost) {
+            const odkaz = document.getElementById('cssLink');
+            if (velikost < 1080) {
+                odkaz.href = 'style-phone.css';
             } else {
-            title.textContent = originalTitle;
+                odkaz.href = 'style.css';
             }
-            changeTitle();
-        }, 1000);
-    }
-
-    changeTitle();
-</script>
-
-<script>
-    function changeFavicon() {
-    const favicon = document.getElementById('favicon');
-    
-const favicons = ['./assets/logo0.png', './assets/logo1.png'];
-    
-    let index = 0;
-    
-    setInterval(() => {
-        favicon.href = favicons[index];
-        index = (index + 1) % favicons.length;
-    }, 1000);
-    }
-    
-    window.onload = changeFavicon;
-</script>
-
-<script>
-    const modeToggle = document.getElementById('mode-toggle');
-    const body = document.body;
-
-    function updateToggleText() {
-        if (body.classList.contains('dark-mode')) {
-            modeToggle.textContent = 'Light Mode';
-        } else {
-            modeToggle.textContent = 'Dark Mode';
         }
-    }
 
-    modeToggle.addEventListener('click', () => {
-        body.classList.toggle('dark-mode');
+        changeStyle(window.innerWidth);
 
-        if (body.classList.contains('dark-mode')) {
-            localStorage.setItem('mode', 'dark');
-        } else {
-            localStorage.setItem('mode', 'light');
+        window.addEventListener('resize', function () {
+            changeStyle(window.innerWidth);
+        });
+    </script>
+
+    <script>
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const mobileCloseIcon = document.getElementById('mobile-close-icon');
+        const nav = document.querySelector('nav');
+        const text = document.getElementById('text');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            nav.classList.toggle('show');
+            text.classList.toggle('move');
+            mobileMenuToggle.classList.toggle('hide');
+            mobileCloseIcon.classList.toggle('show');
+        });
+
+        mobileCloseIcon.addEventListener('click', () => {
+            nav.classList.remove('show');
+            text.classList.toggle('move');
+            mobileMenuToggle.classList.remove('hide');
+            mobileCloseIcon.classList.remove('show');
+        });
+    </script>
+
+    <script>
+        function changeTitle() {
+            var title = document.querySelector('title');
+            var originalTitle = "Jan Levínský";
+            var newTitle = "About";
+
+            setTimeout(function () {
+                if (title.textContent === originalTitle) {
+                    title.textContent = newTitle;
+                } else {
+                    title.textContent = originalTitle;
+                }
+                changeTitle();
+            }, 1000);
+        }
+
+        changeTitle();
+
+        function changeFavicon() {
+            const favicon = document.getElementById('favicon');
+
+            const favicons = ['./assets/logo0.png', './assets/logo1.png'];
+
+            let index = 0;
+
+            setInterval(() => {
+                favicon.href = favicons[index];
+                index = (index + 1) % favicons.length;
+            }, 1000);
+        }
+
+        window.onload = changeFavicon;
+
+        const modeToggle = document.getElementById('mode-toggle');
+        const body = document.body;
+        let galleryImages = document.querySelectorAll('.gallery-img');
+        let textImages = document.querySelectorAll('.text-img');
+
+        function updateToggleText() {
+            if (body.classList.contains('dark-mode')) {
+                document.getElementById('mode-text').textContent = 'Light Mode';
+            } else {
+                document.getElementById('mode-text').textContent = 'Dark Mode';
+            }
+        }
+
+        modeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('mode', 'dark');
+            } else {
+                localStorage.setItem('mode', 'light');
+            }
+
+            updateToggleText();
+            toggleGalleryDarkMode();
+        });
+
+        const userMode = localStorage.getItem('mode');
+        if (userMode === 'dark') {
+            body.classList.add('dark-mode');
+            modeToggle.checked = true; // Přidáno, aby přepínač odpovídal uloženému stavu
+            toggleGalleryDarkMode();
         }
 
         updateToggleText();
-        toggleGalleryDarkMode();
-    });
 
-    const userMode = localStorage.getItem('mode');
-    if (userMode === 'dark') {
-        body.classList.add('dark-mode');
-    }
-
-    updateToggleText();
-
-    const photos = document.getElementById('photos');
-    const img = document.querySelectorAll('#text img');
-
-    function toggleGalleryDarkMode() {
-        const userMode = localStorage.getItem('mode');
-        if (userMode === 'dark') {
-            img.forEach(image => {
-                image.classList.add('dark-mode-img');
-            });
-        } else {
-            img.forEach(image => {
-                image.classList.remove('dark-mode-img');
-            });
+        function toggleGalleryDarkMode() {
+            galleryImages = document.querySelectorAll('.gallery-img');
+            textImages = document.querySelectorAll('.text-img');
+            const userMode = localStorage.getItem('mode');
+            if (userMode === 'dark') {
+                galleryImages.forEach(image => {
+                    image.classList.add('dark-mode-img');
+                });
+                textImages.forEach(image => {
+                    image.classList.add('dark-mode-img');
+                });
+            } else {
+                galleryImages.forEach(image => {
+                    image.classList.remove('dark-mode-img');
+                });
+                textImages.forEach(image => {
+                    image.classList.remove('dark-mode-img');
+                });
+            }
         }
-    }
 
-    toggleGalleryDarkMode();
-</script>
+        window.onload = function () {
+            toggleGalleryDarkMode();
+            // Aktualizace přepínače dle uloženého stavu
+            modeToggle.checked = body.classList.contains('dark-mode');
+        };
+    </script>
+</body>
 
 </html>

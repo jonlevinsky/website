@@ -32,11 +32,12 @@
                 <p>&copy; 2024</span> Jan Levínský</p>
             </div>
             <div class="toggle-switch">
-                    <label class="switch-label">
-                      <input type="checkbox" class="checkbox" id="mode-toggle">
-                      <span class="slider"></span>
-                    </label>
-                </div>
+                <label class="switch-label">
+                    <input type="checkbox" class="checkbox" id="mode-toggle">
+                    <span class="slider"></span>
+                </label>
+                <span id="mode-text" style="display: none;">Dark Mode</span>
+            </div>
         </nav>
 
         <div id="gallery">
@@ -132,75 +133,76 @@
             }
 
             changeTitle();
-        </script>
 
-        <script>
-            function changeFavicon() {
-                const favicon = document.getElementById('favicon');
+        function changeFavicon() {
+            const favicon = document.getElementById('favicon');
 
-                const favicons = ['./assets/logo0.png', './assets/logo1.png'];
+            const favicons = ['./assets/logo0.png', './assets/logo1.png'];
 
-                let index = 0;
+            let index = 0;
 
-                setInterval(() => {
-                    favicon.href = favicons[index];
-                    index = (index + 1) % favicons.length;
-                }, 1000);
+            setInterval(() => {
+                favicon.href = favicons[index];
+                index = (index + 1) % favicons.length;
+            }, 1000);
+        }
+
+        window.onload = changeFavicon;
+
+        const modeToggle = document.getElementById('mode-toggle');
+        const body = document.body;
+        let galleryImages = document.querySelectorAll('.gallery-img');
+
+        function updateToggleText() {
+            if (body.classList.contains('dark-mode')) {
+                document.getElementById('mode-text').textContent = 'Light Mode';
+            } else {
+                document.getElementById('mode-text').textContent = 'Dark Mode';
             }
+        }
 
-            window.onload = changeFavicon;
-        </script>
+        modeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
 
-        <script>
-            const modeToggle = document.getElementById('mode-toggle');
-            const body = document.body;
-            let galleryImages = document.querySelectorAll('.gallery-img');
-
-            function updateToggleText() {
-                if (body.classList.contains('dark-mode')) {
-                    modeToggle.textContent = 'Light Mode';
-                } else {
-                    modeToggle.textContent = 'Dark Mode';
-                }
-            }
-
-            modeToggle.addEventListener('click', () => {
-                body.classList.toggle('dark-mode');
-
-                if (body.classList.contains('dark-mode')) {
-                    localStorage.setItem('mode', 'dark');
-                } else {
-                    localStorage.setItem('mode', 'light');
-                }
-
-                updateToggleText();
-                toggleGalleryDarkMode();
-            });
-
-            const userMode = localStorage.getItem('mode');
-            if (userMode === 'dark') {
-                body.classList.add('dark-mode');
-                toggleGalleryDarkMode();
+            if (body.classList.contains('dark-mode')) {
+                localStorage.setItem('mode', 'dark');
+            } else {
+                localStorage.setItem('mode', 'light');
             }
 
             updateToggleText();
+            toggleGalleryDarkMode();
+        });
 
-            function toggleGalleryDarkMode() {
-                galleryImages = document.querySelectorAll('.gallery-img');
-                const userMode = localStorage.getItem('mode');
-                if (userMode === 'dark') {
-                    galleryImages.forEach(image => {
-                        image.classList.add('dark-mode-img');
-                    });
-                } else {
-                    galleryImages.forEach(image => {
-                        image.classList.remove('dark-mode-img');
-                    });
-                }
+        const userMode = localStorage.getItem('mode');
+        if (userMode === 'dark') {
+            body.classList.add('dark-mode');
+            modeToggle.checked = true; // Přidáno, aby přepínač odpovídal uloženému stavu
+            toggleGalleryDarkMode();
+        }
+
+        updateToggleText();
+
+        function toggleGalleryDarkMode() {
+            galleryImages = document.querySelectorAll('.gallery-img');
+            const userMode = localStorage.getItem('mode');
+            if (userMode === 'dark') {
+                galleryImages.forEach(image => {
+                    image.classList.add('dark-mode-img');
+                });
+            } else {
+                galleryImages.forEach(image => {
+                    image.classList.remove('dark-mode-img');
+                });
             }
+        }
 
-            window.onload = toggleGalleryDarkMode;
-        </script>
-
+        window.onload = function() {
+            toggleGalleryDarkMode();
+            // Aktualizace přepínače dle uloženého stavu
+            modeToggle.checked = body.classList.contains('dark-mode');
+        };
+    </script>
+</body>
 
 </html>
