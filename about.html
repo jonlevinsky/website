@@ -48,7 +48,16 @@
         <div id="text">
             <center><img src="./assets/photo.webp" class="text-img">
                 <h2><a>Photographer</a> | <a>Videomaker</a></h2>
-                <p>Hello and welcome to my personal webpage! I am Jan Levínský, a 17-year-old student at SPŠST Panská in Prague, Czech Republic, specializing in film creation. Within my studies, I demonstrate excellence in technical and vocational subjects pertinent to my field of study, encompassing photography, studio technique, English, and art history. Speaking of art history, I have a profound fondness for artistic expression, particularly favoring the styles of Impressionism and Expressionism. Additionally, I have an interest in creating traditional art forms, although it's an area where I'm still developing my skills and expertise. Proficiency in English is a strong suit of mine, as I speak it fluently (almost), alongside Czech, which I speak perfectly as my native language. If you wish to get in touch, rest assured that I am more than capable of effectively communicating in both languages.</p>
+                <ul><li><p>Hello and welcome to my personal webpage! I am Jan Levínský, a 17-year-old student at SPŠST Panská in Prague, Czech Republic, specializing in film creation. </p>
+                    <li><p>Within my studies, I demonstrate excellence in technical and vocational subjects pertinent to my field of study such as:</p>
+                        <ol>
+                            <li><p>Photography</p>
+                            <li><p>Studio technique</p>
+                            <li><p>English</p> 
+                            <li><p>Art history</p>
+                        </ol> 
+                    <li><p>Speaking of art history, I have a profound fondness for artistic expression, particularly favoring the styles of Impressionism and Expressionism. Additionally, I have an interest in creating traditional art forms, although it's an area where I'm still developing my skills and expertise.</p> 
+                    <li><p>English is a strong suit of mine, as I speak it fluently (almost), alongside Czech, which I speak perfectly as my native language. If you wish to get in touch, rest assured that I am more than capable of effectively communicating in both languages.</p>
             </center>
             <h2>Get in touch:</h2>
             <center><a href="mailto:jon.levinsky@gmail.com" target="_blank"><img src="./assets/mailicon.png" class="text-img"></a>
@@ -72,9 +81,9 @@
         window.addEventListener('resize', function () {
             changeStyle(window.innerWidth);
         });
-    </script>
 
-    <script>
+
+
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const mobileCloseIcon = document.getElementById('mobile-close-icon');
         const nav = document.querySelector('nav');
@@ -93,9 +102,9 @@
             mobileMenuToggle.classList.remove('hide');
             mobileCloseIcon.classList.remove('show');
         });
-    </script>
 
-    <script>
+
+    
         function changeTitle() {
             var title = document.querySelector('title');
             var originalTitle = "Jan Levínský";
@@ -112,21 +121,7 @@
         }
 
         changeTitle();
-
-        function changeFavicon() {
-            const favicon = document.getElementById('favicon');
-
-            const favicons = ['./assets/logo0.png', './assets/logo1.png'];
-
-            let index = 0;
-
-            setInterval(() => {
-                favicon.href = favicons[index];
-                index = (index + 1) % favicons.length;
-            }, 1000);
-        }
-
-        window.onload = changeFavicon;
+        
 
         const modeToggle = document.getElementById('mode-toggle');
         const body = document.body;
@@ -157,7 +152,7 @@
         const userMode = localStorage.getItem('mode');
         if (userMode === 'dark') {
             body.classList.add('dark-mode');
-            modeToggle.checked = true; // Přidáno, aby přepínač odpovídal uloženému stavu
+            modeToggle.checked = true;
             toggleGalleryDarkMode();
         }
 
@@ -186,7 +181,6 @@
 
         window.onload = function () {
             toggleGalleryDarkMode();
-            // Aktualizace přepínače dle uloženého stavu
             modeToggle.checked = body.classList.contains('dark-mode');
         };
     </script>
