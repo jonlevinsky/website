@@ -1,236 +1,260 @@
-<!DOCTYPE html>
-<html>
-
+<!doctype html>
+<html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jan Levínský</title>
-    <link id="favicon" rel="icon" href='./assets/logo0.png'>
-    <link id="cssLink" rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Portfolio // 2025 — Jan Levínský</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/shufflejs@5.3.0/dist/shuffle.min.js"></script>
+<style>
+:root{
+  --bg:#f6f4f5;
+  --muted:#9aa0a6;
+  --accent:#111;
+  --card-radius:12px;
+  --card-radius-after:20px;
+  --gap:16px;
+  --transition:0.3s ease-in-out;
+}
+*{box-sizing:border-box;}
+html,body{height:100%; margin:0; padding:0;}
+body{
+  font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg);
+  color:#0b0b0b;
+  display:flex;
+  justify-content:space-evenly;
+  align-items:stretch;
+  padding:16px;
+}
+
+.wrap{
+  display:grid;
+  grid-template-columns: 1fr 3fr;
+  gap: var(--gap);
+  max-width:1400px;
+  width:100%;
+  height:100%;
+}
+
+.brand{
+  padding-left:12px;
+}
+.kicker{
+  font-size:13px;
+  color:var(--muted);
+  letter-spacing:0.06em;
+  margin-bottom:28px;
+}
+h1{
+  margin:0;
+  font-weight:800;
+  font-size:56px;
+  line-height:0.96;
+}
+h2{
+  margin:0 0 16px 0;
+  font-weight:200;
+  font-size:28px;
+}
+h2 a{
+  cursor: pointer;
+  text-decoration:none;
+  color:var(--accent);
+  margin-right:12px;
+}
+h2 a.active{
+  text-decoration:underline;
+}
+.intro{
+  margin-top:48px;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.6;
+  max-width:330px;
+}
+.links{margin-top:18px;}
+.links a{
+  color:var(--accent);
+  text-decoration:none;
+  margin-right:18px;
+  font-weight:500;
+  font-size:14px;
+}
+
+main{
+  display:flex;
+  flex-direction:column;
+  justify-content: flex-start;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+}
+
+.tile{
+  position: relative;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  background:#fff;
+  aspect-ratio: 3 / 2;
+  width: 17vw;
+  cursor:pointer;
+  margin: 10px;
+  box-shadow: 0x 0px 0px rgba(0, 0, 0, 0);
+}
+
+.tile img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition: transform var(--transition);
+}
+
+.tile:hover img{
+  transform: scale(1.1);
+}
+
+.tile::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.555), rgba(255,255,255,0));
+  pointer-events:none;
+  opacity: 0;
+  transition: height var(--transition), opacity var(--transition);
+}
+
+.tile:hover::after{
+  height:40%;
+  opacity: 1;
+}
+
+.flyout{
+  position:absolute;
+  z-index: 2;
+  bottom:10px;
+  left:50%;
+  transform: translateX(-50%) scale(0);
+  transform-origin: bottom center;
+  background: rgba(255, 255, 255, 0.116);
+  backdrop-filter: blur(5px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius:16px;
+  padding:8px 14px;
+  color:#ffffff;
+  font-family: Inter;
+  font-weight: 100;
+  font-size:14px;
+  white-space:nowrap;
+  pointer-events:none;
+  transition: transform var(--transition), opacity var(--transition);
+  opacity:0;
+}
+
+.tile:hover .flyout{
+  transform: translateX(-50%) scale(1);
+  opacity:1;
+}
+
+.tile.dimmed{
+  filter: grayscale(80%) opacity(0.5);
+}
+
+.greeting{display:flex; align-items:flex-start; gap:10px; margin-top:24px;}
+.greeting .emoji{font-size:20px;}
+
+@media (max-width:880px){
+  .wrap{grid-template-columns:1fr;}
+  h1{font-size:44px;}
+  .grid{grid-template-columns: repeat(2, 1fr);}
+}
+</style>
 </head>
-
 <body>
-    <noscript>
-        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; font-size: 2.5vw; font-weight: bold;">
-            <p>For the full functionality of this website, JavaScript is required.</p>
-        </div>
-    </noscript>
-    <div id="first-page">
-        <img src="./assets/logo0.png" id="loading">
+<div class="wrap">
+  <aside class="brand">
+    <div class="kicker">PORTFOLIO // 2025</div>
+    <h1>Jan<br/>Levínský</h1>
+    <div class="intro">
+      <div class="greeting">
+        <div class="emoji">👋</div>
+        <div>I am Honza — a multimedia creator with passion for tech, nature and everything in between.</div>
+      </div>
     </div>
+  </aside>
 
-    <div id="content">
-        <div id="mobile-menu-toggle" class="hamburger-menu">&#9776;</div>
-            <div id="mobile-close-icon" class="close-icon">&#10006;</div>
-            <a href="./home.html"><img src="./assets/logo.webp" alt="LOGO"></a>
-
-        <nav>
-            <a class="underline-animation" href="people.html">People</a>
-            <a class="underline-animation" href="product.html">Product</a>
-            <a class="underline-animation" href="architecture.html">Architecture</a>
-            <a class="underline-animation" href="nature.html">Nature</a>
-            <div id="info">
-                <a class="underline-animation" href="about.html">About + Contact</a>
-            </div>
-            <div id="copyright">
-                <p>&copy; 2024</span> Jan Levínský</p>
-            </div>
-            <div class="toggle-switch">
-                <label class="switch-label">
-                    <input type="checkbox" class="checkbox" id="mode-toggle">
-                    <span class="slider"></span>
-                </label>
-                <span id="mode-text" style="display: none;">Dark Mode</span>
-            </div>
-        </nav>
-
-        <div id="gallery">
-            <div class="row">
-                <div class="column"></div>
-                <div class="column"></div>
-                <div class="column"></div>
-            </div>
-        </div>
-
-        <script>
-            window.addEventListener('load', () => {
-                const columns = document.querySelectorAll('.column');
-                const totalImages = 108; // Počet fotek
-                const imagesPerColumn = Math.floor(totalImages / columns.length); 
-                const remainder = totalImages % columns.length; 
-        
-                const availableImages = Array.from({ length: totalImages }, (_, i) => i + 1);
-        
-                columns.forEach((column, index) => {
-                    const columnImages = imagesPerColumn + (index === Math.floor(columns.length / 2) ? remainder : 0);
-        
-                    for (let i = 0; i < columnImages; i++) {
-                        const img = document.createElement('img');
-                        img.classList.add('gallery-img'); 
-                        const randomIndex = Math.floor(Math.random() * availableImages.length);
-                        const randomImageNumber = availableImages.splice(randomIndex, 1)[0];
-                        const imgSrc = `./img/top (${randomImageNumber}).webp`;
-        
-                        const tempImg = new Image();
-                        tempImg.src = imgSrc;
-                        tempImg.onerror = function () {
-                            img.parentNode.removeChild(img);
-                        };
-        
-                        img.src = imgSrc;
-                        column.appendChild(img);
-                    }
-                });
-        
-                const galleryImages = document.querySelectorAll('.gallery-img');
-                galleryImages.forEach(img => {
-                    img.addEventListener('click', () => {
-                        window.open(img.src, '_blank');
-                    });
-                });
-            });
-
-            function changeStyle(velikost) {
-                const odkaz = document.getElementById('cssLink');
-                if (velikost < 1080) {
-                    odkaz.href = 'style-phone.css';
-                } else {
-                    odkaz.href = 'style.css';
-                }
-            }
-
-            changeStyle(window.innerWidth);
-
-            window.addEventListener('resize', function () {
-                changeStyle(window.innerWidth);
-            });
-        </script>  
-
-        <script>
-            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
-            const mobileCloseIcon = document.getElementById('mobile-close-icon');
-            const nav = document.querySelector('nav');
-            const gallery = document.getElementById('gallery');
-
-            mobileMenuToggle.addEventListener('click', () => {
-                nav.classList.toggle('show');
-                gallery.classList.toggle('move');
-                mobileMenuToggle.classList.toggle('hide');
-                mobileCloseIcon.classList.toggle('show');
-            });
-
-            mobileCloseIcon.addEventListener('click', () => {
-                nav.classList.remove('show');
-                gallery.classList.toggle('move');
-                mobileMenuToggle.classList.remove('hide');
-                mobileCloseIcon.classList.remove('show');
-            });
-        </script>
+  <main>
+    <h2>
+      <a data-group="all" class="active">All</a> / 
+      <a data-group="photo">Photo</a> / 
+      <a data-group="video">Video</a>
+    </h2>
+    <section class="grid" id="grid"></section>
+  </main>
+</div>
 
 <script>
-    function changeTitle() {
-    var title = document.querySelector('title');
-    var originalTitle = "Jan Levínský";
-    var newTitle = "Home";
+// načtení externího JSON
+fetch('./projects.json')
+  .then(res => res.json())
+  .then(projects => {
+    const grid = document.getElementById('grid');
 
-    setTimeout(function() {
-        if (title.textContent === originalTitle) {
-        title.textContent = newTitle;
+    projects.forEach(project => {
+      const a = document.createElement('a');
+      a.href = `project.html?id=${project.id}`;
+      a.className = 'tile';
+      a.dataset.groups = JSON.stringify([project.type]);
+
+      a.innerHTML = `
+        <img src="${project.thumbnail}" alt="${project.title}">
+        <div class="flyout">${project.title}</div>
+      `;
+
+      grid.appendChild(a);
+    });
+
+    // inicializace Shuffle.js až po vložení projektů
+    const ShuffleInstance = new Shuffle(grid, {
+      itemSelector: '.tile',
+      sizer: null
+    });
+
+    // filtrování
+    const links = document.querySelectorAll('h2 a');
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const group = link.dataset.group;
+
+        links.forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+
+        if(group === 'all'){
+          ShuffleInstance.filter(Shuffle.ALL_ITEMS);
         } else {
-        title.textContent = originalTitle;
-        }
-        changeTitle();
-    }, 1000);
-    }
-
-    changeTitle();
-
-        function changeFavicon() {
-            const favicon = document.getElementById('favicon');
-
-            const favicons = ['./assets/logo0.png', './assets/logo1.png'];
-
-            let index = 0;
-
-            setInterval(() => {
-                favicon.href = favicons[index];
-                index = (index + 1) % favicons.length;
-            }, 1000);
+          ShuffleInstance.filter(group);
         }
 
-        window.onload = changeFavicon;
-
-        const modeToggle = document.getElementById('mode-toggle');
-        const body = document.body;
-        let galleryImages = document.querySelectorAll('.gallery-img');
-
-        function updateToggleText() {
-            if (body.classList.contains('dark-mode')) {
-                document.getElementById('mode-text').textContent = 'Light Mode';
-            } else {
-                document.getElementById('mode-text').textContent = 'Dark Mode';
-            }
-        }
-
-        modeToggle.addEventListener('click', () => {
-            body.classList.toggle('dark-mode');
-
-            if (body.classList.contains('dark-mode')) {
-                localStorage.setItem('mode', 'dark');
-            } else {
-                localStorage.setItem('mode', 'light');
-            }
-
-            updateToggleText();
-            toggleGalleryDarkMode();
+        // odšedění ostatních
+        document.querySelectorAll('.tile').forEach(tile => {
+          const groups = JSON.parse(tile.dataset.groups);
+          if(group === 'all' || groups.includes(group)){
+            tile.classList.remove('dimmed');
+          } else {
+            tile.classList.add('dimmed');
+          }
         });
-
-        const userMode = localStorage.getItem('mode');
-        if (userMode === 'dark') {
-            body.classList.add('dark-mode');
-            modeToggle.checked = true; // Přidáno, aby přepínač odpovídal uloženému stavu
-            toggleGalleryDarkMode();
-        }
-
-        updateToggleText();
-
-        function toggleGalleryDarkMode() {
-            galleryImages = document.querySelectorAll('.gallery-img');
-            const userMode = localStorage.getItem('mode');
-            if (userMode === 'dark') {
-                galleryImages.forEach(image => {
-                    image.classList.add('dark-mode-img');
-                });
-            } else {
-                galleryImages.forEach(image => {
-                    image.classList.remove('dark-mode-img');
-                });
-            }
-        }
-
-        window.onload = function() {
-            toggleGalleryDarkMode();
-            // Aktualizace přepínače dle uloženého stavu
-            modeToggle.checked = body.classList.contains('dark-mode');
-        };
-    </script>
-
-<script>
-    setTimeout(function () {
-        document.getElementById('content').style.opacity = '0';
-        document.getElementById('content').style.display = 'none';
-    }, 10);
-
-    setTimeout(function () {
-        document.getElementById('content').style.display = 'block';
-        document.getElementById('first-page').style.opacity = '0';
-        document.getElementById('first-page').style.display = 'none';
-    }, 2500);
-
-    setTimeout(function () {    
-        document.getElementById('content').style.opacity = '1';   
-    }, 100)
+      });
+    });
+  });
 </script>
 </body>
-
 </html>

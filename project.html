@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f6f4f5;
+  --muted:#9aa0a6;
+  --accent:#111;
+  --card-radius:12px;
+  --gap:16px;
+  --transition:0.3s ease-in-out;
+}
+*{box-sizing:border-box;}
+html,body{height:100%; margin:0; padding:0; font-family:Inter,sans-serif; background:var(--bg); color:#0b0b0b;}
+.wrap{display:grid; grid-template-columns:1fr 3fr; gap:var(--gap); max-width:1400px; width:100%; padding:16px; position: static; top: 10;}
+.brand{padding-left:12px;}
+.kicker{font-size:13px; color:var(--muted); margin-bottom:28px;}
+h1{margin:0; font-weight:800; font-size:56px; line-height:0.96;}
+h2{margin:0 0 16px 0; font-weight:200; font-size:28px;}
+p.project-bio{font-size:16px; line-height:1.6; margin-top:16px; max-width:800px; text-align: justify; padding: auto;}
+a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:var(--accent); font-weight:500;}
+
+.gallery{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+}
+.tile{
+  position: relative;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  background:#fff;
+  aspect-ratio: 3/2;
+  cursor:pointer;
+  transition: all var(--transition);
+}
+.tile img, .tile video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition: transform var(--transition);
+}
+.tile:hover img, .tile:hover video{
+  transform: scale(1.1);
+}
+.tile::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:0;
+  background: linear-gradient(to top, rgba(0,0,0,0.555), rgba(255,255,255,0));
+  pointer-events:none;
+  opacity:0;
+  transition: height var(--transition), opacity var(--transition);
+}
+.tile:hover::after{
+  height:40%;
+  opacity:1;
+}
+.flyout{
+  position:absolute;
+  z-index:2;
+  bottom:10px;
+  left:50%;
+  transform:translateX(-50%) scale(0);
+  transform-origin: bottom center;
+  background: rgba(255,255,255,0.116);
+  backdrop-filter: blur(5px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.6);
+  border-radius:16px;
+  padding:8px 14px;
+  color:#fff;
+  font-size:14px;
+  white-space:nowrap;
+  pointer-events:none;
+  transition: transform var(--transition), opacity var(--transition);
+  opacity:0;
+}
+.tile:hover .flyout{
+  transform: translateX(-50%) scale(1);
+  opacity:1;
+}
+
+/* Play ikona pro videa, stále viditelná */
+.tile-video::before{
+  content:'▶';
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  font-size:50px;
+  color: rgba(255,255,255,0.8);
+  text-shadow:2px 2px 6px rgba(0,0,0,0.6);
+  pointer-events:none;
+  z-index:2;
+}
+
+/* Modal */
+.modal{
+  position:fixed;
+  z-index: 10;
+  top:0; left:0;
+  width:100%; height:100%;
+  background:rgba(0, 0, 0, 0.938);
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.3s;
+}
+.modal.open{opacity:1; pointer-events:auto;}
+
+.modal-inner{
+  max-width:90%; max-height:90%;
+  display:flex; flex-direction:column;
+  align-items:center;
+  position:relative;
+}
+
+.modal-content img,
+.modal-content video{
+  width:100%; 
+  height:auto; 
+  border-radius:12px;
+  display:block;
+}
+
+.modal-content video{
+  max-height:80vh;
+}
+
+.modal-caption{
+  color:white;
+  font-size:16px;
+  margin-top:12px;
+  text-align:center;
+  max-width:90%;
+  word-break: break-word;
+}
+
+/* Modal controls */
+.modal-close{
+  position:absolute; top:10px; right:10px; font-size:24px; color:white; cursor:pointer;
+}
+.modal-nav{
+  position:absolute; top:50%; transform:translateY(-50%); font-size:48px; color:white; cursor:pointer; user-select:none;
+}
+.modal-prev{left:10px;}
+.modal-next{right:10px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <aside class="brand">
+    <div class="kicker">PORTFOLIO // 2025</div>
+    <h1>Jan<br/>Levínský</h1>
+  </aside>
+
+  <main id="project-container"></main>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal">
+  <div class="modal-inner">
+    <div class="modal-content" id="modal-content"></div>
+    <div class="modal-caption" id="modal-caption"></div>
+  </div>
+  <div class="modal-close" id="modal-close">&times;</div>
+  <div class="modal-nav modal-prev" id="modal-prev">&#10094;</div>
+  <div class="modal-nav modal-next" id="modal-next">&#10095;</div>
+</div>
+
+<script>
+function getQueryParam(name){ return new URLSearchParams(window.location.search).get(name); }
+const projectId = parseInt(getQueryParam('id'),10);
+
+let currentMediaIndex = 0;
+let projectMedia = [];
+
+fetch('./projects.json')
+.then(res=>res.json())
+.then(projects=>{
+  const project = projects.find(p=>p.id===projectId);
+  const container = document.getElementById('project-container');
+  if(!project){
+    container.innerHTML = '<p>Projekt nenalezen.</p><a href="index.html" class="back-link">&larr; Back to Portfolio</a>';
+    return;
+  }
+
+  projectMedia = project.media;
+  let galleryHTML = '';
+  project.media.forEach((m,i)=>{
+    let flyoutHTML = '';
+    if(m.title || m.caption){
+      flyoutHTML = `<div class="flyout">${m.title?m.title:''}${m.caption?': '+m.caption:''}</div>`;
+    }
+    if(m.type==='photo'){
+      galleryHTML += `<div class="tile"><img src="${m.src}" data-index="${i}">${flyoutHTML}</div>`;
+    } else {
+      galleryHTML += `<div class="tile tile-video"><video src="${m.src}" data-index="${i}" muted></video>${flyoutHTML}</div>`;
+    }
+  });
+
+  container.innerHTML = `
+    <h2>${project.title} <span style="font-weight:200;color:gray;">(${project.type})</span></h2>
+    <p class="project-bio">${project.bio}</p>
+    <div class="gallery">${galleryHTML}</div>
+    <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
+  `;
+
+  document.querySelectorAll('.gallery img, .gallery video').forEach(el=>{
+    el.addEventListener('click', ()=> openModal(parseInt(el.dataset.index)));
+  });
+});
+
+// Modal
+const modal = document.getElementById('modal');
+const modalContent = document.getElementById('modal-content');
+const modalCaption = document.getElementById('modal-caption');
+const modalClose = document.getElementById('modal-close');
+const modalPrev = document.getElementById('modal-prev');
+const modalNext = document.getElementById('modal-next');
+
+function stopVideo(){
+  const v = modalContent.querySelector('video');
+  if(v) v.pause();
+}
+
+function openModal(index){
+  currentMediaIndex=index;
+  showModalMedia();
+  modal.classList.add('open');
+}
+function closeModal(){ 
+  modal.classList.remove('open'); 
+  stopVideo();
+}
+function showModalMedia(){
+  stopVideo();
+  const m = projectMedia[currentMediaIndex];
+  if(!m) return;
+  modalContent.innerHTML = m.type==='photo'
+    ? `<img src="${m.src}">`
+    : `<video src="${m.src}" controls autoplay></video>`;
+  modalCaption.textContent = `${m.title?m.title:''}${m.caption?': '+m.caption:''}`;
+}
+function prevMedia(){ 
+  currentMediaIndex=(currentMediaIndex-1+projectMedia.length)%projectMedia.length; 
+  showModalMedia(); 
+}
+function nextMedia(){ 
+  currentMediaIndex=(currentMediaIndex+1)%projectMedia.length; 
+  showModalMedia(); 
+}
+
+modalClose.addEventListener('click', closeModal);
+modalPrev.addEventListener('click', prevMedia);
+modalNext.addEventListener('click', nextMedia);
+
+window.addEventListener('keydown', e=>{
+  if(modal.classList.contains('open')){
+    if(e.key==='ArrowLeft') prevMedia();
+    if(e.key==='ArrowRight') nextMedia();
+    if(e.key==='Escape') closeModal();
+    if(e.key===' ') { 
+      e.preventDefault(); 
+      const v = modalContent.querySelector('video'); 
+      if(v) v.paused?v.play():v.pause(); 
+    }
+    if(e.key==='f'){ 
+      const v = modalContent.querySelector('video'); 
+      if(v) v.requestFullscreen?.(); 
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects Editor - OneUI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 24px;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+
+        .actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
+        }
+
+        .btn-secondary {
+            background: #ecf0f1;
+            color: #2c3e50;
+        }
+
+        .btn-secondary:hover {
+            background: #d5dbdb;
+            transform: translateY(-1px);
+        }
+
+        .projects-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .project-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        /* Added collapsible header styles */
+        .project-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 32px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #ecf0f1;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .project-card-header:hover {
+            background: #e9ecef;
+        }
+
+        .project-title-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+        }
+
+        .collapse-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .project-card.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+
+        .project-card-content {
+            padding: 32px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .project-card.collapsed .project-card-content {
+            max-height: 0;
+            padding: 0 32px;
+        }
+
+        .project-header {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 12px;
+            font-size: 1rem;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #ecf0f1;
+            border-radius: 12px;
+            font-size: 1rem;
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .thumbnail-section {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .file-input {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-input input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            padding: 8px 16px;
+            background: #3498db;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: #2980b9;
+        }
+
+        .media-section {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 2px solid #ecf0f1;
+        }
+
+        .media-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .media-grid {
+            display: grid;
+            gap: 16px;
+        }
+
+        .media-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid #ecf0f1;
+            transition: all 0.3s ease;
+        }
+
+        .media-item:hover {
+            border-color: #bdc3c7;
+            background: white;
+        }
+
+        .media-controls {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr auto;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .media-preview {
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .media-preview img,
+        .media-preview video {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        /* Added bottom save section styles */
+        .bottom-actions {
+            margin-top: 48px;
+            padding: 32px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .project-header {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .media-controls {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .thumbnail-section {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            /* Mobile responsive for collapsible header */
+            .project-title-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Projects Editor</h1>
+            <p>Spravujte své projekty a média v moderním rozhraní</p>
+        </div>
+
+        <!-- Removed save button from top actions -->
+        <div class="actions">
+            <button class="btn btn-primary" onclick="addProject()">
+                <span>➕</span> Přidat projekt
+            </button>
+        </div>
+
+        <div id="projects-container" class="projects-grid">
+            <div class="empty-state">
+                <h3>Žádné projekty</h3>
+                <p>Začněte přidáním nového projektu</p>
+            </div>
+        </div>
+
+        <!-- Added bottom save section -->
+        <div class="bottom-actions">
+            <button class="btn btn-success" onclick="saveJSON()">
+                <span>💾</span> Uložit JSON
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let projects = [];
+
+        // Načtení existujícího projects.json
+        fetch('projects.json')
+            .then(res => res.json())
+            .then(data => {
+                projects = data;
+                renderProjects();
+            })
+            .catch(() => {
+                console.log('projects.json not found, starting empty');
+                renderProjects();
+            });
+
+        function renderProjects() {
+            const container = document.getElementById('projects-container');
+            
+            if (projects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <h3>Žádné projekty</h3>
+                        <p>Začněte přidáním nového projektu</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            projects.forEach((project, pIndex) => {
+                const projectCard = document.createElement('div');
+                projectCard.className = 'project-card';
+                projectCard.innerHTML = `
+                    <div class="project-card-header" onclick="toggleProject(${pIndex})">
+                        <div class="project-title-section">
+                            <span class="collapse-icon">▼</span>
+                            <h3>${project.title || `Projekt ${pIndex + 1}`}</h3>
+                            <span class="badge">${project.type === 'photo' ? '📷 Foto' : '🎥 Video'}</span>
+                        </div>
+                        <button class="btn btn-danger" onclick="event.stopPropagation(); removeProject(${pIndex})">
+                            <span>🗑️</span> Smazat
+                        </button>
+                    </div>
+                    <div class="project-card-content">
+                        <div class="project-header">
+                            <input type="text" class="form-input" value="${project.title || ''}" 
+                                   placeholder="Název projektu" 
+                                   onchange="updateProject(${pIndex}, 'title', this.value)">
+                            <select class="form-select" onchange="updateProject(${pIndex}, 'type', this.value)">
+                                <option value="photo" ${project.type === 'photo' ? 'selected' : ''}>Foto</option>
+                                <option value="video" ${project.type === 'video' ? 'selected' : ''}>Video</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Náhled</label>
+                            <div class="thumbnail-section">
+                                <input type="text" class="form-input" value="${project.thumbnail || ''}" 
+                                       placeholder="URL náhledu" readonly>
+                                <div class="file-input">
+                                    <input type="file" id="thumb-${pIndex}" onchange="handleThumbnailSelect(event, ${pIndex})">
+                                    <label for="thumb-${pIndex}" class="file-input-label">Vybrat soubor</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Popis</label>
+                            <textarea class="form-textarea" placeholder="Popis projektu..." 
+                                      onchange="updateProject(${pIndex}, 'bio', this.value)">${project.bio || ''}</textarea>
+                        </div>
+
+                        <div class="media-section">
+                            <div class="media-header">
+                                <h3>Média</h3>
+                                <button class="btn btn-secondary" onclick="addMedia(${pIndex})">
+                                    <span>➕</span> Přidat médium
+                                </button>
+                            </div>
+                            <div id="media-${pIndex}" class="media-grid"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(projectCard);
+                renderMedia(pIndex);
+            });
+        }
+
+        function toggleProject(pIndex) {
+            const projectCard = document.querySelectorAll('.project-card')[pIndex];
+            projectCard.classList.toggle('collapsed');
+        }
+
+        function renderMedia(pIndex) {
+            const mediaContainer = document.getElementById(`media-${pIndex}`);
+            const project = projects[pIndex];
+            
+            if (!project.media) project.media = [];
+            
+            if (project.media.length === 0) {
+                mediaContainer.innerHTML = `
+                    <div class="empty-state">
+                        <p>Žádná média</p>
+                    </div>
+                `;
+                return;
+            }
+
+            mediaContainer.innerHTML = '';
+            project.media.forEach((media, mIndex) => {
+                const mediaItem = document.createElement('div');
+                mediaItem.className = 'media-item';
+                
+                let previewHTML = '';
+                if (media.src) {
+                    if (media.type === 'photo') {
+                        previewHTML = `<img src="${media.src}" alt="preview">`;
+                    } else if (media.type === 'video') {
+                        previewHTML = `<video src="${media.src}" controls></video>`;
+                    }
+                }
+
+                mediaItem.innerHTML = `
+                    <div class="media-controls">
+                        <select class="form-select" onchange="updateMedia(${pIndex}, ${mIndex}, 'type', this.value)">
+                            <option value="photo" ${media.type === 'photo' ? 'selected' : ''}>Foto</option>
+                            <option value="video" ${media.type === 'video' ? 'selected' : ''}>Video</option>
+                        </select>
+                        <input type="text" class="form-input" placeholder="Název" value="${media.title || ''}" 
+                               onchange="updateMedia(${pIndex}, ${mIndex}, 'title', this.value)">
+                        <input type="text" class="form-input" placeholder="Popisek" value="${media.caption || ''}" 
+                               onchange="updateMedia(${pIndex}, ${mIndex}, 'caption', this.value)">
+                        <button class="btn btn-danger" onclick="removeMedia(${pIndex}, ${mIndex})">
+                            <span>🗑️</span>
+                        </button>
+                    </div>
+                    <div class="file-input">
+                        <input type="file" id="media-${pIndex}-${mIndex}" onchange="handleFileSelect(event, ${pIndex}, ${mIndex})">
+                        <label for="media-${pIndex}-${mIndex}" class="file-input-label">Vybrat soubor</label>
+                    </div>
+                    ${previewHTML ? `<div class="media-preview">${previewHTML}</div>` : ''}
+                `;
+                mediaContainer.appendChild(mediaItem);
+            });
+        }
+
+        // Funkce pro správu projektů
+        function updateProject(pIndex, key, value) {
+            projects[pIndex][key] = value;
+            if (key === 'title') {
+                renderProjects();
+            }
+        }
+
+        function addProject() {
+            projects.push({
+                id: projects.length + 1,
+                thumbnail: '',
+                title: '',
+                type: 'photo',
+                bio: '',
+                media: []
+            });
+            renderProjects();
+        }
+
+        function removeProject(pIndex) {
+            if (confirm('Opravdu chcete smazat tento projekt?')) {
+                projects.splice(pIndex, 1);
+                renderProjects();
+            }
+        }
+
+        // Funkce pro správu médií
+        function updateMedia(pIndex, mIndex, key, value) {
+            projects[pIndex].media[mIndex][key] = value;
+        }
+
+        function addMedia(pIndex) {
+            projects[pIndex].media.push({
+                type: 'photo',
+                src: '',
+                title: '',
+                caption: ''
+            });
+            renderMedia(pIndex);
+        }
+
+        function removeMedia(pIndex, mIndex) {
+            projects[pIndex].media.splice(mIndex, 1);
+            renderMedia(pIndex);
+        }
+
+        // Zpracování souborů
+        function handleFileSelect(event, pIndex, mIndex) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const path = './' + file.name;
+            projects[pIndex].media[mIndex].src = path;
+            renderMedia(pIndex);
+        }
+
+        function handleThumbnailSelect(event, pIndex) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const path = './' + file.name;
+            projects[pIndex].thumbnail = path;
+            renderProjects();
+        }
+
+        // Uložení JSON
+        function saveJSON() {
+            const blob = new Blob([JSON.stringify(projects, null, 2)], {
+                type: 'application/json'
+            });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'projects.json';
+            a.click();
+            URL.revokeObjectURL(a.href);
+            alert('JSON byl úspěšně uložen!');
+        }
+    </script>
+</body>
+</html>

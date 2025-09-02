@@ -1,0 +1,17 @@
+[
+  {
+    "id": 1,
+    "thumbnail": "./video/Postup prace/thumbnail.png",
+    "title": "Postup práce",
+    "type": "video",
+    "bio": "",
+    "media": [
+      {
+        "type": "video",
+        "src": "./video/Postup prace/Postup prace.mp4",
+        "title": "Postup práce",
+        "caption": ""
+      }
+    ]
+  }
+]
