@@ -201,13 +201,21 @@ main{
 </div>
 
 <script>
-// načtení externího JSON
 fetch('./projects.json')
   .then(res => res.json())
   .then(projects => {
     const grid = document.getElementById('grid');
 
+    // doplníme thumbnail tam, kde není
     projects.forEach(project => {
+      if (!project.thumbnail || project.thumbnail.trim() === '') {
+        if (project.media && project.media.length > 0) {
+          project.thumbnail = project.media[0].src; // použije první media jako thumbnail
+        } else {
+          project.thumbnail = 'placeholder.png'; // fallback, pokud žádné media nejsou
+        }
+      }
+
       const a = document.createElement('a');
       a.href = `project.html?id=${project.id}`;
       a.className = 'tile';
@@ -221,13 +229,11 @@ fetch('./projects.json')
       grid.appendChild(a);
     });
 
-    // inicializace Shuffle.js až po vložení projektů
     const ShuffleInstance = new Shuffle(grid, {
       itemSelector: '.tile',
       sizer: null
     });
 
-    // filtrování
     const links = document.querySelectorAll('h2 a');
     links.forEach(link => {
       link.addEventListener('click', e => {
@@ -243,7 +249,6 @@ fetch('./projects.json')
           ShuffleInstance.filter(group);
         }
 
-        // odšedění ostatních
         document.querySelectorAll('.tile').forEach(tile => {
           const groups = JSON.parse(tile.dataset.groups);
           if(group === 'all' || groups.includes(group)){

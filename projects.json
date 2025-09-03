@@ -1,15 +1,87 @@
 [
   {
     "id": 1,
-    "thumbnail": "./video/Postup prace/thumbnail.png",
-    "title": "Postup práce",
+    "thumbnail": "",
+    "title": "Zlatý Ámos 2025",
     "type": "video",
-    "bio": "",
+    "bio": "Zlatý Ámos je celostátní anketa o nejoblíbenějšího učitele České republiky, která vznikla v roce 1993. Každoročně ji nominují sami žáci a vyvrcholením je slavnostní finále, kde odborná porota i žáci vybírají vítěze. Projekt podporuje prestiž učitelského povolání a oceňuje pedagogy za jejich znalosti, humor i lidský přístup./n/nNa projektu jsem se podílel jako kameraman, režisér a střihač. Zajišťoval jsem natáčení průběhu akce, tvorbu záběrů a následnou postprodukci. Díky tomu jsem měl možnost spojit technické dovednosti s kreativní prací a podílet se na prezentaci významného vzdělávacího projektu.",
+    "media": [
+      {
+        "type": "video",
+        "src": "./video/Zlatý ámos/1.reg.kolo.mp4",
+        "title": "1. Regionální kolo",
+        "caption": ""
+      },
+      {
+        "type": "video",
+        "src": "./video/Zlatý ámos/finale.mp4",
+        "title": "Finále",
+        "caption": ""
+      },
+      {
+        "type": "video",
+        "src": "./video/Zlatý ámos/4.reg.kolo.mp4",
+        "title": "4. Regionální kolo",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "thumbnail": "./video/Za okny/thumbnail.png",
+    "title": "Za okny",
+    "type": "video",
+    "bio": "Krátký dokumentární film zkoumá, co se může skrývat za zdánlivě obyčejným oknem. Prostřednictvím obrazů a nálad odkrývá příběhy, které běžně zůstávají skryté za záclonami. Film zve diváka k nahlédnutí do světa, kde se prolínají sny, tajemství a realita všedního dne.",
+    "media": [
+      {
+        "type": "video",
+        "src": "./video/Za okny/Za Okny.mp4",
+        "title": "Za okny",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "thumbnail": "",
+    "title": "Svačinka",
+    "type": "video",
+    "bio": "Kamerové cvičení Svačinka sleduje postup práce s obrazem a snaží se u diváka vyvolat pocit znechucení. Prostřednictvím detailů a kompozice zkoumá, jak vizuální prostředky ovlivňují emoce a vnímání všední situace.",
     "media": [
       {
         "type": "video",
         "src": "./video/Postup prace/Postup prace.mp4",
-        "title": "Postup práce",
+        "title": "",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "thumbnail": "",
+    "title": "Střihač",
+    "type": "video",
+    "bio": "Krátké video obrazem přibližuje práci střihače, jeho roli při skládání záběrů a vytváření výsledného rytmu a významu filmového díla.",
+    "media": [
+      {
+        "type": "video",
+        "src": "./video/Střihač/Filmový štáb_ Střihač.mp4",
+        "title": "Filmový štáb - Střihač",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "thumbnail": "",
+    "title": "Cesta za snem",
+    "type": "video",
+    "bio": "Krátké video slouží jako náhrada motivačního dopisu pro přijetí na zemědělskou školu. Protagonistka v něm představuje svou vášeň pro práci se zvířaty, zejména pro chov a péči o koně, a vyjadřuje motivaci spojit svou budoucnost s tímto oborem.",
+    "media": [
+      {
+        "type": "video",
+        "src": "./video/Cesta za snem/Cesta za snem_ Proč chci studovat se světem koní.mp4",
+        "title": "Motivační video",
         "caption": ""
       }
     ]

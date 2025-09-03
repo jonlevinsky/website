@@ -603,22 +603,25 @@
 
         // Zpracování souborů
         function handleFileSelect(event, pIndex, mIndex) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const path = './' + file.name;
-            projects[pIndex].media[mIndex].src = path;
-            renderMedia(pIndex);
-        }
+    const file = event.target.files[0];
+    if (!file) return;
 
-        function handleThumbnailSelect(event, pIndex) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const path = './' + file.name;
-            projects[pIndex].thumbnail = path;
-            renderProjects();
-        }
+    // Relativní cesta do složky media
+    const path = 'media/' + file.name;
+    projects[pIndex].media[mIndex].src = path;
+    renderMedia(pIndex);
+}
+
+function handleThumbnailSelect(event, pIndex) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // Relativní cesta do složky thumbnails
+    const path = 'thumbnails/' + file.name;
+    projects[pIndex].thumbnail = path;
+    renderProjects();
+}
+
 
         // Uložení JSON
         function saveJSON() {
