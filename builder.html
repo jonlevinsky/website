@@ -20,7 +20,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
@@ -106,8 +106,10 @@
             transform: translateY(-1px);
         }
 
+        /* <CHANGE> Changed from single column to 3-column responsive grid */
         .projects-grid {
             display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 24px;
         }
 
@@ -124,7 +126,6 @@
             box-shadow: 0 12px 40px rgba(0,0,0,0.15);
         }
 
-        /* Added collapsible header styles */
         .project-card-header {
             display: flex;
             justify-content: space-between;
@@ -340,7 +341,6 @@
             margin-bottom: 8px;
         }
 
-        /* Added bottom save section styles */
         .bottom-actions {
             margin-top: 48px;
             padding: 32px;
@@ -350,7 +350,18 @@
             text-align: center;
         }
 
+        /* <CHANGE> Updated responsive breakpoints for better grid behavior */
+        @media (max-width: 1200px) {
+            .projects-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+        }
+
         @media (max-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            
             .project-header {
                 grid-template-columns: 1fr;
                 gap: 12px;
@@ -370,7 +381,6 @@
                 align-items: center;
             }
 
-            /* Mobile responsive for collapsible header */
             .project-title-section {
                 flex-direction: column;
                 align-items: flex-start;
@@ -386,7 +396,6 @@
             <p>Spravujte své projekty a média v moderním rozhraní</p>
         </div>
 
-        <!-- Removed save button from top actions -->
         <div class="actions">
             <button class="btn btn-primary" onclick="addProject()">
                 <span>➕</span> Přidat projekt
@@ -400,7 +409,6 @@
             </div>
         </div>
 
-        <!-- Added bottom save section -->
         <div class="bottom-actions">
             <button class="btn btn-success" onclick="saveJSON()">
                 <span>💾</span> Uložit JSON
@@ -603,25 +611,24 @@
 
         // Zpracování souborů
         function handleFileSelect(event, pIndex, mIndex) {
-    const file = event.target.files[0];
-    if (!file) return;
+            const file = event.target.files[0];
+            if (!file) return;
 
-    // Relativní cesta do složky media
-    const path = 'media/' + file.name;
-    projects[pIndex].media[mIndex].src = path;
-    renderMedia(pIndex);
-}
+            // Relativní cesta do složky media
+            const path = 'media/' + file.name;
+            projects[pIndex].media[mIndex].src = path;
+            renderMedia(pIndex);
+        }
 
-function handleThumbnailSelect(event, pIndex) {
-    const file = event.target.files[0];
-    if (!file) return;
+        function handleThumbnailSelect(event, pIndex) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-    // Relativní cesta do složky thumbnails
-    const path = 'thumbnails/' + file.name;
-    projects[pIndex].thumbnail = path;
-    renderProjects();
-}
-
+            // Relativní cesta do složky thumbnails
+            const path = 'thumbnails/' + file.name;
+            projects[pIndex].thumbnail = path;
+            renderProjects();
+        }
 
         // Uložení JSON
         function saveJSON() {

@@ -16,14 +16,13 @@
 }
 *{box-sizing:border-box;}
 html,body{height:100%; margin:0; padding:0; font-family:Inter,sans-serif; background:var(--bg); color:#0b0b0b;}
-.wrap{display:grid; grid-template-columns:1fr 3fr; gap:var(--gap); max-width:1400px; width:100%; padding:16px; position: static; top: 10;}
+.wrap{display:grid; grid-template-columns:1fr 3fr; gap:var(--gap); max-width:1400px; width:100%; padding:16px;}
 .brand{padding-left:12px;}
 .kicker{font-size:13px; color:var(--muted); margin-bottom:28px;}
 h1{margin:0; font-weight:800; font-size:56px; line-height:0.96;}
 h2{margin:0 0 16px 0; font-weight:200; font-size:28px;}
-p.project-bio{font-size:16px; line-height:1.6; margin-top:16px; max-width:800px; text-align: justify; padding: auto;}
+p.project-bio{font-size:16px; line-height:1.6; margin-top:16px; max-width:800px; text-align: justify;}
 a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:var(--accent); font-weight:500;}
-
 .gallery{
   display:grid;
   grid-template-columns: repeat(3, 1fr);
@@ -87,8 +86,6 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   transform: translateX(-50%) scale(1);
   opacity:1;
 }
-
-/* Play ikona pro videa, stále viditelná */
 .tile-video::before{
   content:'▶';
   position:absolute;
@@ -101,8 +98,6 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   pointer-events:none;
   z-index:2;
 }
-
-/* Modal */
 .modal{
   position:fixed;
   z-index: 10;
@@ -115,26 +110,22 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   transition:opacity 0.3s;
 }
 .modal.open{opacity:1; pointer-events:auto;}
-
 .modal-inner{
   max-width:90%; max-height:90%;
   display:flex; flex-direction:column;
   align-items:center;
   position:relative;
 }
-
 .modal-content img,
 .modal-content video{
-  width:100%; 
-  height:auto; 
+  width:100%;
+  height:auto;
   border-radius:12px;
   display:block;
 }
-
 .modal-content video{
   max-height:80vh;
 }
-
 .modal-caption{
   color:white;
   font-size:16px;
@@ -143,8 +134,6 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   max-width:90%;
   word-break: break-word;
 }
-
-/* Modal controls */
 .modal-close{
   position:absolute; top:10px; right:10px; font-size:24px; color:white; cursor:pointer;
 }
@@ -153,6 +142,87 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
 }
 .modal-prev{left:10px;}
 .modal-next{right:10px;}
+.player{
+  position:relative;
+  width:100%;
+  border-radius:12px;
+  overflow:hidden;
+  background:black;
+  box-shadow:0 20px 40px rgba(0,0,0,0.6);
+}
+.player.fullscreen video {
+  width: 100vw !important;
+  height: 100vh !important;
+  object-fit: contain; /* nebo cover pokud chceš plně vyplnit obraz */
+}
+
+.player:fullscreen, .player:-webkit-full-screen {
+  width:100%;
+  height:100%;
+  border-radius:0;
+}
+.overlay-icon{
+  position:absolute;
+  top:50%;left:50%;
+  transform:translate(-50%,-50%) scale(0.8);
+  font-size:90px;
+  color:white;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .3s, transform .3s;
+  text-shadow:0 0 20px rgba(0,0,0,0.6);
+}
+.overlay-icon.show{
+  opacity:1;
+  transform:translate(-50%,-50%) scale(1);
+}
+.controls{
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%) translateY(0);
+  width:95%;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px;
+  background:rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:16px 16px 0 0;
+  color:white;
+  transition:transform .4s ease, opacity .4s ease;
+  opacity:1;
+}
+.controls.hidden{
+  transform:translateX(-50%) translateY(120%);
+  opacity:0;
+}
+button{
+  background:rgba(255,255,255,0.15);
+  border:none;
+  border-radius:8px;
+  padding:6px 10px;
+  cursor:pointer;
+  color:white;
+  font-size:18px;
+  transition:all .2s;
+}
+button:hover{background:rgba(255,255,255,0.3); transform:translateY(-2px);}
+.progress-container{
+  flex:1;
+  height:6px;
+  background:rgba(255,255,255,0.2);
+  border-radius:4px;
+  position:relative;
+  cursor:pointer;
+}
+#progress{appearance:none;width:100%;height:6px;background:transparent;position:absolute;top:0;left:0;margin:0;}
+.played{position:absolute;top:0;left:0;bottom:0;background:#00f7ff;border-radius:4px;width:0%;pointer-events:none;}
+#progress::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 10px #00f7ff,0 0 20px #00f7ff;cursor:pointer;}
+#volume{width:80px;appearance:none;height:6px;border-radius:4px;background:rgba(255,255,255,0.2);cursor:pointer;}
+#volume::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;}
+.time{font-size:14px;min-width:45px;text-align:center;}
 </style>
 </head>
 <body>
@@ -161,11 +231,8 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
     <div class="kicker">PORTFOLIO // 2025</div>
     <h1>Jan<br/>Levínský</h1>
   </aside>
-
   <main id="project-container"></main>
 </div>
-
-<!-- Modal -->
 <div class="modal" id="modal">
   <div class="modal-inner">
     <div class="modal-content" id="modal-content"></div>
@@ -175,14 +242,11 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   <div class="modal-nav modal-prev" id="modal-prev">&#10094;</div>
   <div class="modal-nav modal-next" id="modal-next">&#10095;</div>
 </div>
-
 <script>
 function getQueryParam(name){ return new URLSearchParams(window.location.search).get(name); }
 const projectId = parseInt(getQueryParam('id'),10);
-
 let currentMediaIndex = 0;
 let projectMedia = [];
-
 fetch('./projects.json')
 .then(res=>res.json())
 .then(projects=>{
@@ -192,7 +256,6 @@ fetch('./projects.json')
     container.innerHTML = '<p>Projekt nenalezen.</p><a href="index.html" class="back-link">&larr; Back to Portfolio</a>';
     return;
   }
-
   projectMedia = project.media;
   let galleryHTML = '';
   project.media.forEach((m,i)=>{
@@ -206,79 +269,188 @@ fetch('./projects.json')
       galleryHTML += `<div class="tile tile-video"><video src="${m.src}" data-index="${i}" muted></video>${flyoutHTML}</div>`;
     }
   });
-
   container.innerHTML = `
     <h2>${project.title} <span style="font-weight:200;color:gray;">(${project.type})</span></h2>
     <p class="project-bio">${project.bio}</p>
     <div class="gallery">${galleryHTML}</div>
     <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
   `;
-
   document.querySelectorAll('.gallery img, .gallery video').forEach(el=>{
     el.addEventListener('click', ()=> openModal(parseInt(el.dataset.index)));
   });
 });
-
-// Modal
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
 const modalCaption = document.getElementById('modal-caption');
 const modalClose = document.getElementById('modal-close');
 const modalPrev = document.getElementById('modal-prev');
 const modalNext = document.getElementById('modal-next');
-
 function stopVideo(){
   const v = modalContent.querySelector('video');
   if(v) v.pause();
 }
-
 function openModal(index){
-  currentMediaIndex=index;
+  currentMediaIndex = index;
   showModalMedia();
   modal.classList.add('open');
 }
 function closeModal(){ 
+  const player = modalContent.querySelector(".player");
+  if(player){
+    const media = player.querySelector("video");
+    if(media){
+      media.pause();
+      media.src = "";           // úplně odpojí video
+      media.load();
+    }
+  }
   modal.classList.remove('open'); 
-  stopVideo();
+  modalContent.innerHTML = ""; // odstraní starý player z DOM
 }
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    player.requestFullscreen?.();
+    player.classList.add("fullscreen");
+  } else {
+    document.exitFullscreen?.();
+    player.classList.remove("fullscreen");
+  }
+}
+
 function showModalMedia(){
-  stopVideo();
+  // stop a vyčištění starého videa
+  const oldPlayer = modalContent.querySelector(".player");
+  if(oldPlayer){
+    const oldVideo = oldPlayer.querySelector("video");
+    if(oldVideo){
+      oldVideo.pause();
+      oldVideo.src = "";
+      oldVideo.load();
+    }
+    oldPlayer.remove(); // odstraníme z DOM
+  }
+
   const m = projectMedia[currentMediaIndex];
   if(!m) return;
-  modalContent.innerHTML = m.type==='photo'
-    ? `<img src="${m.src}">`
-    : `<video src="${m.src}" controls autoplay></video>`;
+
+  if(m.type==='photo'){
+    modalContent.innerHTML = `<img src="${m.src}">`;
+  } else {
+    modalContent.innerHTML = `
+      <div class="player" id="player">
+        <video id="media" src="${m.src}"></video>
+        <div class="overlay-icon" id="overlay">▶</div>
+        <div class="controls" id="controls">
+          <button id="play">▶</button>
+          <span class="time" id="current">0:00</span>
+          <div class="progress-container">
+            <div class="played" id="played"></div>
+            <input type="range" id="progress" value="0" min="0" max="100">
+          </div>
+          <span class="time" id="duration">0:00</span>
+          <input type="range" id="volume" min="0" max="1" step="0.05" value="1">
+          <button id="fullscreen">⛶</button>
+        </div>
+      </div>
+    `;
+    initializePlayer();
+  }
   modalCaption.textContent = `${m.title?m.title:''}${m.caption?': '+m.caption:''}`;
 }
 function prevMedia(){ 
-  currentMediaIndex=(currentMediaIndex-1+projectMedia.length)%projectMedia.length; 
+  currentMediaIndex = (currentMediaIndex - 1 + projectMedia.length) % projectMedia.length; 
   showModalMedia(); 
 }
 function nextMedia(){ 
-  currentMediaIndex=(currentMediaIndex+1)%projectMedia.length; 
+  currentMediaIndex = (currentMediaIndex + 1) % projectMedia.length; 
   showModalMedia(); 
+}
+
+function initializePlayer(){
+  const player = document.getElementById("player");
+  const media = document.getElementById("media");
+  const controls = document.getElementById("controls");
+  const playBtn = document.getElementById("play");
+  const overlay = document.getElementById("overlay");
+  const progress = document.getElementById("progress");
+  const played = document.getElementById("played");
+  const current = document.getElementById("current");
+  const duration = document.getElementById("duration");
+  const volume = document.getElementById("volume");
+  const fullscreen = document.getElementById("fullscreen");
+  let hideTimeout, overlayTimeout;
+
+  function format(sec){
+    if(isNaN(sec)) return "0:00";
+    let m = Math.floor(sec/60);
+    let s = Math.floor(sec%60).toString().padStart(2,"0");
+    return `${m}:${s}`;
+  }
+
+  function showOverlay(symbol){
+    overlay.textContent = symbol;
+    overlay.classList.add("show");
+    clearTimeout(overlayTimeout);
+    overlayTimeout = setTimeout(()=>overlay.classList.remove("show"),600);
+  }
+
+  function togglePlay(){
+    if(media.paused){ media.play(); playBtn.textContent="⏸"; showOverlay("▶"); }
+    else { media.pause(); playBtn.textContent="▶"; showOverlay("⏸"); }
+  }
+
+  playBtn.onclick = togglePlay;
+  media.onclick = togglePlay;
+  media.ondblclick = toggleFullscreen;
+
+  media.ontimeupdate = ()=>{
+    let percent = (media.currentTime / media.duration)*100 || 0;
+    progress.value = percent;
+    played.style.width = percent+"%";
+    current.textContent = format(media.currentTime);
+    duration.textContent = format(media.duration);
+  };
+  progress.oninput = ()=>media.currentTime=(progress.value/100)*media.duration;
+  volume.oninput = ()=>media.volume = volume.value;
+
+  function toggleFullscreen(){
+    if(!document.fullscreenElement){ player.requestFullscreen?.(); }
+    else { document.exitFullscreen?.(); }
+  }
+  fullscreen.onclick = toggleFullscreen;
+
+  function showControls(){
+    controls.classList.remove("hidden");
+    player.style.cursor = "default";
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(()=>{
+      if(!media.paused){ controls.classList.add("hidden"); player.style.cursor="none"; }
+    },1000);
+  }
+  player.addEventListener("mousemove", showControls);
+  player.addEventListener("mouseleave", showControls);
+  media.addEventListener("play", showControls);
+  media.addEventListener("pause", ()=>{ controls.classList.remove("hidden"); player.style.cursor="default"; });
+
+  window.addEventListener("keydown", e=>{
+    if(modal.classList.contains("open") && media){
+      if(e.key === ' '){ e.preventDefault(); togglePlay(); }
+      if(e.key==='f'){ toggleFullscreen(); }
+      if(e.key==='ArrowRight'){ media.currentTime+=5; showOverlay("⏩"); }
+      if(e.key==='ArrowLeft'){ media.currentTime-=5; showOverlay("⏪"); }
+      if(e.key==='ArrowUp'){ media.volume=Math.min(media.volume+0.05,1); volume.value=media.volume; showOverlay("🔊"); }
+      if(e.key==='ArrowDown'){ media.volume=Math.max(media.volume-0.05,0); volume.value=media.volume; showOverlay("🔉"); }
+      if(e.key==='Escape'){ 
+        if(document.fullscreenElement) document.exitFullscreen?.(); 
+        else closeModal(); 
+      }
+    }
+  });
 }
 
 modalClose.addEventListener('click', closeModal);
 modalPrev.addEventListener('click', prevMedia);
 modalNext.addEventListener('click', nextMedia);
-
-window.addEventListener('keydown', e=>{
-  if(modal.classList.contains('open')){
-    if(e.key==='ArrowLeft') prevMedia();
-    if(e.key==='ArrowRight') nextMedia();
-    if(e.key==='Escape') closeModal();
-    if(e.key===' ') { 
-      e.preventDefault(); 
-      const v = modalContent.querySelector('video'); 
-      if(v) v.paused?v.play():v.pause(); 
-    }
-    if(e.key==='f'){ 
-      const v = modalContent.querySelector('video'); 
-      if(v) v.requestFullscreen?.(); 
-    }
-  }
-});
 </script>
 </body>
 </html>

@@ -208,26 +208,32 @@ fetch('./projects.json')
 
     // doplníme thumbnail tam, kde není
     projects.forEach(project => {
-      if (!project.thumbnail || project.thumbnail.trim() === '') {
-        if (project.media && project.media.length > 0) {
-          project.thumbnail = project.media[0].src; // použije první media jako thumbnail
-        } else {
-          project.thumbnail = 'placeholder.png'; // fallback, pokud žádné media nejsou
-        }
+  if (!project.thumbnail || project.thumbnail.trim() === '') {
+    if (project.media && project.media.length > 0) {
+      const firstMedia = project.media[0];
+      if (firstMedia.type === 'photo') {
+        project.thumbnail = firstMedia.src; // foto jako thumbnail
+      } else if (firstMedia.type === 'video') {
+        project.thumbnail = 'video-placeholder.png'; // statický obrázek pro video
       }
+    } else {
+      project.thumbnail = 'placeholder.png'; // fallback, pokud není žádné media
+    }
+  }
 
-      const a = document.createElement('a');
-      a.href = `project.html?id=${project.id}`;
-      a.className = 'tile';
-      a.dataset.groups = JSON.stringify([project.type]);
+  const a = document.createElement('a');
+  a.href = `project.html?id=${project.id}`;
+  a.className = 'tile';
+  a.dataset.groups = JSON.stringify([project.type]);
 
-      a.innerHTML = `
-        <img src="${project.thumbnail}" alt="${project.title}">
-        <div class="flyout">${project.title}</div>
-      `;
+  a.innerHTML = `
+    <img src="${project.thumbnail}" alt="${project.title}">
+    <div class="flyout">${project.title}</div>
+  `;
 
-      grid.appendChild(a);
-    });
+  grid.appendChild(a);
+});
+
 
     const ShuffleInstance = new Shuffle(grid, {
       itemSelector: '.tile',
