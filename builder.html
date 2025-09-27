@@ -1,391 +1,100 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Projects Editor - OneUI</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root{
+            --bg1: #f5f7fa;
+            --bg2: #c3cfe2;
+            --card: #ffffff;
+            --muted:#7f8c8d;
+            --text:#2c3e50;
+        }
+        body{
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
+            color:var(--text);
+            min-height:100vh;
+            padding:24px;
+        }
+        .container{ max-width:1400px; margin:0 auto; }
+
+        .header{
+            background:var(--card);
+            padding:32px;
+            border-radius:16px;
+            box-shadow:0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom:24px;
+            text-align:center;
+        }
+        .header h1{ font-size:2.2rem; margin-bottom:6px; }
+        .header p{ color:var(--muted); }
+
+        .actions{ display:flex; gap:12px; justify-content:center; margin-bottom:20px; flex-wrap:wrap; }
+        .btn{
+            padding:10px 18px; border:none; border-radius:12px; cursor:pointer; font-weight:600;
+            display:inline-flex; gap:8px; align-items:center;
+        }
+        .btn-primary{ background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white;}
+        .btn-success{ background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%); color:white;}
+        .btn-danger{ background:linear-gradient(135deg,#fa709a 0%,#fee140 100%); color:white;}
+        .btn-secondary{ background:#ecf0f1; color:var(--text); }
+
+        .projects-grid{
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+            gap:20px;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 24px;
-            color: #2c3e50;
+        .project-card{
+            background:var(--card);
+            border-radius:16px;
+            box-shadow:0 8px 32px rgba(0,0,0,0.08);
+            overflow:hidden;
+            transition:transform .2s, box-shadow .2s;
         }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .project-card:hover{ transform:translateY(-6px); box-shadow:0 14px 40px rgba(0,0,0,0.12); }
+        .project-card-header{
+            display:flex; justify-content:space-between; align-items:center;
+            padding:18px 22px; background:#f8f9fa; border-bottom:2px solid #ecf0f1; cursor:pointer;
         }
+        .project-title-section{ display:flex; align-items:center; gap:14px; flex:1; }
+        .collapse-icon{ transition:transform .25s; }
+        .project-card.collapsed .collapse-icon{ transform:rotate(-90deg); }
 
-        .header {
-            background: white;
-            padding: 32px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            margin-bottom: 32px;
-            text-align: center;
-        }
+        .project-card-content{ padding:20px 22px; transition:max-height .3s, padding .3s; }
+        .project-card.collapsed .project-card-content{ max-height:0; padding:0 22px; overflow:hidden; }
 
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 8px;
-        }
+        .project-header{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; margin-bottom:14px; }
+        .form-label{ display:block; font-weight:600; font-size:.85rem; margin-bottom:6px; color:var(--text); text-transform:uppercase; letter-spacing:.4px; }
+        .form-input, .form-select, .form-textarea{ width:100%; padding:10px 12px; border-radius:10px; border:2px solid #ecf0f1; background:#f8f9fa; font-size:1rem; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus{ outline:none; border-color:#667eea; background:white; box-shadow:0 0 0 4px rgba(102,126,234,0.08); }
+        .form-textarea{ min-height:100px; resize:vertical; }
 
-        .header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
+        .thumbnail-section{ display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; }
+        .file-input{ position:relative; display:inline-block; }
+        .file-input input[type=file]{ display:none; }
+        .file-input-label{ padding:8px 14px; background:#3498db; color:white; border-radius:8px; cursor:pointer; font-size:.9rem; display:inline-block; }
+        .file-input-label.secondary{ background:#95a5a6; }
 
-        .actions {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 32px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
+        .media-section{ margin-top:18px; padding-top:14px; border-top:2px solid #ecf0f1; }
+        .media-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+        .media-grid{ display:grid; gap:12px; grid-auto-rows:min-content; }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .media-item{ background:#f8f9fa; padding:12px; border-radius:12px; border:2px solid #ecf0f1; transition:border-color .2s, background .2s; }
+        .media-item:hover{ background:white; border-color:#bdc3c7; }
+        .media-controls{ display:grid; grid-template-columns:auto 1fr 1fr auto; gap:10px; align-items:center; margin-bottom:10px; }
+        .media-preview img, .media-preview video{ max-width:220px; max-height:150px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
+        .empty-state{ text-align:center; padding:36px 10px; color:var(--muted); }
+        .bottom-actions{ margin-top:22px; padding:20px; background:var(--card); border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,0.06); text-align:center; }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-        }
-
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(250, 112, 154, 0.4);
-        }
-
-        .btn-secondary {
-            background: #ecf0f1;
-            color: #2c3e50;
-        }
-
-        .btn-secondary:hover {
-            background: #d5dbdb;
-            transform: translateY(-1px);
-        }
-
-        /* <CHANGE> Changed from single column to 3-column responsive grid */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 24px;
-        }
-
-        .project-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .project-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-        }
-
-        .project-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 24px 32px;
-            background: #f8f9fa;
-            border-bottom: 2px solid #ecf0f1;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .project-card-header:hover {
-            background: #e9ecef;
-        }
-
-        .project-title-section {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            flex: 1;
-        }
-
-        .collapse-icon {
-            font-size: 1.2rem;
-            transition: transform 0.3s ease;
-        }
-
-        .project-card.collapsed .collapse-icon {
-            transform: rotate(-90deg);
-        }
-
-        .project-card-content {
-            padding: 32px;
-            transition: all 0.3s ease;
-            overflow: hidden;
-        }
-
-        .project-card.collapsed .project-card-content {
-            max-height: 0;
-            padding: 0 32px;
-        }
-
-        .project-header {
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            gap: 16px;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #ecf0f1;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #ecf0f1;
-            border-radius: 12px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        .form-input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #ecf0f1;
-            border-radius: 12px;
-            font-size: 1rem;
-            background: #f8f9fa;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .form-select:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-        }
-
-        .form-textarea {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #ecf0f1;
-            border-radius: 12px;
-            font-size: 1rem;
-            min-height: 120px;
-            resize: vertical;
-            font-family: inherit;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-        }
-
-        .form-textarea:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .thumbnail-section {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 12px;
-            align-items: end;
-        }
-
-        .file-input {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-
-        .file-input input[type=file] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-input-label {
-            padding: 8px 16px;
-            background: #3498db;
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .file-input-label:hover {
-            background: #2980b9;
-        }
-
-        .media-section {
-            margin-top: 32px;
-            padding-top: 24px;
-            border-top: 2px solid #ecf0f1;
-        }
-
-        .media-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .media-grid {
-            display: grid;
-            gap: 16px;
-        }
-
-        .media-item {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 16px;
-            border: 2px solid #ecf0f1;
-            transition: all 0.3s ease;
-        }
-
-        .media-item:hover {
-            border-color: #bdc3c7;
-            background: white;
-        }
-
-        .media-controls {
-            display: grid;
-            grid-template-columns: auto 1fr 1fr auto;
-            gap: 12px;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .media-preview {
-            text-align: center;
-            margin-top: 16px;
-        }
-
-        .media-preview img,
-        .media-preview video {
-            max-width: 200px;
-            max-height: 150px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #7f8c8d;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-        }
-
-        .bottom-actions {
-            margin-top: 48px;
-            padding: 32px;
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            text-align: center;
-        }
-
-        /* <CHANGE> Updated responsive breakpoints for better grid behavior */
-        @media (max-width: 1200px) {
-            .projects-grid {
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            }
-        }
-
-        @media (max-width: 768px) {
-            .projects-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .project-header {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .media-controls {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-
-            .thumbnail-section {
-                grid-template-columns: 1fr;
-            }
-
-            .actions {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .project-title-section {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
+        @media (max-width:768px){
+            .media-controls{ grid-template-columns:1fr; }
+            .project-header{ grid-template-columns:1fr; }
         }
     </style>
 </head>
@@ -400,6 +109,7 @@
             <button class="btn btn-primary" onclick="addProject()">
                 <span>➕</span> Přidat projekt
             </button>
+            <button class="btn btn-secondary" onclick="loadExample()" title="Načíst demo daty">🗂️ Demo</button>
         </div>
 
         <div id="projects-container" class="projects-grid">
@@ -410,31 +120,33 @@
         </div>
 
         <div class="bottom-actions">
-            <button class="btn btn-success" onclick="saveJSON()">
-                <span>💾</span> Uložit JSON
-            </button>
+            <button class="btn btn-success" onclick="saveJSON()"><span>💾</span> Uložit JSON</button>
         </div>
     </div>
 
     <script>
         let projects = [];
 
-        // Načtení existujícího projects.json
+        // pokus načíst projects.json (pokud běží lokálně/na serveru)
         fetch('projects.json')
-            .then(res => res.json())
+            .then(res => {
+                if(!res.ok) throw new Error('no json');
+                return res.json();
+            })
             .then(data => {
-                projects = data;
+                projects = Array.isArray(data) ? data : [];
                 renderProjects();
             })
             .catch(() => {
-                console.log('projects.json not found, starting empty');
+                console.log('projects.json not found or invalid - starting empty');
                 renderProjects();
             });
 
+        // --- RENDER ---
         function renderProjects() {
             const container = document.getElementById('projects-container');
-            
-            if (projects.length === 0) {
+
+            if (!projects || projects.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <h3>Žádné projekty</h3>
@@ -446,23 +158,29 @@
 
             container.innerHTML = '';
             projects.forEach((project, pIndex) => {
-                const projectCard = document.createElement('div');
-                projectCard.className = 'project-card';
-                projectCard.innerHTML = `
+                const card = document.createElement('div');
+                card.className = 'project-card' + (project.collapsed ? ' collapsed' : '');
+
+                // zabezpečit zobrazení textů proti XSS (základní)
+                const safeTitle = escapeHtml(project.title || `Projekt ${pIndex + 1}`);
+                const badge = project.type === 'photo' ? '📷 Foto' : '🎥 Video';
+
+                card.innerHTML = `
                     <div class="project-card-header" onclick="toggleProject(${pIndex})">
                         <div class="project-title-section">
                             <span class="collapse-icon">▼</span>
-                            <h3>${project.title || `Projekt ${pIndex + 1}`}</h3>
-                            <span class="badge">${project.type === 'photo' ? '📷 Foto' : '🎥 Video'}</span>
+                            <h3>${safeTitle}</h3>
+                            <span class="badge">${badge}</span>
                         </div>
                         <button class="btn btn-danger" onclick="event.stopPropagation(); removeProject(${pIndex})">
                             <span>🗑️</span> Smazat
                         </button>
                     </div>
+
                     <div class="project-card-content">
                         <div class="project-header">
-                            <input type="text" class="form-input" value="${project.title || ''}" 
-                                   placeholder="Název projektu" 
+                            <input type="text" class="form-input" value="${escapeAttr(project.title || '')}"
+                                   placeholder="Název projektu"
                                    onchange="updateProject(${pIndex}, 'title', this.value)">
                             <select class="form-select" onchange="updateProject(${pIndex}, 'type', this.value)">
                                 <option value="photo" ${project.type === 'photo' ? 'selected' : ''}>Foto</option>
@@ -473,8 +191,7 @@
                         <div class="form-group">
                             <label class="form-label">Náhled</label>
                             <div class="thumbnail-section">
-                                <input type="text" class="form-input" value="${project.thumbnail || ''}" 
-                                       placeholder="URL náhledu" readonly>
+                                <input type="text" class="form-input" value="${escapeAttr(project.thumbnail || '')}" placeholder="URL náhledu" readonly>
                                 <div class="file-input">
                                     <input type="file" id="thumb-${pIndex}" onchange="handleThumbnailSelect(event, ${pIndex})">
                                     <label for="thumb-${pIndex}" class="file-input-label">Vybrat soubor</label>
@@ -484,14 +201,13 @@
 
                         <div class="form-group">
                             <label class="form-label">Popis</label>
-                            <textarea class="form-textarea" placeholder="Popis projektu..." 
-                                      onchange="updateProject(${pIndex}, 'bio', this.value)">${project.bio || ''}</textarea>
+                            <textarea class="form-textarea" placeholder="Popis projektu..." onchange="updateProject(${pIndex}, 'bio', this.value)">${escapeAttr(project.bio || '')}</textarea>
                         </div>
 
                         <div class="media-section">
                             <div class="media-header">
                                 <h3>Média</h3>
-                                <button class="btn btn-secondary" onclick="addMedia(${pIndex})">
+                                <button class="btn btn-secondary" onclick="addMedia(${pIndex}); event.stopPropagation();">
                                     <span>➕</span> Přidat médium
                                 </button>
                             </div>
@@ -499,27 +215,27 @@
                         </div>
                     </div>
                 `;
-                container.appendChild(projectCard);
+
+                container.appendChild(card);
                 renderMedia(pIndex);
             });
         }
 
         function toggleProject(pIndex) {
-            const projectCard = document.querySelectorAll('.project-card')[pIndex];
-            projectCard.classList.toggle('collapsed');
+            const project = projects[pIndex];
+            project.collapsed = !project.collapsed;
+            renderProjects();
         }
 
+        // --- MEDIA RENDERING ---
         function renderMedia(pIndex) {
             const mediaContainer = document.getElementById(`media-${pIndex}`);
             const project = projects[pIndex];
-            
             if (!project.media) project.media = [];
-            
+
             if (project.media.length === 0) {
                 mediaContainer.innerHTML = `
-                    <div class="empty-state">
-                        <p>Žádná média</p>
-                    </div>
+                    <div class="empty-state"><p>Žádná média</p></div>
                 `;
                 return;
             }
@@ -528,15 +244,10 @@
             project.media.forEach((media, mIndex) => {
                 const mediaItem = document.createElement('div');
                 mediaItem.className = 'media-item';
-                
-                let previewHTML = '';
-                if (media.src) {
-                    if (media.type === 'photo') {
-                        previewHTML = `<img src="${media.src}" alt="preview">`;
-                    } else if (media.type === 'video') {
-                        previewHTML = `<video src="${media.src}" controls></video>`;
-                    }
-                }
+
+                const previewHTML = media.src
+                    ? (media.type === 'photo' ? `<img src="${escapeAttr(media.src)}" alt="preview">` : `<video src="${escapeAttr(media.src)}" controls></video>`)
+                    : '';
 
                 mediaItem.innerHTML = `
                     <div class="media-controls">
@@ -544,97 +255,130 @@
                             <option value="photo" ${media.type === 'photo' ? 'selected' : ''}>Foto</option>
                             <option value="video" ${media.type === 'video' ? 'selected' : ''}>Video</option>
                         </select>
-                        <input type="text" class="form-input" placeholder="Název" value="${media.title || ''}" 
-                               onchange="updateMedia(${pIndex}, ${mIndex}, 'title', this.value)">
-                        <input type="text" class="form-input" placeholder="Popisek" value="${media.caption || ''}" 
-                               onchange="updateMedia(${pIndex}, ${mIndex}, 'caption', this.value)">
-                        <button class="btn btn-danger" onclick="removeMedia(${pIndex}, ${mIndex})">
-                            <span>🗑️</span>
-                        </button>
+                        <input type="text" class="form-input" placeholder="Název" value="${escapeAttr(media.title || '')}" onchange="updateMedia(${pIndex}, ${mIndex}, 'title', this.value)">
+                        <input type="text" class="form-input" placeholder="Popisek" value="${escapeAttr(media.caption || '')}" onchange="updateMedia(${pIndex}, ${mIndex}, 'caption', this.value)">
+                        <button class="btn btn-danger" onclick="removeMedia(${pIndex}, ${mIndex}); event.stopPropagation();">🗑️</button>
                     </div>
+
                     <div class="file-input">
-                        <input type="file" id="media-${pIndex}-${mIndex}" onchange="handleFileSelect(event, ${pIndex}, ${mIndex})">
-                        <label for="media-${pIndex}-${mIndex}" class="file-input-label">Vybrat soubor</label>
+                        <input type="file" id="media-${pIndex}-${mIndex}" multiple onchange="handleFileSelect(event, ${pIndex}, ${mIndex})">
+                        <label for="media-${pIndex}-${mIndex}" class="file-input-label">Vybrat soubory</label>
                     </div>
+
                     ${previewHTML ? `<div class="media-preview">${previewHTML}</div>` : ''}
                 `;
+
                 mediaContainer.appendChild(mediaItem);
             });
         }
 
-        // Funkce pro správu projektů
-        function updateProject(pIndex, key, value) {
-            projects[pIndex][key] = value;
-            if (key === 'title') {
-                renderProjects();
-            }
-        }
-
+        // --- PROJECT CRUD ---
         function addProject() {
             projects.push({
                 id: projects.length + 1,
-                thumbnail: '',
                 title: '',
                 type: 'photo',
+                thumbnail: '',
                 bio: '',
-                media: []
+                media: [],
+                collapsed: false
             });
             renderProjects();
+            // scroll to last
+            setTimeout(()=>document.querySelectorAll('.project-card')[projects.length-1].scrollIntoView({behavior:'smooth'}),80);
         }
 
         function removeProject(pIndex) {
-            if (confirm('Opravdu chcete smazat tento projekt?')) {
-                projects.splice(pIndex, 1);
-                renderProjects();
+            if (!confirm('Opravdu chcete smazat tento projekt?')) return;
+            projects.splice(pIndex,1);
+            renderProjects();
+        }
+
+        function updateProject(pIndex, key, value) {
+            projects[pIndex][key] = value;
+            // pokud se změní název projektu, aktualizuj cesty existujících médií a thumbnailu
+            if (key === 'title') {
+                // pokud má projekt media s cestami, přepočítat pouze složku (ponecháme filename)
+                const folder = value ? value.trim() : `projekt${pIndex+1}`;
+                const basePath = projects[pIndex].type === 'photo' ? './photo/' : './video/';
+                projects[pIndex].media = projects[pIndex].media.map(m => {
+                    if (!m.src) return m;
+                    const parts = m.src.split('/');
+                    const filename = parts[parts.length-1];
+                    return { ...m, src: `${basePath}${folder}/${filename}` };
+                });
+                if (projects[pIndex].thumbnail) {
+                    const tParts = projects[pIndex].thumbnail.split('/');
+                    const tname = tParts[tParts.length-1];
+                    projects[pIndex].thumbnail = `${basePath}${folder}/${tname}`;
+                }
             }
+            renderProjects();
         }
 
-        // Funkce pro správu médií
-        function updateMedia(pIndex, mIndex, key, value) {
-            projects[pIndex].media[mIndex][key] = value;
-        }
-
+        // --- MEDIA CRUD ---
         function addMedia(pIndex) {
-            projects[pIndex].media.push({
-                type: 'photo',
-                src: '',
-                title: '',
-                caption: ''
-            });
+            projects[pIndex].media.push({ type: 'photo', src: '', title:'', caption:'' });
             renderMedia(pIndex);
         }
 
         function removeMedia(pIndex, mIndex) {
-            projects[pIndex].media.splice(mIndex, 1);
+            projects[pIndex].media.splice(mIndex,1);
             renderMedia(pIndex);
         }
 
-        // Zpracování souborů
-        function handleFileSelect(event, pIndex, mIndex) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            // Relativní cesta do složky media
-            const path = 'media/' + file.name;
-            projects[pIndex].media[mIndex].src = path;
-            renderMedia(pIndex);
+        function updateMedia(pIndex, mIndex, key, value) {
+            projects[pIndex].media[mIndex][key] = value;
         }
 
+        // --- FILE HANDLERS ---
+        // Uložení thumbnail (jediný soubor)
         function handleThumbnailSelect(event, pIndex) {
             const file = event.target.files[0];
             if (!file) return;
-
-            // Relativní cesta do složky thumbnails
-            const path = 'thumbnails/' + file.name;
+            const project = projects[pIndex];
+            const folder = project.title ? project.title.trim() : `projekt${pIndex + 1}`;
+            const basePath = project.type === 'photo' ? './photo/' : './video/';
+            const path = `${basePath}${folder}/${file.name}`;
             projects[pIndex].thumbnail = path;
             renderProjects();
         }
 
-        // Uložení JSON
+        // Více souborů pro média: první přepíše aktuální položku, ostatní se přidají jako nové
+        function handleFileSelect(event, pIndex, mIndex) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+            const project = projects[pIndex];
+            const folder = project.title ? project.title.trim() : `projekt${pIndex + 1}`;
+            const basePath = project.type === 'photo' ? './photo/' : './video/';
+
+            // první soubor -> přepiš aktuální položku
+            const firstFile = files[0];
+            const firstType = firstFile.type.startsWith('video') ? 'video' : 'photo';
+            projects[pIndex].media[mIndex] = {
+                ...projects[pIndex].media[mIndex],
+                type: firstType,
+                src: `${basePath}${folder}/${firstFile.name}`
+            };
+
+            // zbytek -> přidat jako nové položky
+            for (let i=1; i<files.length; i++) {
+                const f = files[i];
+                const t = f.type.startsWith('video') ? 'video' : 'photo';
+                projects[pIndex].media.push({
+                    type: t,
+                    src: `${basePath}${folder}/${f.name}`,
+                    title: '',
+                    caption: ''
+                });
+            }
+
+            renderMedia(pIndex);
+        }
+
+        // --- SAVE/LOAD ---
         function saveJSON() {
-            const blob = new Blob([JSON.stringify(projects, null, 2)], {
-                type: 'application/json'
-            });
+            const blob = new Blob([JSON.stringify(projects, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
             a.download = 'projects.json';
@@ -642,6 +386,21 @@
             URL.revokeObjectURL(a.href);
             alert('JSON byl úspěšně uložen!');
         }
+
+        // --- UTIL ---
+        function escapeHtml(str){
+            if(!str && str !== 0) return '';
+            return String(str)
+                .replaceAll('&','&amp;')
+                .replaceAll('<','&lt;')
+                .replaceAll('>','&gt;')
+                .replaceAll('"','&quot;')
+                .replaceAll("'",'&#039;');
+        }
+        function escapeAttr(v){ return escapeHtml(v).replaceAll('\n',' '); }
+
+        // initial
+        renderProjects();
     </script>
 </body>
 </html>

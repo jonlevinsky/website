@@ -118,7 +118,7 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
 }
 .modal-content img,
 .modal-content video{
-  width:100%;
+  max-width:60vw; max-height: 80vh;
   height:auto;
   border-radius:12px;
   display:block;
@@ -150,17 +150,6 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   background:black;
   box-shadow:0 20px 40px rgba(0,0,0,0.6);
 }
-.player.fullscreen video {
-  width: 100vw !important;
-  height: 100vh !important;
-  object-fit: contain; /* nebo cover pokud chceš plně vyplnit obraz */
-}
-
-.player:fullscreen, .player:-webkit-full-screen {
-  width:100%;
-  height:100%;
-  border-radius:0;
-}
 .overlay-icon{
   position:absolute;
   top:50%;left:50%;
@@ -187,7 +176,7 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   gap:12px;
   padding:12px;
   background:rgba(255,255,255,0.08);
-  backdrop-filter:blur(20px) saturate(180%);
+  backdrop-filter:blur(15px) saturate(150%) brightness(80%);
   border:1px solid rgba(255,255,255,0.15);
   border-radius:16px 16px 0 0;
   color:white;
@@ -218,8 +207,8 @@ button:hover{background:rgba(255,255,255,0.3); transform:translateY(-2px);}
   cursor:pointer;
 }
 #progress{appearance:none;width:100%;height:6px;background:transparent;position:absolute;top:0;left:0;margin:0;}
-.played{position:absolute;top:0;left:0;bottom:0;background:#00f7ff;border-radius:4px;width:0%;pointer-events:none;}
-#progress::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 10px #00f7ff,0 0 20px #00f7ff;cursor:pointer;}
+.played{position:absolute;top:0;left:0;bottom:0;background:#F7F7F7;border-radius:4px;width:0%;pointer-events:none;}
+#progress::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;box-shadow:0 0 10px #F7F7F7,0 0 20px #F7F7F7;cursor:pointer;}
 #volume{width:80px;appearance:none;height:6px;border-radius:4px;background:rgba(255,255,255,0.2);cursor:pointer;}
 #volume::-webkit-slider-thumb{appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;}
 .time{font-size:14px;min-width:45px;text-align:center;}
@@ -242,11 +231,14 @@ button:hover{background:rgba(255,255,255,0.3); transform:translateY(-2px);}
   <div class="modal-nav modal-prev" id="modal-prev">&#10094;</div>
   <div class="modal-nav modal-next" id="modal-next">&#10095;</div>
 </div>
+
+
 <script>
 function getQueryParam(name){ return new URLSearchParams(window.location.search).get(name); }
 const projectId = parseInt(getQueryParam('id'),10);
 let currentMediaIndex = 0;
 let projectMedia = [];
+
 fetch('./projects.json')
 .then(res=>res.json())
 .then(projects=>{
@@ -258,67 +250,84 @@ fetch('./projects.json')
   }
   projectMedia = project.media;
   let galleryHTML = '';
+
   project.media.forEach((m,i)=>{
     let flyoutHTML = '';
     if(m.title || m.caption){
       flyoutHTML = `<div class="flyout">${m.title?m.title:''}${m.caption?': '+m.caption:''}</div>`;
     }
+
+    // pokud není thumbnail a je video, vytvoř náhled z 250. frame
+    let thumb = m.thumbnail || '';
+    if(!thumb && m.type==='video'){
+      const video = document.createElement('video');
+      video.src = m.src;
+      video.muted = true;
+      video.currentTime = 250 / 30; // předpoklad 30fps
+      video.addEventListener('loadeddata', ()=>{
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video,0,0,canvas.width,canvas.height);
+        m.thumbnail = canvas.toDataURL();
+        const vidEl = document.querySelector(`.tile-video video[data-index="${i}"]`);
+        if(vidEl) vidEl.poster = m.thumbnail;
+      });
+    }
+
     if(m.type==='photo'){
       galleryHTML += `<div class="tile"><img src="${m.src}" data-index="${i}">${flyoutHTML}</div>`;
     } else {
-      galleryHTML += `<div class="tile tile-video"><video src="${m.src}" data-index="${i}" muted></video>${flyoutHTML}</div>`;
+      galleryHTML += `<div class="tile tile-video"><video src="${m.src}" data-index="${i}" ${thumb?`poster="${thumb}"`:''} muted></video>${flyoutHTML}</div>`;
     }
   });
+
   container.innerHTML = `
     <h2>${project.title} <span style="font-weight:200;color:gray;">(${project.type})</span></h2>
     <p class="project-bio">${project.bio}</p>
     <div class="gallery">${galleryHTML}</div>
     <a href="index.html" class="back-link">&larr; Back to Portfolio</a>
   `;
+
   document.querySelectorAll('.gallery img, .gallery video').forEach(el=>{
     el.addEventListener('click', ()=> openModal(parseInt(el.dataset.index)));
   });
 });
+
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
 const modalCaption = document.getElementById('modal-caption');
 const modalClose = document.getElementById('modal-close');
 const modalPrev = document.getElementById('modal-prev');
 const modalNext = document.getElementById('modal-next');
+
 function stopVideo(){
   const v = modalContent.querySelector('video');
   if(v) v.pause();
 }
+
 function openModal(index){
   currentMediaIndex = index;
   showModalMedia();
   modal.classList.add('open');
 }
+
 function closeModal(){ 
   const player = modalContent.querySelector(".player");
   if(player){
     const media = player.querySelector("video");
     if(media){
       media.pause();
-      media.src = "";           // úplně odpojí video
+      media.src = "";           
       media.load();
     }
   }
   modal.classList.remove('open'); 
-  modalContent.innerHTML = ""; // odstraní starý player z DOM
-}
-function toggleFullscreen(){
-  if(!document.fullscreenElement){
-    player.requestFullscreen?.();
-    player.classList.add("fullscreen");
-  } else {
-    document.exitFullscreen?.();
-    player.classList.remove("fullscreen");
-  }
+  modalContent.innerHTML = ""; 
 }
 
 function showModalMedia(){
-  // stop a vyčištění starého videa
   const oldPlayer = modalContent.querySelector(".player");
   if(oldPlayer){
     const oldVideo = oldPlayer.querySelector("video");
@@ -327,7 +336,7 @@ function showModalMedia(){
       oldVideo.src = "";
       oldVideo.load();
     }
-    oldPlayer.remove(); // odstraníme z DOM
+    oldPlayer.remove();
   }
 
   const m = projectMedia[currentMediaIndex];
@@ -349,18 +358,20 @@ function showModalMedia(){
           </div>
           <span class="time" id="duration">0:00</span>
           <input type="range" id="volume" min="0" max="1" step="0.05" value="1">
-          <button id="fullscreen">⛶</button>
         </div>
       </div>
     `;
     initializePlayer();
   }
+
   modalCaption.textContent = `${m.title?m.title:''}${m.caption?': '+m.caption:''}`;
 }
+
 function prevMedia(){ 
   currentMediaIndex = (currentMediaIndex - 1 + projectMedia.length) % projectMedia.length; 
   showModalMedia(); 
 }
+
 function nextMedia(){ 
   currentMediaIndex = (currentMediaIndex + 1) % projectMedia.length; 
   showModalMedia(); 
@@ -377,7 +388,6 @@ function initializePlayer(){
   const current = document.getElementById("current");
   const duration = document.getElementById("duration");
   const volume = document.getElementById("volume");
-  const fullscreen = document.getElementById("fullscreen");
   let hideTimeout, overlayTimeout;
 
   function format(sec){
@@ -401,7 +411,6 @@ function initializePlayer(){
 
   playBtn.onclick = togglePlay;
   media.onclick = togglePlay;
-  media.ondblclick = toggleFullscreen;
 
   media.ontimeupdate = ()=>{
     let percent = (media.currentTime / media.duration)*100 || 0;
@@ -410,14 +419,9 @@ function initializePlayer(){
     current.textContent = format(media.currentTime);
     duration.textContent = format(media.duration);
   };
+
   progress.oninput = ()=>media.currentTime=(progress.value/100)*media.duration;
   volume.oninput = ()=>media.volume = volume.value;
-
-  function toggleFullscreen(){
-    if(!document.fullscreenElement){ player.requestFullscreen?.(); }
-    else { document.exitFullscreen?.(); }
-  }
-  fullscreen.onclick = toggleFullscreen;
 
   function showControls(){
     controls.classList.remove("hidden");
@@ -427,6 +431,7 @@ function initializePlayer(){
       if(!media.paused){ controls.classList.add("hidden"); player.style.cursor="none"; }
     },1000);
   }
+
   player.addEventListener("mousemove", showControls);
   player.addEventListener("mouseleave", showControls);
   media.addEventListener("play", showControls);
@@ -435,15 +440,11 @@ function initializePlayer(){
   window.addEventListener("keydown", e=>{
     if(modal.classList.contains("open") && media){
       if(e.key === ' '){ e.preventDefault(); togglePlay(); }
-      if(e.key==='f'){ toggleFullscreen(); }
       if(e.key==='ArrowRight'){ media.currentTime+=5; showOverlay("⏩"); }
       if(e.key==='ArrowLeft'){ media.currentTime-=5; showOverlay("⏪"); }
       if(e.key==='ArrowUp'){ media.volume=Math.min(media.volume+0.05,1); volume.value=media.volume; showOverlay("🔊"); }
       if(e.key==='ArrowDown'){ media.volume=Math.max(media.volume-0.05,0); volume.value=media.volume; showOverlay("🔉"); }
-      if(e.key==='Escape'){ 
-        if(document.fullscreenElement) document.exitFullscreen?.(); 
-        else closeModal(); 
-      }
+      if(e.key==='Escape'){ closeModal(); }
     }
   });
 }
@@ -452,5 +453,6 @@ modalClose.addEventListener('click', closeModal);
 modalPrev.addEventListener('click', prevMedia);
 modalNext.addEventListener('click', nextMedia);
 </script>
+
 </body>
 </html>

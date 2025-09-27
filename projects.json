@@ -85,5 +85,284 @@
         "caption": ""
       }
     ]
+  },
+  {
+    "id": 6,
+    "thumbnail": "",
+    "title": "Zub Času",
+    "type": "video",
+    "bio": "Poetický, dokumentární portrét času",
+    "media": [
+      {
+        "type": "video",
+        "src": "./video/Zub Času/Zub času.mp4",
+        "title": "",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Stromovka",
+    "type": "photo",
+    "thumbnail": "",
+    "bio": "",
+    "media": [
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_0016.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_0020.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_0022.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_0027.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_0033.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9891.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9931.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9939.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9945.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9947.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9952.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9970.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9973.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9977.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9989.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9997.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Stromovka/29. 05. 2024 - IMG_9998.JPG",
+        "title": "",
+        "caption": ""
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "id": 8,
+    "title": "VOŠONSPO",
+    "type": "photo",
+    "thumbnail": "",
+    "bio": "",
+    "media": [
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9691.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9697.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9707.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9727.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9737.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9749.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9754.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9768.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9773.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9795.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9803.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9806.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9808.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9810.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9815.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9822.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9842.JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9843.JPG",
+        "title": "",
+        "caption": ""
+      }
+    ],
+    "collapsed": false
+  },
+  {
+    "id": 9,
+    "title": "Koncentrační tábor",
+    "type": "photo",
+    "thumbnail": "./photo/Koncentrační tábor/IMG_5953 [ EF70-300mm f-4-5.6 IS USM, 120 mm, 1-200 sec at f - 4,5 ISO 100 ].JPG",
+    "bio": "",
+    "media": [
+      {
+        "type": "photo",
+        "src": "./photo/Koncentrační tábor/IMG_5936 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-160 sec at f - 4,0 ISO 200 ].JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Koncentrační tábor/IMG_5940 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-800 sec at f - 4,0 ISO 100 ].JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Koncentrační tábor/IMG_5953 [ EF70-300mm f-4-5.6 IS USM, 120 mm, 1-200 sec at f - 4,5 ISO 100 ].JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Koncentrační tábor/IMG_5954 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-250 sec at f - 4,0 ISO 100 ].JPG",
+        "title": "",
+        "caption": ""
+      }
+    ],
+    "collapsed": false
   }
 ]
