@@ -96,26 +96,39 @@ main{
 
 .tile{
   position: relative;
+  width: 17vw;
   border-radius: var(--card-radius);
+  margin: 10px;
   overflow: hidden;
   background:#fff;
   aspect-ratio: 3 / 2;
-  width: 17vw;
   cursor:pointer;
-  margin: 10px;
-  box-shadow: 0x 0px 0px rgba(0, 0, 0, 0);
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
+  transition: all var(--transition);
 }
 
-.tile img{
+.tile:hover{
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  transition: all var(--transition);
+}
+
+.tile picture{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+.tile picture, .tile img{
   width:100%;
   height:100%;
   object-fit:cover;
   display:block;
-  transition: transform var(--transition);
+  transition: transform var(--transition), opacity 1s ease-in-out;
 }
 
 .tile:hover img{
   transform: scale(1.1);
+  transition: transform var(--transition);
 }
 
 .tile::after{
@@ -165,6 +178,40 @@ main{
 
 .tile.dimmed{
   filter: grayscale(80%) opacity(0.5);
+}
+
+.tile.loading picture,
+.tile.loading img {
+  opacity: 0;
+}
+
+.tile:not(.loading) picture,
+.tile:not(.loading) img {
+  opacity: 1;
+}
+
+.tile .spinner {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--accent);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+.tile.loading .spinner {
+  display: block;
+}
+
+@keyframes spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
 }
 
 .greeting{display:flex; align-items:flex-start; gap:10px; margin-top:24px;}
@@ -224,17 +271,47 @@ fetch('./projects.json')
         }
       }
 
+      // Assume thumbnail is a path like 'image.jpg', derive webp as 'image.webp'
+      // If it's a data URL, use as is without picture
+      let thumbnailHtml;
+      if (project.thumbnail.startsWith('data:')) {
+        thumbnailHtml = `<img src="${project.thumbnail}" alt="${project.title}" loading="lazy">`;
+      } else {
+        const webpSrc = project.thumbnail.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+        const originalSrc = project.thumbnail;
+        thumbnailHtml = `
+          <picture>
+            <source srcset="${webpSrc}" type="image/webp">
+            <img src="${originalSrc}" alt="${project.title}" loading="lazy">
+          </picture>
+        `;
+      }
+
       const a = document.createElement('a');
       a.href = `project.html?id=${project.id}`;
-      a.className = 'tile';
+      a.className = 'tile loading'; // Start with loading class
       a.dataset.groups = JSON.stringify([project.type]);
 
       a.innerHTML = `
-        <img src="${project.thumbnail}" alt="${project.title}">
+        ${thumbnailHtml}
         <div class="flyout">${project.title}</div>
+        <div class="spinner"></div>
       `;
 
       grid.appendChild(a);
+
+      // Remove loading class once image is loaded
+      const img = a.querySelector('img');
+      if (img.complete) {
+        a.classList.remove('loading');
+      } else {
+        img.addEventListener('load', () => {
+          a.classList.remove('loading');
+        });
+        img.addEventListener('error', () => {
+          a.classList.remove('loading');
+        });
+      }
     }
 
     const ShuffleInstance = new Shuffle(grid, {
