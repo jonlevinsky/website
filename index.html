@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Portfolio // 2025 — Jan Levínský</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/shufflejs@5.3.0/dist/shuffle.min.js"></script>
 <style>
 :root{
   --bg:#f6f4f5;
@@ -86,49 +85,105 @@ main{
   display:flex;
   flex-direction:column;
   justify-content: flex-start;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap);
-}
-
-.tile{
+  height: 100%;
+  min-height: 0;
   position: relative;
-  width: 17vw;
+}
+
+/* Loading overlay */
+.grid-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.grid-loading.hidden {
+  display: none;
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  border-left-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.loading-text {
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Grid kontejner */
+.grid {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+.tile {
+  position: absolute;
   border-radius: var(--card-radius);
-  margin: 10px;
   overflow: hidden;
   background:#fff;
   aspect-ratio: 3 / 2;
   cursor:pointer;
   box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.5);
-  transition: all var(--transition);
+  transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+.tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--transition) !important;
+}
+
+.tile .image-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+.tile.hidden {
+  opacity: 0;
+  transform: scale(0.8) !important;
+  pointer-events: none;
+  transition: all 0.3s ease-out;
+}
+
+.tile.animating {
+  z-index: 100;
 }
 
 .tile:hover{
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  transition: all var(--transition);
-}
-
-.tile picture{
-  width:100%;
-  height:100%;
-  display:block;
-}
-
-.tile picture, .tile img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  transition: transform var(--transition), opacity 1s ease-in-out;
+  z-index: 10;
 }
 
 .tile:hover img{
-  transform: scale(1.1);
-  transition: transform var(--transition);
+  transform: scale(1.1) !important;
 }
 
 .tile::after{
@@ -176,51 +231,57 @@ main{
   opacity:1;
 }
 
-.tile.dimmed{
-  filter: grayscale(80%) opacity(0.5);
-}
-
-.tile.loading picture,
-.tile.loading img {
-  opacity: 0;
-}
-
-.tile:not(.loading) picture,
-.tile:not(.loading) img {
-  opacity: 1;
-}
-
-.tile .spinner {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 4px solid rgba(0, 0, 0, 0.1);
-  border-left-color: var(--accent);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-}
-
-.tile.loading .spinner {
-  display: block;
-}
-
 @keyframes spin {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
 }
 
 .greeting{display:flex; align-items:flex-start; gap:10px; margin-top:24px;}
 .greeting .emoji{font-size:20px;}
 
+/* RESPONZIVITA */
+@media (max-width:1024px){
+  .wrap{ grid-template-columns:1fr 2fr; }
+  h1{font-size:48px;}
+}
+
 @media (max-width:880px){
-  .wrap{grid-template-columns:1fr;}
-  h1{font-size:44px;}
-  .grid{grid-template-columns: repeat(2, 1fr);}
+  body{ padding:12px; }
+  .wrap{ grid-template-columns:1fr; gap:24px; }
+  h1{font-size:44px;} h2{font-size:24px;}
+  .intro{ max-width:100%; }
+  .brand { padding-left: 0; }
+}
+
+@media (max-width:640px){
+  body{ padding:12px; }
+  .wrap{ gap:20px; }
+  .brand{ padding-left:0; }
+  .kicker{ font-size:12px; margin-bottom:16px; }
+  h1{ font-size:36px; line-height:1.1; }
+  h2{ font-size:20px; margin-bottom:12px; }
+  h2 a{ margin-right:8px; font-size:16px; }
+  .intro{ margin-top:24px; font-size:13px; }
+  .greeting{ margin-top:16px; }
+}
+
+@media (max-width:480px){
+  body{ padding:10px; }
+  .wrap{ gap:16px; }
+  h1{ font-size:32px; }
+  h2{ font-size:18px; }
+  .flyout{ font-size:12px; padding:6px 12px; }
+}
+
+@media (max-width:360px){
+  h1{ font-size:28px; }
+  h2{ font-size:16px; }
+  h2 a{ font-size:14px; }
+  .intro{ font-size:12px; }
 }
 </style>
 </head>
@@ -243,130 +304,297 @@ main{
       <a data-group="photo">Photo</a> / 
       <a data-group="video">Video</a>
     </h2>
+    
+    <div class="grid-loading" id="gridLoading">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Načítám projekty...</div>
+    </div>
+    
     <section class="grid" id="grid"></section>
   </main>
 </div>
 
 <script>
-fetch('./projects.json')
-  .then(res => res.json())
-  .then(async projects => {
-    const grid = document.getElementById('grid');
+let currentGroup = 'all';
+let resizeTimeout;
 
+// PRO GITHUB PAGES - JEDNODUCHÉ A SPOLEHLIVÉ ŘEŠENÍ
+
+// 1. Základní načítání obrázků
+function loadImage(img, placeholder) {
+  return new Promise((resolve) => {
+    img.onload = () => {
+      if (placeholder) placeholder.style.display = 'none';
+      resolve(true);
+    };
+    img.onerror = () => {
+      if (placeholder) placeholder.style.display = 'none';
+      resolve(false);
+    };
+  });
+}
+
+// 2. Jednoduchý video thumbnail (pouze jako fallback)
+function getVideoThumbnail(videoSrc) {
+  return new Promise((resolve) => {
+    const video = document.createElement('video');
+    video.src = videoSrc;
+    video.crossOrigin = 'anonymous';
+    video.currentTime = 2;
+    video.muted = true;
+    
+    const onSuccess = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 400; // Přiměřená velikost pro web
+      canvas.height = 266;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.8));
+    };
+    
+    video.addEventListener('loadeddata', onSuccess);
+    video.addEventListener('error', () => resolve('placeholder.jpg'));
+    
+    // Rychlý timeout
+    setTimeout(() => resolve('placeholder.jpg'), 2000);
+  });
+}
+
+// 3. Hlavní funkce - optimalizovaná pro GitHub Pages
+async function initPortfolio() {
+  const grid = document.getElementById('grid');
+  const gridLoading = document.getElementById('gridLoading');
+
+  try {
+    // Načtení JSON
+    const response = await fetch('./projects.json');
+    if (!response.ok) throw new Error('JSON se nenačetl');
+    
+    const projects = await response.json();
     projects.sort(() => Math.random() - 0.5);
-
+    
+    let loadedCount = 0;
+    const totalProjects = projects.length;
+    
+    // Rychlé vytvoření všech tile
     for (const project of projects) {
-      if (!project.thumbnail || project.thumbnail.trim() === '') {
-        if (project.media && project.media.length > 0) {
-          const firstMedia = project.media[0];
-          if (firstMedia.type === 'photo') {
-            project.thumbnail = firstMedia.src;
-          } else if (firstMedia.type === 'video') {
-            // vytvoříme snapshot z 250. frame (10s při 25fps)
-            const timeInSeconds = (Math.floor(Math.random() * (250 - 20 + 1)) + 20) / 25;
-            project.thumbnail = await getVideoThumbnail(firstMedia.src, timeInSeconds);
-          }
-        } else {
-          project.thumbnail = 'placeholder.png';
+      let thumbnailSrc = project.thumbnail;
+      let needsVideoThumbnail = false;
+
+      // Zjistíme zdroj thumbnailu
+      if (!thumbnailSrc && project.media?.[0]) {
+        const firstMedia = project.media[0];
+        if (firstMedia.type === 'photo') {
+          thumbnailSrc = firstMedia.src;
+        } else if (firstMedia.type === 'video') {
+          needsVideoThumbnail = true;
         }
       }
+      
+      if (!thumbnailSrc) thumbnailSrc = 'placeholder.jpg';
 
-      // Assume thumbnail is a path like 'image.jpg', derive webp as 'image.webp'
-      // If it's a data URL, use as is without picture
-      let thumbnailHtml;
-      if (project.thumbnail.startsWith('data:')) {
-        thumbnailHtml = `<img src="${project.thumbnail}" alt="${project.title}" loading="lazy">`;
-      } else {
-        const webpSrc = project.thumbnail.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-        const originalSrc = project.thumbnail;
-        thumbnailHtml = `
-          <picture>
-            <source srcset="${webpSrc}" type="image/webp">
-            <img src="${originalSrc}" alt="${project.title}" loading="lazy">
-          </picture>
-        `;
-      }
-
+      // Vytvoření tile
       const a = document.createElement('a');
       a.href = `project.html?id=${project.id}`;
-      a.className = 'tile loading'; // Start with loading class
-      a.dataset.groups = JSON.stringify([project.type]);
+      a.className = 'tile';
+      a.dataset.type = project.type;
+      a.dataset.id = project.id;
 
       a.innerHTML = `
-        ${thumbnailHtml}
+        <div class="image-placeholder"></div>
+        <img src="" alt="${project.title}" loading="lazy">
         <div class="flyout">${project.title}</div>
-        <div class="spinner"></div>
       `;
 
       grid.appendChild(a);
-
-      // Remove loading class once image is loaded
-      const img = a.querySelector('img');
-      if (img.complete) {
-        a.classList.remove('loading');
-      } else {
-        img.addEventListener('load', () => {
-          a.classList.remove('loading');
-        });
-        img.addEventListener('error', () => {
-          a.classList.remove('loading');
-        });
-      }
-    }
-
-    const ShuffleInstance = new Shuffle(grid, {
-      itemSelector: '.tile',
-      sizer: null
-    });
-
-    const links = document.querySelectorAll('h2 a');
-    links.forEach(link => {
-      link.addEventListener('click', e => {
-        e.preventDefault();
-        const group = link.dataset.group;
-
-        links.forEach(a => a.classList.remove('active'));
-        link.classList.add('active');
-
-        if(group === 'all'){
-          ShuffleInstance.filter(Shuffle.ALL_ITEMS);
-        } else {
-          ShuffleInstance.filter(group);
-        }
-
-        document.querySelectorAll('.tile').forEach(tile => {
-          const groups = JSON.parse(tile.dataset.groups);
-          if(group === 'all' || groups.includes(group)){
-            tile.classList.remove('dimmed');
-          } else {
-            tile.classList.add('dimmed');
+      
+      // Optimalizované načítání obrázku
+      const loadImageForTile = async () => {
+        try {
+          let finalSrc = thumbnailSrc;
+          
+          if (needsVideoThumbnail) {
+            finalSrc = await getVideoThumbnail(project.media[0].src);
           }
-        });
+          
+          const img = a.querySelector('img');
+          const placeholder = a.querySelector('.image-placeholder');
+          
+          img.src = finalSrc;
+          await loadImage(img, placeholder);
+          
+        } catch (error) {
+          console.warn('Chyba při načítání thumbnailu:', error);
+        } finally {
+          loadedCount++;
+          updateLoadingProgress(loadedCount, totalProjects);
+        }
+      };
+      
+      // Spustíme načítání s malým zpožděním pro lepší UX
+      setTimeout(loadImageForTile, loadedCount * 100);
+    }
+    
+    // Okamžitě zobrazíme grid a skryjeme loading po krátké době
+    setTimeout(() => {
+      gridLoading.classList.add('hidden');
+      updateLayout(false);
+      initEventListeners();
+    }, 1500);
+    
+    // Fallback - vždy skrýt loading po 5s
+    setTimeout(() => {
+      gridLoading.classList.add('hidden');
+    }, 5000);
+
+  } catch (error) {
+    console.error('Chyba:', error);
+    gridLoading.classList.add('hidden');
+    grid.innerHTML = `
+      <div style="text-align: center; padding: 40px; color: var(--muted);">
+        <p>Nepodařilo se načíst projekty</p>
+        <small>Zkontrolujte soubor projects.json</small>
+      </div>
+    `;
+  }
+}
+
+function updateLoadingProgress(loaded, total) {
+  const progress = (loaded / total) * 100;
+  const loadingText = document.querySelector('.loading-text');
+  if (loadingText) {
+    loadingText.textContent = `Načítám projekty... ${Math.round(progress)}%`;
+  }
+}
+
+// Zbývající funkce zůstávají stejné
+function getGridColumns() {
+  const width = window.innerWidth;
+  if (width <= 480) return 1;
+  if (width <= 880) return 2;
+  return 3;
+}
+
+function getTileDimensions() {
+  const grid = document.getElementById('grid');
+  const columns = getGridColumns();
+  const gap = 16;
+  const containerWidth = grid.clientWidth;
+  const availableWidth = containerWidth - (gap * (columns - 1));
+  const tileWidth = availableWidth / columns;
+  const tileHeight = tileWidth * (2/3);
+  
+  return { tileWidth, tileHeight, gap, columns };
+}
+
+function calculatePositions(visibleTiles) {
+  const { tileWidth, tileHeight, gap, columns } = getTileDimensions();
+  const positions = new Map();
+  
+  visibleTiles.forEach((tile, index) => {
+    const col = index % columns;
+    const row = Math.floor(index / columns);
+    
+    const x = col * (tileWidth + gap);
+    const y = row * (tileHeight + gap);
+    
+    positions.set(tile, { x, y, width: tileWidth, height: tileHeight });
+  });
+  
+  return positions;
+}
+
+function updateLayout(animate = true) {
+  const grid = document.getElementById('grid');
+  const allTiles = Array.from(document.querySelectorAll('.tile'));
+  const visibleTiles = allTiles.filter(tile => 
+    currentGroup === 'all' || tile.dataset.type === currentGroup
+  );
+
+  const currentPositions = new Map();
+  if (animate) {
+    allTiles.forEach(tile => {
+      const rect = tile.getBoundingClientRect();
+      const gridRect = grid.getBoundingClientRect();
+      currentPositions.set(tile, {
+        x: rect.left - gridRect.left,
+        y: rect.top - gridRect.top,
+        width: rect.width
       });
     });
-  });
+  }
 
-// funkce pro snapshot videa
-function getVideoThumbnail(url, timeInSeconds) {
-  return new Promise(resolve => {
-    const video = document.createElement('video');
-    video.src = url;
-    video.crossOrigin = 'anonymous';
-    video.currentTime = timeInSeconds;
-    video.muted = true;
-    video.preload = 'metadata';
-    video.addEventListener('loadeddata', () => {
-      const canvas = document.createElement('canvas');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      resolve(canvas.toDataURL());
+  const newPositions = calculatePositions(visibleTiles);
+
+  if (animate) {
+    allTiles.forEach(tile => {
+      const currentPos = currentPositions.get(tile);
+      if (currentPos) {
+        tile.style.transform = `translate3d(${currentPos.x}px, ${currentPos.y}px, 0)`;
+        tile.style.width = `${currentPos.width}px`;
+      }
+      tile.classList.add('animating');
+    });
+
+    grid.offsetHeight;
+  }
+
+  requestAnimationFrame(() => {
+    visibleTiles.forEach(tile => {
+      const newPos = newPositions.get(tile);
+      if (newPos) {
+        tile.style.transform = `translate3d(${newPos.x}px, ${newPos.y}px, 0)`;
+        tile.style.width = `${newPos.width}px`;
+        tile.style.height = `${newPos.height}px`;
+        tile.classList.remove('hidden');
+      }
+    });
+
+    allTiles.forEach(tile => {
+      if (!visibleTiles.includes(tile)) {
+        tile.classList.add('hidden');
+      }
     });
   });
+
+  if (animate) {
+    setTimeout(() => {
+      allTiles.forEach(tile => {
+        tile.classList.remove('animating');
+      });
+    }, 800);
+  }
 }
+
+function filterProjects(group) {
+  currentGroup = group;
+  updateLayout(true);
+}
+
+function initEventListeners() {
+  const links = document.querySelectorAll('h2 a');
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const group = link.dataset.group;
+
+      links.forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+
+      filterProjects(group);
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      updateLayout(true);
+    }, 250);
+  });
+}
+
+// Start
+initPortfolio();
 </script>
-
-
 </body>
 </html>
