@@ -6,6 +6,7 @@
 <title>Project</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 <style>
+/* Všechny existující styly zůstávají stejné */
 :root{
   --bg:#f6f4f5;
   --muted:#9aa0a6;
@@ -465,6 +466,79 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   to { transform: rotate(360deg); }
 }
 
+/* Keyboard shortcuts help */
+.keyboard-help {
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(20px);
+  border-radius: 12px;
+  padding: 16px;
+  color: white;
+  font-size: 14px;
+  border: 1px solid rgba(255,255,255,0.2);
+  display: none;
+  z-index: 1002;
+  max-width: 300px;
+}
+
+.keyboard-help.show {
+  display: block;
+}
+
+.keyboard-help h3 {
+  margin: 0 0 12px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.keyboard-shortcut {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.keyboard-shortcut:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.key {
+  background: rgba(255,255,255,0.15);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.help-btn {
+  position: absolute;
+  top: 25px;
+  left: 90px;
+  width: 55px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  cursor: pointer;
+  font-size: 20px;
+  z-index: 1001;
+  transition: all 0.3s ease;
+}
+
+.help-btn:hover {
+  background: rgba(255,255,255,0.2);
+  transform: scale(1.1);
+}
+
 /* RESPONZIVITA */
 @media (max-width: 1024px) {
   .wrap { grid-template-columns: 1fr 2fr; }
@@ -483,6 +557,8 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   .controls { padding: 16px 20px; gap: 12px; }
   .control-btn { min-width: 46px; height: 46px; font-size: 16px; padding: 10px; }
   .overlay-icon { font-size: 70px; width: 100px; height: 100px; }
+  .help-btn { top: 20px; left: 80px; width: 50px; height: 50px; font-size: 18px; }
+  .keyboard-help { top: 20px; left: 20px; max-width: 280px; }
 }
 
 @media (max-width: 640px) {
@@ -494,6 +570,8 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   .progress-container { margin: 0 8px; }
   .volume-container { min-width: 100px; }
   .overlay-icon { font-size: 60px; width: 90px; height: 90px; }
+  .help-btn { display: none; }
+  .keyboard-help { display: none !important; }
 }
 
 @media (max-width: 480px) {
@@ -526,6 +604,60 @@ a.back-link{display:inline-block; margin-top:24px; text-decoration:none; color:v
   <div class="modal-close" id="modal-close">&times;</div>
   <div class="modal-nav modal-prev" id="modal-prev">&#10094;</div>
   <div class="modal-nav modal-next" id="modal-next">&#10095;</div>
+  
+  <!-- Tlačítko nápovědy a panel -->
+  <div class="help-btn" id="help-btn" title="Keyboard shortcuts (?)">?</div>
+  <div class="keyboard-help" id="keyboard-help">
+    <h3>Keyboard Shortcuts</h3>
+    <div class="keyboard-shortcut">
+      <span>Play/Pause</span>
+      <span class="key">Space / K</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Forward 10s</span>
+      <span class="key">L / →</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Backward 10s</span>
+      <span class="key">J / ←</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Forward 5s</span>
+      <span class="key">→</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Backward 5s</span>
+      <span class="key">←</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Volume Up</span>
+      <span class="key">↑</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Volume Down</span>
+      <span class="key">↓</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Mute</span>
+      <span class="key">M</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Fullscreen</span>
+      <span class="key">F</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Next Media</span>
+      <span class="key">Shift + →</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Previous Media</span>
+      <span class="key">Shift + ←</span>
+    </div>
+    <div class="keyboard-shortcut">
+      <span>Close</span>
+      <span class="key">Esc</span>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -622,6 +754,7 @@ function displayProject(project) {
 // Modal funkce
 let currentMediaIndex = 0;
 let currentMediaArray = [];
+let currentVideoPlayer = null;
 
 function openModal(index, mediaArray) {
   currentMediaIndex = index;
@@ -640,6 +773,9 @@ function closeModal() {
   const modal = document.getElementById('modal');
   modal.classList.remove('open');
   
+  // Skryjeme nápovědu
+  document.getElementById('keyboard-help').classList.remove('show');
+  
   // Zastavíme video pokud hraje
   const video = modal.querySelector('video');
   if (video) {
@@ -653,6 +789,7 @@ function closeModal() {
   
   // Odstraníme event listener
   document.removeEventListener('keydown', handleKeyPress);
+  currentVideoPlayer = null;
 }
 
 function showMediaInModal() {
@@ -666,6 +803,7 @@ function showMediaInModal() {
   
   if (media.type === 'photo') {
     mediaHTML = `<img src="${media.src}" alt="${media.title || ''}">`;
+    currentVideoPlayer = null;
   } else {
     mediaHTML = `
       <div class="player" id="player">
@@ -694,7 +832,9 @@ function showMediaInModal() {
   
   // Pokud je to video, inicializujeme custom player
   if (media.type === 'video') {
-    setTimeout(() => initializeCustomPlayer(), 100);
+    setTimeout(() => {
+      currentVideoPlayer = initializeCustomPlayer();
+    }, 100);
   }
 }
 
@@ -713,7 +853,7 @@ function initializeCustomPlayer() {
   const durationTime = document.getElementById("duration-time");
   const volumeInput = document.getElementById("volume-input");
   
-  if (!media) return;
+  if (!media) return null;
   
   let hideTimeout;
   let isFullscreen = false;
@@ -731,9 +871,11 @@ function initializeCustomPlayer() {
     if (media.paused) {
       media.play().catch(e => console.log('Play error:', e));
       playBtn.textContent = "⏸";
+      overlay.classList.remove("show");
     } else {
       media.pause();
       playBtn.textContent = "▶";
+      overlay.classList.add("show");
     }
   }
 
@@ -741,6 +883,7 @@ function initializeCustomPlayer() {
   function toggleMute() {
     media.muted = !media.muted;
     muteBtn.textContent = media.muted ? "🔇" : "🔊";
+    volumeInput.value = media.muted ? 0 : media.volume;
   }
 
   // Fullscreen funkce
@@ -760,6 +903,23 @@ function initializeCustomPlayer() {
       player.classList.remove('fullscreen');
       isFullscreen = false;
     }
+  }
+
+  // Seek forward/backward
+  function seek(seconds) {
+    media.currentTime += seconds;
+    showControls();
+  }
+
+  // Set volume
+  function setVolume(change) {
+    let newVolume = media.volume + change;
+    newVolume = Math.max(0, Math.min(1, newVolume));
+    media.volume = newVolume;
+    volumeInput.value = newVolume;
+    media.muted = newVolume === 0;
+    muteBtn.textContent = media.muted ? "🔇" : "🔊";
+    showControls();
   }
 
   // Event listeners
@@ -797,6 +957,8 @@ function initializeCustomPlayer() {
   // Volume
   volumeInput.addEventListener("input", () => {
     media.volume = volumeInput.value;
+    media.muted = media.volume === 0;
+    muteBtn.textContent = media.muted ? "🔇" : "🔊";
   });
 
   // Skrytí/viditelnost controls
@@ -813,19 +975,18 @@ function initializeCustomPlayer() {
   player.addEventListener("mousemove", showControls);
   media.addEventListener("play", showControls);
 
-  // Keyboard controls
-  media.addEventListener("keydown", (e) => {
-    if (e.key === " ") {
-      e.preventDefault();
-      togglePlay();
-    } else if (e.key === "f" || e.key === "F") {
-      e.preventDefault();
-      toggleFullscreen();
-    }
-  });
-
   // Focus na video
   media.setAttribute("tabindex", "0");
+
+  // Return player controls for keyboard handling
+  return {
+    togglePlay,
+    toggleMute,
+    toggleFullscreen,
+    seek,
+    setVolume,
+    media
+  };
 }
 
 function prevMedia() {
@@ -838,17 +999,109 @@ function nextMedia() {
   showMediaInModal();
 }
 
+// Hlavní funkce pro zpracování klávesnice
 function handleKeyPress(event) {
-  if (event.key === 'Escape') {
-    if (document.fullscreenElement) {
-      document.exitFullscreen();
-    } else {
-      closeModal();
-    }
-  } else if (event.key === 'ArrowLeft') {
-    prevMedia();
-  } else if (event.key === 'ArrowRight') {
-    nextMedia();
+  // Zabráníme default chování pro klávesy, které používáme
+  const videoKeys = [' ', 'k', 'K', 'j', 'J', 'l', 'L', 'm', 'M', 'f', 'F', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'];
+  if (videoKeys.includes(event.key) && currentVideoPlayer) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  switch(event.key) {
+    case ' ':
+    case 'k':
+    case 'K':
+      // Play/Pause
+      if (currentVideoPlayer) {
+        currentVideoPlayer.togglePlay();
+      }
+      break;
+      
+    case 'ArrowLeft':
+      if (event.shiftKey) {
+        // Previous media
+        prevMedia();
+      } else if (currentVideoPlayer) {
+        // Backward 5 seconds
+        currentVideoPlayer.seek(-5);
+      }
+      break;
+      
+    case 'ArrowRight':
+      if (event.shiftKey) {
+        // Next media
+        nextMedia();
+      } else if (currentVideoPlayer) {
+        // Forward 5 seconds
+        currentVideoPlayer.seek(5);
+      }
+      break;
+      
+    case 'j':
+    case 'J':
+      // Backward 10 seconds
+      if (currentVideoPlayer) {
+        currentVideoPlayer.seek(-10);
+      }
+      break;
+      
+    case 'l':
+    case 'L':
+      // Forward 10 seconds
+      if (currentVideoPlayer) {
+        currentVideoPlayer.seek(10);
+      }
+      break;
+      
+    case 'ArrowUp':
+      // Volume up
+      if (currentVideoPlayer) {
+        currentVideoPlayer.setVolume(0.1);
+      }
+      break;
+      
+    case 'ArrowDown':
+      // Volume down
+      if (currentVideoPlayer) {
+        currentVideoPlayer.setVolume(-0.1);
+      }
+      break;
+      
+    case 'm':
+    case 'M':
+      // Mute
+      if (currentVideoPlayer) {
+        currentVideoPlayer.toggleMute();
+      }
+      break;
+      
+    case 'f':
+    case 'F':
+      // Fullscreen
+      if (currentVideoPlayer) {
+        currentVideoPlayer.toggleFullscreen();
+      }
+      break;
+      
+    case '?':
+      // Show/hide keyboard help
+      const help = document.getElementById('keyboard-help');
+      help.classList.toggle('show');
+      break;
+      
+    case 'Escape':
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        const help = document.getElementById('keyboard-help');
+        if (help.classList.contains('show')) {
+          help.classList.remove('show');
+        } else {
+          closeModal();
+        }
+      }
+      break;
   }
 }
 
@@ -856,6 +1109,9 @@ function handleKeyPress(event) {
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-prev').addEventListener('click', prevMedia);
 document.getElementById('modal-next').addEventListener('click', nextMedia);
+document.getElementById('help-btn').addEventListener('click', function() {
+  document.getElementById('keyboard-help').classList.toggle('show');
+});
 
 // Kliknutí mimo obsah modalu zavře modal
 document.getElementById('modal').addEventListener('click', function(event) {
