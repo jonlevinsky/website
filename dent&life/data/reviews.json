@@ -1,0 +1,16 @@
+[
+  {
+    "id": 1,
+    "name": "Květuše Hornová",
+    "role": "Zákaznice, Praha",
+    "text": "Moc příjemný a ochotný kolektiv. Moc děkuji za jejich péči.",
+    "rating": 4.5
+  },
+  {
+    "id": 2,
+    "name": "Sirstiplak",
+    "role": "Zákazník, Praha",
+    "text": "Férovost, rychlost, ochota\nDěkuji",
+    "rating": 5
+  }
+]

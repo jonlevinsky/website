@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Správa referencí - DentLife</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: #1a1a1a;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 1.25rem;
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .star {
+            position: relative;
+            display: inline-block;
+            font-size: 28px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+        }
+
+        .star .full {
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            color: #fbbf24;
+            width: 0%;
+        }
+
+        .review-rating .star {
+            cursor: default;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-export {
+            background: #10b981;
+            color: white;
+            margin-left: auto;
+        }
+
+        .btn-export:hover {
+            background: #059669;
+        }
+
+        .reviews-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .review-card {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+        }
+
+        .review-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .review-role {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+
+        .review-rating {
+            color: #d1d5db;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+        }
+
+        .review-text {
+            color: #374151;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 6px 14px;
+            font-size: 14px;
+        }
+
+        .btn-edit {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-edit:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-delete:hover {
+            background: #fecaca;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .export-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e5e5;
+            margin-bottom: 40px;
+        }
+
+        .export-section h3 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .export-section p {
+            color: #6b7280;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
+        }
+
+        textarea.json-output {
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            min-height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Správa referencí</h1>
+        
+        <div class="form-container">
+            <h2 id="formTitle">Přidat novou referenci</h2>
+            <form id="reviewForm">
+                <input type="hidden" id="editId" value="">
+                
+                <div class="form-group">
+                    <label for="name">Jméno lékaře</label>
+                    <input type="text" id="name" required placeholder="MUDr. Jana Nováková">
+                </div>
+
+                <div class="form-group">
+                    <label for="role">Role a místo</label>
+                    <input type="text" id="role" required placeholder="Zubní lékařka, Praha">
+                </div>
+
+                <div class="form-group">
+                    <label for="text">Text reference</label>
+                    <textarea id="text" required placeholder="Váš text reference..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Hodnocení</label>
+                    <div class="rating-input" id="ratingInput">
+                        <span class="star" data-value="1"><span class="full">★</span>★</span>
+                        <span class="star" data-value="2"><span class="full">★</span>★</span>
+                        <span class="star" data-value="3"><span class="full">★</span>★</span>
+                        <span class="star" data-value="4"><span class="full">★</span>★</span>
+                        <span class="star" data-value="5"><span class="full">★</span>★</span>
+                    </div>
+                    <input type="hidden" id="rating" value="5" required>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-primary">Uložit</button>
+                    <button type="button" class="btn-secondary hidden" id="cancelEdit">Zrušit</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="export-section">
+            <h3>Export JSON</h3>
+            <p>Po úpravách zkopírujte tento JSON a vložte ho do svého projektu:</p>
+            <textarea class="json-output" id="jsonOutput" readonly></textarea>
+            <div class="button-group">
+                <button class="btn-export" onclick="copyJson()">Zkopírovat JSON</button>
+            </div>
+        </div>
+
+        <div class="reviews-list" id="reviewsList"></div>
+    </div>
+
+    <script>
+        let reviews = [];
+
+        const form = document.getElementById('reviewForm');
+        const reviewsList = document.getElementById('reviewsList');
+        const jsonOutput = document.getElementById('jsonOutput');
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+        const cancelBtn = document.getElementById('cancelEdit');
+        const formTitle = document.getElementById('formTitle');
+
+        function saveToLocalStorage() {
+            localStorage.setItem('dentlife-reviews', JSON.stringify(reviews));
+            updateJsonOutput();
+        }
+
+        function updateJsonOutput() {
+            jsonOutput.value = JSON.stringify(reviews, null, 2);
+        }
+
+        // Rating stars
+        stars.forEach(star => {
+            star.addEventListener('click', function(e) {
+                const value = parseInt(this.dataset.value);
+                const halfWidth = this.offsetWidth / 2;
+                const clickX = e.offsetX;
+                const isHalf = clickX < halfWidth;
+                ratingInput.value = isHalf ? value - 0.5 : value;
+                updateStars(ratingInput.value);
+            });
+        });
+
+        function updateStars(rating) {
+            stars.forEach(star => {
+                const val = parseInt(star.dataset.value);
+                const fill = star.querySelector('.full');
+                if (rating >= val) {
+                    fill.style.width = '100%';
+                } else if (rating >= val - 0.5) {
+                    fill.style.width = '50%';
+                } else {
+                    fill.style.width = '0%';
+                }
+            });
+        }
+
+        updateStars(5);
+
+        // Funkce pro formátování textu: zajistí, že text není celý velkými písmeny a začíná velkým písmenem
+        function formatReviewText(text) {
+            text = text.trim();
+            if (!text) return text;
+
+            // Pokud je celý text velkými písmeny, převeď na malá písmena (kromě zkratek atd., ale jednoduchá detekce)
+            const isAllCaps = text === text.toUpperCase();
+            if (isAllCaps) {
+                text = text.toLowerCase();
+            }
+
+            // Kapitalizuj první písmeno celého textu
+            text = text.charAt(0).toUpperCase() + text.slice(1);
+
+            // Bonus: kapitalizuj první písmeno po tečce (pro věty)
+            text = text.replace(/\.(\s*[a-z])/g, (match) => match.toUpperCase());
+
+            return text;
+        }
+
+        // Form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const editId = document.getElementById('editId').value;
+            const reviewData = {
+                name: document.getElementById('name').value,
+                role: document.getElementById('role').value,
+                text: formatReviewText(document.getElementById('text').value),
+                rating: parseFloat(ratingInput.value)
+            };
+
+            if (editId) {
+                const index = reviews.findIndex(r => r.id == editId);
+                reviews[index] = { ...reviews[index], ...reviewData };
+            } else {
+                const newId = reviews.length > 0 ? Math.max(...reviews.map(r => r.id)) + 1 : 1;
+                reviews.push({ id: newId, ...reviewData });
+            }
+
+            form.reset();
+            document.getElementById('editId').value = '';
+            updateStars(5);
+            ratingInput.value = 5;
+            cancelBtn.classList.add('hidden');
+            formTitle.textContent = 'Přidat novou referenci';
+            
+            saveToLocalStorage();
+            renderReviews();
+        });
+
+        cancelBtn.addEventListener('click', function() {
+            form.reset();
+            document.getElementById('editId').value = '';
+            updateStars(5);
+            ratingInput.value = 5;
+            cancelBtn.classList.add('hidden');
+            formTitle.textContent = 'Přidat novou referenci';
+        });
+
+        function generateStars(rating) {
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                let width = 0;
+                if (rating >= i) width = 100;
+                else if (rating >= i - 0.5) width = 50;
+                html += `<span class="star"><span class="full" style="width: ${width}%">★</span>★</span>`;
+            }
+            return html;
+        }
+
+        function renderReviews() {
+            reviewsList.innerHTML = reviews.map(review => `
+                <div class="review-card">
+                    <div class="review-name">${review.name}</div>
+                    <div class="review-role">${review.role}</div>
+                    <div class="review-rating">${generateStars(review.rating)}</div>
+                    <div class="review-text">${review.text}</div>
+                    <div class="review-actions">
+                        <button class="btn-edit" onclick="editReview(${review.id})">Upravit</button>
+                        <button class="btn-delete" onclick="deleteReview(${review.id})">Smazat</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function editReview(id) {
+            const review = reviews.find(r => r.id === id);
+            if (!review) return;
+            document.getElementById('editId').value = review.id;
+            document.getElementById('name').value = review.name;
+            document.getElementById('role').value = review.role;
+            document.getElementById('text').value = review.text;
+            ratingInput.value = review.rating;
+            updateStars(review.rating);
+            cancelBtn.classList.remove('hidden');
+            formTitle.textContent = 'Upravit referenci';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function deleteReview(id) {
+            if (confirm('Opravdu chcete smazat tuto referenci?')) {
+                reviews = reviews.filter(r => r.id !== id);
+                saveToLocalStorage();
+                renderReviews();
+            }
+        }
+
+        function copyJson() {
+            jsonOutput.select();
+            document.execCommand('copy');
+            alert('JSON zkopírován do schránky!');
+        }
+
+        // Inicializace
+        async function init() {
+            let loaded = false;
+
+            try {
+                const response = await fetch('./data/reviews.json');
+                if (response.ok) {
+                    reviews = await response.json();
+                    // Aplikuj formátování na načtené recenze
+                    reviews = reviews.map(review => ({
+                        ...review,
+                        text: formatReviewText(review.text)
+                    }));
+                    loaded = true;
+                    console.log('✅ Reference načteny z reviews.json');
+                }
+            } catch (error) {
+                console.error('❌ Chyba při načítání reviews.json:', error);
+            }
+
+            if (!loaded) {
+                const saved = localStorage.getItem('dentlife-reviews');
+                if (saved) {
+                    reviews = JSON.parse(saved);
+                    // Aplikuj formátování na načtené z localStorage
+                    reviews = reviews.map(review => ({
+                        ...review,
+                        text: formatReviewText(review.text)
+                    }));
+                    console.log('📦 Načteno z localStorage (fetch selhal)');
+                }
+            }
+
+            renderReviews();
+            updateJsonOutput();
+        }
+
+        // Spuštění
+        init();
+    </script>
+</body>
+</html>
