@@ -267,6 +267,7 @@
       overflow: hidden;
     }
 
+    /* Uprav hero-video styly */
     .hero-video {
       position: absolute;
       inset: 0;
@@ -276,11 +277,25 @@
       transform: scale(1.05);
     }
 
+    /* Pro mobilní zařízení - vertikální video */
+    @media (max-width: 767px) {
+      .hero-video {
+        object-fit: cover;
+        /* Pro vertikální video můžete použít object-position pro lepší zarovnání */
+        object-position: center center;
+      }
+      
+      /* Můžeš také upravit overlay pro lepší čitelnost textu */
+      .hero-overlay {
+        background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5), rgba(0,0,0,0.7));
+      }
+    }
+
     .hero-overlay {
       position: absolute;
       inset: 0;
       background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.5), rgba(0,0,0,0.7));
-      backdrop-filter: blur(20px);
+      backdrop-filter: blur(10px);
     }
 
     .hero-content {
@@ -1498,8 +1513,9 @@
 
   <!-- Hero Section -->
   <section class="hero">
-    <video class="hero-video" autoplay loop muted playsinline>
-      <source src="./res/video/hero.mp4" type="video/mp4">
+    <video class="hero-video" autoplay loop muted playsinline id="hero-video">
+      <source src="./res/video/hero.mp4" type="video/mp4" media="(min-width: 768px)" id="desktop-video">
+      <source src="./res/video/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)" id="mobile-video">
     </video>
     <div class="hero-overlay"></div>
     <div class="hero-content">
@@ -2349,6 +2365,30 @@ function renderStars(rating) {
         if (e.key === 'Escape') closeMapModal();
       }
     });
+
+    // Detekce orientace a zařízení
+    function updateVideoSource() {
+      const video = document.getElementById('hero-video');
+      const mobileVideo = document.getElementById('mobile-video');
+      const desktopVideo = document.getElementById('desktop-video');
+      
+      const isMobile = window.innerWidth <= 767;
+      
+      if (isMobile) {
+        // Pro mobil použij vertikální video
+        video.src = './res/video/hero-mobile.mp4';
+      } else {
+        // Pro desktop použij horizontální video
+        video.src = './res/video/hero.mp4';
+      }
+      
+      // Znovu načíst video
+      video.load();
+    }
+
+    // Spustit při načtení a změně velikosti okna
+    window.addEventListener('load', updateVideoSource);
+    window.addEventListener('resize', updateVideoSource);
   </script>
 </body>
 </html>
