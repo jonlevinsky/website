@@ -355,26 +355,6 @@
 
         updateStars(5);
 
-        // Funkce pro formátování textu: zajistí, že text není celý velkými písmeny a začíná velkým písmenem
-        function formatReviewText(text) {
-            text = text.trim();
-            if (!text) return text;
-
-            // Pokud je celý text velkými písmeny, převeď na malá písmena (kromě zkratek atd., ale jednoduchá detekce)
-            const isAllCaps = text === text.toUpperCase();
-            if (isAllCaps) {
-                text = text.toLowerCase();
-            }
-
-            // Kapitalizuj první písmeno celého textu
-            text = text.charAt(0).toUpperCase() + text.slice(1);
-
-            // Bonus: kapitalizuj první písmeno po tečce (pro věty)
-            text = text.replace(/\.(\s*[a-z])/g, (match) => match.toUpperCase());
-
-            return text;
-        }
-
         // Form submission
         form.addEventListener('submit', function(e) {
             e.preventDefault();
@@ -383,7 +363,7 @@
             const reviewData = {
                 name: document.getElementById('name').value,
                 role: document.getElementById('role').value,
-                text: formatReviewText(document.getElementById('text').value),
+                text: document.getElementById('text').value,
                 rating: parseFloat(ratingInput.value)
             };
 
@@ -477,11 +457,6 @@
                 const response = await fetch('./data/reviews.json');
                 if (response.ok) {
                     reviews = await response.json();
-                    // Aplikuj formátování na načtené recenze
-                    reviews = reviews.map(review => ({
-                        ...review,
-                        text: formatReviewText(review.text)
-                    }));
                     loaded = true;
                     console.log('✅ Reference načteny z reviews.json');
                 }
@@ -493,11 +468,6 @@
                 const saved = localStorage.getItem('dentlife-reviews');
                 if (saved) {
                     reviews = JSON.parse(saved);
-                    // Aplikuj formátování na načtené z localStorage
-                    reviews = reviews.map(review => ({
-                        ...review,
-                        text: formatReviewText(review.text)
-                    }));
                     console.log('📦 Načteno z localStorage (fetch selhal)');
                 }
             }
