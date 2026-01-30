@@ -49,6 +49,7 @@
       .review-card { flex: none !important; width: auto !important; min-width: 0 !important; }
       .noscript-only { display: block !important; }
       .js-only { display: none !important; }
+      .about-image-2 { display: none !important; }
     </style>
   </noscript>
   
@@ -521,10 +522,28 @@
       overflow: hidden;
     }
     .about-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     object-fit: cover;
+     transition: opacity 2s ease-in-out;
+   }
+   .about-image .about-image-1 {
+     opacity: 1;
+     z-index: 2;
+   }
+   .about-image .about-image-2 {
+     opacity: 0;
+     z-index: 1;
+   }
+   .about-image.switching .about-image-1 {
+     opacity: 0;
+   }
+   .about-image.switching .about-image-2 {
+     opacity: 1;
+   }
     .about-badge {
       position: absolute;
       bottom: -1.5rem;
@@ -534,6 +553,7 @@
       padding: 1.5rem;
       border-radius: 1rem;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      z-index: 10;
     }
     .about-badge-number { font-size: 2.5rem; font-weight: 700; }
     .about-badge-text { font-size: 0.875rem; color: rgba(255, 255, 255, 0.7); }
@@ -1475,8 +1495,9 @@
     <div class="container">
       <div class="about-grid">
         <div class="about-image-wrapper">
-          <div class="about-image">
-            <img src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=80" alt="Moderní zubní laboratoř">
+          <div class="about-image" id="about-image-container">
+            <img class="about-image-1" src="https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=800&q=80" alt="Moderní zubní laboratoř">
+            <img class="about-image-2" src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=800&q=80" alt="Dentální laboratoř pracoviště">
           </div>
           <div class="about-badge">
             <div class="about-badge-number">15+</div>
@@ -2224,6 +2245,26 @@ function renderStars(rating) {
     // Volat při změně velikosti okna
     window.addEventListener('resize', debounce(updateVideoSource, 250));
     updateVideoSource(); // Inicializace při načtení
+
+
+    "window.addEventListener('scroll', updateHeaderStyles, { passive: true });"
+
+    // ==================== ABOUT IMAGE CROSSFADE ====================
+    const aboutImageContainer = document.getElementById('about-image-container');
+    let isShowingFirstImage = true;
+    
+    function switchAboutImage() {
+      if (isShowingFirstImage) {
+        aboutImageContainer.classList.add('switching');
+      } else {
+        aboutImageContainer.classList.remove('switching');
+      }
+      isShowingFirstImage = !isShowingFirstImage;
+    }
+    
+    // Start the image crossfade interval (every 10 seconds)
+    setInterval(switchAboutImage, 10000);
+
   </script>
 </body>
 </html>
