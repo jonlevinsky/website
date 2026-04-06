@@ -1,5 +1,39 @@
 [
   {
+    "id": 9,
+    "title": "Test",
+    "type": "photo",
+    "thumbnail": "",
+    "bio": "",
+    "media": [
+      {
+        "type": "photo",
+        "src": "./photo/Test/IMG_5936 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-160 sec at f - 4,0 ISO 200 ].JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Test/IMG_5940 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-800 sec at f - 4,0 ISO 100 ].JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Test/IMG_5953 [ EF70-300mm f-4-5.6 IS USM, 120 mm, 1-200 sec at f - 4,5 ISO 100 ].JPG",
+        "title": "",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "./photo/Test/IMG_5954 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-250 sec at f - 4,0 ISO 100 ].JPG",
+        "title": "",
+        "caption": ""
+      }
+    ],
+    "collapsed": false
+  },
+  {
     "id": 1,
     "thumbnail": "",
     "title": "Zlatý Ámos 2025",
@@ -24,7 +58,8 @@
         "title": "4. Regionální kolo",
         "caption": ""
       }
-    ]
+    ],
+    "collapsed": false
   },
   {
     "id": 2,
@@ -39,7 +74,8 @@
         "title": "Za okny",
         "caption": ""
       }
-    ]
+    ],
+    "collapsed": true
   },
   {
     "id": 3,
@@ -54,7 +90,8 @@
         "title": "",
         "caption": ""
       }
-    ]
+    ],
+    "collapsed": true
   },
   {
     "id": 4,
@@ -325,40 +362,6 @@
       {
         "type": "photo",
         "src": "./photo/VOŠONSPO/28. 05. 2024 - IMG_9843.JPG",
-        "title": "",
-        "caption": ""
-      }
-    ],
-    "collapsed": false
-  },
-  {
-    "id": 9,
-    "title": "Koncentrační tábor",
-    "type": "photo",
-    "thumbnail": "./photo/Koncentrační tábor/IMG_5953 [ EF70-300mm f-4-5.6 IS USM, 120 mm, 1-200 sec at f - 4,5 ISO 100 ].JPG",
-    "bio": "",
-    "media": [
-      {
-        "type": "photo",
-        "src": "./photo/Koncentrační tábor/IMG_5936 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-160 sec at f - 4,0 ISO 200 ].JPG",
-        "title": "",
-        "caption": ""
-      },
-      {
-        "type": "photo",
-        "src": "./photo/Koncentrační tábor/IMG_5940 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-800 sec at f - 4,0 ISO 100 ].JPG",
-        "title": "",
-        "caption": ""
-      },
-      {
-        "type": "photo",
-        "src": "./photo/Koncentrační tábor/IMG_5953 [ EF70-300mm f-4-5.6 IS USM, 120 mm, 1-200 sec at f - 4,5 ISO 100 ].JPG",
-        "title": "",
-        "caption": ""
-      },
-      {
-        "type": "photo",
-        "src": "./photo/Koncentrační tábor/IMG_5954 [ EF70-300mm f-4-5.6 IS USM, 70 mm, 1-250 sec at f - 4,0 ISO 100 ].JPG",
         "title": "",
         "caption": ""
       }

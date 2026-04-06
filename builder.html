@@ -3,280 +3,598 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Projects Editor - OneUI</title>
+    <title>Portfolio Builder // Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        :root{
-            --bg1: #f5f7fa;
-            --bg2: #c3cfe2;
-            --card: #ffffff;
-            --muted:#7f8c8d;
-            --text:#2c3e50;
-        }
-        body{
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-            background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 100%);
-            color:var(--text);
-            min-height:100vh;
-            padding:24px;
-        }
-        .container{ max-width:1400px; margin:0 auto; }
-
-        .header{
-            background:var(--card);
-            padding:32px;
-            border-radius:16px;
-            box-shadow:0 4px 20px rgba(0,0,0,0.08);
-            margin-bottom:24px;
-            text-align:center;
-        }
-        .header h1{ font-size:2.2rem; margin-bottom:6px; }
-        .header p{ color:var(--muted); }
-
-        .actions{ display:flex; gap:12px; justify-content:center; margin-bottom:20px; flex-wrap:wrap; }
-        .btn{
-            padding:10px 18px; border:none; border-radius:12px; cursor:pointer; font-weight:600;
-            display:inline-flex; gap:8px; align-items:center;
-        }
-        .btn-primary{ background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white;}
-        .btn-success{ background:linear-gradient(135deg,#4facfe 0%,#00f2fe 100%); color:white;}
-        .btn-danger{ background:linear-gradient(135deg,#fa709a 0%,#fee140 100%); color:white;}
-        .btn-secondary{ background:#ecf0f1; color:var(--text); }
-
-        .projects-grid{
-            display:grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap:20px;
+        :root {
+            --bg: #0c0c0e;
+            --bg-card: #151518;
+            --bg-input: #1a1a1e;
+            --border: #26262a;
+            --border-hover: #3a3a40;
+            --text: #e0e0e0;
+            --muted: #888890;
+            --accent: #5e6ad2;
+            --accent-hover: #6f7cf0;
+            --danger: #cf5e5e;
+            --success: #52b788;
+            --radius: 12px;
+            --radius-sm: 8px;
+            --font: 'DM Sans', sans-serif;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .project-card{
-            background:var(--card);
-            border-radius:16px;
-            box-shadow:0 8px 32px rgba(0,0,0,0.08);
-            overflow:hidden;
-            transition:transform .2s, box-shadow .2s;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 24px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
-        .project-card:hover{ transform:translateY(-6px); box-shadow:0 14px 40px rgba(0,0,0,0.12); }
-        .project-card-header{
-            display:flex; justify-content:space-between; align-items:center;
-            padding:18px 22px; background:#f8f9fa; border-bottom:2px solid #ecf0f1; cursor:pointer;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .project-title-section{ display:flex; align-items:center; gap:14px; flex:1; }
-        .collapse-icon{ transition:transform .25s; }
-        .project-card.collapsed .collapse-icon{ transform:rotate(-90deg); }
 
-        .project-card-content{ padding:20px 22px; transition:max-height .3s, padding .3s; }
-        .project-card.collapsed .project-card-content{ max-height:0; padding:0 22px; overflow:hidden; }
-
-        .project-header{ display:grid; grid-template-columns:1fr auto; gap:12px; align-items:center; margin-bottom:14px; }
-        .form-label{ display:block; font-weight:600; font-size:.85rem; margin-bottom:6px; color:var(--text); text-transform:uppercase; letter-spacing:.4px; }
-        .form-input, .form-select, .form-textarea{ width:100%; padding:10px 12px; border-radius:10px; border:2px solid #ecf0f1; background:#f8f9fa; font-size:1rem; }
-        .form-input:focus, .form-select:focus, .form-textarea:focus{ outline:none; border-color:#667eea; background:white; box-shadow:0 0 0 4px rgba(102,126,234,0.08); }
-        .form-textarea{ min-height:100px; resize:vertical; }
-
-        .thumbnail-section{ display:grid; grid-template-columns:1fr auto; gap:10px; align-items:end; }
-        .file-input{ position:relative; display:inline-block; }
-        .file-input input[type=file]{ display:none; }
-        .file-input-label{ padding:8px 14px; background:#3498db; color:white; border-radius:8px; cursor:pointer; font-size:.9rem; display:inline-block; }
-        .file-input-label.secondary{ background:#95a5a6; }
-
-        .media-section{ margin-top:18px; padding-top:14px; border-top:2px solid #ecf0f1; }
-        .media-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-        .media-grid{ display:grid; gap:12px; grid-auto-rows:min-content; }
-
-        .media-item{ background:#f8f9fa; padding:12px; border-radius:12px; border:2px solid #ecf0f1; transition:border-color .2s, background .2s; }
-        .media-item:hover{ background:white; border-color:#bdc3c7; }
-        .media-controls{ display:grid; grid-template-columns:auto 1fr 1fr auto; gap:10px; align-items:center; margin-bottom:10px; }
-        .media-preview img, .media-preview video{ max-width:220px; max-height:150px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.08); }
-
-        .empty-state{ text-align:center; padding:36px 10px; color:var(--muted); }
-        .bottom-actions{ margin-top:22px; padding:20px; background:var(--card); border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,0.06); text-align:center; }
-
-        @media (max-width:768px){
-            .media-controls{ grid-template-columns:1fr; }
-            .project-header{ grid-template-columns:1fr; }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
         }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #fff;
+            letter-spacing: -0.02em;
+        }
+
+        .header-title p {
+            color: var(--muted);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            font-family: var(--font);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-input);
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .btn:hover { background: var(--border); }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-hover); }
+        .btn-danger { background: rgba(207, 94, 94, 0.1); color: var(--danger); border-color: rgba(207, 94, 94, 0.2); }
+        .btn-danger:hover { background: rgba(207, 94, 94, 0.2); }
+        .btn-success { background: var(--success); color: #112; font-weight: 600; }
+        .btn-success:hover { filter: brightness(1.1); }
+        .btn-icon-only { padding: 8px; }
+
+        .projects-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .project-card:hover { border-color: var(--border-hover); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            cursor: pointer;
+            user-select: none;
+            background: rgba(255,255,255,0.01);
+        }
+
+        .card-header:hover { background: rgba(255,255,255,0.03); }
+
+        .card-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .collapse-icon {
+            color: var(--muted);
+            transition: transform var(--transition);
+            display: flex;
+        }
+        
+        .project-card.collapsed .collapse-icon { transform: rotate(-90deg); }
+
+        .card-title-wrap h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.08);
+            color: var(--muted);
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 12px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .card-content {
+            padding: 0 24px 24px;
+            border-top: 1px solid var(--border);
+            display: grid;
+            gap: 20px;
+            background: var(--bg-card);
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+        
+        .project-card.collapsed .card-content {
+            display: none;
+            opacity: 0;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) { .form-row { grid-template-columns: 1fr; } }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-control {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            font-family: inherit;
+            font-size: 14px;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(94, 106, 210, 0.15);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+            line-height: 1.5;
+        }
+
+        .media-section {
+            margin-top: 12px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .media-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .media-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .media-item {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        @media (max-width: 640px) { .media-item { grid-template-columns: 1fr; } }
+
+        .media-preview {
+            width: 100%;
+            aspect-ratio: 3/2;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .media-preview img, .media-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .media-preview span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .media-details {
+            display: grid;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .media-fields {
+            display: grid;
+            grid-template-columns: 120px 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 768px) { .media-fields { grid-template-columns: 1fr; } }
+
+        .file-upload-wrap {
+            display: flex;
+            gap: 12px;
+        }
+
+        .file-upload-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-btn input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--bg-card);
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+        }
+
+        .empty-state h3 { font-size: 18px; margin-bottom: 8px; color: #fff; }
+        .empty-state p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 9999;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            transform: translateX(120%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left: 3px solid var(--success); }
+        .toast.error { border-left: 3px solid var(--danger); }
+        .toast.info { border-left: 3px solid var(--accent); }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Projects Editor</h1>
-            <p>Spravujte své projekty a média v moderním rozhraní</p>
-        </div>
-
-        <div class="actions">
-            <button class="btn btn-primary" onclick="addProject()">
-                <span>➕</span> Přidat projekt
-            </button>
-            <button class="btn btn-secondary" onclick="loadExample()" title="Načíst demo daty">🗂️ Demo</button>
-        </div>
+        <header>
+            <div class="header-title">
+                <h1>Správa Portfolia</h1>
+                <p>Upravte své projekty, nahrávejte média a spravujte obsah.</p>
+            </div>
+            <div style="display:flex;gap:12px;">
+                <button class="btn btn-primary" onclick="addProject()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+                    Nový Projekt
+                </button>
+                <button id="saveBtn" class="btn btn-success" onclick="saveData()">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Uložit na server
+                </button>
+            </div>
+        </header>
 
         <div id="projects-container" class="projects-grid">
-            <div class="empty-state">
-                <h3>Žádné projekty</h3>
-                <p>Začněte přidáním nového projektu</p>
-            </div>
-        </div>
-
-        <div class="bottom-actions">
-            <button class="btn btn-success" onclick="saveJSON()"><span>💾</span> Uložit JSON</button>
+            <!-- Projects will be rendered here -->
         </div>
     </div>
+
+    <!-- Toast Area -->
+    <div id="toastContainer" class="toast-container"></div>
 
     <script>
         let projects = [];
 
-        // pokus načíst projects.json (pokud běží lokálně/na serveru)
-        fetch('projects.json')
-            .then(res => {
-                if(!res.ok) throw new Error('no json');
-                return res.json();
-            })
-            .then(data => {
-                projects = Array.isArray(data) ? data : [];
+        // Inicializace
+        async function loadData() {
+            try {
+                const res = await fetch('projects.json?v=' + Date.now());
+                if (!res.ok) throw new Error('Data nedostupná');
+                projects = await res.json();
+                if (!Array.isArray(projects)) projects = [];
                 renderProjects();
-            })
-            .catch(() => {
-                console.log('projects.json not found or invalid - starting empty');
+            } catch (err) {
+                console.warn(err);
                 renderProjects();
-            });
+            }
+        }
 
-        // --- RENDER ---
+        // Zobrazování Toast upozornění
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${message}</span>`;
+            container.appendChild(toast);
+            
+            // animation in
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            // remove
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        // Upload handler via base64 JSON
+        async function uploadFiles(files, basePath, folder) {
+            const convertToBase64 = file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve({ name: file.name, data: reader.result });
+                reader.onerror = error => reject(error);
+            });
+            
+            const fileArray = [];
+            for (const f of files) {
+                fileArray.push(await convertToBase64(f));
+            }
+
+            const res = await fetch('api.php?action=upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    base: basePath,
+                    folder: folder,
+                    files: fileArray
+                })
+            });
+            return res.json();
+        }
+
+        // Ukládání na server
+        async function saveData() {
+            const btn = document.getElementById('saveBtn');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke-linecap="round"/></svg> Ukládám...`;
+            btn.style.pointerEvents = 'none';
+
+            try {
+                const res = await fetch('api.php?action=save_json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(projects, null, 2)
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast('Aktualizace úspěšně uloženy!', 'success');
+                } else {
+                    showToast('Chyba při ukládání: ' + (data.error || 'Neznámá chyba'), 'error');
+                }
+            } catch (err) {
+                showToast('Chyba komunikace se serverem.', 'error');
+            } finally {
+                btn.innerHTML = originalContent;
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+
         function renderProjects() {
             const container = document.getElementById('projects-container');
-
-            if (!projects || projects.length === 0) {
+            
+            if (!projects.length) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <h3>Žádné projekty</h3>
-                        <p>Začněte přidáním nového projektu</p>
-                    </div>
-                `;
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="1.5" style="margin-bottom:16px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        <h3>Zatím zde nejsou žádné projekty</h3>
+                        <p>Přidejte svůj první projekt a začněte tvořit své portfolio.</p>
+                        <button class="btn btn-primary" onclick="addProject()">Vytvořit Projekt</button>
+                    </div>`;
                 return;
             }
 
             container.innerHTML = '';
-            projects.forEach((project, pIndex) => {
-                const card = document.createElement('div');
-                card.className = 'project-card' + (project.collapsed ? ' collapsed' : '');
+            projects.forEach((proj, pIdx) => {
+                const typeLabel = proj.type === 'video' ? 'Video Projekt' : 'Foto Projekt';
 
-                // zabezpečit zobrazení textů proti XSS (základní)
-                const safeTitle = escapeHtml(project.title || `Projekt ${pIndex + 1}`);
-                const badge = project.type === 'photo' ? '📷 Foto' : '🎥 Video';
-
-                card.innerHTML = `
-                    <div class="project-card-header" onclick="toggleProject(${pIndex})">
-                        <div class="project-title-section">
-                            <span class="collapse-icon">▼</span>
-                            <h3>${safeTitle}</h3>
-                            <span class="badge">${badge}</span>
+                container.innerHTML += `
+                    <div class="project-card ${proj.collapsed ? 'collapsed' : ''}">
+                        <div class="card-header" onclick="toggleProject(${pIdx})">
+                            <div class="card-title-wrap">
+                                <span class="collapse-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                </span>
+                                <h3>${escapeHtml(proj.title) || 'Nový Projekt'}</h3>
+                                <span class="badge">${typeLabel}</span>
+                            </div>
+                            <button class="btn btn-danger btn-icon-only" onclick="event.stopPropagation(); removeProject(${pIdx})" title="Smazat projekt">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            </button>
                         </div>
-                        <button class="btn btn-danger" onclick="event.stopPropagation(); removeProject(${pIndex})">
-                            <span>🗑️</span> Smazat
-                        </button>
-                    </div>
+                        
+                        <div class="card-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Název Projektu</label>
+                                    <input type="text" class="form-control" value="${escapeAttr(proj.title)}" placeholder="Např. Stromovka" onchange="updateProject(${pIdx}, 'title', this.value)">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Typ Projektu</label>
+                                    <select class="form-control" onchange="updateProject(${pIdx}, 'type', this.value)">
+                                        <option value="photo" ${proj.type === 'photo' ? 'selected' : ''}>Fotografie</option>
+                                        <option value="video" ${proj.type === 'video' ? 'selected' : ''}>Video</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Hlavní náhled (Thumbnail URL)</label>
+                                <div class="file-upload-wrap">
+                                    <input type="text" class="form-control" value="${escapeAttr(proj.thumbnail || '')}" placeholder="./photo/..." onchange="updateProject(${pIdx}, 'thumbnail', this.value)">
+                                    <label class="btn file-upload-btn">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        Nahrát
+                                        <input type="file" onchange="handleThumbnailUpload(event, ${pIdx})">
+                                    </label>
+                                </div>
+                            </div>
 
-                    <div class="project-card-content">
-                        <div class="project-header">
-                            <input type="text" class="form-input" value="${escapeAttr(project.title || '')}"
-                                   placeholder="Název projektu"
-                                   onchange="updateProject(${pIndex}, 'title', this.value)">
-                            <select class="form-select" onchange="updateProject(${pIndex}, 'type', this.value)">
-                                <option value="photo" ${project.type === 'photo' ? 'selected' : ''}>Foto</option>
-                                <option value="video" ${project.type === 'video' ? 'selected' : ''}>Video</option>
-                            </select>
-                        </div>
+                            <div class="form-group">
+                                <label class="form-label">Popis (Bio)</label>
+                                <textarea class="form-control" placeholder="Popište tento projekt..." onchange="updateProject(${pIdx}, 'bio', this.value)">${escapeAttr(proj.bio || '')}</textarea>
+                            </div>
 
-                        <div class="form-group">
-                            <label class="form-label">Náhled</label>
-                            <div class="thumbnail-section">
-                                <input type="text" class="form-input" value="${escapeAttr(project.thumbnail || '')}" placeholder="URL náhledu" readonly>
-                                <div class="file-input">
-                                    <input type="file" id="thumb-${pIndex}" onchange="handleThumbnailSelect(event, ${pIndex})">
-                                    <label for="thumb-${pIndex}" class="file-input-label">Vybrat soubor</label>
+                            <div class="media-section">
+                                <div class="media-header">
+                                    <h4 style="font-size:14px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em">Soubory Média</h4>
+                                    <div>
+                                        <label class="btn file-upload-btn" style="margin-right:8px">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                            Nahrát Více
+                                            <input type="file" multiple onchange="handleMediaUpload(event, ${pIdx})">
+                                        </label>
+                                        <button class="btn" onclick="addMedia(${pIdx})">
+                                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                            Přidat prázdný řádek
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="media-list" id="media-list-${pIdx}">
+                                    ${renderMediaList(proj.media || [], pIdx)}
                                 </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Popis</label>
-                            <textarea class="form-textarea" placeholder="Popis projektu..." onchange="updateProject(${pIndex}, 'bio', this.value)">${escapeAttr(project.bio || '')}</textarea>
-                        </div>
-
-                        <div class="media-section">
-                            <div class="media-header">
-                                <h3>Média</h3>
-                                <button class="btn btn-secondary" onclick="addMedia(${pIndex}); event.stopPropagation();">
-                                    <span>➕</span> Přidat médium
-                                </button>
-                            </div>
-                            <div id="media-${pIndex}" class="media-grid"></div>
-                        </div>
                     </div>
                 `;
-
-                container.appendChild(card);
-                renderMedia(pIndex);
             });
         }
 
-        function toggleProject(pIndex) {
-            const project = projects[pIndex];
-            project.collapsed = !project.collapsed;
+        function renderMediaList(mediaArr, pIdx) {
+            if (!mediaArr.length) {
+                return `<div style="text-align:center;padding:24px;border:1px dashed var(--border);border-radius:var(--radius-sm);color:var(--muted);font-size:13px;">Zatím nebyla přidána žádná média.</div>`;
+            }
+            
+            return mediaArr.map((m, mIdx) => {
+                let previewContent = `<span>Bez náhledu</span>`;
+                if (m.src) {
+                    if (m.src.endsWith('.mp4') || m.src.endsWith('.webm') || m.type === 'video') {
+                        previewContent = `<video src="${escapeAttr(m.src)}" muted loop onmouseover="this.play()" onmouseout="this.pause()"></video>`;
+                    } else {
+                        previewContent = `<img src="${escapeAttr(m.src)}" loading="lazy">`;
+                    }
+                }
+
+                return `
+                    <div class="media-item">
+                        <div class="media-preview">${previewContent}</div>
+                        <div class="media-details">
+                            <div class="media-fields">
+                                <select class="form-control" onchange="updateMedia(${pIdx}, ${mIdx}, 'type', this.value)">
+                                    <option value="photo" ${m.type === 'photo' ? 'selected' : ''}>Foto</option>
+                                    <option value="video" ${m.type === 'video' ? 'selected' : ''}>Video</option>
+                                </select>
+                                <input type="text" class="form-control" placeholder="Titulek (nepovinný)" value="${escapeAttr(m.title || '')}" onchange="updateMedia(${pIdx}, ${mIdx}, 'title', this.value)">
+                                <input type="text" class="form-control" placeholder="Popisek (nepovinný)" value="${escapeAttr(m.caption || '')}" onchange="updateMedia(${pIdx}, ${mIdx}, 'caption', this.value)">
+                            </div>
+                            <div style="display:flex;gap:12px;align-items:center;">
+                                <input type="text" class="form-control" placeholder="./photo/..." value="${escapeAttr(m.src || '')}" onchange="updateMedia(${pIdx}, ${mIdx}, 'src', this.value)">
+                                <button class="btn btn-danger btn-icon-only" onclick="removeMedia(${pIdx}, ${mIdx})" title="Smazat médium">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- HANDLERY INTERAKCÍ --- //
+
+        function toggleProject(idx) {
+            projects[idx].collapsed = !projects[idx].collapsed;
             renderProjects();
         }
 
-        // --- MEDIA RENDERING ---
-        function renderMedia(pIndex) {
-            const mediaContainer = document.getElementById(`media-${pIndex}`);
-            const project = projects[pIndex];
-            if (!project.media) project.media = [];
-
-            if (project.media.length === 0) {
-                mediaContainer.innerHTML = `
-                    <div class="empty-state"><p>Žádná média</p></div>
-                `;
-                return;
-            }
-
-            mediaContainer.innerHTML = '';
-            project.media.forEach((media, mIndex) => {
-                const mediaItem = document.createElement('div');
-                mediaItem.className = 'media-item';
-
-                const previewHTML = media.src
-                    ? (media.type === 'photo' ? `<img src="${escapeAttr(media.src)}" alt="preview">` : `<video src="${escapeAttr(media.src)}" controls></video>`)
-                    : '';
-
-                mediaItem.innerHTML = `
-                    <div class="media-controls">
-                        <select class="form-select" onchange="updateMedia(${pIndex}, ${mIndex}, 'type', this.value)">
-                            <option value="photo" ${media.type === 'photo' ? 'selected' : ''}>Foto</option>
-                            <option value="video" ${media.type === 'video' ? 'selected' : ''}>Video</option>
-                        </select>
-                        <input type="text" class="form-input" placeholder="Název" value="${escapeAttr(media.title || '')}" onchange="updateMedia(${pIndex}, ${mIndex}, 'title', this.value)">
-                        <input type="text" class="form-input" placeholder="Popisek" value="${escapeAttr(media.caption || '')}" onchange="updateMedia(${pIndex}, ${mIndex}, 'caption', this.value)">
-                        <button class="btn btn-danger" onclick="removeMedia(${pIndex}, ${mIndex}); event.stopPropagation();">🗑️</button>
-                    </div>
-
-                    <div class="file-input">
-                        <input type="file" id="media-${pIndex}-${mIndex}" multiple onchange="handleFileSelect(event, ${pIndex}, ${mIndex})">
-                        <label for="media-${pIndex}-${mIndex}" class="file-input-label">Vybrat soubory</label>
-                    </div>
-
-                    ${previewHTML ? `<div class="media-preview">${previewHTML}</div>` : ''}
-                `;
-
-                mediaContainer.appendChild(mediaItem);
-            });
-        }
-
-        // --- PROJECT CRUD ---
         function addProject() {
-            projects.push({
-                id: projects.length + 1,
-                title: '',
+            const nextId = projects.length ? Math.max(...projects.map(p => p.id || 0)) + 1 : 1;
+            projects.unshift({
+                id: nextId,
+                title: 'Nový Projekt',
                 type: 'photo',
                 thumbnail: '',
                 bio: '',
@@ -284,123 +602,115 @@
                 collapsed: false
             });
             renderProjects();
-            // scroll to last
-            setTimeout(()=>document.querySelectorAll('.project-card')[projects.length-1].scrollIntoView({behavior:'smooth'}),80);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function removeProject(pIndex) {
-            if (!confirm('Opravdu chcete smazat tento projekt?')) return;
-            projects.splice(pIndex,1);
-            renderProjects();
-        }
-
-        function updateProject(pIndex, key, value) {
-            projects[pIndex][key] = value;
-            // pokud se změní název projektu, aktualizuj cesty existujících médií a thumbnailu
-            if (key === 'title') {
-                // pokud má projekt media s cestami, přepočítat pouze složku (ponecháme filename)
-                const folder = value ? value.trim() : `projekt${pIndex+1}`;
-                const basePath = projects[pIndex].type === 'photo' ? './photo/' : './video/';
-                projects[pIndex].media = projects[pIndex].media.map(m => {
-                    if (!m.src) return m;
-                    const parts = m.src.split('/');
-                    const filename = parts[parts.length-1];
-                    return { ...m, src: `${basePath}${folder}/${filename}` };
-                });
-                if (projects[pIndex].thumbnail) {
-                    const tParts = projects[pIndex].thumbnail.split('/');
-                    const tname = tParts[tParts.length-1];
-                    projects[pIndex].thumbnail = `${basePath}${folder}/${tname}`;
-                }
+        function removeProject(idx) {
+            if(confirm('Opravdu chcete tento projekt nevratně smazat?')) {
+                projects.splice(idx, 1);
+                renderProjects();
             }
+        }
+
+        function updateProject(pIdx, field, val) {
+            projects[pIdx][field] = val;
+            if(field === 'title' || field === 'thumbnail') renderProjects();
+        }
+
+        function addMedia(pIdx) {
+            if(!projects[pIdx].media) projects[pIdx].media = [];
+            projects[pIdx].media.push({ type: 'photo', src: '', title: '', caption: '' });
             renderProjects();
         }
 
-        // --- MEDIA CRUD ---
-        function addMedia(pIndex) {
-            projects[pIndex].media.push({ type: 'photo', src: '', title:'', caption:'' });
-            renderMedia(pIndex);
+        function removeMedia(pIdx, mIdx) {
+            if(confirm('Smazat toto médium?')) {
+                projects[pIdx].media.splice(mIdx, 1);
+                renderProjects();
+            }
         }
 
-        function removeMedia(pIndex, mIndex) {
-            projects[pIndex].media.splice(mIndex,1);
-            renderMedia(pIndex);
+        function updateMedia(pIdx, mIdx, field, val) {
+            projects[pIdx].media[mIdx][field] = val;
+            if(field === 'src' || field === 'type') renderProjects();
         }
 
-        function updateMedia(pIndex, mIndex, key, value) {
-            projects[pIndex].media[mIndex][key] = value;
-        }
+        // --- UPLOAD --- //
 
-        // --- FILE HANDLERS ---
-        // Uložení thumbnail (jediný soubor)
-        function handleThumbnailSelect(event, pIndex) {
-            const file = event.target.files[0];
+        async function handleThumbnailUpload(e, pIdx) {
+            const file = e.target.files[0];
             if (!file) return;
-            const project = projects[pIndex];
-            const folder = project.title ? project.title.trim() : `projekt${pIndex + 1}`;
-            const basePath = project.type === 'photo' ? './photo/' : './video/';
-            const path = `${basePath}${folder}/${file.name}`;
-            projects[pIndex].thumbnail = path;
-            renderProjects();
-        }
 
-        // Více souborů pro média: první přepíše aktuální položku, ostatní se přidají jako nové
-        function handleFileSelect(event, pIndex, mIndex) {
-            const files = event.target.files;
-            if (!files || files.length === 0) return;
-            const project = projects[pIndex];
-            const folder = project.title ? project.title.trim() : `projekt${pIndex + 1}`;
-            const basePath = project.type === 'photo' ? './photo/' : './video/';
+            const proj = projects[pIdx];
+            const folder = (proj.title || 'Novy');
+            const basePath = proj.type === 'photo' ? 'photo' : 'video';
 
-            // první soubor -> přepiš aktuální položku
-            const firstFile = files[0];
-            const firstType = firstFile.type.startsWith('video') ? 'video' : 'photo';
-            projects[pIndex].media[mIndex] = {
-                ...projects[pIndex].media[mIndex],
-                type: firstType,
-                src: `${basePath}${folder}/${firstFile.name}`
-            };
-
-            // zbytek -> přidat jako nové položky
-            for (let i=1; i<files.length; i++) {
-                const f = files[i];
-                const t = f.type.startsWith('video') ? 'video' : 'photo';
-                projects[pIndex].media.push({
-                    type: t,
-                    src: `${basePath}${folder}/${f.name}`,
-                    title: '',
-                    caption: ''
-                });
+            showToast('Nahrávám náhled...', 'info');
+            try {
+                const res = await uploadFiles([file], basePath, folder);
+                if (res.success && res.uploaded.length > 0) {
+                    proj.thumbnail = res.uploaded[0].path;
+                    renderProjects();
+                    showToast('Náhled úspěšně nahrán.', 'success');
+                } else {
+                    showToast('Chyba: ' + (res.errors?.[0] || 'Neznámá chyba'), 'error');
+                }
+            } catch (err) {
+                showToast('Chyba sítě při nahrávání.', 'error');
             }
-
-            renderMedia(pIndex);
         }
 
-        // --- SAVE/LOAD ---
-        function saveJSON() {
-            const blob = new Blob([JSON.stringify(projects, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = 'projects.json';
-            a.click();
-            URL.revokeObjectURL(a.href);
-            alert('JSON byl úspěšně uložen!');
+        async function handleMediaUpload(e, pIdx) {
+            const files = Array.from(e.target.files);
+            if (!files.length) return;
+
+            const proj = projects[pIdx];
+            const folder = (proj.title || 'Novy');
+            const basePath = proj.type === 'photo' ? 'photo' : 'video';
+
+            showToast(`Nahrávám ${files.length} souborů...`, 'info');
+            try {
+                const res = await uploadFiles(files, basePath, folder);
+                if (res.success) {
+                    if (!proj.media) proj.media = [];
+                    
+                    res.uploaded.forEach(info => {
+                        const isVid = info.name.toLowerCase().match(/\.(mp4|webm|mov)$/);
+                        proj.media.push({
+                            type: isVid ? 'video' : 'photo',
+                            src: info.path,
+                            title: '',
+                            caption: ''
+                        });
+                    });
+                    
+                    renderProjects();
+                    showToast(`Složka obohacena o ${res.uploaded.length} médií.`, 'success');
+                    if(res.errors && res.errors.length) {
+                        showToast(`Některé soubory selhaly: ${res.errors.join(', ')}`, 'error');
+                    }
+                } else {
+                    showToast('Chyba nahrávání souborů.', 'error');
+                }
+            } catch (err) {
+                showToast('Chyba sítě při hromadném nahrávání.', 'error');
+            }
         }
 
-        // --- UTIL ---
-        function escapeHtml(str){
-            if(!str && str !== 0) return '';
+        // Utilitky
+        function escapeHtml(str) {
+            if (!str && str !== 0) return '';
             return String(str)
-                .replaceAll('&','&amp;')
-                .replaceAll('<','&lt;')
-                .replaceAll('>','&gt;')
-                .replaceAll('"','&quot;')
-                .replaceAll("'",'&#039;');
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
         }
-        function escapeAttr(v){ return escapeHtml(v).replaceAll('\n',' '); }
+        function escapeAttr(v) { return escapeHtml(v).replace(/\n/g, ' '); }
 
-        // initial
-        renderProjects();
+        // Start
+        loadData();
     </script>
 </body>
 </html>
