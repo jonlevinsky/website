@@ -2,6 +2,37 @@
 <html lang="cs">
 <head>
   <meta charset="UTF-8">
+  <!-- Funkce pro kontrolu režimu údržby -->
+  <script>
+    fetch('./data/config.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(config => {
+        if (config.maintenance) {
+          const runMaintenance = () => {
+            document.documentElement.style.background = '#ffffff';
+            document.body.style.display = 'block';
+            document.body.style.background = '#ffffff';
+            document.body.innerHTML = `
+              <div style="position:fixed;inset:0;background:#ffffff;color:#171717;z-index:2147483647;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem;height:100vh;width:100vw;box-sizing:border-box;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="width:4rem;height:4rem;color:#ca4848;margin-bottom:1.5rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" /></svg>
+                <h2 style="font-family:'Outfit',sans-serif;font-size:2.5rem;margin-bottom:1rem;font-weight:600;margin-top:0;">Režim údržby</h2>
+                <p style="font-family:'Poppins',sans-serif;color:#737373;max-width:500px;line-height:1.6;font-size:1.1rem;">${config.maintenanceMessage || 'Web právě prochází údržbou. Zkuste to prosím později.'}</p>
+                <a href="./admin.html" style="margin-top:3rem;color:#a3a3a3;font-size:12px;text-decoration:none;">Admin</a>
+              </div>
+            `;
+            // Vypnout běžný JS kód
+            window.stop(); 
+          };
+
+          if (document.body) {
+            runMaintenance();
+          } else {
+            window.addEventListener('DOMContentLoaded', runMaintenance);
+          }
+        }
+      })
+      .catch(e => console.warn('Config.json nebyl načten'));
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dentální laboratoř Dent&Life - Benešov a Praha | Zubní náhrady, korunky, můstky</title>
   <meta name="description" content="Moderní dentální laboratoř Dent&Life s pobočkami v Benešově a Praze. Specializujeme se na fixní a snímatelnou protetiku, metalokeramiku, celokeramiku, implantátové práce. Individuální přístup, prémiové materiály Ivoclar Vivadent, Aman Dirnbach.">
@@ -28,7 +59,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="icon" type="image/png" href="./res/icon.png">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
   <noscript>
     <style>
@@ -73,12 +104,65 @@
     html {
       scroll-behavior: smooth;
     }
+    /* Hide native scrollbar completely */
+    html {
+      overflow: hidden;
+      height: 100%;
+    }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background-color: var(--background);
       color: var(--foreground);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    body::-webkit-scrollbar {
+      display: none;
+      width: 0;
+    }
+    /* Custom scroll track */
+    .scroll-track {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 14px;
+      height: 100vh;
+      z-index: 9999;
+      pointer-events: none;
+      padding: 4px 3px;
+    }
+    .scroll-thumb {
+      position: absolute;
+      right: 3px;
+      width: 8px;
+      background: rgba(23, 23, 23, 0.25);
+      border-radius: 9999px;
+      opacity: 0;
+      transition: opacity 0.5s, width 0.2s, background 0.2s, box-shadow 0.2s, right 0.2s;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1), inset 0 0 0 0.5px rgba(255, 255, 255, 0.15);
+    }
+    .scroll-thumb.visible {
+      opacity: 0.8;
+    }
+    .scroll-track:hover {
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    .scroll-track:hover .scroll-thumb {
+      width: 10px;
+      right: 2px;
+      background: rgba(23, 23, 23, 0.4);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18), inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
+      opacity: 1;
+    }
+    .scroll-thumb:active {
+      background: rgba(23, 23, 23, 0.55);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25), inset 0 0 0 0.5px rgba(255, 255, 255, 0.25);
     }
     /* Animations */
     @keyframes fade-up {
@@ -304,14 +388,16 @@
       backdrop-filter: blur(8px);
     }
     .hero-title {
+      font-family: 'Outfit', sans-serif;
       font-size: clamp(2.5rem, 8vw, 6rem);
       font-weight: 300;
       line-height: 1.1;
       margin-bottom: 2rem;
+      letter-spacing: -0.02em;
     }
     .hero-title strong { 
-      font-weight: 600;
-      color: var(--accent); 
+      font-weight: 700;
+      color: var(--accent);
     }
     .hero-text {
       font-size: 1.125rem;
@@ -398,13 +484,15 @@
       border-radius: 9999px;
     }
     .section-title {
+      font-family: 'Outfit', sans-serif;
       font-size: clamp(2rem, 5vw, 3.5rem);
       font-weight: 300;
       color: var(--foreground);
       margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
     }
     .section-title strong { 
-      font-weight: 600; 
+      font-weight: 700;
       color: var(--accent);
     }
     .section-text {
@@ -733,6 +821,57 @@
       opacity: 1;
       transform: translateY(0);
     }
+    /* Skeleton Loading */
+    @keyframes skeleton-shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .review-skeleton {
+      flex: 0 0 calc(100% - 1rem);
+      padding: 2.5rem;
+      background: var(--background);
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
+    }
+    @media (min-width: 768px) {
+      .review-skeleton { flex: 0 0 calc(50% - 1rem); padding: 3rem; }
+    }
+    @media (min-width: 1024px) {
+      .review-skeleton { flex: 0 0 calc(33.333% - 1.33rem); }
+    }
+    .skeleton-line {
+      height: 14px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.06) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.06) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s ease-in-out infinite;
+      margin-bottom: 0.75rem;
+    }
+    .skeleton-stars { width: 45%; height: 18px; margin-bottom: 1.25rem; }
+    .skeleton-text-1 { width: 100%; }
+    .skeleton-text-2 { width: 85%; }
+    .skeleton-text-3 { width: 60%; margin-bottom: 1.5rem; }
+    .skeleton-divider {
+      height: 1px;
+      background: rgba(0,0,0,0.06);
+      margin-bottom: 1.25rem;
+    }
+    .skeleton-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .skeleton-avatar {
+      width: 2.75rem;
+      height: 2.75rem;
+      border-radius: 50%;
+      background: linear-gradient(90deg, rgba(0,0,0,0.06) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.06) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.5s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    .skeleton-name { width: 120px; height: 14px; }
+    .skeleton-role { width: 90px; height: 12px; }
     .review-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
@@ -1383,9 +1522,11 @@
   </script>
 </head>
 <body>
+  <!-- Custom Scroll Indicator -->
+  <div class="scroll-track" id="scrollTrack"><div class="scroll-thumb" id="scrollThumb"></div></div>
   <header class="header" id="header">
     <div class="header-container">
-      <a href="#" class="logo dent-logo-light" id="logo"><img src="./res/dent-logo-light.png" alt="Dent&Life Logo"></a>
+      <a href="#hero" class="logo dent-logo-light" id="logo"><img src="./res/dent-logo-light.png" alt="Dent&Life Logo"></a>
       <nav class="nav" id="nav">
         <a href="#sluzby" class="nav-link nav-link-light">Služby</a>
         <a href="#o-nas" class="nav-link nav-link-light">O nás</a>
@@ -1412,7 +1553,7 @@
     </div>
   </header>
   <!-- Hero Section -->
-  <section class="hero">
+  <section class="hero" id="hero">
     <video class="hero-video" autoplay loop muted playsinline id="hero-video">
       <source src="./res/video/hero.mp4" type="video/mp4" media="(min-width: 768px)" id="desktop-video">
       <source src="./res/video/hero-mobile.mp4" type="video/mp4" media="(max-width: 767px)" id="mobile-video">
@@ -1736,11 +1877,11 @@
         <h2>Máte <strong>dotaz?</strong></h2>
         <p>V případě jakéhokoliv zájmu nás neváhejte kontaktovat. Rádi vám odpovíme na všechny dotazy.</p>
         <div class="contact-buttons">
-          <a href="mailto:dentfile@email.cz" class="btn btn-contact-primary">
+          <a href="mailto:dentlife@email.cz" class="btn btn-contact-primary">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-              dentfile@email.cz
+              dentlife@email.cz
             <svg class="arrow" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
@@ -1783,7 +1924,7 @@
       </div>
       <div class="footer-bottom">
         <p>&copy; 2026 Dent&Life. Všechna práva vyhrazena.</p>
-        <p>Moderní zubní laboratoř</p>
+        <p>Moderní zubní laboratoř <span style="opacity:0.2; margin-left:1rem; transition: opacity 0.3s;" onmouseover="this.style.opacity=0.8" onmouseout="this.style.opacity=0.2"><a href="./admin.html" style="color:inherit;text-decoration:none;">Admin</a></span></p>
       </div>
     </div>
   </footer>
@@ -1847,19 +1988,13 @@
     const mobileMenu = document.getElementById('mobile-menu');
     const mobileLinks = mobileMenu.querySelectorAll('.mobile-link');
     function updateHeaderStyles() {
-      const isScrolled = window.scrollY > 50;
+      const isScrolled = document.body.scrollTop > 50;
       
       if (isScrolled) {
-        
         header.classList.add('scrolled');
-        // Změna z dent-logo-light na dent-logo-dark
         logo.classList.remove('dent-logo-light');
         logo.classList.add('dent-logo-dark');
-        // Změna cesty k obrázku loga
         logo.querySelector('img').src = './res/dent-logo-dark.png';
-        header.classList.add('scrolled');
-        logo.classList.remove('dent-logo-light');
-        logo.classList.add('dent-logo-dark');
         headerBtn.classList.remove('btn-header-light');
         headerBtn.classList.add('btn-header-dark');
         mobileToggle.classList.remove('mobile-toggle-light');
@@ -1876,14 +2011,9 @@
         });
       } else {
         header.classList.remove('scrolled');
-        // Změna zpět na dent-logo-light
         logo.classList.remove('dent-logo-dark');
         logo.classList.add('dent-logo-light');
-        // Změna cesty k obrázku loga zpět
         logo.querySelector('img').src = './res/dent-logo-light.png';
-        header.classList.remove('scrolled');
-        logo.classList.remove('dent-logo-dark');
-        logo.classList.add('dent-logo-light');
         headerBtn.classList.remove('btn-header-dark');
         headerBtn.classList.add('btn-header-light');
         mobileToggle.classList.remove('mobile-toggle-dark');
@@ -1900,7 +2030,7 @@
         });
       }
     }
-    window.addEventListener('scroll', updateHeaderStyles, { passive: true });
+    document.body.addEventListener('scroll', updateHeaderStyles, { passive: true });
     
 // Mobile menu toggle
     mobileToggle.addEventListener('click', () => {
@@ -1942,9 +2072,9 @@
         if (target) {
           const headerOffset = 80;
           const elementPosition = target.getBoundingClientRect().top;
-          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          const offsetPosition = elementPosition + document.body.scrollTop - headerOffset;
           
-          window.scrollTo({
+          document.body.scrollTo({
             top: offsetPosition,
             behavior: 'smooth'
           });
@@ -1953,6 +2083,7 @@
     });
     // Intersection Observer for scroll animations
     const observerOptions = {
+      root: document.body,
       threshold: 0.1,
       rootMargin: '0px 0px -50px 0px'
     };
@@ -2145,52 +2276,91 @@ document.querySelectorAll('.services, .portfolio, .locations, .reviews').forEach
     const reviewsSlider = document.getElementById('reviews-slider');
     const reviewsPrev = document.getElementById('reviews-prev');
     const reviewsNext = document.getElementById('reviews-next');
+    // Show skeleton loading
+    function showSkeletons() {
+      const count = window.innerWidth >= 1024 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+      reviewsSlider.innerHTML = Array(count).fill(`
+        <div class="review-skeleton">
+          <div class="skeleton-line skeleton-stars"></div>
+          <div class="skeleton-line skeleton-text-1"></div>
+          <div class="skeleton-line skeleton-text-2"></div>
+          <div class="skeleton-line skeleton-text-3"></div>
+          <div class="skeleton-divider"></div>
+          <div class="skeleton-author">
+            <div class="skeleton-avatar"></div>
+            <div>
+              <div class="skeleton-line skeleton-name"></div>
+              <div class="skeleton-line skeleton-role" style="margin-bottom:0"></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
     // Load reviews from JSON
     async function loadReviews() {
+      showSkeletons();
       try {
         const response = await fetch('./data/reviews.json');
         const reviews = await response.json();
+        // Short delay so skeleton is visible
+        await new Promise(r => setTimeout(r, 400));
         renderReviews(reviews);
       } catch (error) {
-        console.error('Error loading reviews:', error);
-        // Fallback reviews
-const fallbackReviews = [
-  { id: 1, name: "MUDr. Jana Nováková", role: "Zubní lékařka, Praha", text: "Spolupráce s Dent&Life je vždy bezproblémová. Kvalita práce je vynikající.", rating: 5 },
-  { id: 2, name: "MUDr. Petr Svoboda", role: "Stomatolog, Benešov", text: "Oceňuji individuální přístup a možnost konzultací přímo s pacientem.", rating: 4.5 },
-  { id: 3, name: "MUDr. Martina Dvořáková", role: "Dentální klinika, Praha", text: "Profesionální tým s moderním vybavením. Doporučuji všem kolegům.", rating: 4.5 }
-  ];
+        console.warn('Reviews JSON not found, using fallback data.');
+        const fallbackReviews = [
+          { id: 1, name: "MUDr. Jana Nováková", role: "Zubní lékařka, Praha", text: "Spolupráce s Dent&Life je vždy bezproblémová. Kvalita práce je vynikající.", rating: 5 },
+          { id: 2, name: "MUDr. Petr Svoboda", role: "Stomatolog, Benešov", text: "Oceňuji individuální přístup a možnost konzultací přímo s pacientem.", rating: 4.5 },
+          { id: 3, name: "MUDr. Martina Dvořáková", role: "Dentální klinika, Praha", text: "Profesionální tým s moderním vybavením. Doporučuji všem kolegům.", rating: 4.5 }
+        ];
         renderReviews(fallbackReviews);
       }
     }
-function renderStars(rating) {
+    let halfStarCounter = 0;
+    function renderStars(rating) {
       const fullStars = Math.floor(rating);
       const hasHalf = rating % 1 >= 0.5;
       const emptyStars = 5 - fullStars - (hasHalf ? 1 : 0);
       
       const fullStar = '<svg class="star-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
-      const halfStar = '<svg class="star-half" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><clipPath id="halfClip"><rect x="0" y="0" width="12" height="24"/></clipPath></defs><path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><path clip-path="url(#halfClip)" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
       const emptyStar = '<svg class="star-empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
       
+      let halfStarHtml = '';
+      if (hasHalf) {
+        const clipId = 'halfClip' + (halfStarCounter++);
+        halfStarHtml = `<svg class="star-half" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><defs><clipPath id="${clipId}"><rect x="0" y="0" width="12" height="24"/></clipPath></defs><path fill="none" stroke="currentColor" stroke-width="1.5" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/><path clip-path="url(#${clipId})" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+      }
+      
       return Array(fullStars).fill(fullStar).join('') + 
-             (hasHalf ? halfStar : '') + 
+             halfStarHtml + 
              Array(emptyStars).fill(emptyStar).join('');
     }
     function renderReviews(reviews) {
-      reviewsSlider.innerHTML = reviews.map(review => `
-        <div class="review-card">
-          <div class="review-stars">
-            ${renderStars(review.rating)}
-          </div>
-          <p class="review-text">${review.text}</p>
-          <div class="review-author">
-            <div class="review-avatar">${review.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</div>
-            <div class="review-info">
-              <h4>${review.name}</h4>
-              <p>${review.role}</p>
+      reviewsSlider.innerHTML = reviews.map((review, i) => `
+        <div class="review-card" style="animation-delay: ${i * 120}ms; border: 1px solid var(--border); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); padding: 2.5rem; border-radius: 1.5rem; background: #fff; display: flex; flex-direction: column;">
+          <div style="display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.25rem;">
+            ${review.image ? 
+              `<img src="${review.image}" alt="Fotografie" style="width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--muted); box-shadow: 0 4px 10px rgba(0,0,0,0.05);">` : 
+              `<div class="review-avatar" style="width: 4rem; height: 4rem; font-size: 1.125rem;">${review.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</div>`
+            }
+            <div style="flex: 1;">
+              <h3 class="review-name" style="font-size: 1.125rem; font-weight: 700; font-family: 'Outfit', sans-serif; color: var(--foreground); margin: 0 0 0.125rem 0;">${review.name}</h3>
+              <h4 class="review-role" style="font-size: 0.8125rem; font-weight: 400; color: var(--muted-foreground); margin: 0 0 0.35rem 0;">${review.role}</h4>
+              <div class="review-stars" style="margin: 0;">
+                ${renderStars(review.rating)}
+              </div>
             </div>
           </div>
+          <div style="border-top: 1px dashed rgba(0,0,0,0.08); margin: 0 0 1.25rem 0;"></div>
+          <p class="review-text" style="color: #404040; line-height: 1.8; margin-bottom: 1.25rem; flex: 1;">„${review.text.replace(/\n/g, '<br>')}“</p>
+          <div style="border-top: 1px solid rgba(0,0,0,0.04); margin-top: auto;"></div>
         </div>
       `).join('');
+      // Staggered fade in
+      requestAnimationFrame(() => {
+        reviewsSlider.querySelectorAll('.review-card').forEach((card, i) => {
+          setTimeout(() => card.classList.add('visible'), i * 120);
+        });
+      });
     }
     // Reviews slider navigation
     reviewsPrev.addEventListener('click', () => {
@@ -2247,8 +2417,6 @@ function renderStars(rating) {
     updateVideoSource(); // Inicializace při načtení
 
 
-    "window.addEventListener('scroll', updateHeaderStyles, { passive: true });"
-
     // ==================== ABOUT IMAGE CROSSFADE ====================
     const aboutImageContainer = document.getElementById('about-image-container');
     let isShowingFirstImage = true;
@@ -2265,6 +2433,71 @@ function renderStars(rating) {
     // Start the image crossfade interval (every 10 seconds)
     setInterval(switchAboutImage, 10000);
 
+    // ==================== CUSTOM SCROLLBAR ====================
+    (function() {
+      const thumb = document.getElementById('scrollThumb');
+      const track = document.getElementById('scrollTrack');
+      let hideTimeout;
+      let isDragging = false;
+      let isHovering = false;
+
+      function showThumb() {
+        thumb.style.opacity = '0.8';
+        clearTimeout(hideTimeout);
+        hideTimeout = setTimeout(() => {
+          if (!isDragging && !isHovering) thumb.style.opacity = '0';
+        }, 3000);
+      }
+
+      function updateThumb() {
+        const scrollHeight = document.body.scrollHeight - window.innerHeight;
+        if (scrollHeight <= 0) { thumb.style.display = 'none'; return; }
+        thumb.style.display = '';
+        const scrollPercent = document.body.scrollTop / scrollHeight;
+        const thumbHeight = Math.max((window.innerHeight / document.body.scrollHeight) * window.innerHeight, 40);
+        const thumbTop = scrollPercent * (window.innerHeight - thumbHeight);
+        thumb.style.height = thumbHeight + 'px';
+        thumb.style.top = thumbTop + 'px';
+        showThumb();
+      }
+
+      document.body.addEventListener('scroll', updateThumb, { passive: true });
+      window.addEventListener('resize', updateThumb, { passive: true });
+
+      track.addEventListener('mouseenter', () => { isHovering = true; thumb.style.opacity = '1'; });
+      track.addEventListener('mouseleave', () => { isHovering = false; showThumb(); });
+
+      track.addEventListener('mousedown', function(e) {
+        if (e.target === thumb) return;
+        const clickPercent = e.clientY / window.innerHeight;
+        const scrollHeight = document.body.scrollHeight - window.innerHeight;
+        document.body.scrollTo({ top: clickPercent * scrollHeight, behavior: 'smooth' });
+      });
+
+      thumb.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        isDragging = true;
+        const startY = e.clientY;
+        const startScroll = document.body.scrollTop;
+        const scrollHeight = document.body.scrollHeight - window.innerHeight;
+        const thumbHeight = thumb.offsetHeight;
+        const trackHeight = window.innerHeight - thumbHeight;
+        function onMove(e) {
+          const deltaY = e.clientY - startY;
+          document.body.scrollTop = startScroll + (deltaY / trackHeight) * scrollHeight;
+        }
+        function onUp() {
+          isDragging = false;
+          document.removeEventListener('mousemove', onMove);
+          document.removeEventListener('mouseup', onUp);
+          showThumb();
+        }
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+
+      updateThumb();
+    })();
   </script>
 </body>
 </html>

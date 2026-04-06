@@ -135,8 +135,12 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 }
 
 .tile img,.tile video{
-  width:100%;height:100%;object-fit:cover;display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
   transition:transform 0.6s var(--ease-out-expo);
+  pointer-events:none;
 }
 
 .tile:hover{
@@ -663,178 +667,140 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 }
 
 /* ══════════════════════════════════════
-   MOBILE MODAL — YouTube app style
+   MOBILE VIDEO — plays inside tile thumb
 ══════════════════════════════════════ */
+
+.tile-inline-player{ display:none; } /* never used */
+.tile-caption{ display:none; }
+.mob-play-hint{ display:none; }
+
 @media(max-width:640px){
+  .gallery{ grid-template-columns:1fr; gap:10px; }
 
-  /* Full screen dark overlay */
-  .modal{
-    padding:0;
-    align-items:flex-start;
-    background:rgba(0,0,0,0) !important;
-  }
+  .flyout{ display:none; }
+  .tile-video-icon{ display:none; }
+  .modal{ display:none !important; }
 
-  .modal.open{
-    background:#000 !important;
-  }
+  /* Photo tiles — normal 3:2 card */
+  .tile:not(.video-tile){ aspect-ratio:3/2; cursor:pointer; }
 
-  .modal-inner{
-    padding:0;
-    width:100%;
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    align-items:stretch;
-    justify-content:flex-start;
-    position:relative;
-  }
-
-  /* Top bar: close left, counter center, kb right */
-  .modal-topbar{
-    position:relative;
-    z-index:10;
-    height:52px;
-    padding:0 12px;
-    background:#000;
-    flex-shrink:0;
-  }
-
-  .modal-counter{
-    font-size:13px;
-    color:rgba(255,255,255,0.7);
-    font-weight:500;
-  }
-
-  .modal-close, .modal-shortcuts-btn{
-    width:36px;height:36px;
+  /* Video tile — 16:9 thumb, static size always */
+  .tile.video-tile{
+    aspect-ratio:unset;
+    height:auto;
+    cursor:pointer;
+    overflow:visible; /* let caption sit outside */
     background:transparent;
-    border:none;
+    box-shadow:none;
   }
 
-  /* Video fills width, 16:9 */
-  .modal-content{
-    width:100%;
-    flex-shrink:0;
-    opacity:1 !important;
+  .tile.video-tile .tile-thumb{
+    position:relative;
+    aspect-ratio:16/9;
+    overflow:hidden;
+    border-radius:var(--card-radius);
+    background:#111;
+    box-shadow:0 1px 4px rgba(0,0,0,0.07), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+
+  /* Thumbnail image if present */
+  .tile.video-tile .tile-thumb img{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    border-radius:0;
     transform:none !important;
-    transition:none !important;
-    display:block;
+    transition:none;
   }
 
-  /* Override: player goes full width */
-  .player{
-    max-width:100% !important;
+  /* The actual video — fills thumb, hidden until playing */
+  .tile.video-tile .tile-thumb video{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    object-fit:cover;
+    border-radius:0;
+    transform:none !important;
+    transition:none;
+    display:block;
+    background:#000;
+  }
+
+  /* Player injected into thumb — must fill it exactly */
+  .tile.video-tile .tile-thumb .player{
+    position:absolute;
+    inset:0;
     width:100% !important;
-    border-radius:0 !important;
+    max-width:100% !important;
+    height:100% !important;
+    border-radius:var(--card-radius) !important;
     box-shadow:none !important;
   }
 
-  .player video{
-    width:100%;
-    height:auto;
-    max-height:none;
-    aspect-ratio:16/9;
-    object-fit:contain;
-    display:block;
-    background:#000;
+  .tile.video-tile .tile-thumb .player video{
+    position:absolute;
+    inset:0;
+    width:100% !important;
+    height:100% !important;
+    max-height:none !important;
+    object-fit:cover;
+    aspect-ratio:unset;
   }
 
-  /* Big play button bigger touch target */
-  .yt-big-play{
-    width:56px;height:56px;
-  }
-
-  /* Controls stay INSIDE player, bigger touch targets */
-  .controls{
-    padding:36px 12px 10px;
-  }
-
-  .yt-progress{
-    height:20px; /* bigger touch area */
-  }
-
-  .yt-track{height:3px;}
-  .yt-progress:hover .yt-track{height:3px;} /* no hover expand on touch */
-
-  .yt-thumb{
-    width:14px;height:14px;
-    transform:translate(-50%,-50%) scale(1) !important; /* always visible on mobile */
-  }
-
-  .ctrl-btn{width:44px;height:44px;}
-
-  .time-wrap{font-size:12px;}
-
-  /* Volume hidden on mobile (use device volume) */
-  .vol-wrap{display:none;}
-
-  /* Caption below video */
-  .modal-caption{
-    color:rgba(255,255,255,0.75);
-    font-size:13px;
-    font-weight:400;
-    padding:12px 16px 4px;
-    text-align:left;
-    background:#000;
-    opacity:1 !important;
-    transform:none !important;
-    transition:none !important;
-    letter-spacing:0;
-  }
-
-  /* Nav: full-width row below video instead of side arrows */
-  .modal-nav{
-    display:none !important;
-  }
-
-  /* Mobile nav strip below caption */
-  .mobile-nav{
+  /* Play hint overlay — shown before playing */
+  .mob-play-hint{
     display:flex;
+    position:absolute;
+    inset:0;
     align-items:center;
-    justify-content:space-between;
-    padding:8px 8px 16px;
-    background:#000;
-    gap:8px;
+    justify-content:center;
+    pointer-events:none;
+    z-index:3;
+    transition:opacity 0.2s;
   }
 
-  .mob-nav-btn{
-    width:48px;height:48px;
+  .mob-play-hint .play-circle{
+    width:52px;height:52px;
     border-radius:50%;
-    background:rgba(255,255,255,0.08);
-    border:1px solid rgba(255,255,255,0.12);
+    background:rgba(0,0,0,0.6);
     display:flex;align-items:center;justify-content:center;
-    cursor:pointer;
-    color:rgba(255,255,255,0.7);
-    flex-shrink:0;
-    -webkit-tap-highlight-color:transparent;
   }
 
-  .mob-nav-btn svg{
-    width:22px;height:22px;
-    stroke:currentColor;fill:none;
-    stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+  .mob-play-hint svg{ width:22px;height:22px;fill:#fff;margin-left:3px; }
+
+  .tile.video-tile.playing .mob-play-hint{ opacity:0; }
+
+  /* Gradient on thumb before playing */
+  .tile.video-tile .tile-thumb::after{
+    content:'';
+    position:absolute;inset:0;
+    background:linear-gradient(to top,rgba(0,0,0,0.45) 0%,transparent 50%);
+    pointer-events:none;
+    z-index:2;
   }
 
-  .mob-nav-btn:active{background:rgba(255,255,255,0.18);}
-  .mob-nav-btn.disabled{opacity:0.2;pointer-events:none;}
+  .tile.video-tile.playing .tile-thumb::after{ display:none; }
 
-  .mob-nav-center{
-    flex:1;
-    text-align:center;
-    color:rgba(255,255,255,0.35);
-    font-size:11px;
-    letter-spacing:0.08em;
-    font-weight:500;
-    text-transform:uppercase;
+  /* Caption below thumb — always visible */
+  .tile-caption{
+    display:block;
+    padding:8px 2px 0;
+    font-size:12px;
+    color:var(--muted);
+    font-weight:400;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
 
-  /* Shortcuts panel on mobile */
-  .shortcuts-panel{
-    top:52px;
-    right:8px;
-    left:8px;
-    min-width:0;
+  /* Controls inside thumb — bigger touch targets */
+  .tile.video-tile .yt-progress{ height:22px; }
+  .tile.video-tile .yt-thumb{
+    width:14px;height:14px;
+    transform:translate(-50%,-50%) scale(1) !important;
   }
+  .tile.video-tile .ctrl-btn{ width:44px;height:44px; }
+  .tile.video-tile .vol-wrap{ display:none; }
+  .tile.video-tile .time-wrap{ font-size:12px; }
 }
 
 </style>
@@ -885,17 +851,6 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
     <!-- Media content -->
     <div class="modal-content" id="modal-content"></div>
     <div class="modal-caption" id="modal-caption"></div>
-
-    <!-- Mobile nav strip (visible only on mobile) -->
-    <div class="mobile-nav" id="mobile-nav" style="display:none;">
-      <div class="mob-nav-btn" id="mob-prev">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      </div>
-      <div class="mob-nav-center" id="mob-counter"></div>
-      <div class="mob-nav-btn" id="mob-next">
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </div>
-    </div>
   </div>
 
   <!-- Nav arrows -->
@@ -931,6 +886,8 @@ async function loadProject() {
   }
 }
 
+function isMobile(){ return window.innerWidth <= 640; }
+
 function displayProject(project) {
   const container = document.getElementById('project-container');
   const typeLabel = project.type === 'video' ? 'Video' : 'Photography';
@@ -940,10 +897,27 @@ function displayProject(project) {
   project.media.forEach((m, i) => {
     const cap = [m.title, m.caption].filter(Boolean).join(' — ');
     const flyout = cap ? `<div class="flyout">${cap}</div>` : '';
+
     if (m.type === 'photo') {
-      gallery += `<div class="tile"><img src="${m.src}" alt="${m.title||''}" data-index="${i}" loading="lazy">${flyout}</div>`;
+      gallery += `
+        <div class="tile" data-index="${i}" data-type="photo">
+          <img src="${m.src}" alt="${m.title||''}" loading="lazy">
+          ${flyout}
+        </div>`;
     } else {
-      gallery += `<div class="tile"><video src="${m.src}" data-index="${i}" muted playsinline></video><div class="tile-video-icon"><svg viewBox="0 0 24 24" fill="white" width="14" height="14"><polygon points="5,3 19,12 5,21"/></svg></div>${flyout}</div>`;
+      const thumbSrc = m.thumbnail || m.poster || '';
+      const thumbImg = thumbSrc ? `<img src="${thumbSrc}" alt="${m.title||''}" loading="lazy">` : '';
+      gallery += `
+        <div class="tile video-tile" data-index="${i}" data-type="video" data-src="${m.src}">
+          <div class="tile-thumb" id="thumb-${i}">
+            ${thumbImg}
+            <video src="${m.src}" muted playsinline preload="none"></video>
+            <div class="mob-play-hint">
+              <div class="play-circle"><svg viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg></div>
+            </div>
+          </div>
+          <div class="tile-caption">${cap}</div>
+        </div>`;
     }
   });
 
@@ -958,9 +932,90 @@ function displayProject(project) {
     <div class="gallery">${gallery}</div>
   `;
 
-  document.querySelectorAll('.tile [data-index]').forEach(el => {
-    el.closest('.tile').addEventListener('click', () => {
-      openModal(parseInt(el.getAttribute('data-index')), project.media);
+  document.querySelectorAll('.tile').forEach(tile => {
+    tile.addEventListener('click', e => {
+      const i = parseInt(tile.dataset.index);
+      const type = tile.dataset.type;
+
+      if (isMobile() && type === 'video') {
+        e.preventDefault();
+        e.stopPropagation();
+
+        // Stop any other playing tile
+        document.querySelectorAll('.tile.video-tile.playing').forEach(t => {
+          if (t !== tile) {
+            const v = t.querySelector('video#vid');
+            if (v) v.pause();
+            t.classList.remove('playing');
+            // Restore thumb to original state
+            const th = t.querySelector('.tile-thumb');
+            const origThumb = t.dataset.origThumb;
+            if (th && origThumb) th.innerHTML = origThumb;
+          }
+        });
+
+        const thumb = tile.querySelector('.tile-thumb');
+        if (!thumb) return;
+
+        if (tile.classList.contains('playing')) {
+          // Tap again = pause/resume via player
+          const vid = thumb.querySelector('video#vid');
+          if (vid) vid.paused ? vid.play() : vid.pause();
+          return;
+        }
+
+        // Save original thumb HTML so we can restore it later
+        tile.dataset.origThumb = thumb.innerHTML;
+
+        // Replace thumb contents with full player
+        thumb.innerHTML = buildPlayer(project.media[i].src);
+        tile.classList.add('playing');
+
+        setTimeout(() => {
+          const vp2 = initPlayerIn(thumb);
+          tile._vp = vp2;
+          const vid = thumb.querySelector('#vid');
+          if (vid) vid.play().catch(()=>{});
+        }, 40);
+
+        return;
+      }
+        // ── MOBILE: fullscreen the image ──
+        e.preventDefault();
+        const img = tile.querySelector('img');
+        if (!img) return;
+        // Create a fullscreen overlay with the image
+        const fs = document.createElement('div');
+        fs.style.cssText = 'position:fixed;inset:0;z-index:9000;background:#000;display:flex;align-items:center;justify-content:center;';
+        const fsImg = document.createElement('img');
+        fsImg.src = img.src;
+        fsImg.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;display:block;';
+        // Close button
+        const closeBtn = document.createElement('div');
+        closeBtn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+        closeBtn.style.cssText = 'position:absolute;top:16px;right:16px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.12);border-radius:50%;cursor:pointer;z-index:1;';
+        fs.appendChild(fsImg);
+        fs.appendChild(closeBtn);
+        document.body.appendChild(fs);
+        document.body.style.overflow = 'hidden';
+
+        // Try native fullscreen
+        fs.requestFullscreen?.().catch(()=>{});
+
+        function closeFsPhoto() {
+          if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+          fs.remove();
+          document.body.style.overflow = '';
+          document.removeEventListener('fullscreenchange', onFsChange);
+        }
+        function onFsChange() { if (!document.fullscreenElement) { fs.remove(); document.body.style.overflow=''; } }
+        closeBtn.addEventListener('click', closeFsPhoto);
+        fs.addEventListener('click', e => { if (e.target === fs) closeFsPhoto(); });
+        document.addEventListener('fullscreenchange', onFsChange);
+        return
+        
+      // ── DESKTOP: open modal ──
+      openModal(i, project.media);
     });
   });
 }
@@ -991,58 +1046,20 @@ function closeModal() {
   vp = null;
 }
 
-function isMobile(){ return window.innerWidth <= 640; }
-
-function updateMobileNav() {
-  const mobileNav = document.getElementById('mobile-nav');
-  const mobCounter = document.getElementById('mob-counter');
-  const mobPrev = document.getElementById('mob-prev');
-  const mobNext = document.getElementById('mob-next');
-  if (!mobileNav) return;
-
-  if (isMobile()) {
-    mobileNav.style.display = 'flex';
-    mobCounter.textContent = `${idx + 1} of ${media.length}`;
-    mobPrev.classList.toggle('disabled', media.length <= 1);
-    mobNext.classList.toggle('disabled', media.length <= 1);
-  } else {
-    mobileNav.style.display = 'none';
-  }
-}
-
 function renderMedia() {
   const m = media[idx];
   if (!m) return;
 
-  // Update counter
   modalCounter.textContent = `${idx + 1} / ${media.length}`;
-  updateMobileNav();
-
-  // Nav visibility (desktop)
   document.getElementById('modal-prev').classList.toggle('disabled', media.length <= 1);
   document.getElementById('modal-next').classList.toggle('disabled', media.length <= 1);
 
   const cap = [m.title, m.caption].filter(Boolean).join(' — ');
 
-  // Pause previous video
   const prevVideo = modalContent.querySelector('video');
   if (prevVideo) prevVideo.pause();
   vp = null;
 
-  if (isMobile()) {
-    // On mobile: instant swap, no fade animation
-    if (m.type === 'photo') {
-      modalContent.innerHTML = `<img src="${m.src}" alt="${m.title||''}" style="width:100%;height:auto;display:block;max-height:60vh;object-fit:contain;background:#000;">`;
-      vp = null;
-    } else {
-      modalContent.innerHTML = buildPlayer(m.src);
-      setTimeout(() => { vp = initPlayer(); }, 60);
-    }
-    modalCaption.textContent = cap;
-    return;
-  }
-
-  // Desktop: fade transition
   modalContent.style.opacity = '0';
   modalContent.style.transform = 'scale(0.97) translateY(6px)';
 
@@ -1130,36 +1147,39 @@ function buildPlayer(src) {
   </div>`;
 }
 
-function initPlayer() {
-  const player   = document.getElementById('player');
-  const vid      = document.getElementById('vid');
-  const controls = document.getElementById('controls');
-  const playBtn  = document.getElementById('play-btn');
-  const playIcon = document.getElementById('play-icon');
-  const muteBtn  = document.getElementById('mute-btn');
-  const volIcon  = document.getElementById('vol-icon');
-  const fsBtn    = document.getElementById('fs-btn');
-  const fsIcon   = document.getElementById('fs-icon');
-  const ytInput  = document.getElementById('yt-input');
-  const ytFill   = document.getElementById('yt-fill');
-  const ytBuf    = document.getElementById('yt-buf');
-  const ytThumb  = document.getElementById('yt-thumb');
-  const curTime  = document.getElementById('cur-time');
-  const durTime  = document.getElementById('dur-time');
-  const volSlider= document.getElementById('vol-slider');
-  const flash    = document.getElementById('play-flash');
-  const seekTT   = document.getElementById('seek-tt');
-  const ytProg   = document.getElementById('yt-progress');
+// ── initPlayer: used by modal (global IDs) ─────────────
+function initPlayer() { return initPlayerIn(document); }
+
+// ── initPlayerIn: scoped to a container ────────────────
+function initPlayerIn(root) {
+  const $ = id => root.getElementById ? root.getElementById(id) : root.querySelector('#'+id);
+  const player   = $('player');
+  const vid      = $('vid');
+  const controls = $('controls');
+  const playBtn  = $('play-btn');
+  const playIcon = $('play-icon');
+  const muteBtn  = $('mute-btn');
+  const volIcon  = $('vol-icon');
+  const fsBtn    = $('fs-btn');
+  const fsIcon   = $('fs-icon');
+  const ytInput  = $('yt-input');
+  const ytFill   = $('yt-fill');
+  const ytBuf    = $('yt-buf');
+  const ytThumb  = $('yt-thumb');
+  const curTime  = $('cur-time');
+  const durTime  = $('dur-time');
+  const volSlider= $('vol-slider');
+  const flash    = $('play-flash');
+  const seekTT   = $('seek-tt');
+  const ytProg   = $('yt-progress');
   if (!vid) return null;
 
   let hideTimer, isFs = false;
 
-  // ── SVG paths ──
   const IC_PLAY  = `<polygon points="5,3 19,12 5,21" fill="white"/>`;
   const IC_PAUSE = `<rect x="6" y="4" width="4" height="16" fill="white"/><rect x="14" y="4" width="4" height="16" fill="white"/>`;
   const IC_VOL2  = `<polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="white"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>`;
   const IC_VOL1  = `<polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="white"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="white" stroke-width="2" stroke-linecap="round" fill="none"/>`;
-  const IC_VOL0  = `<polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="white"/>`;
   const IC_MUTE  = `<polygon points="11,5 6,9 2,9 2,15 6,15 11,19" fill="white"/><line x1="23" y1="9" x2="17" y2="15" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="17" y1="9" x2="23" y2="15" stroke="white" stroke-width="2" stroke-linecap="round"/>`;
   const IC_FS_IN = `<polyline points="15,3 21,3 21,9" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><polyline points="9,21 3,21 3,15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="21" y1="3" x2="14" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="21" x2="10" y2="14" stroke="white" stroke-width="2" stroke-linecap="round"/>`;
   const IC_FS_OUT= `<polyline points="4,14 10,14 10,20" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><polyline points="20,10 14,10 14,4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="10" y1="14" x2="3" y2="21" stroke="white" stroke-width="2" stroke-linecap="round"/><line x1="21" y1="3" x2="14" y2="10" stroke="white" stroke-width="2" stroke-linecap="round"/>`;
@@ -1167,28 +1187,30 @@ function initPlayer() {
   function fmt(s){ return isNaN(s)||!isFinite(s)?'0:00':`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`; }
 
   function updateVolIcon() {
-    const v = vid.volume;
-    const m = vid.muted;
+    if (!volIcon) return;
+    const v = vid.volume, m = vid.muted;
     volIcon.innerHTML = m||v===0 ? IC_MUTE : v<0.5 ? IC_VOL1 : IC_VOL2;
-    volSlider.value = m ? 0 : v;
+    if (volSlider) volSlider.value = m ? 0 : v;
   }
 
   function updatePlayIcon() {
-    playIcon.innerHTML = vid.paused ? IC_PLAY : IC_PAUSE;
-    player.classList.toggle('paused', vid.paused);
+    if (playIcon) playIcon.innerHTML = vid.paused ? IC_PLAY : IC_PAUSE;
+    if (player)   player.classList.toggle('paused', vid.paused);
   }
 
   function updateFsIcon() {
-    fsIcon.innerHTML = isFs ? IC_FS_OUT : IC_FS_IN;
+    if (fsIcon) fsIcon.innerHTML = isFs ? IC_FS_OUT : IC_FS_IN;
   }
 
   function showControls() {
+    if (!controls) return;
     controls.classList.remove('hidden');
     clearTimeout(hideTimer);
     if (!vid.paused) hideTimer = setTimeout(() => controls.classList.add('hidden'), 3000);
   }
 
   function flashIcon(paused) {
+    if (!flash) return;
     flash.querySelector('svg').innerHTML = paused ? IC_PAUSE : IC_PLAY;
     flash.classList.remove('show');
     void flash.offsetWidth;
@@ -1202,16 +1224,12 @@ function initPlayer() {
     showControls();
   }
 
-  function toggleMute() {
-    vid.muted = !vid.muted;
-    updateVolIcon();
-  }
+  function toggleMute() { vid.muted = !vid.muted; updateVolIcon(); }
 
   function setVolume(delta) {
     vid.volume = Math.max(0, Math.min(1, vid.volume + delta));
     vid.muted = vid.volume === 0;
-    updateVolIcon();
-    showControls();
+    updateVolIcon(); showControls();
   }
 
   function seekBy(s) {
@@ -1220,74 +1238,65 @@ function initPlayer() {
   }
 
   function toggleFs() {
-    if (!isFs) player.requestFullscreen?.().catch(()=>{});
+    if (!isFs) player?.requestFullscreen?.().catch(()=>{});
     else document.exitFullscreen?.().catch(()=>{});
   }
 
-  // ── Bind events ──
-  vid.addEventListener('click', togglePlay);
-  playBtn.addEventListener('click', e => { e.stopPropagation(); togglePlay(); });
-  muteBtn.addEventListener('click', e => { e.stopPropagation(); toggleMute(); });
-  fsBtn.addEventListener('click',   e => { e.stopPropagation(); toggleFs(); });
-  player.addEventListener('mousemove', showControls);
-  player.addEventListener('mouseleave', () => { if (!vid.paused) controls.classList.add('hidden'); });
+  if (playBtn)  playBtn.addEventListener('click',  e => { e.stopPropagation(); togglePlay(); });
+  if (muteBtn)  muteBtn.addEventListener('click',  e => { e.stopPropagation(); toggleMute(); });
+  if (fsBtn)    fsBtn.addEventListener('click',    e => { e.stopPropagation(); toggleFs(); });
+  if (player) {
+    vid.addEventListener('click', togglePlay);
+    player.addEventListener('mousemove', showControls);
+    player.addEventListener('mouseleave', () => { if (!vid.paused) controls?.classList.add('hidden'); });
+  }
 
   vid.addEventListener('play',  () => { updatePlayIcon(); showControls(); });
-  vid.addEventListener('pause', () => { updatePlayIcon(); controls.classList.remove('hidden'); clearTimeout(hideTimer); });
-  vid.addEventListener('ended', () => { updatePlayIcon(); controls.classList.remove('hidden'); });
+  vid.addEventListener('pause', () => { updatePlayIcon(); controls?.classList.remove('hidden'); clearTimeout(hideTimer); });
+  vid.addEventListener('ended', () => { updatePlayIcon(); controls?.classList.remove('hidden'); });
 
   vid.addEventListener('timeupdate', () => {
     const pct = vid.duration ? vid.currentTime / vid.duration : 0;
-    ytInput.value = pct * 1000;
-    ytFill.style.width  = (pct * 100) + '%';
-    ytThumb.style.left  = (pct * 100) + '%';
-    curTime.textContent = fmt(vid.currentTime);
-    durTime.textContent = fmt(vid.duration);
+    if (ytInput) ytInput.value = pct * 1000;
+    if (ytFill)  ytFill.style.width  = (pct * 100) + '%';
+    if (ytThumb) ytThumb.style.left  = (pct * 100) + '%';
+    if (curTime) curTime.textContent = fmt(vid.currentTime);
+    if (durTime) durTime.textContent = fmt(vid.duration);
   });
 
   vid.addEventListener('progress', () => {
-    if (vid.buffered.length && vid.duration)
+    if (ytBuf && vid.buffered.length && vid.duration)
       ytBuf.style.width = (vid.buffered.end(vid.buffered.length-1) / vid.duration * 100) + '%';
   });
 
-  // Seek on input
-  ytInput.addEventListener('input', () => {
+  if (ytInput) ytInput.addEventListener('input', () => {
     const pct = ytInput.value / 1000;
     vid.currentTime = pct * vid.duration;
-    ytFill.style.width = (pct * 100) + '%';
-    ytThumb.style.left = (pct * 100) + '%';
+    if (ytFill)  ytFill.style.width = (pct * 100) + '%';
+    if (ytThumb) ytThumb.style.left = (pct * 100) + '%';
   });
 
-  // Seek tooltip on hover
-  ytProg.addEventListener('mousemove', e => {
+  if (ytProg) ytProg.addEventListener('mousemove', e => {
     const rect = ytProg.getBoundingClientRect();
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    seekTT.textContent = fmt(pct * (vid.duration || 0));
-    seekTT.style.left = (pct * 100) + '%';
+    if (seekTT) { seekTT.textContent = fmt(pct * (vid.duration||0)); seekTT.style.left = (pct*100)+'%'; }
   });
 
-  // Volume slider
-  volSlider.addEventListener('input', e => {
+  if (volSlider) volSlider.addEventListener('input', e => {
     e.stopPropagation();
     vid.volume = parseFloat(volSlider.value);
     vid.muted = vid.volume === 0;
     updateVolIcon();
   });
 
-  // Fullscreen change
   document.addEventListener('fullscreenchange', () => {
     isFs = !!document.fullscreenElement;
-    player.classList.toggle('is-fs', isFs);
+    player?.classList.toggle('is-fs', isFs);
     updateFsIcon();
-    if (!isFs) controls.classList.remove('hidden');
+    if (!isFs) controls?.classList.remove('hidden');
   });
 
-  // Init icons
-  updatePlayIcon();
-  updateVolIcon();
-  updateFsIcon();
-  showControls();
-
+  updatePlayIcon(); updateVolIcon(); updateFsIcon(); showControls();
   return { togglePlay, toggleMute, toggleFs, seekBy, setVolume };
 }
 
@@ -1333,32 +1342,22 @@ function onKey(e) {
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-prev').addEventListener('click', prev);
 document.getElementById('modal-next').addEventListener('click', next);
-document.getElementById('mob-prev').addEventListener('click', prev);
-document.getElementById('mob-next').addEventListener('click', next);
 
 document.getElementById('shortcuts-btn').addEventListener('click', () => {
   document.getElementById('shortcuts-panel').classList.toggle('show');
 });
 
-// Close on backdrop click (desktop only)
+// Close on backdrop click
 modal.addEventListener('click', e => {
-  if (!isMobile() && (e.target === modal || e.target.classList.contains('modal-inner'))) closeModal();
+  if (e.target === modal || e.target.classList.contains('modal-inner')) closeModal();
 });
 
-// Swipe support
-let touchStartX = 0, touchStartY = 0;
-modal.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
-
+// Desktop swipe support in modal
+let touchStartX = 0;
+modal.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
 modal.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  // Only horizontal swipe (not on progress bar)
-  if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-    dx < 0 ? next() : prev();
-  }
+  if (Math.abs(dx) > 60) dx < 0 ? next() : prev();
 }, { passive: true });
 
 loadProject();
