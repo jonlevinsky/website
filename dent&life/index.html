@@ -49,7 +49,7 @@
   <meta property="og:title" content="Dentální laboratoř Dent&Life - Benešov a Praha">
   <meta property="og:description"
     content="Moderní dentální laboratoř s pobočkami v Benešově a Praze. Komplexní protetický servis s důrazem na estetiku a individuální přístup. Používáme prémiové materiály předních světových výrobců.">
-  <meta property="og:image" content="https://laborator-dentlife.cz/res/dent-logo-dark.png">
+  <meta property="og:image" content="https://laborator-dentlife.cz/res/logo-dark.png">
   <meta property="og:locale" content="cs_CZ">
   <meta property="og:site_name" content="Dentální laboratoř Dent&Life">
 
@@ -360,19 +360,19 @@
       vertical-align: middle;
     }
 
-    .dent-logo-light {
+    .logo-light {
       color: white;
     }
 
-    .dent-logo-light span {
+    .logo-light span {
       color: rgba(255, 255, 255, 0.6);
     }
 
-    .dent-logo-dark {
+    .logo-dark {
       color: var(--foreground);
     }
 
-    .dent-logo-dark span {
+    .logo-dark span {
       color: var(--muted-foreground);
     }
 
@@ -2083,7 +2083,7 @@
     "alternateName": "Dent&Life",
     "description": "Moderní dentální laboratoř specializující se na fixní a snímatelnou protetiku, metalokeramiku, celokeramiku a implantátové práce. Používáme prémiové materiály Ivoclar Vivadent, Aman Dirnbach, Renfer a Kavo.",
     "url": "https://laborator-dentlife.cz",
-    "logo": "https://laborator-dentlife.cz/res/dent-logo-dark.png",
+    "logo": "https://laborator-dentlife.cz/res/logo-dark.png",
     "image": "https://laborator-dentlife.cz/res/og-image.jpg",
     "telephone": ["+420 608 547 489", "+420 723 159 128"],
     "email": "dentlife@email.cz",
@@ -2167,7 +2167,7 @@
   </div>
   <header class="header" id="header">
     <div class="header-container">
-      <a href="#hero" class="logo dent-logo-light" id="logo"><img src="./res/dent-logo-light.png"
+      <a href="#hero" class="logo logo-light" id="logo"><img src="./res/logo-light.png"
           alt="Dent&Life Logo"></a>
       <nav class="nav" id="nav">
         <a href="#sluzby" class="nav-link nav-link-light">Služby</a>
@@ -2640,7 +2640,7 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-top">
-        <a href="#" class="footer-logo"><img src="./res/dent-logo-light.png" alt="Dent&Life Logo"></a>
+        <a href="#" class="footer-logo"><img src="./res/logo-light.png" alt="Dent&Life Logo"></a>
         <nav class="footer-nav">
           <a href="#sluzby">Služby</a>
           <a href="#o-nas">O nás</a>
@@ -2736,9 +2736,9 @@
 
       if (isScrolled) {
         header.classList.add('scrolled');
-        logo.classList.remove('dent-logo-light');
-        logo.classList.add('dent-logo-dark');
-        logo.querySelector('img').src = './res/dent-logo-dark.png';
+        logo.classList.remove('logo-light');
+        logo.classList.add('logo-dark');
+        logo.querySelector('img').src = './res/logo-dark.png';
         headerBtn.classList.remove('btn-header-light');
         headerBtn.classList.add('btn-header-dark');
         mobileToggle.classList.remove('mobile-toggle-light');
@@ -2755,9 +2755,9 @@
         });
       } else {
         header.classList.remove('scrolled');
-        logo.classList.remove('dent-logo-dark');
-        logo.classList.add('dent-logo-light');
-        logo.querySelector('img').src = './res/dent-logo-light.png';
+        logo.classList.remove('logo-dark');
+        logo.classList.add('logo-light');
+        logo.querySelector('img').src = './res/logo-light.png';
         headerBtn.classList.remove('btn-header-dark');
         headerBtn.classList.add('btn-header-light');
         mobileToggle.classList.remove('mobile-toggle-dark');
@@ -2786,9 +2786,9 @@
         menuIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />';
         header.classList.add('menu-open');
         // Logo změní na tmavé při otevření mobilního menu
-        logo.classList.remove('dent-logo-light');
-        logo.classList.add('dent-logo-dark');
-        logo.querySelector('img').src = './res/dent-logo-dark.png';
+        logo.classList.remove('logo-light');
+        logo.classList.add('logo-dark');
+        logo.querySelector('img').src = './res/logo-dark.png';
         mobileToggle.classList.remove('mobile-toggle-light');
         mobileToggle.classList.add('mobile-toggle-dark');
       } else {

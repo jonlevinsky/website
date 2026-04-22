@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="cs">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,18 @@
   <link rel="icon" type="image/png" href="./res/icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
   <style>
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
+
     :root {
       --background: #ffffff;
       --foreground: #171717;
@@ -30,13 +36,19 @@
       --danger: #ef4444;
       --danger-bg: #fee2e2;
       --warning: #f59e0b;
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-      --shadow-md: 0 4px 16px -2px rgba(0,0,0,0.08);
-      --shadow-lg: 0 12px 32px -4px rgba(0,0,0,0.12);
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.12);
       --radius: 1rem;
       --radius-sm: 0.75rem;
     }
-    html { scroll-behavior: smooth; overflow: hidden; height: 100%; }
+
+    html {
+      scroll-behavior: smooth;
+      overflow: hidden;
+      height: 100%;
+    }
+
     body {
       font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--muted);
@@ -50,10 +62,12 @@
       scrollbar-width: none;
       -ms-overflow-style: none;
     }
+
     body::-webkit-scrollbar {
       display: none;
       width: 0;
     }
+
     /* Custom scroll track */
     .scroll-track {
       position: fixed;
@@ -65,6 +79,7 @@
       pointer-events: none;
       padding: 4px 3px;
     }
+
     .scroll-thumb {
       position: absolute;
       right: 3px;
@@ -75,13 +90,16 @@
       transition: opacity 0.5s, width 0.2s, background 0.2s, box-shadow 0.2s, right 0.2s;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1), inset 0 0 0 0.5px rgba(255, 255, 255, 0.15);
     }
+
     .scroll-thumb.visible {
       opacity: 0.8;
     }
+
     .scroll-track:hover {
       pointer-events: auto;
       cursor: pointer;
     }
+
     .scroll-track:hover .scroll-thumb {
       width: 10px;
       right: 2px;
@@ -89,6 +107,7 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18), inset 0 0 0 0.5px rgba(255, 255, 255, 0.2);
       opacity: 1;
     }
+
     .scroll-thumb:active {
       background: rgba(23, 23, 23, 0.55);
       box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25), inset 0 0 0 0.5px rgba(255, 255, 255, 0.25);
@@ -102,8 +121,9 @@
       position: sticky;
       top: 0;
       z-index: 50;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
     }
+
     .admin-header-inner {
       max-width: 80rem;
       margin: 0 auto;
@@ -113,38 +133,45 @@
       justify-content: space-between;
       gap: 1.5rem;
     }
+
     .admin-header-left {
       display: flex;
       align-items: center;
       gap: 1.25rem;
     }
+
     .admin-header-logo img {
       height: 2rem;
       vertical-align: middle;
     }
+
     .admin-header-divider {
       width: 1px;
       height: 1.5rem;
-      background: rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.2);
     }
+
     .admin-header-title {
       font-size: 0.9375rem;
       font-weight: 500;
-      color: rgba(255,255,255,0.7);
+      color: rgba(255, 255, 255, 0.7);
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
+
     .admin-header-title svg {
       width: 1rem;
       height: 1rem;
       color: var(--accent);
     }
+
     .admin-header-right {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
+
     .btn-back {
       display: inline-flex;
       align-items: center;
@@ -152,19 +179,21 @@
       padding: 0.5rem 1rem;
       font-size: 0.8125rem;
       font-weight: 500;
-      color: rgba(255,255,255,0.6);
+      color: rgba(255, 255, 255, 0.6);
       text-decoration: none;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255, 255, 255, 0.15);
       border-radius: 9999px;
       transition: all 0.3s;
       background: none;
       cursor: pointer;
     }
+
     .btn-back:hover {
       color: white;
-      border-color: rgba(255,255,255,0.4);
-      background: rgba(255,255,255,0.05);
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.05);
     }
+
     .btn-back svg {
       width: 0.875rem;
       height: 0.875rem;
@@ -176,6 +205,7 @@
       border-bottom: 1px solid var(--border);
       padding: 1.25rem 0;
     }
+
     .stats-bar-inner {
       max-width: 80rem;
       margin: 0 auto;
@@ -185,11 +215,13 @@
       gap: 2.5rem;
       flex-wrap: wrap;
     }
+
     .stat-item {
       display: flex;
       align-items: center;
       gap: 0.75rem;
     }
+
     .stat-icon {
       width: 2.5rem;
       height: 2.5rem;
@@ -198,28 +230,34 @@
       align-items: center;
       justify-content: center;
     }
+
     .stat-icon svg {
       width: 1.125rem;
       height: 1.125rem;
     }
+
     .stat-icon.accent {
       background: var(--accent-light);
       color: var(--accent);
     }
+
     .stat-icon.warning {
       background: #fef3c7;
       color: var(--warning);
     }
+
     .stat-icon.success {
       background: var(--success-bg);
       color: var(--success);
     }
+
     .stat-value {
       font-size: 1.25rem;
       font-weight: 700;
       color: var(--foreground);
       line-height: 1.2;
     }
+
     .stat-label {
       font-size: 0.75rem;
       color: var(--muted-foreground);
@@ -237,16 +275,31 @@
       gap: 2rem;
       align-items: start;
     }
+
     @media (max-width: 1024px) {
       .admin-layout {
         grid-template-columns: 1fr;
       }
     }
+
     @media (max-width: 640px) {
-      .admin-layout { padding: 1rem; gap: 1.25rem; }
-      .admin-header-inner { padding: 1rem; }
-      .stats-bar-inner { padding: 0 1rem; gap: 1.5rem; }
-      .admin-header-title span { display: none; }
+      .admin-layout {
+        padding: 1rem;
+        gap: 1.25rem;
+      }
+
+      .admin-header-inner {
+        padding: 1rem;
+      }
+
+      .stats-bar-inner {
+        padding: 0 1rem;
+        gap: 1.5rem;
+      }
+
+      .admin-header-title span {
+        display: none;
+      }
     }
 
     /* ==================== FORM PANEL ==================== */
@@ -259,6 +312,7 @@
       top: 5.5rem;
       box-shadow: var(--shadow-md);
     }
+
     .form-panel-header {
       padding: 1.5rem 1.75rem;
       border-bottom: 1px solid var(--border);
@@ -266,6 +320,7 @@
       align-items: center;
       justify-content: space-between;
     }
+
     .form-panel-header h2 {
       font-size: 1.125rem;
       font-weight: 600;
@@ -273,18 +328,22 @@
       align-items: center;
       gap: 0.5rem;
     }
+
     .form-panel-header h2 .dot {
       width: 8px;
       height: 8px;
       border-radius: 50%;
       background: var(--accent);
     }
+
     .form-body {
       padding: 1.75rem;
     }
+
     .form-group {
       margin-bottom: 1.25rem;
     }
+
     .form-group label {
       display: block;
       margin-bottom: 0.375rem;
@@ -294,6 +353,7 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
     .form-input {
       width: 100%;
       padding: 0.75rem 1rem;
@@ -306,14 +366,17 @@
       transition: all 0.2s;
       outline: none;
     }
+
     .form-input:focus {
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-light);
     }
+
     .form-input::placeholder {
       color: var(--muted-foreground);
       opacity: 0.6;
     }
+
     textarea.form-input {
       resize: vertical;
       min-height: 100px;
@@ -324,6 +387,7 @@
     .rating-group {
       margin-bottom: 1.25rem;
     }
+
     .rating-group label {
       display: block;
       margin-bottom: 0.5rem;
@@ -333,11 +397,13 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
     .star-rating-input {
       display: flex;
       gap: 0.25rem;
       align-items: center;
     }
+
     .star-btn {
       position: relative;
       background: none;
@@ -351,16 +417,22 @@
       justify-content: center;
       transition: transform 0.15s;
     }
-    .star-btn:hover { transform: scale(1.2); }
+
+    .star-btn:hover {
+      transform: scale(1.2);
+    }
+
     .star-btn svg {
       width: 1.75rem;
       height: 1.75rem;
       transition: all 0.15s;
     }
+
     .star-btn .star-bg {
       color: var(--border);
       fill: var(--border);
     }
+
     .star-btn .star-fill {
       position: absolute;
       top: 50%;
@@ -372,8 +444,15 @@
       filter: drop-shadow(0 1px 2px rgba(245, 158, 11, 0.4));
       transition: clip-path 0.15s;
     }
-    .star-btn.full .star-fill { clip-path: inset(0 0% 0 0); }
-    .star-btn.half .star-fill { clip-path: inset(0 50% 0 0); }
+
+    .star-btn.full .star-fill {
+      clip-path: inset(0 0% 0 0);
+    }
+
+    .star-btn.half .star-fill {
+      clip-path: inset(0 50% 0 0);
+    }
+
     .rating-value {
       margin-left: 0.75rem;
       font-size: 1.125rem;
@@ -388,6 +467,7 @@
       gap: 0.75rem;
       margin-top: 1.5rem;
     }
+
     .btn {
       display: inline-flex;
       align-items: center;
@@ -404,49 +484,60 @@
       text-decoration: none;
       line-height: 1;
     }
+
     .btn svg {
       width: 1rem;
       height: 1rem;
     }
+
     .btn-primary {
       background: var(--accent);
       color: white;
       box-shadow: 0 2px 8px rgba(202, 72, 72, 0.3);
     }
+
     .btn-primary:hover {
       background: var(--accent-hover);
       box-shadow: 0 4px 16px rgba(202, 72, 72, 0.4);
       transform: translateY(-1px);
     }
+
     .btn-secondary {
       background: var(--muted);
       color: var(--foreground);
       border: 1px solid var(--border);
     }
+
     .btn-secondary:hover {
       background: var(--border);
     }
+
     .btn-ghost {
       background: none;
       color: var(--muted-foreground);
       padding: 0.5rem 0.75rem;
     }
+
     .btn-ghost:hover {
       background: var(--muted);
       color: var(--foreground);
     }
+
     .btn-danger {
       background: var(--danger-bg);
       color: var(--danger);
     }
+
     .btn-danger:hover {
       background: #fecaca;
     }
+
     .btn-success {
       background: var(--success);
       color: white;
       box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
     }
+
     .btn-success:hover {
       background: #16a34a;
       transform: translateY(-1px);
@@ -456,6 +547,7 @@
     .reviews-panel {
       min-width: 0;
     }
+
     .reviews-panel-header {
       display: flex;
       align-items: center;
@@ -464,15 +556,18 @@
       flex-wrap: wrap;
       gap: 0.75rem;
     }
+
     .reviews-panel-header h2 {
       font-size: 1.25rem;
       font-weight: 600;
       color: var(--foreground);
     }
+
     .reviews-panel-actions {
       display: flex;
       gap: 0.5rem;
     }
+
     .reviews-grid {
       display: grid;
       gap: 1rem;
@@ -488,6 +583,7 @@
       position: relative;
       overflow: hidden;
     }
+
     .review-card::before {
       content: '';
       position: absolute;
@@ -499,9 +595,11 @@
       opacity: 0;
       transition: opacity 0.3s;
     }
+
     .review-card {
       padding: 2.5rem;
-      background: #ffffff; /* Explicitly light like on the web */
+      background: #ffffff;
+      /* Explicitly light like on the web */
       border-radius: 1.5rem;
       border: none;
       box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(0, 0, 0, 0.03);
@@ -514,23 +612,35 @@
       margin-bottom: 0;
       color: #171717;
     }
+
     .review-card:hover {
       transform: translateY(-8px);
       box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
     }
+
     .review-stars {
       display: flex;
       gap: 0.25rem;
       margin-bottom: 1.5rem;
     }
+
     .review-stars svg {
       width: 1.125rem;
       height: 1.125rem;
       color: #f59e0b;
       filter: drop-shadow(0 1px 2px rgba(245, 158, 11, 0.3));
     }
-    .review-stars svg.star-full, .review-stars svg.star-half { fill: #f59e0b; }
-    .review-stars svg.star-empty { fill: none; stroke: #f59e0b; }
+
+    .review-stars svg.star-full,
+    .review-stars svg.star-half {
+      fill: #f59e0b;
+    }
+
+    .review-stars svg.star-empty {
+      fill: none;
+      stroke: #f59e0b;
+    }
+
     .review-text {
       color: #171717;
       line-height: 1.9;
@@ -540,17 +650,20 @@
       z-index: 1;
       font-style: italic;
     }
+
     .review-divider {
       height: 1px;
-      background: rgba(0,0,0,0.06);
+      background: rgba(0, 0, 0, 0.06);
       margin-bottom: 1.5rem;
       margin-top: auto;
     }
+
     .review-author {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
+
     .review-avatar {
       width: 3.5rem;
       height: 3.5rem;
@@ -565,25 +678,29 @@
       letter-spacing: 0.5px;
       border: 2px solid #ca4848;
     }
+
     .review-info {
       display: flex;
       flex-direction: column;
     }
+
     .review-name {
       font-size: 1rem;
       font-weight: 600;
       color: #171717;
     }
+
     .review-role {
       font-size: 0.875rem;
       color: #737373;
     }
+
     .review-card-actions {
       display: flex;
       gap: 0.5rem;
       padding-top: 1.5rem;
       margin-top: 1.5rem;
-      border-top: 1px dashed rgba(0,0,0,0.1);
+      border-top: 1px dashed rgba(0, 0, 0, 0.1);
     }
 
     /* ==================== EXPORT PANEL ==================== */
@@ -595,6 +712,7 @@
       margin-top: 1.25rem;
       box-shadow: var(--shadow-sm);
     }
+
     .export-panel-header {
       padding: 1.25rem 1.75rem;
       border-bottom: 1px solid var(--border);
@@ -602,6 +720,7 @@
       align-items: center;
       justify-content: space-between;
     }
+
     .export-panel-header h3 {
       font-size: 0.9375rem;
       font-weight: 600;
@@ -609,14 +728,17 @@
       align-items: center;
       gap: 0.5rem;
     }
+
     .export-panel-header h3 svg {
       width: 1.125rem;
       height: 1.125rem;
       color: var(--muted-foreground);
     }
+
     .export-body {
       padding: 1.25rem 1.75rem;
     }
+
     .json-output {
       width: 100%;
       min-height: 180px;
@@ -632,9 +754,11 @@
       outline: none;
       transition: border-color 0.2s;
     }
+
     .json-output:focus {
       border-color: var(--accent);
     }
+
     .export-actions {
       display: flex;
       gap: 0.5rem;
@@ -651,6 +775,7 @@
       flex-direction: column;
       gap: 0.75rem;
     }
+
     .toast {
       display: flex;
       align-items: center;
@@ -659,30 +784,57 @@
       background: var(--foreground);
       color: var(--background);
       border-radius: var(--radius-sm);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
       font-size: 0.875rem;
       font-weight: 500;
       animation: toast-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       min-width: 280px;
     }
+
     .toast.toast-out {
       animation: toast-out 0.3s cubic-bezier(0.7, 0, 0.84, 0) forwards;
     }
+
     .toast svg {
       width: 1.25rem;
       height: 1.25rem;
       flex-shrink: 0;
     }
-    .toast.success svg { color: var(--success); }
-    .toast.danger svg { color: var(--danger); }
-    .toast.info svg { color: #60a5fa; }
-    @keyframes toast-in {
-      from { opacity: 0; transform: translateY(1rem) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+
+    .toast.success svg {
+      color: var(--success);
     }
+
+    .toast.danger svg {
+      color: var(--danger);
+    }
+
+    .toast.info svg {
+      color: #60a5fa;
+    }
+
+    @keyframes toast-in {
+      from {
+        opacity: 0;
+        transform: translateY(1rem) scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
     @keyframes toast-out {
-      from { opacity: 1; transform: translateY(0) scale(1); }
-      to { opacity: 0; transform: translateY(1rem) scale(0.95); }
+      from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+
+      to {
+        opacity: 0;
+        transform: translateY(1rem) scale(0.95);
+      }
     }
 
     /* ==================== EMPTY STATE ==================== */
@@ -693,17 +845,20 @@
       border-radius: var(--radius);
       border: 2px dashed var(--border);
     }
+
     .empty-state svg {
       width: 3rem;
       height: 3rem;
       color: var(--muted-foreground);
       margin-bottom: 1rem;
     }
+
     .empty-state h3 {
       font-size: 1.125rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
     }
+
     .empty-state p {
       color: var(--muted-foreground);
       font-size: 0.875rem;
@@ -713,17 +868,19 @@
     .confirm-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.5);
+      background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(4px);
       z-index: 150;
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s;
     }
+
     .confirm-overlay.active {
       opacity: 1;
       visibility: visible;
     }
+
     .confirm-dialog {
       position: fixed;
       top: 50%;
@@ -738,24 +895,28 @@
       opacity: 0;
       visibility: hidden;
       transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
       text-align: center;
     }
+
     .confirm-dialog.active {
       opacity: 1;
       visibility: visible;
       transform: translate(-50%, -50%) scale(1);
     }
+
     .confirm-dialog h3 {
       font-size: 1.125rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
     }
+
     .confirm-dialog p {
       color: var(--muted-foreground);
       font-size: 0.875rem;
       margin-bottom: 1.5rem;
     }
+
     .confirm-dialog-actions {
       display: flex;
       gap: 0.75rem;
@@ -766,10 +927,19 @@
     .review-card {
       animation: card-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+
     @keyframes card-in {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
+
     /* ==================== LOGIN SCREEN ==================== */
     .login-screen {
       position: fixed;
@@ -781,6 +951,7 @@
       z-index: 99999;
       padding: 1rem;
     }
+
     .login-card {
       background: var(--background);
       border-radius: var(--radius);
@@ -791,22 +962,26 @@
       box-shadow: var(--shadow-lg);
       text-align: center;
     }
+
     .login-card svg {
       width: 3rem;
       height: 3rem;
       color: var(--accent);
       margin-bottom: 1.5rem;
     }
+
     .login-card h2 {
       font-size: 1.5rem;
       font-weight: 600;
       margin-bottom: 0.5rem;
     }
+
     .login-card p {
       color: var(--muted-foreground);
       font-size: 0.875rem;
       margin-bottom: 2rem;
     }
+
     .login-input {
       width: 100%;
       padding: 0.875rem 1rem;
@@ -821,11 +996,13 @@
       letter-spacing: 2px;
       transition: all 0.2s;
     }
+
     .login-input:focus {
       outline: none;
       border-color: var(--accent);
       box-shadow: 0 0 0 3px var(--accent-light);
     }
+
     .login-error {
       color: var(--danger);
       font-size: 0.8125rem;
@@ -833,39 +1010,135 @@
       display: none;
       font-weight: 500;
     }
-    
+
     /* ==================== TABS & SETTINGS ==================== */
     .nav-tab {
-      background: none; border: none; color: rgba(255,255,255,0.6); font-size: 0.9375rem; font-weight: 500; cursor: pointer; padding: 0.5rem 0.5rem; border-bottom: 2px solid transparent; transition: all 0.2s;
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.5rem 0.5rem;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
     }
-    .nav-tab:hover { color: white; }
-    .nav-tab.active { color: white; border-bottom-color: var(--accent); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-    
+
+    .nav-tab:hover {
+      color: white;
+    }
+
+    .nav-tab.active {
+      color: white;
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     .setting-card {
-      background: var(--background); border-radius: var(--radius); border: 1px solid var(--border); padding: 1.75rem; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: var(--shadow-sm); margin: 0 auto;
+      background: var(--background);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 1.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      box-shadow: var(--shadow-sm);
+      margin: 0 auto;
     }
-    .setting-info { flex: 1; margin-right: 2rem; }
-    .setting-info h3 { font-size: 1.125rem; font-weight: 600; margin-bottom: 0.25rem; }
-    .setting-info p { color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 1rem; }
-    .setting-input { width: 100%; max-width: 500px; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: inherit; margin-top: 0.5rem; }
-    
-    .toggle-switch { position: relative; display: inline-block; width: 50px; height: 28px; flex-shrink: 0; }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--border); transition: .4s; border-radius: 34px; }
-    .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: var(--shadow-sm); }
-    input:checked + .toggle-slider { background-color: var(--accent); }
-    input:checked + .toggle-slider:before { transform: translateX(22px); }
+
+    .setting-info {
+      flex: 1;
+      margin-right: 2rem;
+    }
+
+    .setting-info h3 {
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .setting-info p {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+
+    .setting-input {
+      width: 100%;
+      max-width: 500px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      margin-top: 0.5rem;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+    }
+
+    input:checked+.toggle-slider {
+      background-color: var(--accent);
+    }
+
+    input:checked+.toggle-slider:before {
+      transform: translateX(22px);
+    }
   </style>
 </head>
+
 <body>
   <div id="login-screen" class="login-screen">
     <div class="login-card">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+      </svg>
       <h2>Administrace</h2>
       <p>Pro přístup zadejte administrátorské heslo.</p>
-      
+
       <form id="loginForm">
         <input type="password" id="loginPassword" class="login-input" placeholder="Heslo" autofocus required>
         <div id="loginError" class="login-error">Nesprávné heslo</div>
@@ -875,206 +1148,275 @@
   </div>
 
   <div id="app" style="display: none;">
-    <div class="scroll-track" id="scrollTrack"><div class="scroll-thumb" id="scrollThumb"></div></div>
+    <div class="scroll-track" id="scrollTrack">
+      <div class="scroll-thumb" id="scrollThumb"></div>
+    </div>
 
     <!-- Header -->
     <header class="admin-header">
-    <div class="admin-header-inner">
-      <div class="admin-header-left">
-        <a href="./index.html" class="admin-header-logo">
-          <img src="./res/dent-logo-light.png" alt="Dent&Life">
-        </a>
-        <div class="admin-header-divider"></div>
-        <div class="admin-header-nav" style="display:flex;gap:1.5rem;margin-left:0.5rem;">
-          <button class="nav-tab active" onclick="switchTab('reviews')">Recenze</button>
-          <button class="nav-tab" onclick="switchTab('settings')">Nastavení</button>
-        </div>
-      </div>
-      <div class="admin-header-right">
-        <a href="./index.html" class="btn-back">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
-          Zpět na web
-        </a>
-      </div>
-    </div>
-  </header>
-
-<div id="tab-reviews" class="tab-content active">
-  <!-- Stats Bar -->
-  <div class="stats-bar">
-    <div class="stats-bar-inner">
-      <div class="stat-item">
-        <div class="stat-icon accent">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
-        </div>
-        <div>
-          <div class="stat-value" id="stat-total">0</div>
-          <div class="stat-label">Recenzí</div>
-        </div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-icon warning">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg>
-        </div>
-        <div>
-          <div class="stat-value" id="stat-avg">0</div>
-          <div class="stat-label">Průměr</div>
-        </div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-icon success">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <div>
-          <div class="stat-value" id="stat-five">0</div>
-          <div class="stat-label">5★ hodnocení</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Layout -->
-  <main class="admin-layout">
-
-    <!-- Left: Form -->
-    <div class="form-panel" id="formPanel">
-      <div class="form-panel-header">
-        <h2 id="formTitle"><span class="dot"></span> Přidat recenzi</h2>
-        <button class="btn btn-ghost" id="cancelEdit" style="display:none;">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-          Zrušit
-        </button>
-      </div>
-      <form class="form-body" id="reviewForm">
-        <input type="hidden" id="editId" value="">
-        <div class="form-group">
-          <label for="name">Jméno</label>
-          <input type="text" class="form-input" id="name" required placeholder="Květuše Hornová">
-        </div>
-        <div class="form-group">
-          <label for="role">Role / Místo</label>
-          <input type="text" class="form-input" id="role" required placeholder="Zákaznice, Praha">
-        </div>
-        <div class="form-group">
-          <label for="text">Text recenze</label>
-          <textarea class="form-input" id="text" required placeholder="Napište text recenze..."></textarea>
-        </div>
-        <div class="form-group">
-          <label for="reviewImage">Fotografie / Avatar (volitelné)</label>
-          <input type="file" class="form-input" id="reviewImage" accept="image/*">
-        </div>
-        <div class="rating-group">
-          <label>Hodnocení</label>
-          <div class="star-rating-input" id="ratingInput">
-            <button type="button" class="star-btn full" data-value="1">
-              <svg class="star-bg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <svg class="star-fill" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </button>
-            <button type="button" class="star-btn full" data-value="2">
-              <svg class="star-bg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <svg class="star-fill" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </button>
-            <button type="button" class="star-btn full" data-value="3">
-              <svg class="star-bg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <svg class="star-fill" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </button>
-            <button type="button" class="star-btn full" data-value="4">
-              <svg class="star-bg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <svg class="star-fill" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </button>
-            <button type="button" class="star-btn full" data-value="5">
-              <svg class="star-bg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-              <svg class="star-fill" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            </button>
-            <span class="rating-value" id="ratingDisplay">5.0</span>
+      <div class="admin-header-inner">
+        <div class="admin-header-left">
+          <a href="./index.html" class="admin-header-logo">
+            <img src="./res/logo-light.png" alt="Dent&Life">
+          </a>
+          <div class="admin-header-divider"></div>
+          <div class="admin-header-nav" style="display:flex;gap:1.5rem;margin-left:0.5rem;">
+            <button class="nav-tab active" onclick="switchTab('reviews')">Recenze</button>
+            <button class="nav-tab" onclick="switchTab('settings')">Nastavení</button>
           </div>
-          <input type="hidden" id="rating" value="5">
         </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary" id="submitBtn">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-            Přidat recenzi
-          </button>
+        <div class="admin-header-right">
+          <a href="./index.html" class="btn-back">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Zpět na web
+          </a>
         </div>
-      </form>
-    </div>
+      </div>
+    </header>
 
-    <!-- Right: Reviews List + Export -->
-    <div class="reviews-panel">
-      <div class="reviews-panel-header">
-        <h2 id="reviewsCount">Recenze (0)</h2>
-        <div class="reviews-panel-actions">
-          <button class="btn btn-secondary" onclick="importJson()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
-            Import
-          </button>
-          <button class="btn btn-success" onclick="downloadJson()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            Stáhnout JSON
-          </button>
+    <div id="tab-reviews" class="tab-content active">
+      <!-- Stats Bar -->
+      <div class="stats-bar">
+        <div class="stats-bar-inner">
+          <div class="stat-item">
+            <div class="stat-icon accent">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+              </svg>
+            </div>
+            <div>
+              <div class="stat-value" id="stat-total">0</div>
+              <div class="stat-label">Recenzí</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon warning">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+              </svg>
+            </div>
+            <div>
+              <div class="stat-value" id="stat-avg">0</div>
+              <div class="stat-label">Průměr</div>
+            </div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-icon success">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <div>
+              <div class="stat-value" id="stat-five">0</div>
+              <div class="stat-label">5★ hodnocení</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="reviews-grid" id="reviewsList"></div>
+      <!-- Main Layout -->
+      <main class="admin-layout">
 
-      <!-- Export Panel -->
-      <div class="export-panel">
-        <div class="export-panel-header">
-          <h3>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
-            JSON Export
-          </h3>
-          <button class="btn btn-ghost" onclick="copyJson()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-            Kopírovat
-          </button>
+        <!-- Left: Form -->
+        <div class="form-panel" id="formPanel">
+          <div class="form-panel-header">
+            <h2 id="formTitle"><span class="dot"></span> Přidat recenzi</h2>
+            <button class="btn btn-ghost" id="cancelEdit" style="display:none;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+              Zrušit
+            </button>
+          </div>
+          <form class="form-body" id="reviewForm">
+            <input type="hidden" id="editId" value="">
+            <div class="form-group">
+              <label for="name">Jméno</label>
+              <input type="text" class="form-input" id="name" required placeholder="Květuše Hornová">
+            </div>
+            <div class="form-group">
+              <label for="role">Role / Místo</label>
+              <input type="text" class="form-input" id="role" required placeholder="Zákaznice, Praha">
+            </div>
+            <div class="form-group">
+              <label for="text">Text recenze</label>
+              <textarea class="form-input" id="text" required placeholder="Napište text recenze..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="reviewImage">Fotografie / Avatar (volitelné)</label>
+              <input type="file" class="form-input" id="reviewImage" accept="image/*">
+            </div>
+            <div class="rating-group">
+              <label>Hodnocení</label>
+              <div class="star-rating-input" id="ratingInput">
+                <button type="button" class="star-btn full" data-value="1">
+                  <svg class="star-bg" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <svg class="star-fill" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                </button>
+                <button type="button" class="star-btn full" data-value="2">
+                  <svg class="star-bg" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <svg class="star-fill" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                </button>
+                <button type="button" class="star-btn full" data-value="3">
+                  <svg class="star-bg" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <svg class="star-fill" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                </button>
+                <button type="button" class="star-btn full" data-value="4">
+                  <svg class="star-bg" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <svg class="star-fill" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                </button>
+                <button type="button" class="star-btn full" data-value="5">
+                  <svg class="star-bg" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  <svg class="star-fill" viewBox="0 0 24 24">
+                    <path
+                      d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                </button>
+                <span class="rating-value" id="ratingDisplay">5.0</span>
+              </div>
+              <input type="hidden" id="rating" value="5">
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                </svg>
+                Přidat recenzi
+              </button>
+            </div>
+          </form>
         </div>
-        <div class="export-body">
-          <textarea class="json-output" id="jsonOutput" readonly></textarea>
+
+        <!-- Right: Reviews List + Export -->
+        <div class="reviews-panel">
+          <div class="reviews-panel-header">
+            <h2 id="reviewsCount">Recenze (0)</h2>
+            <div class="reviews-panel-actions">
+              <button class="btn btn-secondary" onclick="importJson()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                Import
+              </button>
+              <button class="btn btn-success" onclick="downloadJson()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Stáhnout JSON
+              </button>
+            </div>
+          </div>
+
+          <div class="reviews-grid" id="reviewsList"></div>
+
+          <!-- Export Panel -->
+          <div class="export-panel">
+            <div class="export-panel-header">
+              <h3>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                JSON Export
+              </h3>
+              <button class="btn btn-ghost" onclick="copyJson()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                  stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                Kopírovat
+              </button>
+            </div>
+            <div class="export-body">
+              <textarea class="json-output" id="jsonOutput" readonly></textarea>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- Settings Tab -->
+    <div id="tab-settings" class="tab-content">
+      <div class="admin-layout" style="grid-template-columns: 1fr; max-width: 800px; padding-top: 3rem;">
+        <h2 style="margin-bottom: 1.5rem;">Obecné nastavení webu</h2>
+        <div class="setting-card">
+          <div class="setting-info">
+            <h3>Režim údržby</h3>
+            <p>Aktivací tohoto režimu skryjete hlavní stránku před návštěvníky a uvidí pouze zprávu o probíhající
+              údržbě. Vy jako admin sem do nastavení vždy budete mít přístup.</p>
+            <textarea id="maintenanceMessage" class="setting-input" rows="2" placeholder="Zpráva údržby..."></textarea>
+            <div style="margin-top: 1.5rem;">
+              <button class="btn btn-primary" onclick="saveConfig()">Uložit nastavení</button>
+            </div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="maintenanceToggle">
+            <span class="toggle-slider"></span>
+          </label>
         </div>
       </div>
     </div>
 
-  </main>
-</div>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
 
-<!-- Settings Tab -->
-<div id="tab-settings" class="tab-content">
-  <div class="admin-layout" style="grid-template-columns: 1fr; max-width: 800px; padding-top: 3rem;">
-    <h2 style="margin-bottom: 1.5rem;">Obecné nastavení webu</h2>
-    <div class="setting-card">
-      <div class="setting-info">
-        <h3>Režim údržby</h3>
-        <p>Aktivací tohoto režimu skryjete hlavní stránku před návštěvníky a uvidí pouze zprávu o probíhající údržbě. Vy jako admin sem do nastavení vždy budete mít přístup.</p>
-        <textarea id="maintenanceMessage" class="setting-input" rows="2" placeholder="Zpráva údržby..."></textarea>
-        <div style="margin-top: 1.5rem;">
-          <button class="btn btn-primary" onclick="saveConfig()">Uložit nastavení</button>
-        </div>
+    <!-- Confirm Dialog -->
+    <div class="confirm-overlay" id="confirmOverlay"></div>
+    <div class="confirm-dialog" id="confirmDialog">
+      <h3 id="confirmTitle">Smazat recenzi?</h3>
+      <p id="confirmText">Tato akce je nevratná.</p>
+      <div class="confirm-dialog-actions">
+        <button class="btn btn-secondary" id="confirmCancel">Zrušit</button>
+        <button class="btn btn-danger" id="confirmOk">Smazat</button>
       </div>
-      <label class="toggle-switch">
-        <input type="checkbox" id="maintenanceToggle">
-        <span class="toggle-slider"></span>
-      </label>
     </div>
-  </div>
-</div>
 
-  <!-- Toast Container -->
-  <div class="toast-container" id="toastContainer"></div>
-
-  <!-- Confirm Dialog -->
-  <div class="confirm-overlay" id="confirmOverlay"></div>
-  <div class="confirm-dialog" id="confirmDialog">
-    <h3 id="confirmTitle">Smazat recenzi?</h3>
-    <p id="confirmText">Tato akce je nevratná.</p>
-    <div class="confirm-dialog-actions">
-      <button class="btn btn-secondary" id="confirmCancel">Zrušit</button>
-      <button class="btn btn-danger" id="confirmOk">Smazat</button>
-    </div>
-  </div>
-
-  <!-- Hidden file input for import -->
-  <input type="file" id="fileInput" accept=".json" style="display:none;">
+    <!-- Hidden file input for import -->
+    <input type="file" id="fileInput" accept=".json" style="display:none;">
   </div> <!-- /#app -->
 
   <script>
@@ -1095,7 +1437,7 @@
         loginScreen.style.display = 'none';
         appWrapper.style.display = 'block';
         showToast('Úspěšně přihlášeno', 'success');
-        
+
         // Inicializovat až po přihlášení
         init();
         // Scrollbar se aktualizuje automaticky přes scroll/resize listenery
@@ -1104,7 +1446,7 @@
         loginError.style.display = 'block';
         loginPassword.value = '';
         loginPassword.focus();
-        
+
         // Efekt zatřesení
         const card = document.querySelector('.login-card');
         card.style.transform = 'translateX(-10px)';
@@ -1195,7 +1537,7 @@
           },
           body: JSON.stringify(reviews)
         });
-        
+
         if (response.ok) {
           showToast('Uloženo na server', 'success');
         } else {
@@ -1236,7 +1578,7 @@
     }
 
     starBtns.forEach(btn => {
-      btn.addEventListener('click', function(e) {
+      btn.addEventListener('click', function (e) {
         const val = parseInt(this.dataset.value);
         const rect = this.getBoundingClientRect();
         const isHalf = (e.clientX - rect.left) < rect.width / 2;
@@ -1248,15 +1590,45 @@
     updateStarsUI(5);
 
     // ==================== FORM SUBMIT ====================
-    form.addEventListener('submit', async function(e) {
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      
+
       const fileInput = document.getElementById('reviewImage');
       let imageBase64 = null;
-      if(fileInput.files.length > 0) {
+      if (fileInput.files.length > 0) {
         imageBase64 = await new Promise((resolve) => {
           const reader = new FileReader();
-          reader.onload = (e) => resolve(e.target.result);
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              const canvas = document.createElement('canvas');
+              const MAX_WIDTH = 250;
+              const MAX_HEIGHT = 250;
+              let width = img.width;
+              let height = img.height;
+
+              if (width > height) {
+                if (width > MAX_WIDTH) {
+                  height *= MAX_WIDTH / width;
+                  width = MAX_WIDTH;
+                }
+              } else {
+                if (height > MAX_HEIGHT) {
+                  width *= MAX_HEIGHT / height;
+                  height = MAX_HEIGHT;
+                }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              // Compress to WebP (much smaller base64 string)
+              resolve(canvas.toDataURL('image/webp', 0.8));
+            };
+            img.src = e.target.result;
+          };
           reader.readAsDataURL(fileInput.files[0]);
         });
       }
@@ -1268,13 +1640,13 @@
         text: document.getElementById('text').value.trim(),
         rating: parseFloat(ratingInput.value)
       };
-      
-      if(imageBase64) reviewData.image = imageBase64;
+
+      if (imageBase64) reviewData.image = imageBase64;
       else {
         // If editing and no new image is provided, keep old image
-        if(editId) {
+        if (editId) {
           const currentReview = reviews.find(r => r.id == editId);
-          if(currentReview && currentReview.image) reviewData.image = currentReview.image;
+          if (currentReview && currentReview.image) reviewData.image = currentReview.image;
         }
       }
 
@@ -1312,7 +1684,7 @@
       const hasHalf = rating % 1 >= 0.5;
       const empty = 5 - full - (hasHalf ? 1 : 0);
       const starPath = 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z';
-      
+
       let html = '';
       for (let i = 0; i < full; i++) {
         html += `<svg viewBox="0 0 24 24"><path d="${starPath}"/></svg>`;
@@ -1351,10 +1723,10 @@
         return `
           <div class="review-card" style="animation-delay: ${i * 80}ms; border: 1px solid var(--border); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05); padding: 2.5rem; border-radius: 1.5rem; background: #fff; display: flex; flex-direction: column;">
             <div style="display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.25rem;">
-              ${review.image ? 
-                `<img src="${review.image}" alt="Fotografie" style="width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--muted); box-shadow: 0 4px 10px rgba(0,0,0,0.05);">` : 
-                `<div class="review-avatar" style="width: 4rem; height: 4rem; font-size: 1.125rem;">${initials}</div>`
-              }
+              ${review.image ?
+            `<img src="${review.image}" alt="Fotografie" style="width: 4rem; height: 4rem; border-radius: 50%; object-fit: cover; border: 2px solid var(--muted); box-shadow: 0 4px 10px rgba(0,0,0,0.05);">` :
+            `<div class="review-avatar" style="width: 4rem; height: 4rem; font-size: 1.125rem;">${initials}</div>`
+          }
               <div style="flex: 1;">
                 <h3 class="review-name" style="font-size: 1.125rem; font-weight: 700; font-family: 'Outfit', sans-serif; color: #171717; margin: 0 0 0.125rem 0;">${escapeHtml(review.name)}</h3>
                 <h4 class="review-role" style="font-size: 0.8125rem; font-weight: 400; color: #737373; margin: 0 0 0.35rem 0;">${escapeHtml(review.role)}</h4>
@@ -1441,12 +1813,12 @@
       fileInput.click();
     }
 
-    fileInput.addEventListener('change', function(e) {
+    fileInput.addEventListener('change', function (e) {
       const file = e.target.files[0];
       if (!file) return;
-      
+
       const reader = new FileReader();
-      reader.onload = function(ev) {
+      reader.onload = function (ev) {
         try {
           const imported = JSON.parse(ev.target.result);
           if (Array.isArray(imported)) {
@@ -1485,7 +1857,7 @@
           try {
             reviews = JSON.parse(saved);
             loaded = true;
-          } catch(e) {}
+          } catch (e) { }
         }
       }
 
@@ -1504,14 +1876,14 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      
+
       document.getElementById('tab-' + tabId).classList.add('active');
       event.currentTarget.classList.add('active');
     }
 
     // ==================== SETTINGS / CONFIG ====================
     let appConfig = { maintenance: false, maintenanceMessage: "Omlouváme se, web právě prochází údržbou. Zkuste to prosím později." };
-    
+
     async function loadConfig() {
       try {
         const res = await fetch('./data/config.json?t=' + Date.now());
@@ -1522,8 +1894,8 @@
           const toggle = document.getElementById('maintenanceToggle');
           const isMaintenance = (appConfig.maintenance === true || String(appConfig.maintenance).toLowerCase() === "true");
           toggle.checked = isMaintenance;
-          
-          if(isMaintenance) {
+
+          if (isMaintenance) {
             toggle.setAttribute('checked', 'checked');
           } else {
             toggle.removeAttribute('checked');
@@ -1568,7 +1940,7 @@
     }
 
     // ==================== CUSTOM SCROLLBAR ====================
-    (function() {
+    (function () {
       const thumb = document.getElementById('scrollThumb');
       const track = document.getElementById('scrollTrack');
       let hideTimeout;
@@ -1601,14 +1973,14 @@
       track.addEventListener('mouseenter', () => { isHovering = true; thumb.style.opacity = '1'; });
       track.addEventListener('mouseleave', () => { isHovering = false; showThumb(); });
 
-      track.addEventListener('mousedown', function(e) {
+      track.addEventListener('mousedown', function (e) {
         if (e.target === thumb) return;
         const clickPercent = e.clientY / window.innerHeight;
         const scrollHeight = document.body.scrollHeight - window.innerHeight;
         document.body.scrollTo({ top: clickPercent * scrollHeight, behavior: 'smooth' });
       });
 
-      thumb.addEventListener('mousedown', function(e) {
+      thumb.addEventListener('mousedown', function (e) {
         e.preventDefault();
         isDragging = true;
         const startY = e.clientY;
@@ -1634,4 +2006,5 @@
     })();
   </script>
 </body>
+
 </html>
