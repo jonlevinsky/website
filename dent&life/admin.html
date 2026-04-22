@@ -1098,7 +1098,7 @@
         
         // Inicializovat až po přihlášení
         init();
-        updateThumb();
+        // Scrollbar se aktualizuje automaticky přes scroll/resize listenery
       } else {
         // Špatné heslo
         loginError.style.display = 'block';
@@ -1171,13 +1171,22 @@
       hideConfirm();
     });
 
+    // ==================== HOSTING DETECTION ====================
+    const isGitHubPages = window.location.hostname.includes('github.io');
+
     // ==================== STORAGE ====================
     async function saveToStorage() {
       localStorage.setItem('dentlife-reviews', JSON.stringify(reviews));
       updateJsonOutput();
       updateStats();
 
-      // Automatics save to server via PHP
+      // Na GitHub Pages nelze použít POST - ukládáme jen do localStorage
+      if (isGitHubPages) {
+        console.log('GitHub Pages detekován – data uložena do localStorage. Pro trvalé uložení stáhněte JSON a commitněte do repozitáře.');
+        return;
+      }
+
+      // Lokální server – automaticky uložit přes API
       try {
         const response = await fetch('./save_reviews.php', {
           method: 'POST',
@@ -1528,6 +1537,23 @@
     async function saveConfig() {
       appConfig.maintenance = document.getElementById('maintenanceToggle').checked;
       appConfig.maintenanceMessage = document.getElementById('maintenanceMessage').value;
+
+      // Na GitHub Pages nelze POST – uložíme do localStorage a nabídneme stažení
+      if (isGitHubPages) {
+        localStorage.setItem('dentlife-config', JSON.stringify(appConfig));
+        // Automaticky stáhnout config.json pro ruční commit do repozitáře
+        const blob = new Blob([JSON.stringify(appConfig, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'config.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('Nastavení staženo jako config.json – nahrajte soubor do složky data/ v repozitáři', 'info');
+        return;
+      }
+
+      // Lokální server
       try {
         const response = await fetch('./save_config.php', {
           method: 'POST',
