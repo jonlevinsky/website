@@ -26,9 +26,9 @@
       "camera": "Canon eos 250D",
       "lens": "Helios-44M, Canon 18-50mm",
       "software": "Davinci resolve",
-      "media": "./video/2.Reklama.mov",
+      "media": "./video/2.Reklama.mp4",
       "videos": [
-        "./video/2.Reklama.mov"
+        "./video/2.Reklama.mp4"
       ],
       "photos": []
     },
@@ -70,11 +70,11 @@
       "camera": "Phantom Flex 4K GS",
       "lens": "",
       "software": "",
-      "media": "./video/9.Phantom (3).mov",
+      "media": "./video/9.Phantom (3).mp4",
       "videos": [
-        "./video/9.Phantom (3).mov",
-        "./video/9.Phantom (1).mov",
-        "./video/9.Phantom (2).mov"
+        "./video/9.Phantom (3).mp4",
+        "./video/9.Phantom (1).mp4",
+        "./video/9.Phantom (2).mp4"
       ],
       "photos": []
     },
@@ -123,9 +123,9 @@
       "camera": "Blackmagic ursa",
       "lens": "Tamron 24-135",
       "software": "Davinci resolve",
-      "media": "./video/8.ZaOkny.mov",
+      "media": "./video/8.ZaOkny.mp4",
       "videos": [
-        "./video/8.ZaOkny.mov"
+        "./video/8.ZaOkny.mp4"
       ],
       "photos": []
     },

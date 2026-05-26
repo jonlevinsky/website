@@ -325,7 +325,7 @@
         }
 
         // ==========================================
-        //  LOAD / SAVE
+        //  LOAD PROJECTS WITH DEFAULTS
         // ==========================================
         function loadProjects() {
             const stored = localStorage.getItem('portfolio_projects');
@@ -333,15 +333,200 @@
                 try { projects = JSON.parse(stored); } catch (e) { projects = []; }
             } else {
                 projects = [
-                    { id:1, num:'01', title:'AutoPortret',              tags:'Experimental / Fine Art / Cinematography',      type:'video', media:'1.AutoPortret.mp4', photos:['photo/1.JPG', 'photo/2.jpg', 'photo/3.JPG', 'photo/4.jpg'], camera:'Sony FX3', lens:'Sigma 24-70mm f/2.8', software:'DaVinci Resolve', description:'Hluboká introspektivní sonda do duše tvůrce. Práce s kontrastem, stíny a minimalistickým zvukovým designem.' },
-                    { id:2, num:'02', title:'Reklama',                  tags:'Commercial / Brand Identity / Direction',  type:'video', media:'2.Reklama.mov', description:'Komerční projekt s důrazem na špičkový color grading a dynamický střih.' },
-                    { id:3, num:'03', title:'AP-Trailer',               tags:'Promo / Fast Pace / Sound Design',             type:'video', media:'3.AP-Trailer.mp4', description:'Úderný, kinetický trailer navržený tak, aby okamžitě upoutal pozornost.' },
-                    { id:4, num:'04', title:'AP-Hodinář',               tags:'Documentary / Narrative / Macro Detail',       type:'video', media:'4.AP-Hodinář.mp4', description:'Dokumentární esej zachycující preciznost lidského řemesla.' },
-                    { id:5, num:'05', title:'AP-Zubní Technik',         tags:'Professional Profile / Industrial / Precision',      type:'video', media:'5.AP-Zubní_Technik.mp4', description:'Vizuální studie profesní preciznosti.' },
-                    { id:6, num:'06', title:'Semifinále Zlatého Ámose', tags:'Event / Reportage / Live Action',             type:'video', media:'6.Semifinále Zlatého Ámose 2025.mp4', videos:['6.Semifinále Zlatého Ámose 2025.mp4', 'Animace.mp4'], description:'Reportážní zachycení prestižní události roku 2025.' },
-                    { id:7, num:'07', title:'Svačinka',                 tags:'Short Fiction / Comedy / Narrative',        type:'video', media:'7.Svačinka.mp4', description:'Krátkometrážní narativní projekt s odlehčenou atmosférou.' },
-                    { id:8, num:'08', title:'ZaOkny',                   tags:'Atmospheric / Mood Film / Ambient',       type:'video', media:'8.ZaOkny.mov', description:'Vizuální báseň a lo-fi atmosférická studie okolního světa.' },
-                    { id:9, num:'09', title:'Noční galerie',            tags:'Photography / Night / Street',            type:'photo', photos:['9.Galerie_1.jpg','9.Galerie_2.jpg','9.Galerie_3.jpg','9.Galerie_4.jpg'], description:'Galerie nočních snímků s atmosférou pouličních světel a tichých momentů.' }
+                    {
+                        id: 1,
+                        num: '01',
+                        title: 'Auto-Potrét',
+                        tags: 'Experimental / Fine Art / Cinematography',
+                        type: 'video',
+                        camera: 'Canon eos250D',
+                        lens: 'Helios-44M, Canon 18-55mm, + olympus 0.8x converter',
+                        software: '',
+                        media: './video/1.AutoPortret.mp4',
+                        videos: ['./video/1.AutoPortret.mp4'],
+                        photos: [],
+                        description: 'Hluboká introspektivní sonda do duše tvůrce. Kamera oko'
+                    },
+                    {
+                        id: 2,
+                        num: '02',
+                        title: 'Reklama',
+                        tags: 'Commercial / Brand Identity / Direction',
+                        type: 'video',
+                        camera: 'Canon eos 250D',
+                        lens: 'Helios-44M, Canon 18-50mm',
+                        software: 'Davinci resolve',
+                        media: './video/2.Reklama.mp4',
+                        videos: ['./video/2.Reklama.mp4'],
+                        photos: [],
+                        description: 'Reklama na parfém Jack Saloon značky Angry Beards. Nekomerční projekt'
+                    },
+                    {
+                        id: 4,
+                        num: '03',
+                        title: 'Postupy práce',
+                        tags: 'Documentary / Cinema verité / Macro Detail',
+                        type: 'video',
+                        camera: 'Blackmagic pocket cinema 6k pro',
+                        lens: 'Helios-44M, Nikkor 55mm macro, Tamron 24-135',
+                        software: 'Davinci resolve',
+                        media: './video/3.AP-Trailer.mp4',
+                        videos: [
+                            './video/3.AP-Trailer.mp4',
+                            './video/4.AP-Hodinář.mp4',
+                            './video/5.AP-Zubní_Technik.mp4'
+                        ],
+                        photos: [
+                            'photo/hodinar/still (1).jpg',
+                            'photo/hodinar/still (1).png',
+                            'photo/hodinar/still (2).png',
+                            'photo/hodinar/still (3).png',
+                            'photo/hodinar/still (4).png',
+                            'photo/zubni_technik/still (1).png',
+                            'photo/zubni_technik/still (2).png',
+                            'photo/zubni_technik/still (3).png',
+                            'photo/zubni_technik/still (4).png'
+                        ],
+                        description: 'Dokumentární esej zachycující preciznost lidského řemesla. Detailní macro záběry, fascinující práce řemeslníků a intimní atmosféra dílen.'
+                    },
+                    {
+                        id: 9,
+                        num: '04',
+                        title: 'ShotBox',
+                        tags: 'Experimental / Cinematography',
+                        type: 'video',
+                        camera: 'Phantom Flex 4K GS',
+                        lens: '',
+                        software: '',
+                        media: './video/9.Phantom (3).mp4',
+                        videos: [
+                            './video/9.Phantom (3).mp4',
+                            './video/9.Phantom (1).mp4',
+                            './video/9.Phantom (2).mp4'
+                        ],
+                        photos: [],
+                        description: 'Praxe v reklamním studiu ShotBox s.r.o. Práce s MRMC Bolt, Phantom Flex 4K GS'
+                    },
+                    {
+                        id: 6,
+                        num: '05',
+                        title: 'Zlatý Ámos',
+                        tags: 'Event / Reportage / Live Action',
+                        type: 'video',
+                        camera: 'Sony FX3, Sony FS5',
+                        lens: 'Škála 24-135',
+                        software: 'DaVinci Resolve',
+                        media: './video/6. 1. Regionální kolo Zlatého Ámose 2025.mp4',
+                        videos: [
+                            './video/6. 1. Regionální kolo Zlatého Ámose 2025.mp4',
+                            './video/6. 4. Regionální kolo Zlatého Ámose 2025.mp4',
+                            './video/6.Semifinále Zlatého Ámose 2025.mp4',
+                            './video/6. Finále Zlatého Ámose 2025.mp4'
+                        ],
+                        photos: [],
+                        description: 'Reportážní zachycení prestižní události roku 2025. Autentické emoce, dynamická kamera přímo v centru dění a čistý storytelling.'
+                    },
+                    {
+                        id: 7,
+                        num: '06',
+                        title: 'Svačinka',
+                        tags: 'Short Fiction / Comedy / Narrative',
+                        type: 'video',
+                        camera: 'Blackmagic ursa',
+                        lens: 'Tamron 24-135',
+                        software: 'Davinci resolve',
+                        media: './video/7.Svačinka.mp4',
+                        videos: ['./video/7.Svačinka.mp4'],
+                        photos: [],
+                        description: 'Krátkometrážní narativní projekt s odlehčenou atmosférou. Hra s každodenní situací dovedenou do absurdního, vizuálně saturovaného detailu.'
+                    },
+                    {
+                        id: 8,
+                        num: '07',
+                        title: 'Za Okny',
+                        tags: 'Atmospheric / Mood Film / Ambient',
+                        type: 'video',
+                        camera: 'Blackmagic ursa',
+                        lens: 'Tamron 24-135',
+                        software: 'Davinci resolve',
+                        media: './video/8.ZaOkny.mp4',
+                        videos: ['./video/8.ZaOkny.mp4'],
+                        photos: [],
+                        description: 'Vizuální báseň a lo-fi atmosférická studie okolního světa pozorovaného skrze sklo. Pomalé tempo, hluboká melancholie a hra světla, stínu.'
+                    },
+                    {
+                        id: 10,
+                        num: '08',
+                        title: 'Oswiecim',
+                        tags: 'Photography / Auschwitz / History',
+                        type: 'photo',
+                        camera: 'Canon eos 250D',
+                        lens: 'Canon 18-55mm, 70-300mm',
+                        software: 'Adobe Lightroom',
+                        media: './photo/oswiecim/oswiecim (1).JPG',
+                        videos: [],
+                        photos: [
+                            './photo/oswiecim/oswiecim (1).JPG',
+                            './photo/oswiecim/oswiecim (2).JPG',
+                            './photo/oswiecim/oswiecim (3).JPG',
+                            './photo/oswiecim/oswiecim (4).JPG'
+                        ],
+                        description: 'Fotografická série z koncentračního tábora Osvětim zachycující tíživou historickou atmosféru.'
+                    },
+                    {
+                        id: 11,
+                        num: '09',
+                        title: 'Vánoční jarmark',
+                        tags: 'Photography / Event / Christmas',
+                        type: 'photo',
+                        camera: 'Canon eos 250D',
+                        lens: 'Canon 18-55mm, 70-300mm',
+                        software: 'Adobe Lightroom',
+                        media: './photo/vanocni_jarmark/vanoce (1).JPG',
+                        videos: [],
+                        photos: [
+                            './photo/vanocni_jarmark/vanoce (1).JPG',
+                            './photo/vanocni_jarmark/vanoce (1).webp',
+                            './photo/vanocni_jarmark/vanoce (2).JPG',
+                            './photo/vanocni_jarmark/vanoce (2).webp',
+                            './photo/vanocni_jarmark/vanoce (3).JPG',
+                            './photo/vanocni_jarmark/vanoce (4).JPG',
+                            './photo/vanocni_jarmark/vanoce (5).JPG',
+                            './photo/vanocni_jarmark/vanoce (6).JPG',
+                            './photo/vanocni_jarmark/vanoce (7).JPG',
+                            './photo/vanocni_jarmark/vanoce (8).JPG',
+                            './photo/vanocni_jarmark/vanoce (9).JPG'
+                        ],
+                        description: 'Reportážní a detailní záběry z tradičního vánočního jarmarku.'
+                    },
+                    {
+                        id: 12,
+                        num: '10',
+                        title: 'RGB Light',
+                        tags: 'Photography / Studio / Lighting',
+                        type: 'photo',
+                        camera: 'Sony FX3',
+                        lens: 'Sigma 24-70mm f/2.8',
+                        software: 'Adobe Lightroom',
+                        media: './photo/color/color (1).jpg',
+                        videos: [],
+                        photos: [
+                            './photo/color/color (1).jpg',
+                            './photo/color/color (9).jpg',
+                            './photo/color/color (10).jpg',
+                            './photo/color/color (11).jpg',
+                            './photo/color/color (12).jpg',
+                            './photo/color/color (13).JPG',
+                            './photo/color/color (14).JPG',
+                            './photo/color/color (15).JPG',
+                            './photo/color/color (16).jpg',
+                            './photo/color/color (17).jpg',
+                            './photo/color/color (18).jpg',
+                            './photo/color/color (19).jpg',
+                            './photo/color/color (20).jpg'
+                        ],
+                        description: 'Ateliérové fotografie s využitím kreativního barevného RGB osvětlení a tichých momentů.'
+                    }
                 ];
                 localStorage.setItem('portfolio_projects', JSON.stringify(projects));
             }
@@ -701,7 +886,6 @@
                 if (!videos.length) { showMessage('Přidej video soubor', 'error'); return; }
             }
 
-            // Fix for Math.max on empty array
             const maxId = projects.length > 0 ? Math.max(...projects.map(p => p.id)) : 0;
 
             const project = {
