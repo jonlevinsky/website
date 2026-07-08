@@ -192,7 +192,6 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   align-items: stretch;
   gap:var(--gap);
   width:100%;
-  position: relative;
 }
 
 .tile{
@@ -821,49 +820,6 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   white-space:nowrap;
 }
 
-.gallery-loading{
-  position: absolute;
-  inset: 0;
-  background: var(--bg);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-  transition: opacity 0.6s var(--ease-out-expo), visibility 0s 0.6s;
-  visibility: visible;
-}
-.gallery-loading.hidden{
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-}
-.gallery-loading-ring{
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 2.5px solid var(--outline);
-  border-top-color: var(--accent);
-  animation: spin 0.85s linear infinite;
-}
-.gallery-loading-text{
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  margin-top: 16px;
-}
-.gallery-loading-text::after{
-  content: '...';
-  animation: loaderDots 1.5s steps(4, end) infinite;
-}
-@keyframes loaderDots{
-  0%, 20% { content: ''; }
-  40% { content: '.'; }
-  60% { content: '..'; }
-  80%, 100% { content: '...'; }
-}
 @keyframes spin{to{transform:rotate(360deg);}}
 @keyframes fadeUp{
   from{opacity:0;transform:translateY(16px);}
@@ -1093,11 +1049,60 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
     scroll-behavior: auto !important;
   }
 }
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.6s var(--ease-out-expo), visibility 0s 0.6s;
+}
+.page-loader.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loader-ring {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2.5px solid var(--outline);
+  border-top-color: var(--accent);
+  animation: spin 0.85s linear infinite;
+}
+.loader-text {
+  margin-top: 18px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.loader-text::after {
+  content: '...';
+  animation: loaderDots 1.5s steps(4, end) infinite;
+}
+@keyframes loaderDots {
+  0%, 20% { content: ''; }
+  40% { content: '.'; }
+  60% { content: '..'; }
+  80%, 100% { content: '...'; }
+}
+
 </style>
 <base target="_self">
 <base target="_blank">
 </head>
 <body>
+<div class="page-loader" id="pageLoader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Načítání projektu</div>
+</div>
+
 <div class="wrap">
   <aside class="brand">
     <div class="kicker">Portfolio // 2025</div>
@@ -1197,7 +1202,12 @@ function detectOrientations() {
 async function loadProject() {
   const id = getProjectId();
   const container = document.getElementById('project-container');
-  if (!id) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Missing project ID.</p>'; return; }
+  const pageLoader = document.getElementById('pageLoader');
+  if (!id) { 
+    container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Missing project ID.</p>'; 
+    if (pageLoader) pageLoader.classList.add('hidden');
+    return; 
+  }
 
   try {
     const res = await fetch('./projects.json');
@@ -1205,11 +1215,16 @@ async function loadProject() {
     const projects = await res.json();
     const projectList = Array.isArray(projects) ? projects : (projects.projects || []);
     const project = projectList.find(p => p.id === id);
-    if (!project) { container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Project not found.</p>'; return; }
+    if (!project) { 
+      container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Project not found.</p>'; 
+      if (pageLoader) pageLoader.classList.add('hidden');
+      return; 
+    }
     displayProject(project);
     document.title = project.title + ' — Jan Levínský';
   } catch(e) {
     container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Failed to load project.</p>';
+    if (pageLoader) pageLoader.classList.add('hidden');
   }
 }
 
@@ -1315,12 +1330,7 @@ function displayProject(project) {
     '</div>' +
     (techHtml ? techHtml : '') +
     gearHtml +
-    '<div class="gallery">' +
-'<div class="gallery-loading" id="galleryLoading">' +
-'<div class="gallery-loading-ring"></div>' +
-'<div class="gallery-loading-text">Načítání galerie</div>' +
-'</div>' +
-gallery + '</div>' +
+    '<div class="gallery">' + gallery + '</div>' +
     '<footer class="g-footer">' +
       '<div class="f-name">Jan Levínský</div>' +
       '<div class="f-role">Cinematography & Photography</div>' +
@@ -1334,32 +1344,32 @@ gallery + '</div>' +
   // create lower-resolution display images (half res) for gallery and thumbs
   optimizeGalleryImages();
 
-  // Hide gallery loader after images load
-  const galleryLoading = document.getElementById('galleryLoading');
+  // Hide page loader after gallery images load
+  const pageLoader = document.getElementById('pageLoader');
   const galleryImages = container.querySelectorAll('.gallery img, .tile-thumb img');
   let loadedCount = 0;
   const totalImages = galleryImages.length;
-  function checkGalleryLoaded() {
+  function tryHideLoader() {
     loadedCount++;
-    if (loadedCount >= totalImages && galleryLoading) {
-      galleryLoading.classList.add('hidden');
+    if (loadedCount >= totalImages && pageLoader) {
+      pageLoader.classList.add('hidden');
     }
   }
   if (totalImages === 0) {
-    if (galleryLoading) galleryLoading.classList.add('hidden');
+    if (pageLoader) pageLoader.classList.add('hidden');
   } else {
     galleryImages.forEach(img => {
       if (img.complete && img.naturalWidth) {
-        checkGalleryLoaded();
+        tryHideLoader();
       } else {
-        img.addEventListener('load', checkGalleryLoaded);
-        img.addEventListener('error', checkGalleryLoaded);
+        img.addEventListener('load', tryHideLoader);
+        img.addEventListener('error', tryHideLoader);
       }
     });
   }
   setTimeout(() => {
-    if (galleryLoading && !galleryLoading.classList.contains('hidden')) {
-      galleryLoading.classList.add('hidden');
+    if (pageLoader && !pageLoader.classList.contains('hidden')) {
+      pageLoader.classList.add('hidden');
     }
   }, 4000);
 
@@ -1858,7 +1868,7 @@ function optimizeGalleryImages() {
         const w = off.naturalWidth || off.width || 0;
         const h = off.naturalHeight || off.height || 0;
         if (w > 800 && h > 0) {
-          const targetW = Math.max(320, Math.round(w / 2));
+          const targetW = Math.max(240, Math.round(w / 2));
           const targetH = Math.round((targetW / w) * h);
           const canvas = document.createElement('canvas');
           canvas.width = targetW;

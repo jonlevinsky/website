@@ -1,0 +1,540 @@
+[
+  {
+    "id": 1,
+    "title": "Postupy práce",
+    "type": "video",
+    "year": "2025-2026",
+    "layout": "wide",
+    "thumbnail": "media/video/2025/Postupy-práce/minuatzra_5.1.1.png",
+    "full": "media/video/2025/Postupy-práce/minuatzra_5.1.1.png",
+    "bio": "Krátkometrážní film Postupy práce sezaměřuje na zachycení pracovních procesů napříč vybranými řemesly. Principem projektu je sledovat činnost od úplného začátku až po finální produkt a zprostředkovat divákovi nejen samotný postup, ale i prostředí a atmosféru, které jsou s danou prací neodmyslitelně spjaty. Film se soustředí na 2 odlišné obory: zubního technika a hodináře. Prostřednictvím kamery, střihu a zvuku přibližuje jejich činnosti v rytmu a vizuální estetice vlastního řemesla. Cílem je umožnit divákovi co nejintenzivnější prožitek a porozumění hodnotě ruční práce.",
+    "techniques": [],
+    "gear": {
+      "camera": [
+        "Blackmagic Pocket Cinema 6K Pro"
+      ],
+      "lenses": [
+        "Helios - 44M",
+        "Tamron 24-105"
+      ],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [
+        "Zoom H6"
+      ],
+      "software": [
+        "Davinci Resolve"
+      ],
+      "color": [],
+      "drone": [],
+      "filter": [
+        "Close-UP",
+        "CPL",
+        "ND",
+        "Blackmist"
+      ],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "video",
+        "src": "media/video/2025/Postupy-práce/3.AP-Trailer.mp4",
+        "thumbnail": "media/video/2025/Postupy-práce/minuatzra_5.1.1.png",
+        "title": "Trailer",
+        "caption": ""
+      },
+      {
+        "type": "video",
+        "src": "media/video/2025/Postupy-práce/4.AP-Hodinář.mp4",
+        "thumbnail": "media/video/2025/Postupy-práce/Snímek obrazovky 2026-07-08 180826.png",
+        "title": "Hodinář",
+        "caption": ""
+      },
+      {
+        "type": "video",
+        "src": "media/video/2025/Postupy-práce/5.AP-Zubní_Technik.mp4",
+        "thumbnail": "media/video/2025/Postupy-práce/Snímek obrazovky 2026-07-08 180840.png",
+        "title": "Zubní Technik",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/post3.png",
+        "thumbnail": "media/video/2025/Postupy-práce/post3.png",
+        "title": "Plakát Hodinář",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/post1.png",
+        "thumbnail": "media/video/2025/Postupy-práce/post1.png",
+        "title": "Plakát Zubní technik",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (1).jpg",
+        "thumbnail": "media/video/2025/Postupy-práce/still (1).jpg",
+        "title": "still (1)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (1).png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (1).png",
+        "title": "still (2)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (2).png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (2).png",
+        "title": "still (3)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (4).png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (4).png",
+        "title": "still (4)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (3).png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (3).png",
+        "title": "still (5)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025-2026/Postupy-práce/Still 2026-03-29 195902_3.1.3.png",
+        "thumbnail": "media/video/2025/Postupy-práce/Still 2026-03-29 195902_3.1.3.png",
+        "title": "still (6)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (1)_1.png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (1)_1.png",
+        "title": "still (7)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (2)_1.png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (2)_1.png",
+        "title": "still (8)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (3)_1.png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (3)_1.png",
+        "title": "still (9)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/video/2025/Postupy-práce/still (4)_1.png",
+        "thumbnail": "media/video/2025/Postupy-práce/still (4)_1.png",
+        "title": "still (10)",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Reklama",
+    "type": "video",
+    "year": "2025",
+    "layout": "normal",
+    "thumbnail": "media/video/2025/Reklama/Snímek obrazovky 2026-07-08 184957.png",
+    "full": "",
+    "bio": "Reklama na parfém Jack Saloon od značky Angry Beards. Vytvořeno v rámci kamerových praxí.",
+    "techniques": [],
+    "gear": {
+      "camera": [
+        "Canon EOS 250D"
+      ],
+      "lenses": [
+        "Helios - 44M"
+      ],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [
+        "Davinci Resolve"
+      ],
+      "color": [],
+      "drone": [],
+      "filter": [
+        "ND"
+      ],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "video",
+        "src": "media/video/2025/Reklama/2.Reklama_5.mp4",
+        "thumbnail": "media/video/2025/Reklama/Snímek obrazovky 2026-07-08 184957.png",
+        "title": "Reklama",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Portraits",
+    "type": "photo",
+    "year": "2026",
+    "layout": "tall",
+    "thumbnail": "media/photo/2026/Portraits/color (17).jpg",
+    "full": "media/photo/2026/Portraits/color (17).jpg",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (20).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (20).jpg",
+        "title": "color (20)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (18).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (18).jpg",
+        "title": "color (18)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (9).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (9).jpg",
+        "title": "color (9)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (10).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (10).jpg",
+        "title": "color (10)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (16).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (16).jpg",
+        "title": "color (16)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (1).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (1).jpg",
+        "title": "color (1)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (11).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (11).jpg",
+        "title": "color (11)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (17).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (17).jpg",
+        "title": "color (17)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (19).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (19).jpg",
+        "title": "color (19)",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Portraits/color (12).jpg",
+        "thumbnail": "media/photo/2026/Portraits/color (12).jpg",
+        "title": "color (12)",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Španělsko",
+    "type": "photo",
+    "year": "2025",
+    "layout": "tall",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (3).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (3).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (2).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (2).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (4).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (4).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (1).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (1).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "title": "Váš projekt",
+    "type": "video",
+    "year": "2024",
+    "layout": "wide",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": []
+  },
+  {
+    "id": 7,
+    "title": "Za Okny",
+    "type": "video",
+    "year": "2024",
+    "layout": "normal",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": []
+  },
+  {
+    "id": 5,
+    "title": "Stromovka",
+    "type": "photo",
+    "year": "2024",
+    "layout": "wide",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9891.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9891.JPG",
+        "title": "29. 05. 2024 - IMG_9891",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9931.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9931.JPG",
+        "title": "29. 05. 2024 - IMG_9931",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0016.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0016.JPG",
+        "title": "29. 05. 2024 - IMG_0016",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0020.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0020.JPG",
+        "title": "29. 05. 2024 - IMG_0020",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0022.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0022.JPG",
+        "title": "29. 05. 2024 - IMG_0022",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0027.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0027.JPG",
+        "title": "29. 05. 2024 - IMG_0027",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0033.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_0033.JPG",
+        "title": "29. 05. 2024 - IMG_0033",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9939.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9939.JPG",
+        "title": "29. 05. 2024 - IMG_9939",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9945.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9945.JPG",
+        "title": "29. 05. 2024 - IMG_9945",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9947.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9947.JPG",
+        "title": "29. 05. 2024 - IMG_9947",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9952.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9952.JPG",
+        "title": "29. 05. 2024 - IMG_9952",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9970.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9970.JPG",
+        "title": "29. 05. 2024 - IMG_9970",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9973.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9973.JPG",
+        "title": "29. 05. 2024 - IMG_9973",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9977.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9977.JPG",
+        "title": "29. 05. 2024 - IMG_9977",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9989.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9989.JPG",
+        "title": "29. 05. 2024 - IMG_9989",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9997.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9997.JPG",
+        "title": "29. 05. 2024 - IMG_9997",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9998.JPG",
+        "thumbnail": "media/photo/2025/Nový-projekt/29. 05. 2024 - IMG_9998.JPG",
+        "title": "29. 05. 2024 - IMG_9998",
+        "caption": ""
+      }
+    ]
+  }
+]
