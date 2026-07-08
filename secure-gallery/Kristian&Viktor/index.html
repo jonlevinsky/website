@@ -1,0 +1,3518 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#faf8f5">
+<title>Secure Gallery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --md-primary: #8b6914;
+  --md-on-primary: #ffffff;
+  --md-primary-container: ##ffffff6e;
+  --md-secondary-container: ##ffffff6e;
+  --md-surface: #faf8f5;
+  --md-surface-variant: #f0ece6;
+  --md-surface-container: #f5f2ee;
+  --md-surface-container-high: #eae6e0;
+  --md-surface-container-low: #fdfcfa;
+  --md-outline: #d4cfc7;
+  --md-outline-variant: #e8e4dd;
+  --md-on-surface: #6b6560;
+  --md-on-surface-variant: #6b6560;
+  --md-inverse-surface: #6b6560;
+  --md-inverse-on-surface: #faf8f5;
+  --md-elevation-1: 0 1px 3px rgba(28,25,23,0.08), 0 1px 2px rgba(28,25,23,0.06);
+  --md-elevation-2: 0 4px 6px rgba(28,25,23,0.08), 0 2px 4px rgba(28,25,23,0.06);
+  --md-elevation-3: 0 10px 15px rgba(28,25,23,0.08), 0 4px 6px rgba(28,25,23,0.06);
+  --md-elevation-4: 0 20px 25px rgba(28,25,23,0.1), 0 10px 10px rgba(28,25,23,0.06);
+  --md-elevation-5: 0 25px 50px rgba(28,25,23,0.12), 0 12px 12px rgba(28,25,23,0.08);
+  --serif: 'Bricolage Grotesque', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
+  --z-toast: 200; --z-selection: 50; --z-lightbox: 100;
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0.0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1);
+
+  /* Typography scale (1.25 major third, base 16px) */
+  --text-xs: 0.64rem;   /* 10.24px */
+  --text-sm: 0.8rem;    /* 12.8px */
+  --text-base: 1rem;    /* 16px */
+  --text-lg: 1.25rem;   /* 20px */
+  --text-xl: 1.563rem;  /* 25px */
+  --text-2xl: 1.953rem; /* 31.25px */
+  --text-3xl: 2.441rem; /* 39.06px */
+  --text-4xl: 3.052rem; /* 48.83px */
+
+  color-scheme: light;
+
+  /* Shadow-as-border tokens */
+  --shadow-border: 0 0 0 1px rgba(28, 25, 23, 0.08);
+  --shadow-border-hover: 0 0 0 1px rgba(28, 25, 23, 0.13);
+}
+
+
+html, body { height: 100%; color: var(--md-on-surface); font-family: var(--sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overscroll-behavior-y: none; transition-property: background-color, color; transition-duration: 0.3s; transition-timing-function: var(--ease-out); }
+
+/* Screen-reader only */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+.sr-only:focus { position: fixed; top: 16px; left: 16px; z-index: 10000; width: auto; height: auto; padding: 12px 16px; margin: 0; overflow: visible; clip: auto; white-space: normal; background: var(--md-primary); color: var(--md-on-primary); border-radius: var(--r-md); font-weight: 500; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+/* Lock Screen */
+#lock-screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--md-surface); z-index: 999; transition-property: opacity, visibility, background-color; transition-duration: 0.6s, 0.6s, 0.4s; transition-timing-function: ease; padding: 24px; }
+#lock-screen::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 30% 20%, color-mix(in srgb, var(--md-primary) 6%, transparent) 0%, transparent 60%), radial-gradient(ellipse at 70% 80%, color-mix(in srgb, var(--md-primary) 3%, transparent) 0%, transparent 60%); pointer-events: none; }
+#lock-screen.hidden { opacity: 0; visibility: hidden; }
+
+.lock-card {
+  width: min(400px, 100%);
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline);
+  padding: 48px 32px;
+  text-align: center;
+  position: relative;
+  border-radius: var(--r-xl);
+  box-shadow: var(--md-elevation-3);
+  transition-property: background-color, border-color, box-shadow;
+  transition-duration: 0.4s;
+  transition-timing-function: ease;
+}
+.lock-card::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: var(--md-primary); border-radius: 0 0 4px 4px; opacity: 0.6; }
+.lock-avatar { width: 84px; height: 84px; border-radius: var(--r-full); background: var(--md-primary-container); display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; border: 2px solid var(--md-outline-variant); }
+.lock-avatar svg { width: 42px; height: 42px; stroke: var(--md-primary); fill: var(--md-primary); stroke-width: 1.5; }
+.lock-label { font-family: var(--sans); font-size: 11px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--md-primary); margin-bottom: 8px; }
+.lock-title { font-family: var(--serif); font-size: 32px; font-weight: 400; color: var(--md-on-surface); margin-bottom: 4px; letter-spacing: -0.01em; text-wrap: balance; }
+.lock-subtitle { font-family: var(--serif); font-size: 18px; font-weight: 300; font-style: italic; color: var(--md-on-surface-variant); margin-bottom: 40px; text-wrap: pretty; }
+.field-wrap { position: relative; margin-bottom: 16px; }
+.password-toggle {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  transition-property: color, background-color;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  z-index: 2;
+}
+.password-toggle:hover { color: var(--md-primary); }
+.password-toggle svg { width: 18px; height: 18px; }
+.field-wrap input { padding-right: 52px; }
+.field-wrap input {
+  width: 100%;
+  background: var(--md-surface-container);
+  border: 1.5px solid var(--md-outline);
+  color: var(--md-on-surface);
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-weight: 400;
+  padding: 16px 24px;
+  text-align: center;
+  outline: none;
+  transition-property: border-color, background-color, color, box-shadow;
+  transition-duration: 0.3s, 0.4s, 0.4s, 0.4s;
+  transition-timing-function: ease-out;
+  letter-spacing: 0.05em;
+  border-radius: var(--r-md);
+}
+.field-wrap input:focus { border-color: var(--md-primary); background: var(--md-surface-container-high); box-shadow: 0 0 0 4px var(--md-primary-container); }
+.field-wrap input::placeholder { color: var(--md-on-surface-variant); font-weight: 300; }
+.btn-unlock {
+  width: 100%;
+  padding: 16px;
+  background: var(--md-primary);
+  border: none;
+  color: var(--md-on-primary);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition-property: transform, box-shadow, background-color, color;
+  transition-duration: 0.3s, 0.3s, 0.4s, 0.4s;
+  transition-timing-function: ease-out;
+  border-radius: var(--r-md);
+  position: relative;
+  overflow: hidden;
+}
+.btn-unlock::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent); transform: translateX(-100%); transition: transform 0.6s ease-out; }
+.btn-unlock:hover::after { transform: translateX(100%); }
+.btn-unlock:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--md-primary) 88%, white); box-shadow: var(--md-elevation-3), 0 0 20px color-mix(in srgb, var(--md-primary) 20%, transparent); }
+.btn-unlock:active { transform: translateY(0) scale(0.96); }
+.btn-unlock:disabled { opacity: 0.5; pointer-events: none; }
+.lock-error { font-family: var(--sans); font-size: 13px; font-weight: 400; color: #cf6679; margin-top: 16px; min-height: 20px; }
+.lock-footer { margin-top: 40px; font-family: var(--serif); font-size: 13px; font-style: italic; color: var(--md-on-surface-variant); opacity: 0.7; text-wrap: pretty; }
+
+/* Gallery Shell */
+#gallery-shell { display: flex; flex-direction: column; min-height: 100vh; opacity: 0; transition-property: opacity, background-color; transition-duration: 0.5s, 0.4s; transition-timing-function: ease; padding-bottom: 80px; }
+#gallery-shell.visible { opacity: 1; }
+.g-content { flex: 1; }
+
+/* Header */
+.g-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 24px; background: var(--md-surface-container); backdrop-filter: blur(24px) saturate(1.3); -webkit-backdrop-filter: blur(24px) saturate(1.3); position: sticky; top: 0; z-index: 10; border-bottom: 1px solid var(--md-outline); transition-property: background-color, border-color; transition-duration: 0.4s; transition-timing-function: ease; }
+.g-brand { display: flex; flex-direction: column; gap: 2px; }
+.g-title { font-family: var(--serif); font-size: 22px; font-weight: 400; letter-spacing: 0.01em; color: var(--md-on-surface); text-wrap: balance; }
+.g-meta { font-family: var(--sans); font-size: 11px; font-weight: 400; color: var(--md-on-surface-variant); letter-spacing: 0.08em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+.g-actions { display: flex; gap: 8px; align-items: center; }
+.btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface-variant);
+  transition-property: background-color, border-color, color, transform;
+  transition-duration: 0.3s, 0.3s, 0.3s, 0.15s;
+  transition-timing-function: ease-out;
+}
+.btn-icon:hover { background: var(--md-secondary-container); border-color: var(--md-primary); color: var(--md-primary); }
+.btn-icon:active { transform: scale(0.96); }
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface-variant);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  padding: 8px 16px;
+  border-radius: var(--r-full);
+  transition-property: border-color, color, background-color, transform;
+  transition-duration: 0.3s, 0.3s, 0.3s, 0.15s;
+  transition-timing-function: ease-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-ghost:hover { border-color: var(--md-primary); color: var(--md-primary); background: var(--md-primary-container); }
+.btn-ghost:active { transform: scale(0.96); }
+
+/* Hero */
+.g-hero { padding: 32px 24px 24px; max-width: 1200px; margin: 0 auto; width: 100%; transition-property: background-color; transition-duration: 0.4s; transition-timing-function: ease; }
+.g-hero h2 { font-family: var(--serif); font-size: 36px; font-weight: 400; color: var(--md-on-surface); letter-spacing: -0.02em; line-height: 1.1; margin-bottom: 12px; text-wrap: balance; }
+.g-hero p { font-family: var(--sans); font-size: 15px; font-weight: 300; color: var(--md-on-surface-variant); max-width: 480px; line-height: 1.7; text-wrap: pretty; }
+
+/* Filters (Material You Chips) */
+.g-filters { display: flex; gap: 8px; padding: 0 24px 20px; max-width: 1200px; margin: 0 auto; width: 100%; overflow-x: auto; scrollbar-width: none; }
+.g-filters::-webkit-scrollbar { display: none; }
+.filter-chip {
+  background: var(--md-surface-container);
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface-variant);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  padding: 8px 24px;
+  border-radius: var(--r-full);
+  transition-property: background-color, border-color, color, box-shadow, transform;
+  transition-duration: 0.3s, 0.3s, 0.3s, 0.3s, 0.15s;
+  transition-timing-function: ease-out;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.filter-chip:hover { background: var(--md-surface-container-high); border-color: var(--md-outline-variant); }
+.filter-chip.active { color: var(--md-on-primary); background: var(--md-primary); border-color: var(--md-primary); box-shadow: var(--md-elevation-1); }
+.filter-chip:active { transform: scale(0.96); }
+.filter-chip .chip-dot { width: 6px; height: 6px; border-radius: var(--r-full); background: currentColor; opacity: 0.5; }
+.filter-chip.active .chip-dot { opacity: 1; background: var(--md-on-primary); }
+
+/* Grid */
+.g-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-auto-rows: 220px;
+  grid-auto-flow: dense;
+  gap: 12px;
+  padding: 0 24px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+.g-item {
+  position: relative;
+  background: var(--md-surface);
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: var(--r-md);
+  transition-property: transform, box-shadow, background-color;
+  transition-duration: 0.4s;
+  transition-timing-function: ease-out;
+  will-change: transform;
+  min-height: 220px;
+}
+.g-item.portrait {
+  grid-row: span 2;
+}
+.g-item.landscape {
+  grid-row: span 1;
+}
+.g-item:hover { transform: translateY(-2px) scale(1.01); box-shadow: var(--md-elevation-3); z-index: 2; }
+.g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition-property: transform, opacity; transition-duration: 0.8s, 0.4s; transition-timing-function: ease-out; outline: 1px solid rgba(28, 25, 23, 0.1); outline-offset: -1px; }
+.g-item:hover img { transform: scale(1.06); }
+
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+.g-item::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, var(--md-surface) 25%, var(--md-surface-variant) 50%, var(--md-surface) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; z-index: 0; opacity: 0.5; }
+.g-item img { position: relative; z-index: 1; }
+.item-badge { position: absolute; top: 12px; left: 12px; background: rgba(28,25,23,0.55); backdrop-filter: blur(12px); padding: 6px 12px; border-radius: var(--r-full); font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--md-primary); text-transform: uppercase; border: 1px solid color-mix(in srgb, var(--md-primary) 25%, transparent); z-index: 3; display: inline-flex; align-items: center; gap: 5px; }
+.item-badge svg { width: 12px; height: 12px; fill: currentColor; }
+.g-item-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(28,25,23,0.75) 0%, rgba(28,25,23,0) 55%); opacity: 0; transition-property: opacity; transition-duration: 0.4s; transition-timing-function: ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; z-index: 2; }
+.g-item:hover .g-item-overlay { opacity: 1; }
+.g-item-name { font-family: var(--sans); font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g-item-info { font-family: var(--sans); font-size: 11px; font-weight: 400; color: rgba(255,255,255,0.7); margin-top: 2px; letter-spacing: 0.03em; font-variant-numeric: tabular-nums; }
+
+/* Downloaded indicator */
+.dl-indicator { position: absolute; top: 12px; right: 12px; background: var(--md-primary); color: var(--md-on-primary); padding: 5px 10px; border-radius: var(--r-full); font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 4px; z-index: 3; box-shadow: var(--md-elevation-1); pointer-events: none; transition-property: right, background-color, color; transition-duration: 0.3s, 0.4s, 0.4s; transition-timing-function: ease-out; }
+.dl-indicator svg { width: 10px; height: 10px; fill: currentColor; }
+body.selecting .g-item.downloaded .dl-indicator { right: 44px; }
+/* Light mode: item overlay stays dark for contrast, text stays white */
+/* Selection */
+body.selecting .g-item img { opacity: 0.5; }
+body.selecting .g-item.selected img { opacity: 1; }
+.select-ring { position: absolute; top: 12px; right: 12px; width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.5); border-radius: var(--r-full); display: none; align-items: center; justify-content: center; background: rgba(28,25,23,0.35); transition-property: background-color, border-color; transition-duration: 0.3s, 0.3s; transition-timing-function: ease-out; backdrop-filter: blur(8px); z-index: 3; }
+body.selecting .select-ring { display: flex; }
+.g-item.selected .select-ring { background: var(--md-primary); border-color: var(--md-primary); }
+.g-item.selected .select-ring::after { content: ''; width: 10px; height: 10px; background: var(--md-on-primary); border-radius: var(--r-full); }
+/* Selection Bar */
+#selection-bar { position: fixed; bottom: -120px; left: 50%; transform: translateX(-50%); background: var(--md-surface-container); border: 1px solid var(--md-outline); padding: 12px 20px; display: flex; align-items: center; gap: 16px; box-shadow: var(--md-elevation-4); z-index: var(--z-selection); border-radius: var(--r-xl); transition-property: bottom, background-color, border-color; transition-duration: 0.4s, 0.4s, 0.4s; transition-timing-function: ease-out; backdrop-filter: blur(20px); max-width: 90vw; }
+#selection-bar.visible { bottom: 24px; }
+.sel-count { font-family: var(--sans); font-size: 13px; font-weight: 500; color: var(--md-on-surface-variant); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.btn-primary {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  border: none;
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 8px 24px;
+  border-radius: var(--r-full);
+  transition-property: transform, box-shadow, background-color, color;
+  transition-duration: 0.3s, 0.3s, 0.4s, 0.4s;
+  transition-timing-function: ease-out;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary:hover { transform: translateY(-1px); background: color-mix(in srgb, var(--md-primary) 88%, white); box-shadow: var(--md-elevation-2), 0 0 20px color-mix(in srgb, var(--md-primary) 25%, transparent); }
+.btn-primary:active { transform: translateY(0) scale(0.96); }
+.btn-primary:disabled { opacity: 0.4; pointer-events: none; }
+#lb-dl-btn.downloaded { background: var(--md-primary); color: var(--md-on-primary); border: 1px solid var(--md-primary); }
+#lb-dl-btn.downloaded:hover { background: color-mix(in srgb, var(--md-primary) 88%, white); border-color: color-mix(in srgb, var(--md-primary) 88%, white); }
+
+/* Footer */
+.g-footer { padding: 60px 24px 40px; border-top: 1px solid var(--md-outline); display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; transition-property: border-color, background-color; transition-duration: 0.4s, 0.4s; transition-timing-function: ease; }
+.g-footer::before { content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 40px; height: 2px; background: var(--md-primary); border-radius: 2px; opacity: 0.5; }
+.f-name { font-family: var(--serif); font-size: 26px; font-weight: 400; color: var(--md-on-surface); text-wrap: balance; }
+.f-role { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--md-on-surface-variant); margin-top: 8px; letter-spacing: 0.15em; text-transform: uppercase; }
+.f-contact { margin-top: 20px; font-family: var(--sans); font-size: 13px; font-weight: 400; color: var(--md-on-surface-variant); text-decoration: none; background: transparent; border: none; border-bottom: 1px solid var(--md-outline); padding-bottom: 3px; transition-property: color, border-color; transition-duration: 0.3s; transition-timing-function: ease-out; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+.f-contact:hover { color: var(--md-primary); border-color: var(--md-primary); }
+
+/* Custom Video Player */
+#lightbox { position: fixed; inset: 0; z-index: var(--z-lightbox); background: rgba(250,248,245,0.98); display: none; flex-direction: column; opacity: 0; transition-property: opacity; transition-duration: 0.4s; transition-timing-function: ease; }
+#lightbox.open { display: flex; opacity: 1; }
+
+.lb-top { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--md-outline); background: var(--md-surface-container); backdrop-filter: blur(20px); transition-property: background-color, border-color; transition-duration: 0.4s; transition-timing-function: ease; }
+.lb-title { font-family: var(--sans); font-size: 13px; font-weight: 400; color: var(--md-on-surface-variant); letter-spacing: 0.03em; }
+
+.lb-stage { flex: 1; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 16px; }
+
+.custom-video-container { position: relative; width: 100%; max-width: 1200px; max-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.custom-video-container video { width: 100%; max-height: calc(100vh - 200px); object-fit: contain; border-radius: var(--r-md); background: var(--md-surface); display: block; transition-property: box-shadow; transition-duration: 0.4s; transition-timing-function: ease; }
+
+.video-controls { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(28,25,23,0.85) 0%, rgba(28,25,23,0.35) 60%, transparent 100%); padding: 40px 20px 16px; border-radius: 0 0 var(--r-md) var(--r-md); opacity: 0; transition-property: opacity; transition-duration: 0.3s; transition-timing-function: ease; display: flex; flex-direction: column; gap: 8px; }
+.custom-video-container:hover .video-controls, .custom-video-container.show-controls .video-controls { opacity: 1; }
+
+.progress-bar-container { width: 100%; height: 4px; background: rgba(255,255,255,0.15); border-radius: var(--r-full); cursor: pointer; position: relative; overflow: hidden; transition-property: height; transition-duration: 0.2s; transition-timing-function: ease-out; }
+.progress-bar-container:hover { height: 6px; }
+.progress-bar-fill { height: 100%; background: var(--md-primary); border-radius: var(--r-full); width: 0%; position: relative; transition-property: width; transition-duration: 0.1s; transition-timing-function: linear; }
+.progress-bar-fill::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 12px; height: 12px; background: var(--md-primary); border-radius: var(--r-full); opacity: 0; transition-property: opacity; transition-duration: 0.2s; transition-timing-function: ease-out; box-shadow: 0 0 8px rgba(196,149,106,0.5); }
+.progress-bar-container:hover .progress-bar-fill::after { opacity: 1; }
+.progress-bar-buffer { position: absolute; top: 0; left: 0; height: 100%; background: rgba(255,255,255,0.1); border-radius: var(--r-full); width: 0%; }
+
+.controls-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.controls-left, .controls-right { display: flex; align-items: center; gap: 4px; }
+
+.ctrl-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #fff;
+  transition-property: background-color, transform;
+  transition-duration: 0.2s, 0.15s;
+  transition-timing-function: ease-out;
+  border: none;
+}
+.ctrl-btn:hover { background: rgba(255,255,255,0.1); }
+.ctrl-btn:active { transform: scale(0.96); }
+.ctrl-btn svg { width: 20px; height: 20px; fill: currentColor; }
+.ctrl-btn.play-btn { width: 44px; height: 44px; background: var(--md-primary); color: var(--md-on-primary); }
+.ctrl-btn.play-btn:hover { background: color-mix(in srgb, var(--md-primary) 88%, white); transform: scale(1.05); }
+.ctrl-btn.play-btn:active { transform: scale(0.96); }
+
+.time-display { font-family: var(--sans); font-size: 12px; color: rgba(255,255,255,0.7); min-width: 80px; text-align: center; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+
+.volume-container { display: flex; align-items: center; gap: 4px; position: relative; }
+.volume-slider { width: 0; height: 4px; -webkit-appearance: none; appearance: none; background: rgba(255,255,255,0.2); border-radius: var(--r-full); outline: none; transition-property: width; transition-duration: 0.3s; transition-timing-function: ease-out; overflow: hidden; }
+.volume-container:hover .volume-slider { width: 80px; }
+.volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; background: var(--md-primary); border-radius: var(--r-full); cursor: pointer; }
+.volume-slider::-moz-range-thumb { width: 12px; height: 12px; background: var(--md-primary); border-radius: var(--r-full); cursor: pointer; border: none; }
+
+.speed-btn { font-family: var(--sans); font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); padding: 6px 10px; border-radius: var(--r-sm); transition-property: background-color, color; transition-duration: 0.2s; transition-timing-function: ease-out; min-width: 40px; }
+.speed-btn:hover { background: rgba(255,255,255,0.1); color: var(--md-on-surface); }
+.speed-menu { position: absolute; bottom: 48px; right: 0; background: rgba(28,25,23,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--r-md); padding: 8px 0; display: none; flex-direction: column; min-width: 100px; box-shadow: var(--md-elevation-3); z-index: 10; }
+.speed-menu.show { display: flex; }
+.speed-option { padding: 8px 16px; font-family: var(--sans); font-size: 13px; color: rgba(255,255,255,0.7); text-align: left; transition-property: background-color, color; transition-duration: 0.2s; transition-timing-function: ease-out; cursor: pointer; background: none; border: none; width: 100%; }
+.speed-option:hover { background: var(--md-primary); color: #fff; }
+.speed-option.active { color: var(--md-primary); font-weight: 600; }
+
+.big-play-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(28,25,23,0.25); cursor: pointer; transition-property: opacity; transition-duration: 0.3s; transition-timing-function: ease; z-index: 4; }
+.big-play-overlay.hidden { opacity: 0; pointer-events: none; }
+.big-play-btn { width: 72px; height: 72px; border-radius: var(--r-full); background: var(--md-primary); color: var(--md-on-primary); display: flex; align-items: center; justify-content: center; box-shadow: var(--md-elevation-3), 0 0 30px color-mix(in srgb, var(--md-primary) 30%, transparent); transition-property: transform, box-shadow; transition-duration: 0.2s; transition-timing-function: ease-out; }
+.big-play-btn:hover { transform: scale(1.1); }
+.big-play-btn svg { width: 28px; height: 28px; fill: currentColor; margin-left: 4px; }
+
+.video-decrypt-overlay { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--md-surface-container); backdrop-filter: blur(12px); border-radius: var(--r-md); z-index: 5; transition-property: background-color; transition-duration: 0.4s; transition-timing-function: ease; }
+.video-decrypt-overlay p { font-family: var(--sans); font-size: 14px; font-weight: 300; color: var(--md-on-surface-variant); margin-top: 16px; max-width: 280px; text-align: center; line-height: 1.6; text-wrap: pretty; }
+
+.lb-stage img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: var(--r-md); box-shadow: var(--md-elevation-3); transition-property: box-shadow; transition-duration: 0.4s; transition-timing-function: ease; outline: 1px solid rgba(28, 25, 23, 0.1); outline-offset: -1px; }
+
+.lb-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--md-surface-container);
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface-variant);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--r-full);
+  font-size: var(--text-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-property: color, border-color, background-color, transform;
+  transition-duration: 0.3s, 0.3s, 0.3s, 0.15s;
+  transition-timing-function: ease-out;
+  backdrop-filter: blur(12px);
+  box-shadow: var(--md-elevation-2);
+  z-index: 5;
+}
+.lb-nav:hover { color: var(--md-on-primary); border-color: var(--md-primary); background: var(--md-primary); transform: translateY(-50%) scale(1.05); }
+.lb-nav:active { transform: translateY(-50%) scale(0.96); }
+.lb-nav.prev { left: 20px; }
+.lb-nav.next { right: 20px; }
+
+.lb-progress { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); width: 240px; background: var(--md-surface-container); border: 1px solid var(--md-outline); padding: 4px; border-radius: var(--r-full); display: none; overflow: hidden; z-index: 20; transition-property: background-color, border-color; transition-duration: 0.4s; transition-timing-function: ease; }
+.lb-progress.active { display: block; }
+.lb-bar { height: 4px; background: linear-gradient(90deg, var(--md-primary), color-mix(in srgb, var(--md-primary) 70%, white)); width: 0%; border-radius: var(--r-full); transition-property: width; transition-duration: 0.1s; transition-timing-function: linear; }
+
+/* Sleek bottom dots navigation */
+.lb-dots-track { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: var(--r-full); background: transparent; opacity: 0; transition-property: opacity, background-color; transition-duration: 0.4s, 0.3s; transition-timing-function: ease; z-index: 15; pointer-events: none; }
+.lb-dots-track.visible { opacity: 1; pointer-events: auto; }
+.lb-stage:hover .lb-dots-track { opacity: 1; pointer-events: auto; }
+.lb-dots-track:hover { background: var(--md-surface-container); backdrop-filter: blur(16px); }
+.lb-dot { width: 5px; height: 5px; border-radius: var(--r-full); background: rgba(28,25,23,0.25); transition-property: background-color, transform; transition-duration: 0.35s; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; }
+.lb-dot::before { content: ''; position: absolute; inset: -8px; }
+.lb-dot.active { background: var(--md-primary); transform: scale(1.4); box-shadow: 0 0 8px color-mix(in srgb, var(--md-primary) 50%, transparent); }
+.lb-dot:hover { background: rgba(28,25,23,0.4); }
+.lb-dot.active:hover { background: var(--md-primary); }
+
+/* Dot tooltip with mini thumb on hover */
+.lb-dot-tooltip { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(4px); width: 72px; height: 54px; border-radius: var(--r-sm); overflow: hidden; opacity: 0; pointer-events: none; transition-property: opacity, transform; transition-duration: 0.3s; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); box-shadow: var(--md-elevation-3); border: 1px solid var(--md-outline); }
+.lb-dot:hover .lb-dot-tooltip { opacity: 1; transform: translateX(-50%) translateY(0); }
+.lb-dot-tooltip img { width: 100%; height: 100%; object-fit: cover; display: block; outline: 1px solid rgba(28, 25, 23, 0.1); outline-offset: -1px; }
+.lb-dot-tooltip .tt-video-icon { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(28,25,23,0.4); }
+.lb-dot-tooltip .tt-video-icon svg { width: 16px; height: 16px; fill: var(--md-primary); }
+
+/* Toast */
+#toast { position: fixed; top: 24px; left: 50%; transform: translate(-50%, -20px); background: var(--md-inverse-surface); color: var(--md-inverse-on-surface); font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0.02em; padding: 14px 24px; z-index: var(--z-toast); opacity: 0; pointer-events: none; transition-property: transform, opacity, background-color, color; transition-duration: 0.4s, 0.4s, 0.4s, 0.4s; transition-timing-function: ease-out; border-radius: var(--r-md); box-shadow: var(--md-elevation-3); display: flex; align-items: center; gap: 10px; max-width: 90vw; }
+#toast.show { transform: translate(-50%, 0); opacity: 1; }
+#toast .toast-icon { width: 18px; height: 18px; border-radius: var(--r-full); background: var(--md-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+#toast .toast-icon svg { width: 10px; height: 10px; fill: var(--md-on-primary); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .g-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: 160px; gap: 8px; padding: 0 12px 32px; }
+  .g-item { min-height: 160px; }
+  .g-header { padding: 16px 12px; }
+  .g-hero { padding: 24px 12px 16px; }
+  .g-hero h2 { font-size: 28px; }
+  .g-filters { padding: 0 12px 16px; }
+  .g-footer { padding: 48px 12px 100px; }
+  .lb-top { padding: 12px 16px; }
+  .lb-stage { padding: 8px; }
+  .lb-nav { width: 40px; height: 40px; font-size: 14px; }
+  .lb-nav.prev { left: 8px; }
+  .lb-nav.next { right: 8px; }
+  .lock-card { padding: 36px 24px; border-radius: var(--r-lg); }
+  .lock-title { font-size: 26px; }
+  .custom-video-container video { max-height: calc(100vh - 160px); }
+  .video-controls { padding: 30px 12px 12px; }
+  .ctrl-btn { width: 32px; height: 32px; }
+  .ctrl-btn svg { width: 16px; height: 16px; }
+  .ctrl-btn.play-btn { width: 40px; height: 40px; }
+  .time-display { font-size: 11px; min-width: 70px; }
+  .speed-btn { display: none; }
+  #selection-bar { padding: 10px 16px; gap: 12px; }
+  .btn-primary { padding: 8px 16px; font-size: 11px; }
+}
+
+@media (max-width: 380px) {
+  .g-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 140px; }
+  .g-item { min-height: 140px; }
+  .g-hero h2 { font-size: 24px; }
+  .btn-ghost { padding: 8px 14px; font-size: 11px; }
+}
+
+.g-item { touch-action: manipulation; }
+.ctrl-btn { touch-action: manipulation; }
+
+/* ═══════════════════════════════════════════════════════════════
+   ItsHover-style Animated Icons
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Base animated icon wrapper */
+.hover-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+/* ─── Lock Icon ─── */
+.lock-avatar svg {
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.lock-avatar:hover svg {
+  transform: rotate(-10deg) scale(1.08);
+}
+
+/* ─── Download Icon ─── */
+.hover-icon-download svg {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hover-icon-download:hover svg {
+  transform: translateY(2px);
+}
+
+/* ─── Play Icon ─── */
+.hover-icon-play svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s ease;
+}
+.hover-icon-play:hover svg {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--md-primary) 50%, transparent));
+}
+
+/* ─── Mail / Contact Icon ─── */
+.hover-icon-mail svg {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hover-icon-mail:hover svg {
+  transform: translateY(-2px) rotate(-5deg);
+}
+
+/* ─── Close / X Icon ─── */
+.hover-icon-close svg {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-icon-close:hover svg {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* ─── Arrow Navigation ─── */
+.hover-icon-arrow svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.lb-nav.prev.hover-icon-arrow:hover svg {
+  transform: translateX(-3px);
+}
+.lb-nav.next.hover-icon-arrow:hover svg {
+  transform: translateX(3px);
+}
+
+/* ─── Grid / Select Icon ─── */
+.hover-icon-grid svg {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hover-icon-grid:hover svg {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ─── Theme Toggle ─── */
+.theme-toggle svg {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+.theme-toggle:hover svg {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* ─── Social Icons ─── */
+.hover-icon-social svg {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
+}
+.hover-icon-social:hover svg {
+  transform: translateY(-3px) scale(1.12);
+  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--md-primary) 30%, transparent));
+}
+
+/* ─── Check / Done ─── */
+.hover-icon-check svg {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hover-icon-check:hover svg {
+  transform: scale(1.15);
+}
+
+/* ─── Eye / Password ─── */
+.hover-icon-eye svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hover-icon-eye:hover svg {
+  transform: scale(1.15);
+}
+
+/* ─── Heart ─── */
+.hover-icon-heart svg {
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hover-icon-heart:hover svg {
+  transform: scale(1.2);
+}
+
+/* ─── Filter Chip ─── */
+.hover-icon-filter svg {
+  transition: transform 0.3s ease;
+}
+.hover-icon-filter:hover svg {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* ─── General Button Icon Hover ─── */
+.btn-icon svg,
+.btn-ghost svg,
+.btn-primary svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-icon:hover svg,
+.btn-ghost:hover svg,
+.btn-primary:hover svg {
+  transform: scale(1.1);
+}
+
+/* ─── Toast Icon ─── */
+.toast-icon svg {
+  transition: transform 0.3s ease;
+}
+#toast.show .toast-icon svg {
+  animation: toastPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes toastPop {
+  0% { transform: scale(0) rotate(-45deg); }
+  70% { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ─── Big Play Button ─── */
+.big-play-btn svg {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), margin 0.3s ease;
+}
+.big-play-btn:hover svg {
+  transform: scale(1.15);
+  margin-left: 6px;
+}
+
+/* ─── Selection Ring Check ─── */
+.g-item.selected .select-ring::after {
+  animation: checkPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* ─── Tip Section Arrow ─── */
+.tip-section-arrow svg {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tip-section-arrow.open svg {
+  transform: rotate(180deg);
+}
+
+/* ─── Contact Social Arrow ─── */
+.contact-social-arrow svg {
+  transition: transform 0.3s ease;
+}
+.contact-social:hover .contact-social-arrow svg {
+  transform: translateX(4px);
+}
+
+/* ─── Speed Menu Items ─── */
+.speed-option {
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+.speed-option:hover {
+  transform: translateX(4px);
+}
+
+/* ─── Progress Bar Handle ─── */
+.progress-bar-fill::after {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.progress-bar-container:hover .progress-bar-fill::after {
+  transform: translateY(-50%) scale(1.3);
+}
+
+/* ─── Volume Slider Thumb ─── */
+.volume-slider::-webkit-slider-thumb {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.volume-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--md-primary) 50%, transparent);
+}
+
+/* ─── Glow effect for primary buttons ─── */
+.btn-primary::after,
+.big-play-btn::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: transparent;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: -1;
+}
+.btn-primary:hover::after,
+.big-play-btn:hover::after {
+  opacity: 1;
+  box-shadow: 0 0 20px color-mix(in srgb, var(--md-primary) 40%, transparent);
+}
+
+/* ─── Stagger animation for filter chips ─── */
+.g-filters:hover .filter-chip:nth-child(1) { transition-delay: 0ms; }
+.g-filters:hover .filter-chip:nth-child(2) { transition-delay: 30ms; }
+.g-filters:hover .filter-chip:nth-child(3) { transition-delay: 60ms; }
+.g-filters:hover .filter-chip:nth-child(4) { transition-delay: 90ms; }
+.g-filters:hover .filter-chip:nth-child(5) { transition-delay: 120ms; }
+
+/* ─── Smooth icon transitions for all SVGs ─── */
+svg {
+  transition: color 0.3s ease, stroke 0.3s ease, fill 0.3s ease;
+}
+
+/* ─── Reduced motion support ─── */
+@media (prefers-reduced-motion: reduce) {
+  .hover-icon,
+  .hover-icon-download svg,
+  .hover-icon-play svg,
+  .hover-icon-mail svg,
+  .hover-icon-close svg,
+  .hover-icon-arrow svg,
+  .hover-icon-grid svg,
+  .theme-toggle svg,
+  .hover-icon-social svg,
+  .hover-icon-check svg,
+  .hover-icon-eye svg,
+  .hover-icon-heart svg,
+  .hover-icon-filter svg,
+  .btn-icon svg,
+  .btn-ghost svg,
+  .btn-primary svg,
+  .password-toggle svg,
+  .tip-card-close svg,
+  .contact-card-close svg,
+  .tip-section-btn .tip-section-icon svg,
+  .contact-link svg,
+  .ctrl-btn svg,
+  #mute-btn svg,
+  #fullscreen-btn svg,
+  .filter-chip svg,
+  .f-contact svg,
+  .lb-dot svg,
+  .lock-avatar svg,
+  .contact-avatar svg,
+  .big-play-btn svg,
+  .item-badge svg,
+  .toast-icon svg,
+  .video-decrypt-overlay .btn-primary svg,
+  #lb-dl-btn svg,
+  .speed-option,
+  .contact-social-arrow svg {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MEGA-UPDATE CSS: New Components (NO grid changes)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── CSS Containment ─── */
+.g-item { contain: layout paint style; }
+.g-header { contain: layout; }
+#lightbox { contain: layout paint; }
+#lock-screen { contain: layout paint; }
+
+/* ─── Skeleton / Placeholder ─── */
+.g-item.skeleton {
+  background: var(--md-surface-variant);
+  animation: skeletonPulse 2s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.g-item.skeleton::before { display: none; }
+.g-item.skeleton .g-item-overlay { display: none; }
+.g-item.skeleton .item-badge { display: none; }
+.g-item.skeleton .dl-indicator { display: none; }
+.g-item.skeleton .select-ring { display: none; }
+
+/* ─── Empty State ─── */
+.g-empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  min-height: 300px;
+}
+.g-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--r-full);
+  background: var(--md-primary-container);
+  color: var(--md-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.g-empty-icon svg { width: 28px; height: 28px; }
+.g-empty-title {
+  font-family: var(--serif);
+  font-size: var(--text-xl);
+  color: var(--md-on-surface);
+  margin-bottom: 8px;
+}
+.g-empty-desc {
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  color: var(--md-on-surface-variant);
+  max-width: 320px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+/* ─── Help Overlay ─── */
+#help-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: rgba(28,25,23,0.5);
+  backdrop-filter: blur(12px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#help-overlay.open { display: flex; opacity: 1; }
+.help-card {
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-xl);
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--md-elevation-5);
+  padding: 32px;
+}
+.help-title {
+  font-family: var(--serif);
+  font-size: var(--text-2xl);
+  color: var(--md-on-surface);
+  margin-bottom: 24px;
+  text-align: center;
+}
+.help-section { margin-bottom: 24px; }
+.help-section-title {
+  font-family: var(--sans);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--md-primary);
+  margin-bottom: 12px;
+}
+.help-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--md-outline);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+}
+.help-key {
+  background: var(--md-surface-container);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-sm);
+  padding: 4px 10px;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--md-on-surface);
+}
+.help-action { color: var(--md-on-surface-variant); }
+.help-close {
+  width: 100%;
+  padding: 12px;
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  border: none;
+  border-radius: var(--r-md);
+  font-family: var(--sans);
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.help-close:hover { transform: translateY(-1px); }
+.help-close:active { transform: scale(0.98); }
+
+/* ─── Auto-Lock Overlay ─── */
+#auto-lock-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: var(--md-surface);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+#auto-lock-overlay.open { display: flex; opacity: 1; }
+.auto-lock-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--r-full);
+  background: var(--md-primary-container);
+  color: var(--md-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  animation: lockPulse 2s ease infinite;
+}
+@keyframes lockPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 color-mix(in srgb, var(--md-primary) 30%, transparent); }
+  50% { transform: scale(1.05); box-shadow: 0 0 0 20px transparent; }
+}
+.auto-lock-icon svg { width: 40px; height: 40px; }
+.auto-lock-title {
+  font-family: var(--serif);
+  font-size: var(--text-2xl);
+  color: var(--md-on-surface);
+  margin-bottom: 8px;
+}
+.auto-lock-desc {
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  color: var(--md-on-surface-variant);
+  max-width: 300px;
+  text-align: center;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* ─── Rate Limit Overlay ─── */
+#rate-limit-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  background: var(--md-surface);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+#rate-limit-overlay.open { display: flex; opacity: 1; }
+.rate-limit-timer {
+  font-family: var(--serif);
+  font-size: var(--text-4xl);
+  color: var(--md-primary);
+  margin-bottom: 16px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Pull-to-Dismiss Indicator ─── */
+#pull-indicator {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(-100%);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0;
+  z-index: 60;
+  pointer-events: none;
+}
+#pull-indicator.visible {
+  transform: translateX(-50%) translateY(12px);
+  opacity: 1;
+}
+#pull-indicator.ready {
+  transform: translateX(-50%) translateY(12px) scale(1.2);
+  background: var(--md-on-primary);
+  color: var(--md-primary);
+}
+#pull-indicator svg { width: 20px; height: 20px; }
+
+/* ─── Progressive Decryption Indicator ─── */
+#decrypt-progress {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--md-surface-container);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-full);
+  padding: 8px 20px;
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  color: var(--md-on-surface-variant);
+  display: none;
+  align-items: center;
+  gap: 10px;
+  box-shadow: var(--md-elevation-2);
+  z-index: 30;
+  backdrop-filter: blur(12px);
+  white-space: nowrap;
+}
+#decrypt-progress.active { display: flex; }
+.decrypt-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--md-outline);
+  border-top-color: var(--md-primary);
+  border-radius: var(--r-full);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── Clipboard Button ─── */
+.clipboard-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--md-surface-container);
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface-variant);
+  font-family: var(--sans);
+  font-size: var(--text-xs);
+  padding: 4px 10px;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+}
+.clipboard-btn:hover {
+  background: var(--md-primary);
+  border-color: var(--md-primary);
+  color: var(--md-on-primary);
+}
+.clipboard-btn svg { width: 12px; height: 12px; }
+
+/* ─── Share Button ─── */
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--md-primary-container);
+  border: 1px solid var(--md-outline);
+  color: var(--md-primary);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: var(--r-full);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 12px;
+}
+.share-btn:hover {
+  background: var(--md-primary);
+  border-color: var(--md-primary);
+  color: var(--md-on-primary);
+  transform: translateY(-1px);
+}
+.share-btn svg { width: 16px; height: 16px; }
+
+/* ─── Focus Trap Visual Indicator ─── */
+*:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* ─── Toast Enhancement ─── */
+#toast.toast-error .toast-icon { background: #cf6679; }
+#toast.toast-error .toast-icon svg { fill: #fff; }
+#toast.toast-success .toast-icon { background: var(--md-primary); }
+
+/* ─── Smooth scroll for lightbox dots ─── */
+.lb-dots-track { scroll-behavior: smooth; }
+
+/* ─── Mobile Pull Feedback ─── */
+@media (max-width: 768px) {
+  .g-item { touch-action: pan-y; }
+  .lb-stage { touch-action: pan-y; }
+}
+
+</style>
+<base target="_blank">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<base target="_blank">
+<base target="_blank">
+</head>
+<body>
+
+<div id="lock-screen" style="transition-property: background-color; transition-duration: 0.3s; transition-timing-function: ease;">
+  <div class="lock-card">
+    <div class="lock-avatar">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 437 396.85"><path d="M0 382.28V172.52C0 155.04 0 15.2 192.28 15.2v69.92c-34.96 0-104.88 17.48-104.88 87.4v139.84h104.88v69.92zM437 15.2v209.76c0 17.48 0 157.32-192.28 157.32v-69.92c34.96 0 104.88-17.48 104.88-87.4V85.12H244.72V15.2z"/><path d="M235.83 132s-33.48-18.06-68.62 6.51c3.46 9.4 19.4 52.61 19.4 52.61l49.22-59.13Zm49.4 48.26s-1.32-37.91-40.38-55.75c-6.38 7.72-35.71 43.24-35.71 43.24zm-17.41 67.19s32.36-19.91 28.48-62.56c-9.9-1.7-55.4-9.5-55.4-9.5l26.92 72.07Zm-66.65 18.03s33.24 18.49 68.7-5.63c-3.34-9.45-18.73-52.86-18.73-52.86zm-49.31-48.26s1.09 37.92 40.05 55.99c6.43-7.68 35.97-43.02 35.97-43.02zm17.22-66.91s-32.32 19.99-28.34 62.63c9.9 1.68 55.42 9.38 55.42 9.38z"/><path d="M218.5 113.27c-47.2 0-85.47 38.27-85.47 85.47s38.27 85.47 85.47 85.47 85.47-38.27 85.47-85.47-38.27-85.47-85.47-85.47m0 145.83c-33.34 0-60.36-27.03-60.36-60.36s27.03-60.36 60.36-60.36 60.36 27.03 60.36 60.36-27.03 60.36-60.36 60.36"/></svg>    
+</div>
+    <div class="lock-label">Zabezpečený přístup</div>
+    <div class="lock-title" id="lock-name">Klientská galerie</div>
+    <div class="lock-subtitle">Jan Levínský</div>
+    <div class="field-wrap" style="margin-bottom:12px;">
+      <input type="text" id="name-input" placeholder="Vaše jméno (nepovinné)" autocomplete="name">
+    </div>
+    <div class="field-wrap">
+      <input type="password" id="password-input" placeholder="Zadejte heslo" autocomplete="current-password">
+      <button type="button" class="password-toggle hover-icon-eye" id="pwd-toggle" onclick="togglePassword()" title="Zobrazit heslo">
+        <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <svg id="eye-off-icon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+      </button>
+    </div>
+    <button class="btn-unlock hover-icon-download" id="unlock-btn" onclick="unlock()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; margin-top:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Odemknout galerii</button>
+    <div class="lock-error" id="lock-error"></div>
+    <div class="lock-footer">Cinematography & Photography</div>
+  </div>
+</div>
+
+<div id="gallery-shell">
+  <div class="g-content">
+    <header class="g-header">
+      <div class="g-brand">
+        <div class="g-title" id="gallery-title">Galerie</div>
+        <div class="g-meta" id="gallery-meta"></div>
+      </div>
+      <div class="g-actions">
+        <button class="btn-ghost hover-icon-grid" id="btn-select" onclick="toggleSelectMode()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Vybrat
+        </button><button class="btn-icon hover-icon-close" onclick="lockGallery()" title="Zamknout galerii" aria-label="Zamknout galerii">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="g-hero">
+      <h2 id="hero-title">Váš projekt</h2>
+      <p id="hero-desc">Prohlédněte si vybrané záběry a stáhněte si je v plném rozlišení. Videa jsou z bezpečnostních důvodů šifrována a před přehráním se musí bezpečně načíst.</p>
+    </div>
+
+    <div class="g-filters" id="filter-bar">
+      <button class="filter-chip active hover-icon-filter" onclick="setFilter('all', this)"><span class="chip-dot"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Vše</button>
+      <button class="filter-chip hover-icon-filter" onclick="setFilter('image', this)"><span class="chip-dot"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Fotografie</button>
+      <button class="filter-chip hover-icon-filter" onclick="setFilter('video', this)"><span class="chip-dot"></span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Videa</button>
+    </div>
+
+    <div class="g-grid" id="grid"></div>
+  </div>
+
+  <footer class="g-footer">
+    <div class="f-name">Jan Levínský</div>
+    <div class="f-role">Cinematography & Photography</div>
+    <button class="f-contact hover-icon-mail" onclick="openContactCard()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>Kontakt</button>
+  </footer>
+</div>
+
+<div id="tip-card" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:300; background:rgba(28,25,23,0.4); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:24px;">
+  <div class="tip-card-inner">
+    <button class="tip-card-close hover-icon-close" onclick="closeTipCard()" title="Zavřít" aria-label="Zavřít okno">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="tip-card-header">
+      <div class="lock-avatar" style="width:56px; height:56px; margin:0 auto 16px;">
+        <svg data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 437 396.85" style="width:28px; height:28px;"><path d="M0 382.28V172.52C0 155.04 0 15.2 192.28 15.2v69.92c-34.96 0-104.88 17.48-104.88 87.4v139.84h104.88v69.92zM437 15.2v209.76c0 17.48 0 157.32-192.28 157.32v-69.92c34.96 0 104.88-17.48 104.88-87.4V85.12H244.72V15.2z"/><path d="M235.83 132s-33.48-18.06-68.62 6.51c3.46 9.4 19.4 52.61 19.4 52.61l49.22-59.13Zm49.4 48.26s-1.32-37.91-40.38-55.75c-6.38 7.72-35.71 43.24-35.71 43.24zm-17.41 67.19s32.36-19.91 28.48-62.56c-9.9-1.7-55.4-9.5-55.4-9.5l26.92 72.07Zm-66.65 18.03s33.24 18.49 68.7-5.63c-3.34-9.45-18.73-52.86-18.73-52.86zm-49.31-48.26s1.09 37.92 40.05 55.99c6.43-7.68 35.97-43.02 35.97-43.02zm17.22-66.91s-32.32 19.99-28.34 62.63c9.9 1.68 55.42 9.38 55.42 9.38z"/><path d="M218.5 113.27c-47.2 0-85.47 38.27-85.47 85.47s38.27 85.47 85.47 85.47 85.47-38.27 85.47-85.47-38.27-85.47-85.47-85.47m0 145.83c-33.34 0-60.36-27.03-60.36-60.36s27.03-60.36 60.36-60.36 60.36 27.03 60.36 60.36-27.03 60.36-60.36 60.36"/></svg>
+      </div>
+      <div class="tip-card-label">Závěrem</div>
+      <div class="tip-card-title">Děkuji za důvěru</div>
+      <p class="tip-card-subtitle">Doufám, že vás výsledek potěšil. Pokud máte jakékoli připomínky nebo byste chtěli spolupracovat znovu, ozvěte se.</p>
+    </div>
+
+    <div class="tip-card-body">
+      <div class="tip-section">
+        <button class="tip-section-btn hover-icon-mail" onclick="toggleTipSection('contact')">
+          <span class="tip-section-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </span>
+          <span class="tip-section-label">Kontakt</span>
+          <span class="tip-section-arrow" id="contact-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="tip-section-content" id="contact-content">
+          <div class="contact-card">
+            <div class="contact-name">Jan Levínský</div>
+            <div class="contact-role">Cinematography & Photography</div>
+            <a href="mailto:j.levinsky@gmail.com" class="contact-link hover-icon-mail">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              j.levinsky@gmail.com
+            </a>
+            <div class="contact-note">Odpovím do 24 hodin</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="tip-card-footer">
+      <button class="btn-primary" onclick="closeTipCard()" style="width:100%;">Rozumím</button>
+    </div>
+  </div>
+</div>
+<style>
+@keyframes tipCardIn {
+  from { opacity:0; transform:scale(0.92) translateY(12px); }
+  to { opacity:1; transform:scale(1) translateY(0); }
+}
+.tip-card-inner {
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-xl);
+  max-width: 440px;
+  width: 100%;
+  box-shadow: var(--md-elevation-5);
+  position: relative;
+  animation: tipCardIn 0.4s cubic-bezier(0.16,1,0.3,1);
+  overflow: hidden;
+}
+.tip-card-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: var(--md-primary);
+  border-radius: 0 0 4px 4px;
+  opacity: 0.6;
+}
+.tip-card-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  background: transparent;
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-property: color, background-color, border-color, transform;
+  transition-duration: 0.2s, 0.2s, 0.2s, 0.15s;
+  transition-timing-function: ease-out;
+  z-index: 2;
+}
+.tip-card-close:hover {
+  background: var(--md-primary);
+  border-color: var(--md-primary);
+  color: var(--md-on-primary);
+}
+.tip-card-close:active { transform: scale(0.96); }
+.tip-card-header {
+  padding: 48px 32px 24px;
+  text-align: center;
+}
+.tip-card-label {
+  font-family: var(--sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--md-primary);
+  margin-bottom: 8px;
+}
+.tip-card-title {
+  font-family: var(--serif);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  color: var(--md-on-surface);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.tip-card-subtitle {
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-weight: 300;
+  color: var(--md-on-surface-variant);
+  line-height: 1.7;
+  max-width: 320px;
+  margin: 0 auto;
+  text-wrap: pretty;
+}
+.tip-card-body {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tip-card-footer {
+  padding: 24px 32px 32px;
+}
+
+/* Expandable Sections */
+.tip-section {
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  transition-property: border-color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease;
+}
+.tip-section:hover {
+  border-color: var(--md-outline-variant);
+}
+.tip-section-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--md-surface-container);
+  border: none;
+  color: var(--md-on-surface);
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  cursor: pointer;
+  transition-property: background-color, transform;
+  transition-duration: 0.3s, 0.15s;
+  transition-timing-function: ease-out;
+  text-align: left;
+}
+.tip-section-btn:hover {
+  background: var(--md-surface-container-high);
+}
+.tip-section-btn:active { transform: scale(0.99); }
+.tip-section-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-full);
+  background: var(--md-primary-container);
+  color: var(--md-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition-property: background-color, color;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-out;
+}
+.tip-section-btn:hover .tip-section-icon {
+  background: var(--md-primary);
+  color: var(--md-on-primary);
+}
+.tip-section-label {
+  flex: 1;
+}
+.tip-section-arrow {
+  color: var(--md-on-surface-variant);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+}
+.tip-section-arrow.open {
+  transform: rotate(180deg);
+}
+.tip-section-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  opacity: 0;
+}
+.tip-section-content.open {
+  max-height: 500px;
+  opacity: 1;
+}
+
+/* Contact Card */
+.contact-card {
+  padding: 24px;
+  background: var(--md-surface-container-low);
+  border-top: 1px solid var(--md-outline);
+  text-align: center;
+}
+.contact-name {
+  font-family: var(--serif);
+  font-size: var(--text-lg);
+  font-weight: 400;
+  color: var(--md-on-surface);
+  margin-bottom: 4px;
+  text-wrap: balance;
+}
+.contact-role {
+  font-family: var(--sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  color: var(--md-primary);
+  text-decoration: none;
+  border: 1px solid var(--md-outline);
+  padding: 8px 24px;
+  border-radius: var(--r-full);
+  transition-property: background-color, border-color, transform;
+  transition-duration: 0.3s, 0.3s, 0.15s;
+  transition-timing-function: ease-out;
+  margin-bottom: 12px;
+}
+.contact-link:hover {
+  background: var(--md-primary);
+  border-color: var(--md-primary);
+  color: var(--md-on-primary);
+}
+.contact-link:active { transform: scale(0.96); }
+.contact-link svg {
+  stroke: currentColor;
+}
+.contact-note {
+  font-family: var(--sans);
+  font-size: var(--text-xs);
+  color: var(--md-on-surface-variant);
+  opacity: 0.7;
+  text-wrap: pretty;
+}
+
+/* QR Card */
+.qr-card {
+  padding: 24px;
+  background: var(--md-surface-container-low);
+  border-top: 1px solid var(--md-outline);
+  text-align: center;
+}
+.qr-desc {
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 300;
+  color: var(--md-on-surface-variant);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+  text-wrap: pretty;
+}
+.qr-container {
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-md);
+  padding: 16px;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+.qr-bank-info {
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  color: var(--md-on-surface-variant);
+  line-height: 1.8;
+}
+.qr-bank-name {
+  font-weight: 600;
+  color: var(--md-on-surface);
+  font-size: var(--text-base);
+}
+.qr-bank-detail {
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+.qr-bank-note {
+  margin-top: 4px;
+  font-size: var(--text-xs);
+  opacity: 0.7;
+  text-wrap: pretty;
+}
+
+@media (max-width: 480px) {
+  .tip-card-header { padding: 32px 20px 20px; }
+  .tip-card-body { padding: 0 16px; }
+  .tip-card-footer { padding: 20px 20px 24px; }
+  .tip-card-title { font-size: 24px; }
+  .tip-section-btn { padding: 14px 16px; }
+}
+
+/* Contact Card */
+@keyframes contactCardIn {
+  from { opacity:0; transform:scale(0.92) translateY(12px); }
+  to { opacity:1; transform:scale(1) translateY(0); }
+}
+#contact-card { transition-property: opacity; transition-duration: 0.3s; transition-timing-function: ease-out; }
+#contact-card.open { display:flex !important; opacity:1; }
+#contact-card:not(.open) { opacity:0; pointer-events:none; }
+.contact-card-inner {
+  background: var(--md-surface);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-xl);
+  max-width: 420px;
+  width: 100%;
+  max-height: 90vh;
+  box-shadow: var(--md-elevation-5);
+  position: relative;
+  animation: contactCardIn 0.4s cubic-bezier(0.16,1,0.3,1);
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  scrollbar-width: thin;
+  scrollbar-color: var(--md-outline-variant) transparent;
+}
+.contact-card-inner::-webkit-scrollbar {
+  width: 5px;
+}
+.contact-card-inner::-webkit-scrollbar-track {
+  background: transparent;
+}
+.contact-card-inner::-webkit-scrollbar-thumb {
+  background: var(--md-outline-variant);
+  border-radius: var(--r-full);
+}
+.contact-card-inner::-webkit-scrollbar-thumb:hover {
+  background: var(--md-primary);
+}
+.contact-card-inner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: var(--md-primary);
+  border-radius: 0 0 4px 4px;
+  opacity: 0.6;
+}
+.contact-card-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r-full);
+  background: transparent;
+  border: 1px solid var(--md-outline);
+  color: var(--md-on-surface-variant);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-property: color, background-color, border-color, transform;
+  transition-duration: 0.2s, 0.2s, 0.2s, 0.15s;
+  transition-timing-function: ease-out;
+  z-index: 2;
+}
+.contact-card-close:hover {
+  background: var(--md-primary);
+  border-color: var(--md-primary);
+  color: var(--md-on-primary);
+}
+.contact-card-close:active { transform: scale(0.96); }
+
+.contact-card-header {
+  padding: 48px 32px 24px;
+  text-align: center;
+}
+.contact-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: var(--r-full);
+  margin: 0 auto 24px;
+  overflow: hidden;
+  border: 2px solid var(--md-outline-variant);
+  box-shadow: var(--md-elevation-2);
+  background: var(--md-surface-container);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.contact-avatar svg {
+  width: 56%;
+  height: 56%;
+  fill: var(--md-primary);
+  stroke: var(--md-primary);
+  stroke-width: 1.2;
+}
+.contact-card-label {
+  font-family: var(--sans);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--md-primary);
+  margin-bottom: 8px;
+}
+.contact-card-title {
+  font-family: var(--serif);
+  font-size: var(--text-2xl);
+  font-weight: 400;
+  color: var(--md-on-surface);
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.contact-card-subtitle {
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-weight: 300;
+  color: var(--md-on-surface-variant);
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+
+.contact-card-body {
+  padding: 0 24px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.contact-social {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 16px;
+  background: var(--md-surface-container);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-md);
+  color: var(--md-on-surface);
+  text-decoration: none;
+  font-family: var(--sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  transition-property: background-color, border-color, color, transform, box-shadow;
+  transition-duration: 0.25s, 0.25s, 0.25s, 0.15s, 0.25s;
+  transition-timing-function: ease-out;
+  position: relative;
+}
+.contact-social:hover {
+  background: var(--md-primary);
+  border-color: var(--md-primary);
+  color: var(--md-on-primary);
+  transform: translateY(-2px);
+  box-shadow: var(--md-elevation-2);
+}
+.contact-social:active { transform: translateY(0) scale(0.98); }
+.contact-social-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-full);
+  background: var(--md-primary-container);
+  color: var(--md-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition-property: background-color, color;
+  transition-duration: 0.25s;
+  transition-timing-function: ease-out;
+}
+.contact-social:hover .contact-social-icon {
+  background: var(--md-on-primary);
+  color: var(--md-primary);
+}
+.contact-social-icon svg { width: 18px; height: 18px; }
+.contact-social-label { flex: 1; }
+.contact-social-arrow {
+  color: var(--md-on-surface-variant);
+  transition: color 0.25s ease-out, transform 0.25s ease-out;
+}
+.contact-social:hover .contact-social-arrow {
+  color: var(--md-primary);
+  transform: translateX(3px);
+}
+
+.contact-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--md-inverse-surface);
+  color: var(--md-inverse-on-surface);
+  padding: 8px 16px;
+  border-radius: var(--r-md);
+  font-family: var(--sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition-property: opacity, transform;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-out;
+  box-shadow: var(--md-elevation-2);
+  z-index: 10;
+}
+.contact-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: var(--md-inverse-surface) transparent transparent transparent;
+}
+.contact-social:hover .contact-tooltip,
+.contact-social:focus-visible .contact-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@media (max-width: 480px) {
+  .contact-card-header { padding: 40px 24px 20px; }
+  .contact-card-title { font-size: 24px; }
+  .contact-card-body { padding: 0 20px 24px; }
+  .contact-avatar { width: 92px; height: 92px; }
+  .contact-social { padding: 12px 14px; font-size: 13px; }
+  #contact-qr-container img,
+  #contact-qr-container canvas { width: 160px !important; height: 160px !important; }
+}
+</style>
+
+
+<div id="contact-card" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; z-index:300; background:rgba(28,25,23,0.4); backdrop-filter:blur(8px); align-items:center; justify-content:center; padding:24px;" onclick="if(event.target === this) closeContactCard()">
+  <div class="contact-card-inner" role="dialog" aria-modal="true" aria-labelledby="contact-card-title" onclick="event.stopPropagation()">
+    <button class="contact-card-close hover-icon-close" onclick="closeContactCard()" title="Zavřít" aria-label="Zavřít kontaktní kartu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+
+    <div class="contact-card-header">
+      <div class="contact-avatar">
+        <svg data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 437 396.85"><path d="M0 382.28V172.52C0 155.04 0 15.2 192.28 15.2v69.92c-34.96 0-104.88 17.48-104.88 87.4v139.84h104.88v69.92zM437 15.2v209.76c0 17.48 0 157.32-192.28 157.32v-69.92c34.96 0 104.88-17.48 104.88-87.4V85.12H244.72V15.2z"/><path d="M235.83 132s-33.48-18.06-68.62 6.51c3.46 9.4 19.4 52.61 19.4 52.61l49.22-59.13Zm49.4 48.26s-1.32-37.91-40.38-55.75c-6.38 7.72-35.71 43.24-35.71 43.24zm-17.41 67.19s32.36-19.91 28.48-62.56c-9.9-1.7-55.4-9.5-55.4-9.5l26.92 72.07Zm-66.65 18.03s33.24 18.49 68.7-5.63c-3.34-9.45-18.73-52.86-18.73-52.86zm-49.31-48.26s1.09 37.92 40.05 55.99c6.43-7.68 35.97-43.02 35.97-43.02zm17.22-66.91s-32.32 19.99-28.34 62.63c9.9 1.68 55.42 9.38 55.42 9.38z"/><path d="M218.5 113.27c-47.2 0-85.47 38.27-85.47 85.47s38.27 85.47 85.47 85.47 85.47-38.27 85.47-85.47-38.27-85.47-85.47-85.47m0 145.83c-33.34 0-60.36-27.03-60.36-60.36s27.03-60.36 60.36-60.36 60.36 27.03 60.36 60.36-27.03 60.36-60.36 60.36"/></svg>
+      </div>
+      <div class="contact-card-label">Kontakt</div>
+      <div class="contact-card-title" id="contact-card-title">Jan Levínský</div>
+      <p class="contact-card-subtitle">Cinematography & Photography</p>
+    </div>
+
+    <div class="contact-card-body">
+      <a href="https://www.youtube.com/@LevinskyJ" class="contact-social youtube hover-icon-social" target="_blank" rel="noopener noreferrer" class="contact-social youtube" aria-label="YouTube @LevinskyJ">
+        <span class="contact-tooltip">@LevinskyJ</span>
+        <span class="contact-social-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </span>
+        <span class="contact-social-label">YouTube</span>
+        <span class="contact-social-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </a>
+
+      <a href="https://www.instagram.com/levinskyj.cine/" class="contact-social instagram hover-icon-social" target="_blank" rel="noopener noreferrer" class="contact-social instagram" aria-label="Instagram @levinskyj.cine">
+        <span class="contact-tooltip">@levinskyj.cine</span>
+        <span class="contact-social-icon">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </span>
+        <span class="contact-social-label">Instagram</span>
+        <span class="contact-social-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </a>
+
+      <a href="mailto:levinskyj.cine@gmail.com" class="contact-social email hover-icon-social" aria-label="Email levinskyj.cine@gmail.com">
+        <span class="contact-tooltip">levinskyj.cine@gmail.com</span>
+        <span class="contact-social-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </span>
+        <span class="contact-social-label">Email</span>
+        <span class="contact-social-arrow">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </span>
+      </a>
+
+      <div class="tip-section" style="margin-top:6px;">
+        <button class="tip-section-btn hover-icon-heart" onclick="toggleTipSection('contact-thanks')">
+          <span class="tip-section-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </span>
+          <span class="tip-section-label">DÍKY!</span>
+          <span class="tip-section-arrow" id="contact-thanks-arrow">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="tip-section-content" id="contact-thanks-content">
+          <div class="qr-card">
+            <p class="qr-desc">Pokud vás práce potěšila, budu vděčný za jakýkoli příspěvek. QR kód obsahuje platební údaje — stačí ho naskenovat v mobilní bance.</p>
+            <div id="contact-qr-container" class="qr-container"></div>
+            <div class="qr-bank-info">
+              <div class="qr-bank-name">Jan Levínský</div>
+              <div class="qr-bank-detail">ČSOB · CZ6308000000004362498043</div>
+              <div class="qr-bank-note">Částku zadáte přímo v bance</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="selection-bar">
+  <div class="sel-count"><span id="sel-count-num">0</span> vybráno</div>
+  <button class="btn-primary hover-icon-download" id="btn-dl-selected" onclick="downloadSelected()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Stáhnout</button>
+  <button class="btn-ghost" onclick="toggleSelectMode()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Zrušit</button>
+</div>
+
+<div id="lightbox">
+  <div class="lb-top">
+    <div class="lb-title" id="lb-filename">IMG_1234.jpg</div>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <button class="btn-ghost hover-icon-download" id="lb-dl-btn" onclick="downloadCurrentFull()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Stáhnout
+      </button>
+      <button class="btn-icon hover-icon-close" onclick="closeLightbox()" title="Zavřít" aria-label="Zavřít lightbox">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="lb-stage">
+    <button class="lb-nav prev hover-icon-arrow" onclick="navigate(-1)">&#8592;</button>
+    <div id="lb-content" style="position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"></div>
+    <button class="lb-nav next hover-icon-arrow" onclick="navigate(1)">&#8594;</button>
+
+    <div class="lb-progress" id="lb-progress">
+      <div class="lb-bar" id="lb-bar"></div>
+    </div>
+
+    <div class="lb-dots-track" id="lb-dots-track"></div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite" aria-atomic="true">
+  <span class="toast-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
+  <span id="toast-text"></span>
+</div>
+
+<script>
+let cryptoKey = null, manifest = null, currentFilter = 'all', filteredItems = [], lbIndex = -1, lbThumbURLs = new Map();
+let isSelecting = false, selectedItems = new Set();
+let currentVideoPlayer = null, currentVideoElement = null, isVideoPlaying = false, videoSpeedMenuOpen = false;
+const LS_DOWNLOADED_KEY = 'gallery-downloaded-items';
+
+function getDownloadedIds() {
+  try { const raw = localStorage.getItem(LS_DOWNLOADED_KEY); return new Set(raw ? JSON.parse(raw) : []); }
+  catch (e) { return new Set(); }
+}
+function saveDownloadedIds(ids) {
+  try { localStorage.setItem(LS_DOWNLOADED_KEY, JSON.stringify([...ids])); } catch (e) {}
+}
+function markDownloaded(id) {
+  const ids = getDownloadedIds();
+  ids.add(id);
+  saveDownloadedIds(ids);
+}
+function isDownloaded(id) { return getDownloadedIds().has(id); }
+function updateDownloadedUI(id) {
+  // Update gallery card
+  const card = document.querySelector('.g-item[data-item-id="' + id + '"]');
+  if (card && !card.querySelector('.dl-indicator')) {
+    card.classList.add('downloaded');
+    const indicator = document.createElement('div');
+    indicator.className = 'dl-indicator';
+    indicator.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Staženo';
+    card.appendChild(indicator);
+  }
+  // Update lightbox button if current item
+  const current = filteredItems[lbIndex];
+  if (current && current.id === id) {
+    const btn = document.getElementById('lb-dl-btn');
+    if (btn && !btn.classList.contains('downloaded')) {
+      btn.classList.add('downloaded');
+      btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Staženo';
+    }
+  }
+}
+
+// Theme
+
+
+
+
+// Load saved name
+(function loadSavedName() {
+  const savedName = localStorage.getItem('gallery-user-name');
+  if (savedName) {
+    const nameInput = document.getElementById('name-input');
+    if (nameInput) nameInput.value = savedName;
+  }
+})();
+
+// Password visibility toggle
+function togglePassword() {
+  const input = document.getElementById('password-input');
+  const eye = document.getElementById('eye-icon');
+  const eyeOff = document.getElementById('eye-off-icon');
+  const btn = document.getElementById('pwd-toggle');
+  if (input.type === 'password') {
+    input.type = 'text';
+    eye.style.display = 'none';
+    eyeOff.style.display = 'block';
+    btn.title = 'Skrýt heslo';
+  } else {
+    input.type = 'password';
+    eye.style.display = 'block';
+    eyeOff.style.display = 'none';
+    btn.title = 'Zobrazit heslo';
+  }
+}
+
+// Crypto Core
+async function deriveKey(password, saltHex, iterations) {
+  const enc = new TextEncoder();
+  const salt = new Uint8Array(saltHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+  const keyMaterial = await window.crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return window.crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations, hash: 'SHA-256' }, keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+}
+async function decryptBytes(encryptedBuf, key) {
+  const nonce = encryptedBuf.slice(0, 12);
+  const ct = encryptedBuf.slice(12);
+  return window.crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, ct);
+}
+async function fetchAndDecrypt(path, onProgress) {
+  const resp = await fetch(path);
+  if (!resp.ok) throw new Error('Chyba stahování: ' + path);
+  const contentLength = +resp.headers.get('Content-Length') || 0;
+  const reader = resp.body.getReader();
+  const chunks = []; let received = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value); received += value.length;
+    if (onProgress && contentLength) onProgress(received / contentLength);
+  }
+  const combined = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) { combined.set(chunk, offset); offset += chunk.length; }
+  return decryptBytes(combined.buffer, cryptoKey);
+}
+
+// Dynamic Color (Material You)
+function generatePaletteFromSeed(seedColor) {
+  const hexToHsl = (hex) => {
+    let r = parseInt(hex.slice(1,3), 16) / 255;
+    let g = parseInt(hex.slice(3,5), 16) / 255;
+    let b = parseInt(hex.slice(5,7), 16) / 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    let h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [h * 360, s * 100, l * 100];
+  };
+  const hslToHex = (h, s, l) => {
+    l /= 100;
+    const a = s * Math.min(l, 1 - l) / 100;
+    const f = n => {
+      const k = (n + h / 30) % 12;
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');
+    };
+    return '#' + f(0) + f(8) + f(4);
+  };
+  const [h, s, l] = hexToHsl(seedColor);
+  return {
+    primary: hslToHex(h, Math.min(s + 10, 90), Math.max(l, 45)),
+    primaryContainer: hslToHex(h, s * 0.6, Math.min(l + 30, 25)),
+    secondaryContainer: hslToHex(h, s * 0.4, Math.min(l + 20, 18)),
+  };
+}
+function applyDynamicColors(seedColor) {
+  const palette = generatePaletteFromSeed(seedColor);
+  const root = document.documentElement;
+  root.style.setProperty('--md-primary', palette.primary);
+  root.style.setProperty('--md-primary-container', palette.primaryContainer);
+  root.style.setProperty('--md-secondary-container', palette.secondaryContainer);
+}
+
+// Extract dominant color from image for dynamic accent
+function extractDominantColor(imageUrl) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const size = 64;
+      canvas.width = size; canvas.height = size;
+      ctx.drawImage(img, 0, 0, size, size);
+
+      try {
+        const data = ctx.getImageData(0, 0, size, size).data;
+        let r = 0, g = 0, b = 0, count = 0;
+
+        // Sample every 4th pixel for performance
+        for (let i = 0; i < data.length; i += 16) {
+          const pr = data[i], pg = data[i+1], pb = data[i+2];
+          // Skip very dark and very light pixels
+          const brightness = (pr + pg + pb) / 3;
+          if (brightness < 30 || brightness > 230) continue;
+          // Skip grayscale-ish
+          const maxC = Math.max(pr, pg, pb), minC = Math.min(pr, pg, pb);
+          if (maxC - minC < 20) continue;
+
+          r += pr; g += pg; b += pb; count++;
+        }
+
+        if (count > 0) {
+          r = Math.round(r / count);
+          g = Math.round(g / count);
+          b = Math.round(b / count);
+        } else {
+          // Fallback to a warm tone if no good colors found
+          r = 196; g = 149; b = 106;
+        }
+
+        const hex = '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+        resolve(hex);
+      } catch (e) {
+        resolve('#c4956a');
+      }
+    };
+    img.onerror = () => resolve('#c4956a');
+    img.src = imageUrl;
+  });
+}
+
+async function applyDynamicColorFromImage(imageUrl) {
+  try {
+    const color = await extractDominantColor(imageUrl);
+    applyDynamicColors(color);
+  } catch (e) {
+    console.log('Could not extract color, using default');
+  }
+}
+
+// Auth
+async function unlock() {
+  const pw = document.getElementById('password-input').value;
+  if (!pw) return;
+  const name = document.getElementById('name-input').value.trim();
+  if (name) localStorage.setItem('gallery-user-name', name);
+  const btn = document.getElementById('unlock-btn');
+  btn.textContent = 'Ověřuji...'; btn.disabled = true;
+  document.getElementById('lock-error').textContent = '';
+  try {
+    if (!manifest) { const resp = await fetch('manifest.json'); manifest = await resp.json(); }
+    cryptoKey = await deriveKey(pw, manifest.salt, manifest.iterations || 600000);
+    if (manifest.items?.length) { await fetchAndDecrypt(manifest.items[0].thumb); }
+    if (manifest.accentColor) { 
+      applyDynamicColors(manifest.accentColor); 
+    } else if (manifest.items?.length) {
+      // Extract accent color from first image thumbnail
+      const firstItem = manifest.items[0];
+      if (firstItem.thumb) {
+        try {
+          const dec = await fetchAndDecrypt(firstItem.thumb);
+          const blob = new Blob([dec], { type: 'image/jpeg' });
+          const url = URL.createObjectURL(blob);
+          await applyDynamicColorFromImage(url);
+          URL.revokeObjectURL(url);
+        } catch (e) { console.log('Color extraction failed'); }
+      }
+    }
+    document.getElementById('gallery-title').textContent = manifest.title || 'Galerie';
+    document.getElementById('hero-title').textContent = manifest.title || 'Váš projekt';
+    document.getElementById('lock-name').textContent = manifest.title || 'Klientská galerie';
+    document.title = (manifest.title || 'Galerie') + ' | Jan Levinský';
+    document.getElementById('lock-screen').classList.add('hidden');
+    document.getElementById('gallery-shell').classList.add('visible');
+    renderGallery();
+  } catch (err) {
+    document.getElementById('lock-error').textContent = 'Nesprávné heslo nebo poškozená data.';
+  } finally {
+    btn.textContent = 'Odemknout galerii'; btn.disabled = false;
+  }
+}
+function lockGallery() {
+  cryptoKey = null;
+  // Keep gallery-user-name and gallery-has-downloaded in localStorage for convenience
+  lbThumbURLs.forEach(url => URL.revokeObjectURL(url)); lbThumbURLs.clear();
+  selectedItems.clear(); isSelecting = false;
+  document.body.classList.remove('selecting'); updateSelectionUI();
+  document.documentElement.style.removeProperty('--md-primary');
+  document.documentElement.style.removeProperty('--md-primary-container');
+  document.documentElement.style.removeProperty('--md-secondary-container');
+  document.getElementById('grid').innerHTML = '';
+  document.getElementById('gallery-shell').classList.remove('visible');
+  document.getElementById('lock-screen').classList.remove('hidden');
+  document.getElementById('password-input').value = '';
+  document.title = "Secure Gallery";
+}
+
+// Render Gallery
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGallery();
+}
+function renderGallery() {
+  const items = manifest?.items || [];
+  filteredItems = currentFilter === 'all' ? items : items.filter(i => i.type === currentFilter);
+  const grid = document.getElementById('grid'); grid.innerHTML = '';
+  document.getElementById('gallery-meta').textContent = items.filter(i=>i.type==='image').length + ' fotek · ' + items.filter(i=>i.type==='video').length + ' videí';
+  filteredItems.forEach((item, idx) => {
+    const el = document.createElement('div');
+    const isDl = isDownloaded(item.id);
+    el.className = 'g-item ' + (selectedItems.has(item.id) ? 'selected ' : '') + (isDl ? 'downloaded' : '');
+    el.dataset.itemId = item.id;
+    el.innerHTML = (item.type === 'video' ? '<div class="item-badge"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Video</div>' : '') + (isDl ? '<div class="dl-indicator"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Staženo</div>' : '') + '<div class="select-ring"></div><div class="g-item-overlay"><div class="g-item-name">' + item.name + '</div><div class="g-item-info">' + (item.size/1024/1024).toFixed(1) + ' MB</div></div>';
+    el.addEventListener('click', () => {
+      if (isSelecting) {
+        if (selectedItems.has(item.id)) selectedItems.delete(item.id);
+        else selectedItems.add(item.id);
+        el.classList.toggle('selected'); updateSelectionUI();
+      } else { openLightbox(idx); }
+    });
+    grid.appendChild(el); loadThumb(item, el);
+  });
+}
+async function loadThumb(item, el) {
+  try {
+    let blobUrl = lbThumbURLs.get(item.id);
+    if (!blobUrl) {
+      const dec = await fetchAndDecrypt(item.thumb);
+      const blob = new Blob([dec], { type: 'image/jpeg' });
+      blobUrl = URL.createObjectURL(blob); lbThumbURLs.set(item.id, blobUrl);
+    }
+    const img = document.createElement('img');
+    img.src = blobUrl;
+    img.onload = function() {
+      // Auto-detect orientation for bento grid
+      const w = img.naturalWidth;
+      const h = img.naturalHeight;
+      if (w && h) {
+        if (h > w * 1.15) {
+          el.classList.add('portrait');
+          el.classList.remove('landscape');
+        } else {
+          el.classList.add('landscape');
+          el.classList.remove('portrait');
+        }
+      }
+    };
+    el.insertBefore(img, el.firstChild);
+
+    // Extract accent color from first loaded image if not already set
+    const root = document.documentElement;
+    const currentPrimary = getComputedStyle(root).getPropertyValue('--md-primary').trim();
+    if (currentPrimary === '#c4956a' || currentPrimary === '' || currentPrimary === 'rgba(28, 25, 23, 0)') {
+      if (manifest && !manifest.accentColor) {
+        applyDynamicColorFromImage(blobUrl);
+      }
+    }
+
+    // If this item is currently viewed in lightbox, update accent color live
+    if (lbIndex >= 0) {
+      const currentItem = filteredItems[lbIndex];
+      const lb = document.getElementById('lightbox');
+      if (currentItem && currentItem.id === item.id && lb && lb.classList.contains('open')) {
+        applyDynamicColorFromImage(blobUrl);
+      }
+    }
+  } catch (e) { el.innerHTML += '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#555;z-index:2">ERR</div>'; }
+}
+
+// Selection Logic
+function toggleSelectMode() {
+  isSelecting = !isSelecting;
+  document.body.classList.toggle('selecting', isSelecting);
+  if (!isSelecting) { selectedItems.clear(); document.querySelectorAll('.g-item').forEach(el => el.classList.remove('selected')); }
+  updateSelectionUI();
+}
+function updateSelectionUI() {
+  const bar = document.getElementById('selection-bar');
+  const btnStr = document.getElementById('btn-select');
+  document.getElementById('sel-count-num').textContent = selectedItems.size;
+  document.getElementById('btn-dl-selected').disabled = selectedItems.size === 0;
+  btnStr.innerHTML = isSelecting ? 'Zrušit' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Vybrat';
+  if (isSelecting) bar.classList.add('visible'); else bar.classList.remove('visible');
+}
+async function downloadSelected() {
+  console.log('downloadSelected called, selectedItems.size:', selectedItems.size);
+  if (selectedItems.size === 0) { showToast('Nic není vybráno'); return; }
+  const itemsToDl = manifest.items.filter(i => selectedItems.has(i.id));
+  console.log('itemsToDl count:', itemsToDl.length, 'items:', itemsToDl.map(x => x.name));
+  if (itemsToDl.length === 0) { showToast('Žádné soubory ke stažení'); return; }
+  toggleSelectMode();
+  const wasFirstDownload = !localStorage.getItem('gallery-has-downloaded');
+  console.log('wasFirstDownload:', wasFirstDownload);
+  let successCount = 0;
+  for (let i = 0; i < itemsToDl.length; i++) {
+    const item = itemsToDl[i];
+    showToast('Stahuji ' + (i+1) + '/' + itemsToDl.length + ': ' + item.name);
+    try {
+      console.log('Starting download for:', item.name);
+      const dec = await fetchAndDecrypt(item.full);
+      console.log('Decrypted:', item.name, 'size:', dec.byteLength);
+      triggerDownload(dec, item.name, item.ext, item.id);
+      successCount++;
+      console.log('Download triggered for:', item.name);
+      // Longer delay between downloads to avoid browser blocking
+      if (i < itemsToDl.length - 1) {
+        console.log('Waiting before next download...');
+        await new Promise(r => setTimeout(r, 1500));
+      }
+    } catch (e) {
+      console.error('Download failed for', item.name, e);
+      showToast('Chyba u ' + item.name + ': ' + (e.message || 'neznámá chyba'));
+    }
+  }
+  showToast('Staženo ' + successCount + '/' + itemsToDl.length + ' souborů');
+  console.log('Batch download complete. successCount:', successCount, 'wasFirstDownload:', wasFirstDownload);
+  // Tip card auto-show disabled by user request
+}
+
+// Custom Video Player
+function destroyVideoPlayer() {
+  if (currentVideoElement) { currentVideoElement.pause(); currentVideoElement.src = ''; currentVideoElement = null; }
+  currentVideoPlayer = null; isVideoPlaying = false; videoSpeedMenuOpen = false;
+}
+
+function createCustomVideoPlayer(videoUrl, itemName) {
+  destroyVideoPlayer();
+  const container = document.createElement('div');
+  container.className = 'custom-video-container';
+  container.id = 'custom-video-player';
+  container.innerHTML = '<video src="' + videoUrl + '" preload="metadata" playsinline></video>' +
+    '<div class="big-play-overlay" id="big-play-overlay"><div class="big-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>' +
+    '<div class="video-controls">' +
+    '<div class="progress-bar-container" id="progress-container"><div class="progress-bar-buffer" id="progress-buffer"></div><div class="progress-bar-fill" id="progress-fill"></div></div>' +
+    '<div class="controls-row">' +
+    '<div class="controls-left">' +
+    '<button class="ctrl-btn play-btn" id="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>' +
+    '<div class="time-display" id="time-display">0:00 / 0:00</div>' +
+    '</div>' +
+    '<div class="controls-right">' +
+    '<div class="volume-container">' +
+    '<button class="ctrl-btn" id="mute-btn"><svg viewBox="0 0 24 24" id="vol-icon"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg></button>' +
+    '<input type="range" class="volume-slider" id="volume-slider" min="0" max="1" step="0.01" value="1">' +
+    '</div>' +
+    '<div style="position:relative;">' +
+    '<button class="speed-btn" id="speed-btn">1x</button>' +
+    '<div class="speed-menu" id="speed-menu">' +
+    '<button class="speed-option" data-speed="0.5">0.5x</button>' +
+    '<button class="speed-option" data-speed="0.75">0.75x</button>' +
+    '<button class="speed-option active" data-speed="1">1x</button>' +
+    '<button class="speed-option" data-speed="1.25">1.25x</button>' +
+    '<button class="speed-option" data-speed="1.5">1.5x</button>' +
+    '<button class="speed-option" data-speed="2">2x</button>' +
+    '</div></div>' +
+    '<button class="ctrl-btn" id="fullscreen-btn"><svg viewBox="0 0 24 24"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>' +
+    '</div></div></div>';
+
+  const video = container.querySelector('video');
+  const playBtn = container.querySelector('#play-btn');
+  const bigPlayOverlay = container.querySelector('#big-play-overlay');
+  const progressContainer = container.querySelector('#progress-container');
+  const progressFill = container.querySelector('#progress-fill');
+  const progressBuffer = container.querySelector('#progress-buffer');
+  const timeDisplay = container.querySelector('#time-display');
+  const muteBtn = container.querySelector('#mute-btn');
+  const volumeSlider = container.querySelector('#volume-slider');
+  const speedBtn = container.querySelector('#speed-btn');
+  const speedMenu = container.querySelector('#speed-menu');
+  const fullscreenBtn = container.querySelector('#fullscreen-btn');
+
+  const formatTime = (seconds) => { const mins = Math.floor(seconds / 60); const secs = Math.floor(seconds % 60); return mins + ':' + secs.toString().padStart(2, '0'); };
+
+  const togglePlay = () => {
+    if (video.paused) { video.play(); playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; bigPlayOverlay.classList.add('hidden'); isVideoPlaying = true; }
+    else { video.pause(); playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'; bigPlayOverlay.classList.remove('hidden'); isVideoPlaying = false; }
+  };
+
+  playBtn.addEventListener('click', togglePlay);
+  bigPlayOverlay.addEventListener('click', togglePlay);
+  video.addEventListener('click', togglePlay);
+
+  const updateProgress = () => {
+    if (video.duration) {
+      const pct = (video.currentTime / video.duration) * 100;
+      progressFill.style.width = pct + '%';
+      timeDisplay.textContent = formatTime(video.currentTime) + ' / ' + formatTime(video.duration);
+      if (video.buffered.length > 0) {
+        const bufferedEnd = video.buffered.end(video.buffered.length - 1);
+        progressBuffer.style.width = (bufferedEnd / video.duration * 100) + '%';
+      }
+    }
+  };
+
+  video.addEventListener('timeupdate', updateProgress);
+  video.addEventListener('progress', updateProgress);
+  video.addEventListener('ended', () => { isVideoPlaying = false; playBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>'; bigPlayOverlay.classList.remove('hidden'); });
+
+  progressContainer.addEventListener('click', (e) => {
+    const rect = progressContainer.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    if (video.duration) video.currentTime = pct * video.duration;
+  });
+
+  let isDragging = false;
+  progressContainer.addEventListener('mousedown', () => isDragging = true);
+  document.addEventListener('mouseup', () => isDragging = false);
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const rect = progressContainer.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+    if (video.duration) video.currentTime = pct * video.duration;
+  });
+
+  // Touch support
+  progressContainer.addEventListener('touchstart', (e) => { isDragging = true; handleTouchProgress(e); }, { passive: false });
+  progressContainer.addEventListener('touchmove', (e) => { if (isDragging) handleTouchProgress(e); }, { passive: false });
+  progressContainer.addEventListener('touchend', () => isDragging = false);
+  function handleTouchProgress(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const rect = progressContainer.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+    if (video.duration) video.currentTime = pct * video.duration;
+  }
+
+  // Volume
+  const updateVolumeIcon = () => {
+    if (video.muted || video.volume === 0) {
+      muteBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73 4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>';
+    } else if (video.volume < 0.5) {
+      muteBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M18.5 12c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM5 9v6h4l5 5V4L9 9H5z"/></svg>';
+    } else {
+      muteBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>';
+    }
+  };
+
+  muteBtn.addEventListener('click', () => { video.muted = !video.muted; updateVolumeIcon(); });
+  volumeSlider.addEventListener('input', () => { video.volume = volumeSlider.value; video.muted = false; updateVolumeIcon(); });
+  video.addEventListener('volumechange', updateVolumeIcon);
+
+  // Speed
+  speedBtn.addEventListener('click', (e) => { e.stopPropagation(); videoSpeedMenuOpen = !videoSpeedMenuOpen; speedMenu.classList.toggle('show', videoSpeedMenuOpen); });
+  speedMenu.querySelectorAll('.speed-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      video.playbackRate = parseFloat(opt.dataset.speed);
+      speedBtn.textContent = opt.dataset.speed + 'x';
+      speedMenu.querySelectorAll('.speed-option').forEach(o => o.classList.remove('active'));
+      opt.classList.add('active');
+      videoSpeedMenuOpen = false; speedMenu.classList.remove('show');
+    });
+  });
+  document.addEventListener('click', (e) => { if (!speedMenu.contains(e.target) && e.target !== speedBtn) { videoSpeedMenuOpen = false; speedMenu.classList.remove('show'); } });
+
+  // Fullscreen
+  fullscreenBtn.addEventListener('click', () => {
+    if (container.requestFullscreen) container.requestFullscreen();
+    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+    else if (container.msRequestFullscreen) container.msRequestFullscreen();
+  });
+
+  // Keyboard
+  document.addEventListener('keydown', (e) => {
+    const lb = document.getElementById('lightbox');
+    if (!lb.classList.contains('open') || !currentVideoElement) return;
+    if (e.key === ' ') { e.preventDefault(); togglePlay(); }
+    if (e.key === 'ArrowRight') { video.currentTime = Math.min(video.duration, video.currentTime + 5); }
+    if (e.key === 'ArrowLeft') { video.currentTime = Math.max(0, video.currentTime - 5); }
+    if (e.key === 'm' || e.key === 'M') { video.muted = !video.muted; updateVolumeIcon(); }
+    if (e.key === 'f' || e.key === 'F') { fullscreenBtn.click(); }
+  });
+
+  currentVideoElement = video;
+  currentVideoPlayer = container;
+  return container;
+}
+
+// Lightbox
+function openLightbox(idx) {
+  lbIndex = idx;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  showLightboxItem(idx);
+  renderBottomNav();
+}
+function closeLightbox() {
+  destroyVideoPlayer();
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('lb-content').innerHTML = '';
+  const track = document.getElementById('lb-dots-track');
+  if (track) { track.innerHTML = ''; track.classList.remove('visible'); }
+}
+function navigate(dir) {
+  destroyVideoPlayer();
+  lbIndex = (lbIndex + dir + filteredItems.length) % filteredItems.length;
+  showLightboxItem(lbIndex);
+  updateBottomNav();
+}
+
+function renderBottomNav() {
+  const track = document.getElementById('lb-dots-track');
+  track.innerHTML = '';
+
+  filteredItems.forEach((item, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'lb-dot' + (i === lbIndex ? ' active' : '');
+    dot.dataset.index = i;
+
+    // Mini tooltip thumbnail
+    const tooltip = document.createElement('div');
+    tooltip.className = 'lb-dot-tooltip';
+    let thumbUrl = lbThumbURLs.get(item.id);
+    if (thumbUrl) {
+      tooltip.innerHTML = '<img src="' + thumbUrl + '" alt="">' + (item.type === 'video' ? '<div class="tt-video-icon"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>' : '');
+    } else {
+      tooltip.innerHTML = '<div style="width:100%;height:100%;background:var(--md-surface-variant);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--md-on-surface-variant);">' + (i + 1) + '</div>';
+    }
+    dot.appendChild(tooltip);
+
+    dot.addEventListener('click', () => { navigateTo(i); });
+    track.appendChild(dot);
+  });
+
+  track.classList.add('visible');
+}
+
+function updateBottomNav() {
+  document.querySelectorAll('.lb-dot').forEach((dot, i) => {
+    dot.classList.toggle('active', i === lbIndex);
+  });
+}
+
+function navigateTo(idx) {
+  if (idx === lbIndex) return;
+  destroyVideoPlayer();
+  lbIndex = idx;
+  showLightboxItem(lbIndex);
+  updateBottomNav();
+}
+
+async function showLightboxItem(idx) {
+  const item = filteredItems[idx];
+  document.getElementById('lb-filename').textContent = item.name;
+  const dlBtn = document.getElementById('lb-dl-btn');
+  if (dlBtn) {
+    const dl = isDownloaded(item.id);
+    dlBtn.classList.toggle('downloaded', dl);
+    dlBtn.innerHTML = dl
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Staženo'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Stáhnout';
+  }
+  const content = document.getElementById('lb-content');
+  content.innerHTML = '';
+  let thumbUrl = lbThumbURLs.get(item.id);
+
+  // Auto-pick accent color from current image when in lightbox
+  if (thumbUrl) {
+    try { await applyDynamicColorFromImage(thumbUrl); } catch (e) {}
+  }
+
+  if (item.type === 'video') {
+    const overlay = document.createElement('div');
+    overlay.className = 'video-decrypt-overlay';
+    overlay.id = 'vid-overlay';
+    overlay.innerHTML = '<button class="btn-primary hover-icon-play" style="font-size:13px; padding:14px 28px;" onclick="playCurrentVideo()">Dešifrovat a přehrát</button><p>Z důvodu silného šifrování se video musí nejprve celé bezpečně načíst do paměti.</p>';
+    content.appendChild(overlay);
+  } else {
+    const img = document.createElement('img');
+    img.src = thumbUrl;
+    img.style.borderRadius = 'var(--r-md)';
+    content.appendChild(img);
+  }
+}
+
+async function playCurrentVideo() {
+  const item = filteredItems[lbIndex];
+  const overlay = document.getElementById('vid-overlay');
+  const progBox = document.getElementById('lb-progress');
+  const progBar = document.getElementById('lb-bar');
+  overlay.innerHTML = '<p style="color:var(--md-on-surface); font-weight:500;">Dešifruji vrstvu...</p>';
+  progBox.classList.add('active');
+  try {
+    const dec = await fetchAndDecrypt(item.full, (pct) => { progBar.style.width = (pct * 100) + '%'; });
+    const mime = 'video/' + (item.ext === 'mp4' ? 'mp4' : 'webm');
+    const blob = new Blob([dec], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const content = document.getElementById('lb-content');
+    content.innerHTML = '';
+    const player = createCustomVideoPlayer(url, item.name);
+    content.appendChild(player);
+    setTimeout(() => { if (currentVideoElement) { currentVideoElement.play(); isVideoPlaying = true; const btn = player.querySelector('#play-btn'); if (btn) btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>'; player.querySelector('#big-play-overlay').classList.add('hidden'); } }, 300);
+  } catch (e) {
+    overlay.innerHTML = '<p style="color:#cf6679">Chyba při dešifrování videa.</p>';
+  } finally {
+    progBox.classList.remove('active');
+    progBar.style.width = '0%';
+  }
+}
+
+async function downloadCurrentFull() {
+  const item = filteredItems[lbIndex];
+  if (!item) { console.error('No item at lbIndex:', lbIndex); showToast('Chyba: soubor nenalezen'); return; }
+  console.log('downloadCurrentFull called for:', item.name, 'wasFirstDownload:', !localStorage.getItem('gallery-has-downloaded'));
+  const btn = document.getElementById('lb-dl-btn');
+  const progBox = document.getElementById('lb-progress');
+  const progBar = document.getElementById('lb-bar');
+  const wasFirstDownload = !localStorage.getItem('gallery-has-downloaded');
+  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Stahuji...';
+  btn.disabled = true;
+  progBox.classList.add('active');
+  try {
+    console.log('Starting fetchAndDecrypt for:', item.name);
+    const dec = await fetchAndDecrypt(item.full, (pct) => { progBar.style.width = (pct * 100) + '%'; });
+    console.log('Decrypted successfully, size:', dec.byteLength);
+    triggerDownload(dec, item.name, item.ext, item.id);
+    showToast('Staženo: ' + item.name);
+    // Tip card auto-show disabled by user request
+  } catch(e) {
+    console.error('downloadCurrentFull error:', e);
+    showToast('Chyba stahování: ' + (e.message || e));
+  } finally {
+    console.log('downloadCurrentFull finally - resetting UI');
+    const current = filteredItems[lbIndex];
+    const dl = current && isDownloaded(current.id);
+    btn.classList.toggle('downloaded', !!dl);
+    btn.innerHTML = dl
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>Staženo'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Stáhnout';
+    btn.disabled = false;
+    progBox.classList.remove('active');
+    progBar.style.width = '0%';
+  }
+}
+
+function renderQRCode(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) { console.error(containerId + ' element not found!'); return; }
+  container.innerHTML = '';
+
+  // Build SPD QR string with user's name if available
+  const userName = localStorage.getItem('gallery-user-name') || '';
+  const rnValue = userName ? userName.toUpperCase() : 'JAN LEVÍNSKÝ';
+  const spdString = 'SPD*1.0*ACC:CZ6308000000004362498043*AM:0.00*CC:CZK*RN:' + rnValue + '*';
+  console.log('SPD string:', spdString);
+
+  // Fixed light mode QR colors
+  const colorDark = '#1c1917';
+  const colorLight = '#faf8f5';
+
+  // Generate QR code
+  if (typeof QRCode === 'undefined') {
+    console.error('QRCode library not loaded!');
+    container.innerHTML = '<div style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--md-on-surface-variant);text-align:center;padding:16px;">Knihovna pro QR kódy se nenačetla.<br>Zkontrolujte připojení k internetu.</div>';
+  } else {
+    try {
+      new QRCode(container, {
+        text: spdString,
+        width: 200,
+        height: 200,
+        colorDark: colorDark,
+        colorLight: colorLight,
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      console.log('QR code generated successfully');
+    } catch (e) {
+      console.error('QR generation failed:', e);
+      container.innerHTML = '<div style="width:200px;height:200px;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--md-on-surface-variant);text-align:center;padding:16px;">QR kód nelze vygenerovat.<br>' + e.message + '</div>';
+    }
+  }
+}
+
+function showTipCard() {
+  console.log('showTipCard called');
+  const card = document.getElementById('tip-card');
+  if (!card) { console.error('tip-card element not found!'); return; }
+
+  // Reset sections to closed state
+  document.querySelectorAll('.tip-section-content').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.tip-section-arrow').forEach(el => el.classList.remove('open'));
+
+  console.log('Setting tip-card display to flex');
+  card.style.display = 'flex';
+}
+
+function toggleTipSection(id) {
+  const content = document.getElementById(id + '-content');
+  const arrow = document.getElementById(id + '-arrow');
+  if (!content || !arrow) return;
+
+  const isOpen = content.classList.contains('open');
+
+  // Close all sections first
+  document.querySelectorAll('.tip-section-content').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('.tip-section-arrow').forEach(el => el.classList.remove('open'));
+
+  // If the clicked section was closed, open it
+  if (!isOpen) {
+    content.classList.add('open');
+    arrow.classList.add('open');
+  }
+}
+
+function closeTipCard() {
+  const card = document.getElementById('tip-card');
+  if (card) { card.style.display = 'none'; console.log('Tip card closed'); }
+}
+
+// Contact Card
+function openContactCard() {
+  const card = document.getElementById('contact-card');
+  if (!card) return;
+
+  // Reset contact-card sections to closed state
+  document.querySelectorAll('#contact-card .tip-section-content').forEach(el => el.classList.remove('open'));
+  document.querySelectorAll('#contact-card .tip-section-arrow').forEach(el => el.classList.remove('open'));
+
+  // Generate QR code for the thanks section
+  renderQRCode('contact-qr-container');
+
+  card.style.display = 'flex';
+  // force reflow for transition
+  void card.offsetWidth;
+  card.classList.add('open');
+}
+function closeContactCard() {
+  const card = document.getElementById('contact-card');
+  if (!card) return;
+  card.classList.remove('open');
+  setTimeout(() => { if (!card.classList.contains('open')) card.style.display = 'none'; }, 300);
+}
+
+function triggerDownload(buffer, filename, ext, itemId) {
+  console.log('triggerDownload called for:', filename, 'size:', buffer.byteLength);
+  const mimeTypes = { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', mp4:'video/mp4', mov:'video/quicktime' };
+  const mime = mimeTypes[ext] || 'application/octet-stream';
+  const blob = new Blob([buffer], { type: mime });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  // Delay removal to ensure browser processes the download
+  setTimeout(() => {
+    if (a.parentNode) document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    console.log('Download cleanup done for:', filename);
+  }, 1000);
+  if (itemId) { markDownloaded(itemId); updateDownloadedUI(itemId); }
+}
+
+// Utils
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('lightbox');
+  const contact = document.getElementById('contact-card');
+  const tip = document.getElementById('tip-card');
+  if (contact && contact.classList.contains('open') && e.key === 'Escape') {
+    e.preventDefault(); closeContactCard(); return;
+  }
+  if (tip && tip.style.display === 'flex' && e.key === 'Escape') {
+    e.preventDefault(); closeTipCard(); return;
+  }
+  if (lb.classList.contains('open')) {
+    if (e.key === 'Escape') closeLightbox();
+    if (e.key === 'ArrowLeft') navigate(-1);
+    if (e.key === 'ArrowRight') navigate(1);
+  } else if (e.key === 'Escape' && isSelecting) {
+    toggleSelectMode();
+  }
+});
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MEGA-UPDATE JS: Optimization, UX, Functionality
+   ═══════════════════════════════════════════════════════════════ */
+
+// ─── Web Worker (inline blob) ───
+const workerCode = `self.onmessage = async function(e) {
+  const { encryptedBuf, password, saltHex, iterations, id } = e.data;
+  try {
+    const enc = new TextEncoder();
+    const salt = new Uint8Array(saltHex.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+    const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations, hash: 'SHA-256' },
+      keyMaterial,
+      { name: 'AES-GCM', length: 256 },
+      false,
+      ['decrypt']
+    );
+    const nonce = encryptedBuf.slice(0, 12);
+    const ct = encryptedBuf.slice(12);
+    const decrypted = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, ct);
+    self.postMessage({ id, decrypted, success: true }, [decrypted]);
+  } catch (err) {
+    self.postMessage({ id, error: err.message, success: false });
+  }
+};`;
+const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
+const workerUrl = URL.createObjectURL(workerBlob);
+const decryptWorker = new Worker(workerUrl);
+const workerCallbacks = new Map();
+let workerIdCounter = 0;
+
+decryptWorker.onmessage = function(e) {
+  const { id, decrypted, error, success } = e.data;
+  const cb = workerCallbacks.get(id);
+  if (cb) {
+    workerCallbacks.delete(id);
+    if (success) cb.resolve(decrypted);
+    else cb.reject(new Error(error));
+  }
+};
+
+function decryptInWorker(encryptedBuf, password, saltHex, iterations) {
+  return new Promise((resolve, reject) => {
+    const id = ++workerIdCounter;
+    workerCallbacks.set(id, { resolve, reject });
+    decryptWorker.postMessage({ encryptedBuf, password, saltHex, iterations, id }, [encryptedBuf]);
+  });
+}
+
+// ─── LRU Cache for decrypted blobs ───
+class LRUCache {
+  constructor(maxItems = 15, maxBytes = 300 * 1024 * 1024) {
+    this.cache = new Map();
+    this.maxItems = maxItems;
+    this.maxBytes = maxBytes;
+    this.currentBytes = 0;
+  }
+  get(key) {
+    const item = this.cache.get(key);
+    if (item) {
+      this.cache.delete(key);
+      this.cache.set(key, item);
+    }
+    return item ? item.value : null;
+  }
+  set(key, value, bytes) {
+    while (this.currentBytes + bytes > this.maxBytes && this.cache.size > 0) {
+      const firstKey = this.cache.keys().next().value;
+      const first = this.cache.get(firstKey);
+      this.currentBytes -= first.bytes;
+      URL.revokeObjectURL(first.value);
+      this.cache.delete(firstKey);
+    }
+    if (this.cache.has(key)) {
+      const old = this.cache.get(key);
+      this.currentBytes -= old.bytes;
+    }
+    this.cache.delete(key);
+    this.cache.set(key, { value, bytes });
+    this.currentBytes += bytes;
+    if (this.cache.size > this.maxItems) {
+      const firstKey = this.cache.keys().next().value;
+      const first = this.cache.get(firstKey);
+      this.currentBytes -= first.bytes;
+      URL.revokeObjectURL(first.value);
+      this.cache.delete(firstKey);
+    }
+  }
+  has(key) { return this.cache.has(key); }
+}
+const blobCache = new LRUCache();
+
+// ─── Focus Trap ───
+function trapFocus(element) {
+  const focusable = element.querySelectorAll('a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])');
+  if (focusable.length === 0) return;
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  first.focus();
+  element._focusTrapHandler = function(e) {
+    if (e.key !== 'Tab') return;
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  element.addEventListener('keydown', element._focusTrapHandler);
+}
+function releaseFocusTrap(element) {
+  if (element._focusTrapHandler) {
+    element.removeEventListener('keydown', element._focusTrapHandler);
+    delete element._focusTrapHandler;
+  }
+}
+
+// ─── Haptic Feedback ───
+function haptic(type) {
+  if (!navigator.vibrate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const patterns = {
+    light: [10], medium: [20], heavy: [30],
+    success: [10, 50, 10], error: [50, 30, 50],
+    select: [5], download: [15, 30, 15]
+  };
+  navigator.vibrate(patterns[type] || patterns.light);
+}
+
+// ─── Audit Log ───
+function logAudit(action, detail) {
+  try {
+    const logs = JSON.parse(localStorage.getItem('gallery-audit') || '[]');
+    logs.push({ t: Date.now(), a: action, d: detail || '', ua: navigator.userAgent.slice(0, 100) });
+    if (logs.length > 100) logs.shift();
+    localStorage.setItem('gallery-audit', JSON.stringify(logs));
+  } catch (e) {}
+}
+
+// ─── Clipboard API ───
+async function copyToClipboard(text, label) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast((label || 'Text') + ' zkopírován');
+    haptic('success');
+  } catch (e) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast((label || 'Text') + ' zkopírován');
+    haptic('success');
+  }
+}
+
+// ─── Web Share API ───
+async function shareGallery() {
+  const shareData = {
+    title: (manifest?.title || 'Galerie') + ' | Jan Levínský',
+    text: 'Prohlédněte si vybrané záběry v zabezpečené galerii.',
+    url: location.href
+  };
+  if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+    try { await navigator.share(shareData); haptic('success'); }
+    catch (e) { if (e.name !== 'AbortError') fallbackShare(); }
+  } else { fallbackShare(); }
+}
+function fallbackShare() {
+  copyToClipboard(location.href, 'Odkaz');
+}
+
+// ─── Rate Limiting ───
+function checkRateLimit() {
+  try {
+    const attempts = JSON.parse(localStorage.getItem('gallery-failed-attempts') || '[]');
+    const now = Date.now();
+    const windowMs = 30 * 60 * 1000;
+    const recent = attempts.filter(t => now - t < windowMs);
+    localStorage.setItem('gallery-failed-attempts', JSON.stringify(recent));
+    if (recent.length >= 5) {
+      const last = recent[recent.length - 1];
+      const wait = Math.ceil((windowMs - (now - last)) / 1000);
+      return { allowed: false, wait };
+    }
+    return { allowed: true };
+  } catch (e) { return { allowed: true }; }
+}
+function recordFailedAttempt() {
+  try {
+    const attempts = JSON.parse(localStorage.getItem('gallery-failed-attempts') || '[]');
+    attempts.push(Date.now());
+    localStorage.setItem('gallery-failed-attempts', JSON.stringify(attempts));
+  } catch (e) {}
+}
+function showRateLimitOverlay(waitSeconds) {
+  const overlay = document.getElementById('rate-limit-overlay');
+  const timer = document.getElementById('rate-limit-timer');
+  overlay.classList.add('open');
+  const update = () => {
+    const m = Math.floor(waitSeconds / 60).toString().padStart(2, '0');
+    const s = (waitSeconds % 60).toString().padStart(2, '0');
+    timer.textContent = m + ':' + s;
+    if (waitSeconds > 0) { waitSeconds--; setTimeout(update, 1000); }
+    else { overlay.classList.remove('open'); }
+  };
+  update();
+}
+
+// ─── Auto-Lock ───
+let idleTimer = null;
+let idleWarningTimer = null;
+function resetIdleTimer() {
+  if (!cryptoKey) return;
+  clearTimeout(idleTimer);
+  clearTimeout(idleWarningTimer);
+  idleTimer = setTimeout(() => {
+    logAudit('auto-lock');
+    lockGallery();
+    document.getElementById('auto-lock-overlay').classList.add('open');
+  }, 5 * 60 * 1000);
+}
+function dismissAutoLock() {
+  document.getElementById('auto-lock-overlay').classList.remove('open');
+  document.getElementById('lock-screen').classList.remove('hidden');
+  document.getElementById('password-input').focus();
+}
+['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(e => {
+  document.addEventListener(e, resetIdleTimer, { passive: true });
+});
+
+// ─── Swipe Gestures (Lightbox) ───
+let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
+function initSwipeGestures() {
+  const lb = document.getElementById('lightbox');
+  if (!lb) return;
+  lb.addEventListener('touchstart', (e) => {
+    if (e.touches.length !== 1) return;
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+  lb.addEventListener('touchend', (e) => {
+    if (!touchStartX) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    const dt = Date.now() - touchStartTime;
+    const velocity = Math.abs(dx) / (dt || 1);
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5 && velocity > 0.3) {
+      haptic('light');
+      if (dx > 0) navigate(-1); else navigate(1);
+    }
+    touchStartX = 0;
+  }, { passive: true });
+}
+
+// ─── Pull-to-Dismiss ───
+let pullStartY = 0, pullCurrentY = 0, pullEl = null;
+function initPullToDismiss() {
+  const targets = [
+    { el: document.getElementById('lightbox'), close: closeLightbox },
+    { el: document.getElementById('tip-card'), close: closeTipCard },
+    { el: document.getElementById('contact-card'), close: closeContactCard },
+    { el: document.getElementById('help-overlay'), close: closeHelpOverlay }
+  ];
+  targets.forEach(({ el, close }) => {
+    if (!el) return;
+    el.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      pullStartY = e.touches[0].clientY;
+      pullEl = el;
+    }, { passive: true });
+    el.addEventListener('touchmove', (e) => {
+      if (!pullEl || pullEl !== el) return;
+      pullCurrentY = e.touches[0].clientY - pullStartY;
+      if (pullCurrentY > 0 && el.scrollTop <= 0) {
+        const indicator = document.getElementById('pull-indicator');
+        if (indicator) {
+          indicator.classList.add('visible');
+          if (pullCurrentY > 100) indicator.classList.add('ready');
+          else indicator.classList.remove('ready');
+        }
+        el.style.transform = 'translateY(' + (pullCurrentY * 0.4) + 'px)';
+        el.style.transition = 'none';
+        el.style.opacity = Math.max(0.3, 1 - pullCurrentY / 400);
+      }
+    }, { passive: true });
+    el.addEventListener('touchend', (e) => {
+      if (!pullEl || pullEl !== el) return;
+      const indicator = document.getElementById('pull-indicator');
+      if (indicator) { indicator.classList.remove('visible'); indicator.classList.remove('ready'); }
+      el.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+      if (pullCurrentY > 120) {
+        el.style.transform = 'translateY(100vh)';
+        el.style.opacity = '0';
+        setTimeout(() => { close(); el.style.transform = ''; el.style.opacity = ''; }, 300);
+        haptic('medium');
+      } else {
+        el.style.transform = 'translateY(0)';
+        el.style.opacity = '1';
+        setTimeout(() => { el.style.transform = ''; el.style.opacity = ''; el.style.transition = ''; }, 300);
+      }
+      pullEl = null; pullCurrentY = 0;
+    }, { passive: true });
+  });
+}
+
+// ─── Lazy Loading (IntersectionObserver) ───
+let thumbObserver = null;
+function initLazyLoading() {
+  if (thumbObserver) thumbObserver.disconnect();
+  thumbObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const item = entry.target;
+        const itemData = filteredItems.find(i => i.id === item.dataset.itemId);
+        if (itemData && !item.querySelector('img')) {
+          loadThumb(itemData, item);
+        }
+        thumbObserver.unobserve(item);
+      }
+    });
+  }, { rootMargin: '200px' });
+  document.querySelectorAll('.g-item').forEach(el => thumbObserver.observe(el));
+}
+
+// ─── Prefetch next/prev in lightbox ───
+async function prefetchAdjacent() {
+  if (!cryptoKey || filteredItems.length === 0) return;
+  const indices = [
+    (lbIndex - 1 + filteredItems.length) % filteredItems.length,
+    (lbIndex + 1) % filteredItems.length
+  ];
+  for (const idx of indices) {
+    const item = filteredItems[idx];
+    if (!item || blobCache.has('thumb-' + item.id)) continue;
+    try {
+      const dec = await fetchAndDecrypt(item.thumb);
+      const blob = new Blob([dec], { type: 'image/jpeg' });
+      const url = URL.createObjectURL(blob);
+      blobCache.set('thumb-' + item.id, url, dec.byteLength);
+      lbThumbURLs.set(item.id, url);
+    } catch (e) {}
+  }
+}
+
+// ─── Progressive Decryption UI ───
+function showDecryptProgress(text) {
+  const el = document.getElementById('decrypt-progress');
+  const txt = document.getElementById('decrypt-text');
+  if (txt) txt.textContent = text;
+  if (el) el.classList.add('active');
+}
+function hideDecryptProgress() {
+  const el = document.getElementById('decrypt-progress');
+  if (el) el.classList.remove('active');
+}
+
+// ─── Enhanced fetchAndDecrypt with progress ───
+async function fetchAndDecryptProgress(path, onProgress, onChunk) {
+  const resp = await fetch(path);
+  if (!resp.ok) throw new Error('Chyba stahování: ' + path);
+  const contentLength = +(resp.headers.get('Content-Length') || 0);
+  const reader = resp.body.getReader();
+  const chunks = [];
+  let received = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    received += value.length;
+    if (onProgress && contentLength) onProgress(received / contentLength);
+    if (onChunk) onChunk(received, contentLength);
+  }
+  const combined = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) { combined.set(chunk, offset); offset += chunk.length; }
+  return decryptBytes(combined.buffer, cryptoKey);
+}
+
+// ─── Batch ZIP Download ───
+async function downloadSelectedAsZip() {
+  if (selectedItems.size === 0) { showToast('Nic není vybráno'); return; }
+  const itemsToDl = manifest.items.filter(i => selectedItems.has(i.id));
+  if (itemsToDl.length === 0) { showToast('Žádné soubory ke stažení'); return; }
+  if (typeof JSZip === 'undefined') { showToast('Knihovna pro ZIP není načtena'); return; }
+
+  toggleSelectMode();
+  const zip = new JSZip();
+  let successCount = 0;
+
+  for (let i = 0; i < itemsToDl.length; i++) {
+    const item = itemsToDl[i];
+    showToast('Připravuji ZIP ' + (i+1) + '/' + itemsToDl.length + ': ' + item.name);
+    try {
+      const dec = await fetchAndDecryptProgress(item.full, null, (recv, total) => {
+        if (total) showToast('Stahuji ' + item.name + ' — ' + Math.round(recv/total*100) + '%');
+      });
+      const mimeTypes = { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', mp4:'video/mp4', mov:'video/quicktime' };
+      const mime = mimeTypes[item.ext] || 'application/octet-stream';
+      zip.file(item.name, new Blob([dec], { type: mime }));
+      successCount++;
+      haptic('success');
+    } catch (e) {
+      showToast('Chyba u ' + item.name);
+      haptic('error');
+    }
+  }
+
+  if (successCount === 0) { showToast('ZIP se nepodařilo vytvořit'); return; }
+
+  showToast('Vytvářím archiv...');
+  const content = await zip.generateAsync({ type: 'blob' }, (metadata) => {
+    showToast('Komprimuji... ' + metadata.percent.toFixed(0) + '%');
+  });
+  const url = URL.createObjectURL(content);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (manifest?.title || 'galerie') + '.zip';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+  showToast('Archiv stažen (' + successCount + ' souborů)');
+  haptic('download');
+  logAudit('batch-zip', successCount + '/' + itemsToDl.length);
+}
+
+// ─── Help Overlay ───
+function toggleHelpOverlay() {
+  const overlay = document.getElementById('help-overlay');
+  if (overlay.classList.contains('open')) closeHelpOverlay();
+  else openHelpOverlay();
+}
+function openHelpOverlay() {
+  const overlay = document.getElementById('help-overlay');
+  overlay.classList.add('open');
+  trapFocus(overlay.querySelector('.help-card'));
+}
+function closeHelpOverlay() {
+  const overlay = document.getElementById('help-overlay');
+  overlay.classList.remove('open');
+  releaseFocusTrap(overlay.querySelector('.help-card'));
+}
+
+// ─── Keyboard Shortcuts ───
+document.addEventListener('keydown', (e) => {
+  if (e.target.matches('input, textarea, [contenteditable]')) return;
+  const lb = document.getElementById('lightbox');
+  const help = document.getElementById('help-overlay');
+  const contact = document.getElementById('contact-card');
+  const tip = document.getElementById('tip-card');
+
+  if (e.key === '?' && !e.shiftKey) {
+    e.preventDefault();
+    toggleHelpOverlay();
+    return;
+  }
+  if (help && help.classList.contains('open')) {
+    if (e.key === 'Escape' || e.key === '?') { e.preventDefault(); closeHelpOverlay(); }
+    return;
+  }
+  if (e.key === 'l' || e.key === 'L') {
+    e.preventDefault();
+    if (cryptoKey) { lockGallery(); haptic('medium'); }
+    return;
+  }
+  if (e.key === 's' || e.key === 'S') {
+    e.preventDefault();
+    toggleSelectMode();
+    haptic('select');
+    return;
+  }
+  if (lb && lb.classList.contains('open')) {
+    if (e.key === 'j' || e.key === 'J') { e.preventDefault(); navigate(1); haptic('light'); }
+    if (e.key === 'k' || e.key === 'K') { e.preventDefault(); navigate(-1); haptic('light'); }
+    if (e.key === 'd' || e.key === 'D') { e.preventDefault(); downloadCurrentFull(); haptic('medium'); }
+    return;
+  }
+  if (e.key >= '1' && e.key <= '3') {
+    e.preventDefault();
+    const filters = ['all', 'image', 'video'];
+    const idx = parseInt(e.key) - 1;
+    const buttons = document.querySelectorAll('.filter-chip');
+    if (buttons[idx]) {
+      setFilter(filters[idx], buttons[idx]);
+      haptic('light');
+    }
+    return;
+  }
+});
+
+// ─── Enhanced unlock with rate limit ───
+const _originalUnlock = unlock;
+unlock = async function() {
+  const rl = checkRateLimit();
+  if (!rl.allowed) {
+    showRateLimitOverlay(rl.wait);
+    haptic('error');
+    return;
+  }
+  try {
+    await _originalUnlock();
+    logAudit('unlock-success');
+    initSwipeGestures();
+    initPullToDismiss();
+    resetIdleTimer();
+  } catch (e) {
+    recordFailedAttempt();
+    logAudit('unlock-failed');
+    throw e;
+  }
+};
+
+// ─── Enhanced lockGallery ───
+const _originalLockGallery = lockGallery;
+lockGallery = function() {
+  _originalLockGallery();
+  clearTimeout(idleTimer);
+  clearTimeout(idleWarningTimer);
+};
+
+// ─── Enhanced renderGallery with lazy loading & empty state ───
+const _originalRenderGallery = renderGallery;
+renderGallery = function() {
+  _originalRenderGallery();
+  initLazyLoading();
+
+  // Empty state
+  const grid = document.getElementById('grid');
+  const existingEmpty = grid.querySelector('.g-empty-state');
+  if (existingEmpty) existingEmpty.remove();
+
+  if (filteredItems.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'g-empty-state';
+    empty.innerHTML = '<div class="g-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><div class="g-empty-title">Žádné výsledky</div><div class="g-empty-desc">V této kategorii nejsou žádné soubory. Zkuste jiný filtr nebo zobrazte vše.</div>';
+    grid.appendChild(empty);
+  }
+};
+
+// ─── Enhanced openLightbox with prefetch ───
+const _originalOpenLightbox = openLightbox;
+openLightbox = function(idx) {
+  _originalOpenLightbox(idx);
+  prefetchAdjacent();
+};
+
+// ─── Enhanced downloadCurrentFull with progress ───
+const _originalDownloadCurrentFull = downloadCurrentFull;
+downloadCurrentFull = async function() {
+  const item = filteredItems[lbIndex];
+  if (!item) { showToast('Chyba: soubor nenalezen'); return; }
+  logAudit('download-single', item.name);
+  showDecryptProgress('Připravuji stahování...');
+  try {
+    await _originalDownloadCurrentFull();
+  } finally {
+    hideDecryptProgress();
+  }
+};
+
+// ─── Enhanced playCurrentVideo with progress ───
+const _originalPlayCurrentVideo = playCurrentVideo;
+playCurrentVideo = async function() {
+  showDecryptProgress('Načítání videa...');
+  try {
+    await _originalPlayCurrentVideo();
+  } finally {
+    hideDecryptProgress();
+  }
+};
+
+// ─── Enhanced downloadSelected with ZIP option ───
+const _originalDownloadSelected = downloadSelected;
+downloadSelected = async function() {
+  if (selectedItems.size > 1) {
+    if (typeof JSZip !== 'undefined') {
+      await downloadSelectedAsZip();
+      return;
+    }
+  }
+  logAudit('batch-download', selectedItems.size);
+  await _originalDownloadSelected();
+};
+
+// ─── Enhanced showToast with types ───
+const _originalShowToast = showToast;
+showToast = function(msg, type) {
+  _originalShowToast(msg);
+  const toast = document.getElementById('toast');
+  if (toast) {
+    toast.classList.remove('toast-error', 'toast-success');
+    if (type === 'error') toast.classList.add('toast-error');
+    if (type === 'success') toast.classList.add('toast-success');
+  }
+};
+
+// ─── Enhanced showLightboxItem with focus trap ───
+const _originalShowLightboxItem = showLightboxItem;
+showLightboxItem = function(idx) {
+  _originalShowLightboxItem(idx);
+  const lb = document.getElementById('lightbox');
+  if (lb && lb.classList.contains('open')) {
+    setTimeout(() => trapFocus(lb), 100);
+  }
+};
+
+// ─── Enhanced closeLightbox with focus release ───
+const _originalCloseLightbox = closeLightbox;
+closeLightbox = function() {
+  const lb = document.getElementById('lightbox');
+  if (lb) releaseFocusTrap(lb);
+  _originalCloseLightbox();
+};
+
+// ─── Enhanced openContactCard with focus trap ───
+const _originalOpenContactCard = openContactCard;
+openContactCard = function() {
+  _originalOpenContactCard();
+  const card = document.getElementById('contact-card');
+  if (card) setTimeout(() => trapFocus(card.querySelector('.contact-card-inner')), 100);
+};
+
+// ─── Enhanced closeContactCard with focus release ───
+const _originalCloseContactCard = closeContactCard;
+closeContactCard = function() {
+  const card = document.getElementById('contact-card');
+  if (card) releaseFocusTrap(card.querySelector('.contact-card-inner'));
+  _originalCloseContactCard();
+};
+
+// ─── Enhanced closeTipCard ───
+const _originalCloseTipCard = closeTipCard;
+closeTipCard = function() {
+  const tip = document.getElementById('tip-card');
+  if (tip) releaseFocusTrap(tip.querySelector('.tip-card-inner'));
+  _originalCloseTipCard();
+};
+
+// ─── Enhanced showTipCard with focus trap ───
+const _originalShowTipCard = showTipCard;
+showTipCard = function() {
+  _originalShowTipCard();
+  const tip = document.getElementById('tip-card');
+  if (tip) setTimeout(() => trapFocus(tip.querySelector('.tip-card-inner')), 100);
+};
+
+// ─── Add Share Button to Footer ───
+(function addShareButton() {
+  const footer = document.querySelector('.g-footer');
+  if (!footer || footer.querySelector('.share-btn')) return;
+  const shareBtn = document.createElement('button');
+  shareBtn.className = 'share-btn';
+  shareBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>Sdílet galerii';
+  shareBtn.onclick = shareGallery;
+  footer.appendChild(shareBtn);
+})();
+
+// ─── Add Clipboard Buttons to Contact Card ───
+(function addClipboardButtons() {
+  const emailLink = document.querySelector('.contact-card-body .email');
+  if (emailLink) {
+    const email = 'levinskyj.cine@gmail.com';
+    const btn = document.createElement('button');
+    btn.className = 'clipboard-btn';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Kopírovat';
+    btn.onclick = () => copyToClipboard(email, 'Email');
+    emailLink.appendChild(btn);
+  }
+  const bankDetail = document.querySelector('.qr-bank-detail');
+  if (bankDetail) {
+    const btn = document.createElement('button');
+    btn.className = 'clipboard-btn';
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Kopírovat';
+    btn.onclick = () => copyToClipboard('CZ6308000000004362498043', 'Číslo účtu');
+    bankDetail.appendChild(btn);
+  }
+})();
+
+// ─── Init on DOM ready ───
+document.addEventListener('DOMContentLoaded', () => {
+  initSwipeGestures();
+  initPullToDismiss();
+
+  // Add haptic to existing buttons
+  document.querySelectorAll('.btn-icon, .btn-ghost, .btn-primary, .filter-chip, .lb-nav, .ctrl-btn').forEach(btn => {
+    btn.addEventListener('click', () => haptic('light'));
+  });
+
+  // Add haptic to filter chips
+  document.querySelectorAll('.filter-chip').forEach((chip, i) => {
+    chip.addEventListener('click', () => {
+      haptic('light');
+    });
+  });
+});
+
+// ─── Expose audit log for debugging ───
+window.getAuditLog = function() {
+  return JSON.parse(localStorage.getItem('gallery-audit') || '[]');
+};
+window.clearAuditLog = function() {
+  localStorage.removeItem('gallery-audit');
+};
+
+</script>
+
+<!-- Help Overlay -->
+<div id="help-overlay" onclick="if(event.target===this)closeHelpOverlay()">
+  <div class="help-card" role="dialog" aria-modal="true" aria-labelledby="help-title">
+    <div class="help-title" id="help-title">Klávesové zkratky</div>
+    <div class="help-section">
+      <div class="help-section-title">Navigace</div>
+      <div class="help-row"><span class="help-action">Předchozí položka</span><span class="help-key">← / K</span></div>
+      <div class="help-row"><span class="help-action">Další položka</span><span class="help-key">→ / J</span></div>
+      <div class="help-row"><span class="help-action">Zavřít lightbox</span><span class="help-key">ESC</span></div>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">Přehrávání</div>
+      <div class="help-row"><span class="help-action">Přehrát / Pozastavit</span><span class="help-key">Space</span></div>
+      <div class="help-row"><span class="help-action">Posunout -5s</span><span class="help-key">←</span></div>
+      <div class="help-row"><span class="help-action">Posunout +5s</span><span class="help-key">→</span></div>
+      <div class="help-row"><span class="help-action">Ztlumit / Zapnout zvuk</span><span class="help-key">M</span></div>
+      <div class="help-row"><span class="help-action">Celá obrazovka</span><span class="help-key">F</span></div>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">Akce</div>
+      <div class="help-row"><span class="help-action">Výběr více položek</span><span class="help-key">S</span></div>
+      <div class="help-row"><span class="help-action">Stáhnout aktuální</span><span class="help-key">D</span></div>
+      <div class="help-row"><span class="help-action">Filtr: Vše</span><span class="help-key">1</span></div>
+      <div class="help-row"><span class="help-action">Filtr: Fotografie</span><span class="help-key">2</span></div>
+      <div class="help-row"><span class="help-action">Filtr: Videa</span><span class="help-key">3</span></div>
+    </div>
+    <div class="help-section">
+      <div class="help-section-title">Ostatní</div>
+      <div class="help-row"><span class="help-action">Zamknout galerii</span><span class="help-key">L</span></div>
+      <div class="help-row"><span class="help-action">Tato nápověda</span><span class="help-key">?</span></div>
+    </div>
+    <button class="help-close" onclick="closeHelpOverlay()">Rozumím</button>
+  </div>
+</div>
+
+<!-- Auto-Lock Overlay -->
+<div id="auto-lock-overlay">
+  <div class="auto-lock-icon">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+  </div>
+  <div class="auto-lock-title">Galerie byla zamčena</div>
+  <div class="auto-lock-desc">Z důvodu bezpečnosti byla galerie po 5 minutách nečinnosti automaticky zamčena.</div>
+  <button class="btn-unlock" onclick="dismissAutoLock()" style="width:auto; padding: 14px 32px;">Odemknout znovu</button>
+</div>
+
+<!-- Rate Limit Overlay -->
+<div id="rate-limit-overlay">
+  <div class="lock-avatar" style="margin-bottom:24px;">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  </div>
+  <div class="lock-title">Příliš mnoho pokusů</div>
+  <div class="lock-subtitle">Z bezpečnostních důvodů je galerie dočasně uzamčena.</div>
+  <div class="rate-limit-timer" id="rate-limit-timer">00:00</div>
+  <div class="lock-footer">Zkuste to znovu za zobrazený čas</div>
+</div>
+
+<!-- Pull-to-Dismiss Indicator -->
+<div id="pull-indicator">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+</div>
+
+<!-- Progressive Decryption Progress -->
+<div id="decrypt-progress">
+  <div class="decrypt-spinner"></div>
+  <span id="decrypt-text">Dešifruji...</span>
+</div>
+
+</body>
+</html>

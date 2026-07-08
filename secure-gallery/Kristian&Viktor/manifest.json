@@ -1,0 +1,229 @@
+{
+  "version": 1,
+  "title": "Kristián & Viktor",
+  "salt": "f9402d7a682ee5aa53a4ec210067c7f18a6c3b699adaafe7510b2993294bd257",
+  "iterations": 600000,
+  "count": 20,
+  "items": [
+    {
+      "id": "1d4746d06fb5",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_1.JPG",
+      "ext": "jpg",
+      "thumb": "files/1d4746d06fb5_t.enc",
+      "full": "files/1d4746d06fb5_f.enc",
+      "size": 1589346,
+      "width": 4498,
+      "height": 2999
+    },
+    {
+      "id": "18e557ff7d8a",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_10.JPG",
+      "ext": "jpg",
+      "thumb": "files/18e557ff7d8a_t.enc",
+      "full": "files/18e557ff7d8a_f.enc",
+      "size": 887070,
+      "width": 3215,
+      "height": 4822
+    },
+    {
+      "id": "915f3cdbf8fc",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_11.JPG",
+      "ext": "jpg",
+      "thumb": "files/915f3cdbf8fc_t.enc",
+      "full": "files/915f3cdbf8fc_f.enc",
+      "size": 1435688,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "71a042a9a2ec",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_12.JPG",
+      "ext": "jpg",
+      "thumb": "files/71a042a9a2ec_t.enc",
+      "full": "files/71a042a9a2ec_f.enc",
+      "size": 755461,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "373cc59a3f7a",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_13.JPG",
+      "ext": "jpg",
+      "thumb": "files/373cc59a3f7a_t.enc",
+      "full": "files/373cc59a3f7a_f.enc",
+      "size": 719989,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "ae9a19958ee4",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_14.JPG",
+      "ext": "jpg",
+      "thumb": "files/ae9a19958ee4_t.enc",
+      "full": "files/ae9a19958ee4_f.enc",
+      "size": 850039,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "0986b4b7954f",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_15.JPG",
+      "ext": "jpg",
+      "thumb": "files/0986b4b7954f_t.enc",
+      "full": "files/0986b4b7954f_f.enc",
+      "size": 687238,
+      "width": 3774,
+      "height": 5661
+    },
+    {
+      "id": "749a0c8e11fb",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_16.JPG",
+      "ext": "jpg",
+      "thumb": "files/749a0c8e11fb_t.enc",
+      "full": "files/749a0c8e11fb_f.enc",
+      "size": 898432,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "abb30ff88a29",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_17.JPG",
+      "ext": "jpg",
+      "thumb": "files/abb30ff88a29_t.enc",
+      "full": "files/abb30ff88a29_f.enc",
+      "size": 1096451,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "70f69bd7f0d7",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_18.JPG",
+      "ext": "jpg",
+      "thumb": "files/70f69bd7f0d7_t.enc",
+      "full": "files/70f69bd7f0d7_f.enc",
+      "size": 818268,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "726f8c469557",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_19.JPG",
+      "ext": "jpg",
+      "thumb": "files/726f8c469557_t.enc",
+      "full": "files/726f8c469557_f.enc",
+      "size": 467946,
+      "width": 2760,
+      "height": 4140
+    },
+    {
+      "id": "e1dcecd07ca1",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_2.JPG",
+      "ext": "jpg",
+      "thumb": "files/e1dcecd07ca1_t.enc",
+      "full": "files/e1dcecd07ca1_f.enc",
+      "size": 1181062,
+      "width": 3361,
+      "height": 5042
+    },
+    {
+      "id": "d0148e45a60c",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_20.JPG",
+      "ext": "jpg",
+      "thumb": "files/d0148e45a60c_t.enc",
+      "full": "files/d0148e45a60c_f.enc",
+      "size": 526556,
+      "width": 2425,
+      "height": 3638
+    },
+    {
+      "id": "f748ef77656d",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_3.JPG",
+      "ext": "jpg",
+      "thumb": "files/f748ef77656d_t.enc",
+      "full": "files/f748ef77656d_f.enc",
+      "size": 2066883,
+      "width": 3695,
+      "height": 5542
+    },
+    {
+      "id": "49b985a9fb7e",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_4.JPG",
+      "ext": "jpg",
+      "thumb": "files/49b985a9fb7e_t.enc",
+      "full": "files/49b985a9fb7e_f.enc",
+      "size": 429247,
+      "width": 1871,
+      "height": 2817
+    },
+    {
+      "id": "eb9307cb91da",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_5.JPG",
+      "ext": "jpg",
+      "thumb": "files/eb9307cb91da_t.enc",
+      "full": "files/eb9307cb91da_f.enc",
+      "size": 1225799,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "554d60ae8667",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_6.JPG",
+      "ext": "jpg",
+      "thumb": "files/554d60ae8667_t.enc",
+      "full": "files/554d60ae8667_f.enc",
+      "size": 961397,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "bc101a982e92",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_7.JPG",
+      "ext": "jpg",
+      "thumb": "files/bc101a982e92_t.enc",
+      "full": "files/bc101a982e92_f.enc",
+      "size": 417234,
+      "width": 6000,
+      "height": 4000
+    },
+    {
+      "id": "a21704e8eb5f",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_8.JPG",
+      "ext": "jpg",
+      "thumb": "files/a21704e8eb5f_t.enc",
+      "full": "files/a21704e8eb5f_f.enc",
+      "size": 1358940,
+      "width": 4000,
+      "height": 6000
+    },
+    {
+      "id": "b43eb0969a5a",
+      "type": "image",
+      "name": "20260703_Kristián&Viktor_9.JPG",
+      "ext": "jpg",
+      "thumb": "files/b43eb0969a5a_t.enc",
+      "full": "files/b43eb0969a5a_f.enc",
+      "size": 995675,
+      "width": 3641,
+      "height": 5462
+    }
+  ]
+}
