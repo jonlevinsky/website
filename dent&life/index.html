@@ -869,114 +869,176 @@
     .brand-tag:active { transform: scale(0.96); }
 
     /* Portfolio Section */
-    .portfolio { padding: 8rem 0; background: var(--background); }
-    @media (min-width: 768px) { .portfolio { padding: 10rem 0; } }
+    .portfolio { padding: 8rem 0 0; background: var(--background); overflow: hidden; }
+    @media (min-width: 768px) { .portfolio { padding: 10rem 0 0; } }
 
-    .portfolio-grid { display: grid; gap: 1.5rem; }
-    @media (min-width: 768px) { .portfolio-grid { grid-template-columns: repeat(2, 1fr); } }
+    /* ── Film Strip ── */
+    .film-strip-outer {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      margin-top: 4rem;
+      /* bottom padding replaces old section padding-bottom */
+      padding-bottom: 8rem;
+    }
+    @media (min-width: 768px) { .film-strip-outer { padding-bottom: 10rem; } }
 
-    .portfolio-item {
+    @keyframes film-scroll {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .film-strip {
+      display: flex;
+      flex-direction: column;
+      background: #1a1a1a;
+      position: relative;
+      user-select: none;
+      /* subtle film grain texture */
+      box-shadow: inset 0 0 60px rgba(0,0,0,0.6), 0 0 0 1px #111;
+    }
+
+    /* Perforations row */
+    .film-perfs {
+      display: flex;
+      align-items: center;
+      background: #141414;
+      height: 28px;
+      padding: 0 8px;
+      gap: 0;
+      overflow: hidden;
+      flex-shrink: 0;
+      /* continuous strip — duplicated inside for seamless loop */
+    }
+
+    /* Each individual sprocket hole */
+    .film-perf {
+      flex-shrink: 0;
+      width: 16px;
+      height: 12px;
+      border-radius: 2px;
+      background: transparent;
+      border: none;
+      box-shadow:
+        0 0 0 1.5px #0a0a0a,
+        inset 0 0 0 1.5px #0a0a0a;
+      /* The hole itself — cut out with a nested div or just bg */
+      background-color: #0a0a0a;
+      margin: 0 9px;
+      position: relative;
+    }
+
+    /* Shine on hole edge for realism */
+    .film-perf::before {
+      content: '';
+      position: absolute;
+      inset: 1px;
+      border-radius: 1px;
+      background: #050505;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    /* Images row */
+    .film-frames-track {
+      display: flex;
+      animation: film-scroll 28s linear infinite;
+      /* will contain 2× the frames for seamless loop */
+    }
+
+    .film-frames-track:hover { animation-play-state: paused; }
+
+    .film-frame {
+      flex-shrink: 0;
+      width: 300px;
+      height: 220px;
+      margin: 6px 5px;
       position: relative;
       overflow: hidden;
-      border-radius: 1rem;
       cursor: pointer;
-      opacity: 0;
-      transform: translateY(20px);
-      transition-property: transform, opacity;
-      transition-duration: 0.7s;
-      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform, opacity;
+      /* frame border — slight off-white like actual film */
+      outline: 2px solid #2a2a2a;
     }
 
-    .portfolio-item.visible { opacity: 1; transform: translateY(0); }
-
-    .portfolio-image {
-      position: relative;
-      aspect-ratio: 16/10;
-      overflow: hidden;
+    @media (min-width: 768px) {
+      .film-frame { width: 360px; height: 260px; }
     }
 
-    .portfolio-image img {
+    .film-frame img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition-property: transform;
-      transition-duration: 0.7s;
-      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-      will-change: transform;
+      display: block;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+      filter: saturate(0.85) contrast(1.05);
     }
 
-    .portfolio-item:hover .portfolio-image img { transform: scale(1.1); }
+    .film-frame:hover img {
+      transform: scale(1.06);
+      filter: saturate(1.1) contrast(1.08);
+    }
 
-    .portfolio-overlay {
+    .film-frame-overlay {
       position: absolute;
       inset: 0;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.2), transparent);
-      opacity: 0.6;
-      transition-property: opacity;
-      transition-duration: 0.5s;
-      transition-timing-function: ease-out;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.1) 55%, transparent 100%);
+      opacity: 0.75;
+      transition: opacity 0.4s ease;
     }
 
-    .portfolio-item:hover .portfolio-overlay { opacity: 0.8; }
+    .film-frame:hover .film-frame-overlay { opacity: 0.9; }
 
-    .portfolio-content {
+    .film-frame-content {
       position: absolute;
-      inset: 0;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem 1.1rem;
+      transform: translateY(4px);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .portfolio-info { display: flex; align-items: flex-start; justify-content: space-between; }
+    .film-frame:hover .film-frame-content { transform: translateY(0); }
 
-    .portfolio-item h3 {
-      font-size: 1.5rem;
+    .film-frame-content h3 {
+      font-size: 0.95rem;
       font-weight: 600;
-      color: white;
-      margin-bottom: 0.5rem;
-      transition-property: transform;
-      transition-duration: 0.5s;
-      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      color: #fff;
+      margin: 0 0 0.2rem;
+      letter-spacing: -0.01em;
     }
 
-    .portfolio-item:hover h3 { transform: translateX(0.5rem); }
-
-    .portfolio-item p {
-      font-size: 0.875rem;
-      color: rgba(255, 255, 255, 0.6);
-      transition-property: color;
-      transition-duration: 0.5s;
-      transition-timing-function: ease-out;
+    .film-frame-content p {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.6);
+      margin: 0;
     }
 
-    .portfolio-item:hover p { color: rgba(255, 255, 255, 0.8); }
+    /* Frame number — like real film */
+    .film-frame-number {
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.25);
+      letter-spacing: 0.05em;
+    }
 
-    .portfolio-arrow {
-      width: 3rem;
-      height: 3rem;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(8px);
+    /* Perf scroll animation (same speed as frames) */
+    .film-perfs-track {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      transform: translateY(1rem);
-      filter: blur(4px);
-      transition-property: opacity, transform, filter;
-      transition-duration: 0.5s;
-      transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      animation: film-scroll 28s linear infinite;
     }
+    .film-perfs-track:hover { animation-play-state: paused; }
 
-    .portfolio-item:hover .portfolio-arrow {
+    /* portfolio-item kept for JS observer compatibility */
+    .portfolio-item {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
       opacity: 1;
-      transform: translateY(0);
-      filter: blur(0px);
+      transform: none;
     }
-
-    .portfolio-arrow svg { width: 1.25rem; height: 1.25rem; color: white; }
 
     /* Reviews Section */
     .reviews { padding: 8rem 0; background: var(--muted); overflow: clip; overflow-clip-margin: 60px; }
@@ -1854,83 +1916,106 @@
         <h2 class="section-title">Ukázky naší <strong>práce</strong></h2>
         <p class="section-text">Precizní zpracování a kvalita v každém detailu</p>
       </div>
-      <div class="portfolio-grid">
-        <div class="portfolio-item" data-gallery="0">
-          <div class="portfolio-image">
-            <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&q=80" alt="Metalokeramické korunky">
+    </div>
+
+    <!-- Film Strip -->
+    <div class="film-strip-outer">
+      <div class="film-strip">
+
+        <!-- Top perforations -->
+        <div class="film-perfs" aria-hidden="true">
+          <div class="film-perfs-track" id="perfs-top">
+            <!-- filled by JS -->
           </div>
-          <div class="portfolio-overlay"></div>
-          <div class="portfolio-content">
-            <div class="portfolio-info">
-              <div>
+        </div>
+
+        <!-- Frames -->
+        <div class="film-perfs" style="height:auto; background:#1a1a1a; padding:0; overflow:hidden;">
+          <div class="film-frames-track" id="film-frames">
+            <!-- Set A -->
+            <div class="film-frame portfolio-item" data-gallery="0">
+              <span class="film-frame-number">1A</span>
+              <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&q=80" alt="Metalokeramické korunky" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
                 <h3>Metalokeramické korunky</h3>
                 <p>Precizní zpracování s perfektním barevným přechodem</p>
               </div>
-              <div class="portfolio-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                </svg>
-              </div>
             </div>
-          </div>
-        </div>
-        <div class="portfolio-item" data-gallery="1">
-          <div class="portfolio-image">
-            <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80" alt="Celokeramické můstky">
-          </div>
-          <div class="portfolio-overlay"></div>
-          <div class="portfolio-content">
-            <div class="portfolio-info">
-              <div>
+            <div class="film-frame portfolio-item" data-gallery="1">
+              <span class="film-frame-number">2A</span>
+              <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80" alt="Celokeramické můstky" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
                 <h3>Celokeramické můstky</h3>
                 <p>Estetické řešení s maximální přirozeností</p>
               </div>
-              <div class="portfolio-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                </svg>
-              </div>
             </div>
-          </div>
-        </div>
-        <div class="portfolio-item" data-gallery="2">
-          <div class="portfolio-image">
-            <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80" alt="Implantátové práce">
-          </div>
-          <div class="portfolio-overlay"></div>
-          <div class="portfolio-content">
-            <div class="portfolio-info">
-              <div>
+            <div class="film-frame portfolio-item" data-gallery="2">
+              <span class="film-frame-number">3A</span>
+              <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80" alt="Implantátové práce" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
                 <h3>Implantátové práce</h3>
                 <p>Moderní technologie pro dlouhodobá řešení</p>
               </div>
-              <div class="portfolio-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                </svg>
-              </div>
             </div>
-          </div>
-        </div>
-        <div class="portfolio-item" data-gallery="3">
-          <div class="portfolio-image">
-            <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&q=80" alt="Snímatelné protézy">
-          </div>
-          <div class="portfolio-overlay"></div>
-          <div class="portfolio-content">
-            <div class="portfolio-info">
-              <div>
+            <div class="film-frame portfolio-item" data-gallery="3">
+              <span class="film-frame-number">4A</span>
+              <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&q=80" alt="Snímatelné protézy" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
                 <h3>Snímatelné protézy</h3>
                 <p>Komfortní a esteticky zpracované náhrady</p>
               </div>
-              <div class="portfolio-arrow">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                </svg>
+            </div>
+            <!-- Set B (duplicate for seamless loop) -->
+            <div class="film-frame" data-gallery="0" aria-hidden="true">
+              <span class="film-frame-number">1B</span>
+              <img src="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?w=600&q=80" alt="" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
+                <h3>Metalokeramické korunky</h3>
+                <p>Precizní zpracování s perfektním barevným přechodem</p>
+              </div>
+            </div>
+            <div class="film-frame" data-gallery="1" aria-hidden="true">
+              <span class="film-frame-number">2B</span>
+              <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=600&q=80" alt="" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
+                <h3>Celokeramické můstky</h3>
+                <p>Estetické řešení s maximální přirozeností</p>
+              </div>
+            </div>
+            <div class="film-frame" data-gallery="2" aria-hidden="true">
+              <span class="film-frame-number">3B</span>
+              <img src="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?w=600&q=80" alt="" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
+                <h3>Implantátové práce</h3>
+                <p>Moderní technologie pro dlouhodobá řešení</p>
+              </div>
+            </div>
+            <div class="film-frame" data-gallery="3" aria-hidden="true">
+              <span class="film-frame-number">4B</span>
+              <img src="https://images.unsplash.com/photo-1598256989800-fe5f95da9787?w=600&q=80" alt="" loading="lazy">
+              <div class="film-frame-overlay"></div>
+              <div class="film-frame-content">
+                <h3>Snímatelné protézy</h3>
+                <p>Komfortní a esteticky zpracované náhrady</p>
               </div>
             </div>
           </div>
         </div>
+
+        <!-- Bottom perforations -->
+        <div class="film-perfs" aria-hidden="true">
+          <div class="film-perfs-track" id="perfs-bottom">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -2279,6 +2364,37 @@
       });
     });
 
+    // ==================== FILM STRIP PERFORATIONS ====================
+    (function () {
+      function fillPerfs(trackEl) {
+        // Each perf+gap is approx 34px wide (16px hole + 9px margin each side)
+        // We need 2× viewport width worth of perfs for seamless loop
+        const perfWidth = 34;
+        const needed = Math.ceil((window.innerWidth * 2) / perfWidth) + 4;
+        const html = Array(needed).fill('<div class="film-perf"></div>').join('');
+        trackEl.innerHTML = html + html; // 2x for the animation loop
+      }
+
+      const perfsTop    = document.getElementById('perfs-top');
+      const perfsBottom = document.getElementById('perfs-bottom');
+
+      if (perfsTop)    fillPerfs(perfsTop);
+      if (perfsBottom) fillPerfs(perfsBottom);
+
+      // Pause perf animation in sync with frame hover
+      const framesTrack = document.getElementById('film-frames');
+      if (framesTrack) {
+        framesTrack.addEventListener('mouseenter', () => {
+          if (perfsTop)    perfsTop.style.animationPlayState    = 'paused';
+          if (perfsBottom) perfsBottom.style.animationPlayState = 'paused';
+        });
+        framesTrack.addEventListener('mouseleave', () => {
+          if (perfsTop)    perfsTop.style.animationPlayState    = 'running';
+          if (perfsBottom) perfsBottom.style.animationPlayState = 'running';
+        });
+      }
+    })();
+
     // Intersection Observer for scroll animations
     const observerOptions = {
       root: document.body,
@@ -2471,7 +2587,7 @@
       document.body.style.overflow = '';
     }
 
-    document.querySelectorAll('.portfolio-item').forEach(item => {
+    document.querySelectorAll('.film-frame[data-gallery]:not([aria-hidden])').forEach(item => {
       item.addEventListener('click', () => {
         const index = parseInt(item.dataset.gallery);
         openGalleryModal(index);

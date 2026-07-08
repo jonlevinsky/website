@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "title": "Nový projekt",
+    "type": "photo",
+    "year": "2025-2026",
+    "layout": "normal",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": []
+  }
+]

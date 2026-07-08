@@ -1,0 +1,56 @@
+[
+  {
+    "id": 1,
+    "title": "Nový projekt",
+    "type": "video",
+    "year": "2025",
+    "layout": "normal",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [
+        "Blackmagic Pocket Cinema 6k Pro"
+      ],
+      "lenses": [
+        ""
+      ],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [
+        "Davinci Resolve"
+      ],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "video",
+        "src": "media/video/2025/Nový-projekt/3.AP-Trailer.mp4",
+        "thumbnail": "media/video/2025/Nový-projekt/3.AP-Trailer.mp4",
+        "title": "Trailer",
+        "caption": ""
+      },
+      {
+        "type": "video",
+        "src": "media/video/2025/Nový-projekt/4.AP-Hodinář.mp4",
+        "thumbnail": "media/video/2025/Nový-projekt/4.AP-Hodinář.mp4",
+        "title": "Hodinář",
+        "caption": ""
+      },
+      {
+        "type": "video",
+        "src": "media/video/2025/Nový-projekt/5.AP-Zubní_Technik.mp4",
+        "thumbnail": "media/video/2025/Nový-projekt/5.AP-Zubní_Technik.mp4",
+        "title": "Zubní Technik",
+        "caption": ""
+      }
+    ]
+  }
+]

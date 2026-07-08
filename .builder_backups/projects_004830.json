@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Nový projekt",
+    "type": "photo",
+    "year": "2025",
+    "layout": "normal",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [
+        "Helios - 44M"
+      ],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": []
+  }
+]

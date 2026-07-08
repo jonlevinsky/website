@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "title": "Postupy práce",
+    "type": "video",
+    "year": "2025",
+    "layout": "normal",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [
+        "Blackmagic Pocket Cinema 6K Pro"
+      ],
+      "lenses": [
+        "Helios - 44M"
+      ],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [
+        "Zoom H6"
+      ],
+      "software": [],
+      "color": [],
+      "drone": [],
+      "filter": [
+        "Close-UP",
+        "CPL",
+        "ND"
+      ],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": []
+  }
+]

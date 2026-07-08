@@ -1,3084 +1,922 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio | Photo & Video Archive</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #E4E3DF;
-            --surface: #EDECE8;
-            --surface2: #DDDCD8;
-            --surface-raised: #F5F4F0;
-            --surface-sunken: #D4D3CF;
-            --surface-deep: #C8C7C3;
-            --border: rgba(0,0,0,0.11);
-            --border-active: rgba(0,0,0,0.22);
-            --text: #1C1B18;
-            --text-muted: #78746F;
-            --text-dim: #58544F;
-            --accent: #B87840;
-            --accent-glow: rgba(184,120,64,0.08);
-            --green: #3A7A58;
-            --warm-bronze: #B87840;
-            --mono: 'DM Mono', monospace;
-            --sans: 'Syne', sans-serif;
-
-            /* ── Motion System — Emil Kowalski easing curves ── */
-            --ease-out-quart:  cubic-bezier(0.165, 0.84, 0.44, 1);
-            --ease-out-quint:  cubic-bezier(0.23, 1, 0.32, 1);
-            --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
-            --ease-spring:     cubic-bezier(0.34, 1.56, 0.64, 1);
-
-            /* ── Brushed aluminum texture (horizontal hairlines) ── */
-            --brush: repeating-linear-gradient(
-                89deg,
-                transparent 0px,
-                transparent 2px,
-                rgba(255,255,255,0.024) 2px,
-                rgba(255,255,255,0.024) 3px,
-                transparent 3px,
-                transparent 6px,
-                rgba(0,0,0,0.006) 6px,
-                rgba(0,0,0,0.006) 7px
-            );
-            --plastic-grain: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='grain'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grain)' opacity='0.015'/%3E%3C/svg%3E");
-
-            /* ── Skeuomorphic Physical Shadow System ── */
-            --shadow-sm:
-                0 1px 0 rgba(255,255,255,0.86),
-                0 2px 5px rgba(0,0,0,0.13),
-                0 1px 2px rgba(0,0,0,0.09);
-            --shadow-md:
-                0 1px 0 rgba(255,255,255,0.80),
-                0 5px 14px rgba(0,0,0,0.17),
-                0 2px 5px rgba(0,0,0,0.12),
-                inset 0 1px 0 rgba(255,255,255,0.88);
-            --shadow-lg:
-                0 1px 0 rgba(255,255,255,0.74),
-                0 10px 28px rgba(0,0,0,0.20),
-                0 4px 10px rgba(0,0,0,0.13),
-                inset 0 1px 0 rgba(255,255,255,0.92);
-            --shadow-inset:
-                inset 0 2px 7px rgba(0,0,0,0.13),
-                inset 0 1px 3px rgba(0,0,0,0.09),
-                inset 0 -1px 0 rgba(255,255,255,0.38);
-            --shadow-pressed:
-                inset 0 3px 9px rgba(0,0,0,0.18),
-                inset 0 1px 4px rgba(0,0,0,0.12),
-                0 1px 0 rgba(255,255,255,0.52);
-        }
-
-        /* ═══════════════════════════════════════════════════════
-           DARK MODE — Black Anodized Titanium
-           Like a Sony FX3 body, Leica M in black, space-grade alloy.
-           Deep near-black base, warm highlights, copper accent glow.
-        ═══════════════════════════════════════════════════════ */
-        body.dark-mode {
-            --bg: #0D0C10;
-            --surface: #141318;
-            --surface2: #1B1A21;
-            --surface-raised: #201F27;
-            --surface-sunken: #09080C;
-            --surface-deep: #060508;
-            --border: rgba(255,255,255,0.058);
-            --border-active: rgba(255,255,255,0.14);
-            --text: #F0EEEA;
-            --text-muted: #6A6872;
-            --text-dim: #4A4852;
-            --accent: #D4956A;
-            --accent-glow: rgba(212,149,106,0.18);
-            --warm-bronze: #D4956A;
-            --green: #6BBF9A;
-            --brush: repeating-linear-gradient(
-                89deg,
-                transparent 0px,
-                transparent 2px,
-                rgba(255,248,242,0.008) 2px,
-                rgba(255,248,242,0.008) 3px,
-                transparent 3px,
-                transparent 6px,
-                rgba(255,248,242,0.003) 6px,
-                rgba(255,248,242,0.003) 7px
-            );
-            --shadow-sm:
-                0 1px 0 rgba(255,255,255,0.038),
-                0 2px 5px rgba(0,0,0,0.58),
-                0 1px 2px rgba(0,0,0,0.40);
-            --shadow-md:
-                0 1px 0 rgba(255,255,255,0.030),
-                0 5px 14px rgba(0,0,0,0.70),
-                0 2px 5px rgba(0,0,0,0.48),
-                inset 0 1px 0 rgba(255,248,242,0.052);
-            --shadow-lg:
-                0 1px 0 rgba(255,255,255,0.022),
-                0 10px 28px rgba(0,0,0,0.82),
-                0 4px 10px rgba(0,0,0,0.55),
-                inset 0 1px 0 rgba(255,248,242,0.042);
-            --shadow-inset:
-                inset 0 2px 7px rgba(0,0,0,0.65),
-                inset 0 1px 3px rgba(0,0,0,0.45),
-                inset 0 -1px 0 rgba(255,255,255,0.022);
-            --shadow-pressed:
-                inset 0 3px 9px rgba(0,0,0,0.75),
-                inset 0 1px 4px rgba(0,0,0,0.55),
-                0 1px 0 rgba(255,255,255,0.022);
-        }
-
-        /* ══════════════════════════════════════ */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            background-color: var(--bg);
-            background-image: var(--brush);
-            color: var(--text);
-            font-family: var(--sans);
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        body::before { display: none; }
-
-        /* ─── HEADER ─── */
-        header {
-            padding: 24px 48px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 0;
-            background-color: var(--surface);
-            background-image: var(--brush);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 100;
-            box-shadow: var(--shadow-md);
-        }
-
-        .logo {
-            font-family: var(--mono);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--text);
-            font-weight: 500;
-        }
-
-        .logo span { color: var(--accent); }
-
-        .nav-links {
-            font-family: var(--mono);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-        }
-
-        .kbd-hint {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-
-        /* Real 3D keycaps */
-        .kbd-hint kbd {
-            background-color: var(--surface);
-            background-image: linear-gradient(180deg,
-                var(--surface-raised) 0%,
-                var(--surface) 40%,
-                var(--surface2) 80%,
-                var(--surface-sunken) 100%
-            );
-            border: 1px solid var(--border-active);
-            border-bottom: 3px solid rgba(0,0,0,0.20);
-            border-radius: 4px;
-            padding: 4px 9px;
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-dim);
-            box-shadow:
-                0 3px 7px rgba(0,0,0,0.14),
-                inset 0 1px 0 rgba(255,255,255,0.92),
-                inset 1px 0 0 rgba(255,255,255,0.55),
-                inset -1px 0 0 rgba(0,0,0,0.05);
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.5);
-        }
-
-        body.dark-mode .kbd-hint kbd {
-            border-bottom-color: rgba(0,0,0,0.60);
-            text-shadow: none;
-            box-shadow:
-                0 3px 8px rgba(0,0,0,0.62),
-                inset 0 1px 0 rgba(255,248,242,0.09),
-                inset 1px 0 0 rgba(255,248,242,0.05),
-                inset -1px 0 0 rgba(0,0,0,0.18);
-        }
-
-        .menu-btn {
-            display: none;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 20px;
-            height: 14px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            z-index: 101;
-        }
-
-        .menu-btn-line {
-            width: 100%;
-            height: 1.5px;
-            background: var(--text);
-            transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-            transform-origin: center;
-        }
-
-        /* ─── LAYOUT ─── */
-        .portfolio-container {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            gap: 36px;
-            max-width: 1440px;
-            margin: 0 auto;
-            padding: 40px 40px 100px;
-            align-items: start;
-        }
-
-        .portfolio-intro {
-            grid-column: 1 / -1;
-            margin-bottom: 20px;
-        }
-
-        .portfolio-intro h1 {
-            font-size: 40px;
-            font-weight: 800;
-            letter-spacing: -1.5px;
-            color: var(--text);
-            line-height: 1;
-            margin-bottom: 10px;
-        }
-
-        .portfolio-intro p {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-        }
-
-        /* ─── SLIDESHOW WRAPPER ─── */
-        .slideshow-wrapper {
-            grid-column: 2;
-            grid-row: 2;
-            width: 100%;
-            background-color: var(--surface);
-            background-image: var(--brush);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: var(--shadow-lg);
-            position: relative;
-        }
-
-        /* ── Emil slide entrance: scale + translate + blur defog ── */
-        .slide { display: none; }
-        .slide.active {
-            display: block;
-            animation: slideIn 420ms var(--ease-out-quint) both;
-        }
-
-        @keyframes slideIn {
-            0% {
-                opacity: 0;
-                transform: translateY(14px) scale(0.992);
-                filter: blur(3px);
-            }
-            55% {
-                filter: blur(0);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                filter: blur(0);
-            }
-        }
-
-        /* ─── MEDIA AREA ─── */
-        .media-area {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #08080C;
-            position: relative;
-            overflow: hidden;
-            user-select: none;
-            box-shadow:
-                inset 0 2px 8px rgba(0,0,0,0.22),
-                inset 0 1px 3px rgba(0,0,0,0.14);
-        }
-
-        .media-area video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        .media-area img.photo-display {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-
-        /* ═══════════════════════════════════
-           PREMIUM VIDEO PLAYER CONTROLS
-           Emil-quality micro-interactions
-        ═══════════════════════════════════ */
-        .custom-controls {
-            position: absolute;
-            bottom: 0; left: 0; right: 0;
-            z-index: 10;
-            padding: 20px 18px 18px;
-            /* Premium gradient — longer reach, warmer tint */
-            background: linear-gradient(
-                180deg,
-                transparent 0%,
-                rgba(4,3,8,0.55) 35%,
-                rgba(4,3,8,0.82) 65%,
-                rgba(4,3,8,0.94) 100%
-            );
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            opacity: 0;
-            backdrop-filter: blur(0px);
-            -webkit-backdrop-filter: blur(0px);
-            /* Slide-up reveal — Emil's intentional entrance */
-            transform: translateY(6px);
-            transition:
-                opacity 240ms var(--ease-out-quart),
-                transform 240ms var(--ease-out-quart),
-                backdrop-filter 240ms var(--ease-out-quart);
-        }
-
-        .media-area:hover .custom-controls {
-            opacity: 1;
-            transform: translateY(0);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
-
-        .media-area.hide-controls { cursor: none; }
-        .media-area.hide-controls .custom-controls {
-            opacity: 0 !important;
-            transform: translateY(4px) !important;
-            pointer-events: none;
-        }
-
-        /* ── Machined progress track ── */
-        .progress-wrap {
-            width: 100%;
-            height: 3px;
-            background: rgba(255,255,255,0.14);
-            border-radius: 2px;
-            cursor: pointer;
-            position: relative;
-            transition: height 150ms var(--ease-out-quart), background 150ms;
-            display: flex;
-            align-items: center;
-            box-shadow:
-                inset 0 1px 2px rgba(0,0,0,0.45),
-                inset 0 0 0 0.5px rgba(0,0,0,0.35);
-        }
-
-        .progress-wrap::before {
-            content: '';
-            position: absolute;
-            top: -10px; bottom: -10px; left: 0; right: 0;
-        }
-
-        .progress-wrap:hover {
-            height: 5px;
-            background: rgba(255,255,255,0.20);
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--accent) 0%, #E4A870 60%, #F0C090 100%);
-            border-radius: 2px;
-            width: 0%;
-            pointer-events: none;
-            position: relative;
-            box-shadow:
-                0 0 14px rgba(184,120,64,0.60),
-                0 0 4px rgba(184,120,64,0.40),
-                inset 0 1px 2px rgba(255,255,255,0.30);
-            overflow: hidden;
-        }
-
-        /* Shimmer running light — alive, premium */
-        .progress-bar::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(255,255,255,0.22) 45%,
-                rgba(255,255,255,0.38) 50%,
-                rgba(255,255,255,0.22) 55%,
-                transparent 100%
-            );
-            animation: progress-shimmer 2.8s var(--ease-in-out-cubic) infinite;
-            border-radius: inherit;
-        }
-
-        @keyframes progress-shimmer {
-            0%   { transform: translateX(-150%); }
-            100% { transform: translateX(400%); }
-        }
-
-        /* Spring thumb on hover */
-        .progress-bar::after {
-            content: '';
-            position: absolute;
-            right: -7px; top: 50%;
-            transform: translateY(-50%) scale(0.5);
-            width: 14px; height: 14px;
-            background: radial-gradient(circle at 38% 32%,
-                rgba(255,255,255,0.98) 0%,
-                rgba(240,220,200,0.92) 55%,
-                rgba(220,190,160,0.85) 100%
-            );
-            border-radius: 50%;
-            opacity: 0;
-            transition:
-                opacity 160ms var(--ease-out-quart),
-                transform 220ms var(--ease-spring);
-            box-shadow:
-                0 2px 8px rgba(0,0,0,0.50),
-                0 1px 3px rgba(0,0,0,0.35),
-                inset 0 1px 2px rgba(255,255,255,0.60);
-        }
-
-        .progress-wrap:hover .progress-bar::after {
-            opacity: 1;
-            transform: translateY(-50%) scale(1);
-        }
-
-        /* ── Controls row ── */
-        .controls-row {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* ── Premium control buttons ── */
-        .ctrl-btn {
-            background: none;
-            border: none;
-            padding: 8px;
-            cursor: pointer;
-            color: rgba(255,255,255,0.72);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            flex-shrink: 0;
-            transition:
-                color 140ms var(--ease-out-quart),
-                background-color 140ms var(--ease-out-quart),
-                transform 140ms var(--ease-out-quart);
-            will-change: transform;
-            margin: -2px;
-        }
-
-        .ctrl-btn:hover {
-            color: rgba(255,255,255,1);
-            background-color: rgba(255,255,255,0.10);
-            transform: scale(1.08);
-        }
-
-        .ctrl-btn:active {
-            transform: scale(0.90);
-            color: rgba(255,255,255,0.85);
-            background-color: rgba(255,255,255,0.06);
-            transition-duration: 80ms;
-        }
-
-        .ctrl-btn svg { display: block; pointer-events: none; }
-
-        /* Play button — more prominent, pill-shaped glow */
-        .play-btn {
-            padding: 8px 10px;
-            background: rgba(255,255,255,0.10);
-            border: 1px solid rgba(255,255,255,0.14);
-            border-radius: 8px;
-            box-shadow:
-                0 2px 8px rgba(0,0,0,0.30),
-                inset 0 1px 0 rgba(255,255,255,0.10);
-            color: rgba(255,255,255,0.92);
-        }
-
-        .play-btn:hover {
-            background: rgba(255,255,255,0.18);
-            border-color: rgba(255,255,255,0.24);
-            box-shadow:
-                0 4px 14px rgba(0,0,0,0.35),
-                inset 0 1px 0 rgba(255,255,255,0.14);
-            transform: scale(1.06);
-        }
-
-        .play-btn:active {
-            background: rgba(255,255,255,0.06);
-            transform: scale(0.92);
-        }
-
-        .volume-wrap {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-left: 4px;
-        }
-
-        .volume-slider {
-            appearance: none;
-            -webkit-appearance: none;
-            width: 60px; height: 3px;
-            background: rgba(255,255,255,0.20);
-            border-radius: 2px;
-            outline: none;
-            cursor: pointer;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.40);
-            transition: background 140ms var(--ease-out-quart), width 200ms var(--ease-out-quart);
-        }
-
-        .volume-slider:hover { background: rgba(255,255,255,0.28); width: 72px; }
-
-        .volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px; height: 12px;
-            background: radial-gradient(circle at 38% 32%,
-                rgba(255,255,255,0.98),
-                rgba(230,210,195,0.92)
-            );
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow:
-                0 2px 6px rgba(0,0,0,0.50),
-                inset 0 1px 2px rgba(255,255,255,0.55);
-            transition: transform 140ms var(--ease-spring), box-shadow 140ms;
-        }
-
-        .volume-slider::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            box-shadow:
-                0 3px 10px rgba(0,0,0,0.55),
-                inset 0 1px 2px rgba(255,255,255,0.55);
-        }
-
-        .volume-slider::-moz-range-thumb {
-            width: 12px; height: 12px;
-            background: rgba(255,255,255,0.95);
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.50);
-        }
-
-        /* Premium time display — pill badge */
-        .time-display {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: rgba(255,255,255,0.58);
-            margin-left: auto;
-            letter-spacing: 0.5px;
-            min-width: 56px;
-            text-align: right;
-            background: rgba(0,0,0,0.30);
-            padding: 3px 8px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.07);
-            transition: color 160ms;
-            flex-shrink: 0;
-        }
-
-        .media-area:hover .time-display { color: rgba(255,255,255,0.80); }
-
-        .fullscreen-btn { margin-left: 2px; }
-
-        .photo-display {
-            width: 100%; height: 100%;
-            object-fit: contain;
-            background: #08080C;
-            display: block;
-        }
-
-        .slide[data-type="photo"] .custom-controls { opacity: 0; pointer-events: none; background: transparent; }
-
-        .media-type-badge {
-            position: absolute;
-            top: 12px; right: 12px;
-            font-family: var(--mono);
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 3px 8px;
-            border-radius: 2px;
-            border: 1px solid rgba(255,255,255,0.15);
-            color: rgba(255,255,255,0.50);
-            background: rgba(0,0,0,0.45);
-            backdrop-filter: blur(4px);
-        }
-
-        .media-type-badge.photo { border-color: rgba(255,255,255,0.3); color: rgba(255,255,255,0.7); }
-
-        /* ─── PROJECT META ─── */
-        .project-meta {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            border-top: 1px solid rgba(0,0,0,0.13);
-            background-color: var(--surface);
-            background-image: var(--brush);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
-        }
-
-        body.dark-mode .project-meta {
-            border-top-color: rgba(212,149,106,0.10);
-        }
-
-        .project-info {
-            padding: 22px 28px;
-            border-right: 1px solid var(--border);
-        }
-
-        .project-number {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--accent);
-            display: block;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 2.5px;
-            font-weight: 400;
-        }
-
-        .project-title {
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: -0.6px;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .project-tags {
-            font-family: var(--mono);
-            font-size: 10px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            display: inline-block;
-            padding: 4px 10px;
-            background-color: var(--surface-sunken);
-            border-radius: 2px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-inset);
-        }
-
-        .project-gear {
-            display: flex;
-            gap: 20px;
-            margin-top: 16px;
-            font-family: var(--mono);
-            font-size: 9.5px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            flex-wrap: wrap;
-            border-top: 1px solid var(--border);
-            padding-top: 12px;
-        }
-
-        .project-gear span {
-            color: var(--text);
-            font-weight: 500;
-            margin-right: 4px;
-        }
-
-        .project-desc-box {
-            width: 340px;
-            padding: 22px 28px;
-            font-size: 12.5px;
-            color: var(--text-dim);
-            line-height: 1.7;
-            border-left: 1px solid var(--border);
-            background-color: var(--surface);
-            background-image: var(--brush);
-        }
-
-        /* ─── SLIDE NAV ─── */
-        .slide-nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 28px;
-            border-top: 1px solid var(--border);
-            background-color: var(--surface);
-            background-image: var(--brush);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.46),
-                inset 0 -1px 0 rgba(0,0,0,0.03);
-        }
-
-        .nav-btns { display: flex; gap: 6px; }
-
-        /* Physical aluminum pushbutton */
-        .nav-btn {
-            background-color: var(--surface);
-            background-image: linear-gradient(180deg,
-                rgba(255,255,255,0.55) 0%,
-                rgba(255,255,255,0.18) 25%,
-                transparent 55%,
-                rgba(0,0,0,0.05) 100%
-            );
-            border: 1px solid var(--border-active);
-            border-bottom: 2px solid rgba(0,0,0,0.17);
-            color: var(--text);
-            padding: 11px 22px;
-            font-family: var(--mono);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition:
-                transform 140ms var(--ease-out-quart),
-                box-shadow 140ms var(--ease-out-quart),
-                background-color 100ms;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow:
-                0 3px 7px rgba(0,0,0,0.13),
-                inset 0 1px 0 rgba(255,255,255,0.92),
-                inset 0 -1px 0 rgba(0,0,0,0.09),
-                inset 1px 0 0 rgba(255,255,255,0.55),
-                inset -1px 0 0 rgba(0,0,0,0.04);
-            font-weight: 500;
-            will-change: transform;
-        }
-
-        .nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow:
-                0 6px 14px rgba(0,0,0,0.17),
-                inset 0 1px 0 rgba(255,255,255,0.92),
-                inset 0 -1px 0 rgba(0,0,0,0.09),
-                inset 1px 0 0 rgba(255,255,255,0.55),
-                inset -1px 0 0 rgba(0,0,0,0.04);
-        }
-
-        .nav-btn:active {
-            transform: translateY(1px);
-            border-bottom-width: 1px;
-            background-color: var(--surface-sunken);
-            box-shadow: var(--shadow-pressed);
-            transition-duration: 70ms;
-        }
-
-        .nav-btn svg { pointer-events: none; }
-
-        /* Dark mode nav btn — warm metallic sheen */
-        body.dark-mode .nav-btn {
-            background-image: linear-gradient(180deg,
-                rgba(255,248,242,0.085) 0%,
-                rgba(255,248,242,0.022) 30%,
-                transparent 60%,
-                rgba(0,0,0,0.14) 100%
-            );
-            border-color: rgba(255,255,255,0.12);
-            border-bottom-color: rgba(0,0,0,0.58);
-            box-shadow:
-                0 4px 12px rgba(0,0,0,0.62),
-                inset 0 1px 0 rgba(255,248,242,0.09),
-                inset 0 -1px 0 rgba(0,0,0,0.28),
-                inset 1px 0 0 rgba(255,248,242,0.05),
-                inset -1px 0 0 rgba(0,0,0,0.16);
-        }
-
-        body.dark-mode .nav-btn:hover {
-            box-shadow:
-                0 7px 18px rgba(0,0,0,0.72),
-                inset 0 1px 0 rgba(255,248,242,0.09),
-                inset 0 -1px 0 rgba(0,0,0,0.28),
-                inset 1px 0 0 rgba(255,248,242,0.05),
-                inset -1px 0 0 rgba(0,0,0,0.16);
-        }
-
-        .counter-display {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-
-        .counter-display b { color: var(--text); font-weight: 500; }
-
-        .progress-dots { display: flex; gap: 5px; align-items: center; }
-
-        /* Precision indicator dots — spring activation */
-        .dot {
-            width: 6px; height: 6px;
-            border-radius: 50%;
-            background-color: var(--surface-sunken);
-            border: 1px solid var(--border-active);
-            cursor: pointer;
-            transition:
-                background 200ms var(--ease-out-quart),
-                box-shadow 200ms var(--ease-out-quart);
-            transform-origin: center;
-            box-shadow:
-                0 1px 2px rgba(0,0,0,0.12),
-                inset 0 1px 0 rgba(255,255,255,0.45);
-            will-change: transform;
-        }
-
-        .dot:hover { transform: scale(1.2); }
-
-        /* Spring bounce on activate */
-        .dot.active {
-            background-color: var(--accent);
-            border-color: rgba(184,120,64,0.5);
-            animation: dotSpring 380ms var(--ease-out-quint) forwards;
-            box-shadow:
-                0 0 10px rgba(184,120,64,0.42),
-                0 2px 5px rgba(0,0,0,0.14),
-                inset 0 1px 0 rgba(255,255,255,0.35);
-        }
-
-        @keyframes dotSpring {
-            0%   { transform: scale(1); }
-            30%  { transform: scale(1.7); }
-            55%  { transform: scale(1.3); }
-            78%  { transform: scale(1.5); }
-            100% { transform: scale(1.4); }
-        }
-
-        /* ─── GRID INDEX ─── */
-        .project-shorts {
-            grid-column: 1;
-            grid-row: 2;
-            position: sticky;
-            top: 88px;
-            max-height: calc(100vh - 140px);
-            overflow-y: auto;
-            padding: 20px 10px 20px 16px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--surface-sunken) transparent;
-            background-color: var(--surface);
-            background-image: var(--brush);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .project-shorts::-webkit-scrollbar { width: 4px; }
-        .project-shorts::-webkit-scrollbar-track { background: transparent; }
-        .project-shorts::-webkit-scrollbar-thumb {
-            background: var(--surface-sunken);
-            border-radius: 2px;
-        }
-
-        .shorts-title {
-            font-family: var(--mono);
-            font-size: 9px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--accent);
-            margin-bottom: 18px;
-            padding-left: 2px;
-        }
-
-        .grid-links { display: flex; flex-direction: column; gap: 3px; }
-
-        /* Staggered entrance for grid items */
-        .grid-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background-color: var(--surface);
-            background-image: linear-gradient(180deg, rgba(255,255,255,0.28) 0%, transparent 100%);
-            border: 1px solid var(--border);
-            padding: 12px 14px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition:
-                background-color 160ms var(--ease-out-quart),
-                border-color 160ms var(--ease-out-quart),
-                transform 200ms var(--ease-out-quart),
-                box-shadow 200ms var(--ease-out-quart);
-            box-shadow:
-                0 1px 3px rgba(0,0,0,0.08),
-                inset 0 1px 0 rgba(255,255,255,0.68);
-            will-change: transform;
-            animation: gridItemEnter 320ms var(--ease-out-quint) both;
-        }
-
-        @keyframes gridItemEnter {
-            from { opacity: 0; transform: translateX(-10px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Stagger 12 items */
-        .grid-item:nth-child(1)  { animation-delay:  20ms; }
-        .grid-item:nth-child(2)  { animation-delay:  50ms; }
-        .grid-item:nth-child(3)  { animation-delay:  80ms; }
-        .grid-item:nth-child(4)  { animation-delay: 110ms; }
-        .grid-item:nth-child(5)  { animation-delay: 140ms; }
-        .grid-item:nth-child(6)  { animation-delay: 170ms; }
-        .grid-item:nth-child(7)  { animation-delay: 200ms; }
-        .grid-item:nth-child(8)  { animation-delay: 230ms; }
-        .grid-item:nth-child(9)  { animation-delay: 255ms; }
-        .grid-item:nth-child(10) { animation-delay: 278ms; }
-        .grid-item:nth-child(11) { animation-delay: 298ms; }
-        .grid-item:nth-child(12) { animation-delay: 315ms; }
-
-        .grid-item:hover {
-            background-color: var(--surface-raised);
-            border-color: var(--border-active);
-            transform: translateX(4px);
-            box-shadow:
-                0 4px 10px rgba(0,0,0,0.13),
-                inset 0 1px 0 rgba(255,255,255,0.68);
-        }
-
-        .grid-item.active-thumb {
-            background-color: var(--surface-sunken);
-            border-color: var(--border-active);
-            border-left: 2px solid var(--accent);
-            transform: translateX(6px);
-            box-shadow: var(--shadow-inset);
-        }
-
-        body.dark-mode .grid-item {
-            background-image: linear-gradient(180deg, rgba(255,248,242,0.06) 0%, transparent 100%);
-        }
-
-        .grid-item-num {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--text-muted);
-            flex-shrink: 0;
-        }
-
-        .grid-item-name {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            flex-grow: 1;
-        }
-
-        .grid-item-type {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            flex-shrink: 0;
-        }
-
-        .grid-item-type.photo { color: var(--green); }
-
-        /* ─── FOOTER ─── */
-        footer {
-            padding: 40px 50px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: var(--surface);
-            background-image: var(--brush);
-            box-shadow:
-                inset 0 1px 0 rgba(255,255,255,0.46),
-                0 -2px 8px rgba(0,0,0,0.06);
-        }
-
-        footer span {
-            font-family: var(--mono);
-            font-size: 10px;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-        }
-
-        footer a { transition: opacity 180ms var(--ease-out-quart); }
-        footer a:hover { opacity: 0.6; }
-
-        /* ═══ GALLERY GRID ═══ */
-        .gallery-preview {
-            width: 100%; height: 100%;
-            padding: 8px;
-            box-sizing: border-box;
-            display: flex;
-            align-items: stretch;
-            justify-content: center;
-            background: #08080C;
-        }
-
-        .gallery-grid {
-            width: 100%; height: 100%;
-            display: grid;
-            gap: 3px;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            grid-auto-rows: 1fr;
-        }
-
-        .gallery-grid[data-count="1"] { grid-template-columns: 1fr; }
-        .gallery-grid[data-count="2"] { grid-template-columns: 1fr 1fr; }
-        .gallery-grid[data-count="3"] { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-        .gallery-grid[data-count="3"] .gallery-item:first-child { grid-row: 1 / 3; }
-        .gallery-grid[data-count="4"] { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-        .gallery-grid[data-count="5"],
-        .gallery-grid[data-count="6"] { grid-template-columns: repeat(3, 1fr); grid-template-rows: 1fr 1fr; }
-
-        .gallery-item {
-            border-radius: 3px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.07);
-            transition:
-                opacity 200ms var(--ease-out-quart),
-                box-shadow 200ms var(--ease-out-quart),
-                transform 200ms var(--ease-out-quart);
-            background: #1a1a20;
-            position: relative;
-            min-height: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-        }
-
-        .gallery-item:hover {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.40);
-            transform: translateY(-2px) scale(1.012);
-        }
-
-        .gallery-item img {
-            width: 100%; height: 100%;
-            object-fit: cover; display: block;
-            transition: transform 400ms var(--ease-out-quint);
-        }
-
-        .gallery-item:hover img { transform: scale(1.05); }
-
-        .gallery-item-badge {
-            position: absolute;
-            bottom: 8px; left: 8px;
-            font-family: var(--mono);
-            font-size: 9px;
-            color: rgba(255,255,255,0.7);
-            background: rgba(0,0,0,0.55);
-            padding: 2px 7px;
-            border-radius: 2px;
-            letter-spacing: 1px;
-            opacity: 0;
-            transform: translateY(5px);
-            transition: opacity 180ms var(--ease-out-quart), transform 180ms var(--ease-out-quart);
-            z-index: 3;
-        }
-
-        .gallery-item:hover .gallery-item-badge { opacity: 1; transform: translateY(0); }
-
-        .gallery-overflow {
-            position: absolute; inset: 0;
-            background: rgba(0,0,0,0.62);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255,255,255,0.8);
-            font-family: var(--mono);
-            font-size: 13px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            z-index: 3;
-            transition: background 180ms var(--ease-out-quart);
-        }
-
-        .gallery-overflow:hover { background: rgba(0,0,0,0.76); }
-
-        /* ═══ GALLERY MODAL ═══ */
-        .gallery-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(8,8,12,0.98);
-            z-index: 2000;
-            flex-direction: column;
-        }
-
-        /* Spring modal entrance */
-        .gallery-modal.active {
-            display: flex;
-            animation: gm-fadein 320ms var(--ease-out-quint) both;
-        }
-
-        @keyframes gm-fadein {
-            0%   { opacity: 0; transform: scale(0.97) translateY(10px); }
-            60%  { opacity: 1; }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .gm-topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 28px;
-            flex-shrink: 0;
-            background: rgba(10,10,16,0.96);
-            border-bottom: 1px solid rgba(255,255,255,0.055);
-            box-shadow: 0 1px 0 rgba(212,149,106,0.08), 0 2px 12px rgba(0,0,0,0.35);
-        }
-
-        .gm-counter {
-            font-family: var(--mono);
-            font-size: 11px;
-            color: rgba(255,255,255,0.32);
-            letter-spacing: 2px;
-        }
-
-        .gm-counter b { color: rgba(255,255,255,0.72); font-weight: 500; }
-
-        .gm-close {
-            background: rgba(255,255,255,0.055);
-            border: 1px solid rgba(255,255,255,0.10);
-            color: rgba(255,255,255,0.48);
-            width: 36px; height: 36px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: all 160ms var(--ease-out-quart);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.07);
-            will-change: transform;
-        }
-
-        .gm-close:hover {
-            border-color: rgba(255,255,255,0.28);
-            color: #fff;
-            background: rgba(255,255,255,0.10);
-            transform: scale(1.05);
-        }
-
-        .gm-close:active { transform: scale(0.92); transition-duration: 70ms; }
-
-        .gm-stage {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            padding: 0 60px;
-            min-height: 0;
-        }
-
-        .gm-image-wrap {
-            position: relative;
-            max-width: 100%; max-height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .gm-image {
-            max-width: 100%;
-            max-height: calc(100vh - 200px);
-            object-fit: contain;
-            border-radius: 2px;
-            transition: opacity 140ms var(--ease-out-quart), transform 340ms var(--ease-in-out-cubic);
-            cursor: zoom-in;
-            box-shadow:
-                0 24px 70px rgba(0,0,0,0.65),
-                0 8px 20px rgba(0,0,0,0.40);
-        }
-
-        .gm-image.zoomed { cursor: zoom-out; transform: scale(1.8); z-index: 10; }
-        .gm-image.switching { opacity: 0; transform: scale(0.97); }
-
-        .gm-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(20,20,28,0.82);
-            border: 1px solid rgba(255,255,255,0.09);
-            color: rgba(255,255,255,0.48);
-            width: 46px; height: 46px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transition: all 180ms var(--ease-out-quart);
-            z-index: 5;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
-            will-change: transform;
-        }
-
-        .gm-arrow:hover {
-            border-color: rgba(212,149,106,0.35);
-            color: rgba(212,149,106,0.90);
-            background: rgba(30,28,40,0.90);
-            transform: translateY(-50%) scale(1.06);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.52), 0 0 0 1px rgba(212,149,106,0.12), inset 0 1px 0 rgba(255,255,255,0.07);
-        }
-
-        .gm-arrow:active { transform: translateY(-50%) scale(0.94); transition-duration: 70ms; }
-
-        .gm-arrow-left { left: 12px; }
-        .gm-arrow-right { right: 12px; }
-
-        .gm-thumbs {
-            display: flex; gap: 4px;
-            padding: 12px 24px 16px;
-            justify-content: center;
-            overflow-x: auto;
-            flex-shrink: 0;
-            scrollbar-width: none;
-            border-top: 1px solid rgba(255,255,255,0.055);
-            background: rgba(10,10,16,0.96);
-        }
-
-        .gm-thumbs::-webkit-scrollbar { display: none; }
-
-        .gm-thumb {
-            width: 52px; height: 38px;
-            border-radius: 2px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 1px solid transparent;
-            flex-shrink: 0;
-            transition: opacity 150ms var(--ease-out-quart), transform 150ms var(--ease-out-quart), border-color 150ms;
-            opacity: 0.32;
-            will-change: transform;
-        }
-
-        .gm-thumb:hover { opacity: 0.72; transform: scale(1.05); }
-
-        .gm-thumb.active {
-            border-color: var(--accent);
-            opacity: 1;
-            transform: scale(1.04);
-            box-shadow: 0 0 10px rgba(212,149,106,0.35);
-        }
-
-        .gm-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-        .gm-info {
-            position: absolute;
-            bottom: 16px; left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--mono);
-            font-size: 10px;
-            color: rgba(255,255,255,0.28);
-            letter-spacing: 1px;
-            background: rgba(0,0,0,0.28);
-            padding: 3px 10px;
-            border-radius: 2px;
-            pointer-events: none;
-        }
-
-        /* ─── KEYBOARD FLASH ─── */
-        .key-flash {
-            position: fixed;
-            bottom: 24px; left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background-color: var(--text);
-            background-image: var(--brush);
-            border-radius: 4px;
-            padding: 8px 18px;
-            font-family: var(--mono);
-            font-size: 11px;
-            color: var(--bg);
-            letter-spacing: 1px;
-            pointer-events: none;
-            opacity: 0;
-            transition:
-                opacity 180ms var(--ease-out-quart),
-                transform 220ms var(--ease-spring);
-            z-index: 200;
-            box-shadow: var(--shadow-md);
-        }
-
-        .key-flash.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* ─── BTS GALLERY ─── */
-        .bts-gallery {
-            padding: 24px 28px;
-            border-top: 1px solid var(--border);
-            background-color: var(--surface);
-            background-image: var(--brush);
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.38);
-        }
-
-        .bts-gallery-title {
-            font-family: var(--mono);
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--accent);
-            margin-bottom: 16px;
-        }
-
-        .bts-grid {
-            display: flex; gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 6px;
-            scrollbar-width: thin;
-            scrollbar-color: var(--border) transparent;
-        }
-
-        .bts-grid::-webkit-scrollbar { height: 3px; }
-        .bts-grid::-webkit-scrollbar-track { background: transparent; }
-        .bts-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-        .bts-item {
-            width: 110px; height: 74px;
-            border-radius: 4px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 1px solid var(--border);
-            flex-shrink: 0;
-            opacity: 0.80;
-            will-change: transform;
-            transition:
-                opacity 160ms var(--ease-out-quart),
-                transform 200ms var(--ease-out-quart),
-                box-shadow 200ms var(--ease-out-quart),
-                border-color 160ms;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.11), inset 0 1px 0 rgba(255,255,255,0.38);
-        }
-
-        .bts-item:hover {
-            opacity: 1;
-            border-color: var(--border-active);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.20), inset 0 1px 0 rgba(255,255,255,0.38);
-        }
-
-        .bts-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-        /* ─── VIDEO PLAYLIST ─── */
-        .video-playlist {
-            background-color: var(--surface);
-            background-image: var(--brush);
-            border-top: 1px solid var(--border);
-            padding: 22px 28px;
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            scrollbar-width: thin;
-            scrollbar-color: var(--surface-sunken) transparent;
-            box-shadow: inset 0 1px 0 rgba(255,255,255,0.44);
-        }
-
-        .video-playlist::-webkit-scrollbar { height: 4px; }
-        .video-playlist::-webkit-scrollbar-track { background: transparent; }
-        .video-playlist::-webkit-scrollbar-thumb {
-            background: var(--surface-sunken);
-            border-radius: 2px;
-        }
-
-        .playlist-card {
-            background-color: var(--surface);
-            background-image: linear-gradient(180deg,
-                rgba(255,255,255,0.55) 0%,
-                rgba(255,255,255,0.15) 30%,
-                transparent 60%,
-                rgba(0,0,0,0.04) 100%
-            );
-            border: 1px solid var(--border);
-            border-bottom: 2px solid rgba(0,0,0,0.13);
-            padding: 16px 18px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 210px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-shrink: 0;
-            transition:
-                border-color 160ms var(--ease-out-quart),
-                transform 180ms var(--ease-out-quart),
-                box-shadow 180ms var(--ease-out-quart),
-                background-color 120ms;
-            position: relative;
-            overflow: hidden;
-            text-align: left;
-            will-change: transform;
-            box-shadow:
-                0 2px 8px rgba(0,0,0,0.10),
-                inset 0 1px 0 rgba(255,255,255,0.88),
-                inset 1px 0 0 rgba(255,255,255,0.52),
-                inset -1px 0 0 rgba(0,0,0,0.04);
-        }
-
-        body.dark-mode .playlist-card {
-            background-image: linear-gradient(180deg,
-                rgba(255,248,242,0.085) 0%,
-                rgba(255,248,242,0.022) 30%,
-                transparent 60%,
-                rgba(0,0,0,0.10) 100%
-            );
-            border-color: rgba(255,255,255,0.09);
-            border-bottom-color: rgba(0,0,0,0.52);
-            box-shadow:
-                0 4px 14px rgba(0,0,0,0.62),
-                inset 0 1px 0 rgba(255,248,242,0.09),
-                inset 1px 0 0 rgba(255,248,242,0.05),
-                inset -1px 0 0 rgba(0,0,0,0.16);
-        }
-
-        .playlist-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0;
-            width: 2px; height: 100%;
-            background: linear-gradient(180deg, var(--accent) 0%, rgba(184,120,64,0.4) 100%);
-            opacity: 0;
-            transition: opacity 160ms var(--ease-out-quart);
-        }
-
-        .playlist-card:hover {
-            border-color: var(--border-active);
-            transform: translateY(-2px);
-            box-shadow:
-                0 6px 16px rgba(0,0,0,0.15),
-                inset 0 1px 0 rgba(255,255,255,0.88),
-                inset 1px 0 0 rgba(255,255,255,0.52),
-                inset -1px 0 0 rgba(0,0,0,0.04);
-        }
-
-        .playlist-card.active {
-            border-color: var(--border-active);
-            background-color: var(--surface-sunken);
-            background-image: none;
-            border-bottom-width: 1px;
-            box-shadow: var(--shadow-inset);
-        }
-
-        .playlist-card.active::before { opacity: 1; }
-
-        .playlist-card-ep {
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--accent);
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-
-        .playlist-card-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text);
-            line-height: 1.4;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .playlist-card-status {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: var(--mono);
-            font-size: 9px;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-top: 2px;
-            font-weight: 500;
-        }
-
-        .playlist-card.active .playlist-card-status { color: var(--green); }
-        .playlist-card-status svg { width: 10px; height: 10px; fill: currentColor; }
-
-        /* ─── MEDIA LOADER ─── */
-        .media-loader {
-            position: absolute; inset: 0;
-            background: rgba(0,0,0,0.42);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 240ms var(--ease-out-quart);
-            z-index: 10;
-        }
-
-        .media-loader.active { opacity: 1; pointer-events: auto; }
-
-        .media-loader .spinner {
-            width: 28px; height: 28px;
-            border: 1.5px solid rgba(255,255,255,0.08);
-            border-top-color: rgba(212,149,106,0.88);
-            border-radius: 50%;
-            animation: media-spin 0.7s linear infinite;
-        }
-
-        @keyframes media-spin { to { transform: rotate(360deg); } }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: var(--bg); }
-        ::-webkit-scrollbar-thumb { background: var(--surface2); border-radius: 2px; }
-
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 1024px) {
-            .project-meta { grid-template-columns: 1fr; }
-            .project-desc-box { width: 100%; border-left: none; border-top: 1px solid var(--border); }
-        }
-
-        @media (max-width: 900px) {
-            .portfolio-container { display: flex; flex-direction: column; gap: 20px; padding: 24px 16px 60px; }
-            .project-shorts {
-                position: fixed;
-                top: 0; left: 0;
-                width: 100vw; height: 100vh;
-                background-color: var(--surface);
-                background-image: var(--brush);
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                z-index: 99;
-                padding: 90px 24px 40px;
-                overflow-y: auto;
-                display: flex; flex-direction: column;
-                border-top: none; padding-right: 24px;
-                transform: translateY(-100%); opacity: 0; pointer-events: none;
-                transition: transform 380ms var(--ease-out-quint), opacity 380ms var(--ease-out-quint);
-                border-radius: 0; box-shadow: none;
-            }
-            .project-shorts.active { transform: translateY(0); opacity: 1; pointer-events: auto; }
-            .grid-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
-            .grid-item {
-                flex-direction: row; align-items: center; gap: 12px; padding: 10px 14px;
-                transform: none !important;
-                transition: border-color 160ms var(--ease-out-quart), background-color 160ms var(--ease-out-quart);
-                animation: none;
-            }
-            .grid-item:hover { transform: none !important; background-color: var(--surface-raised); }
-            .grid-item.active-thumb { border-color: var(--border-active); background-color: var(--surface-sunken); border-left: 2px solid var(--accent); transform: none !important; }
-            .grid-item-num { margin-bottom: 0; }
-            .grid-item-type { margin-top: 0; }
-            .slideshow-wrapper { width: 100%; }
-            .kbd-hint { display: none; }
-            header { padding: 18px 24px; }
-            .menu-btn { display: flex; }
-            .menu-btn.active .menu-btn-line:nth-child(1) { transform: translateY(6px) rotate(45deg); }
-            .menu-btn.active .menu-btn-line:nth-child(2) { opacity: 0; }
-            .menu-btn.active .menu-btn-line:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
-        }
-
-        @media (max-width: 600px) {
-            header { padding: 14px 16px; }
-            .nav-links { display: none; }
-            .logo { letter-spacing: 2px; }
-            .project-info { padding: 14px 18px; }
-            .project-title { font-size: 20px; }
-            .project-desc-box { padding: 14px 18px; }
-            .video-playlist { padding: 12px 16px; gap: 6px; }
-            .playlist-card { width: 165px; padding: 10px 12px; }
-            .playlist-card-title { font-size: 11px; }
-            .playlist-card-ep { font-size: 8px; }
-            .playlist-card-status { font-size: 8px; }
-            .bts-gallery { padding: 14px 18px; }
-            .bts-item { width: 86px; height: 58px; }
-            .project-gear { gap: 12px; margin-top: 12px; padding-top: 8px; }
-            .volume-wrap { display: none; }
-            footer { padding: 20px; flex-direction: column; gap: 10px; text-align: center; }
-            footer span { font-size: 8px; }
-            .gm-stage { padding: 0 10px; }
-            .gm-arrow { display: none; }
-            .gm-thumbs { padding: 8px 12px; }
-            .gm-thumb { width: 42px; height: 30px; }
-            .project-shorts { padding: 72px 16px 32px; border-radius: 0; }
-            .grid-links { grid-template-columns: 1fr; gap: 6px; }
-        }
-
-        /* Dark mode header */
-        body.dark-mode header {
-            background-color: var(--surface);
-            background-image: var(--brush);
-        }
-
-        /* Dark mode theme + playlist buttons */
-        body.dark-mode .theme-btn {
-            background-image: linear-gradient(180deg,
-                rgba(255,248,242,0.085) 0%,
-                rgba(255,248,242,0.022) 30%,
-                transparent 60%,
-                rgba(0,0,0,0.14) 100%
-            );
-            border-color: rgba(255,255,255,0.12);
-            border-bottom-color: rgba(0,0,0,0.58);
-            box-shadow:
-                0 3px 10px rgba(0,0,0,0.60),
-                inset 0 1px 0 rgba(255,248,242,0.09),
-                inset 0 -1px 0 rgba(0,0,0,0.28),
-                inset 1px 0 0 rgba(255,248,242,0.05),
-                inset -1px 0 0 rgba(0,0,0,0.16);
-        }
-
-        /* Dark mode player controls */
-        body.dark-mode .progress-wrap {
-            background: rgba(255,255,255,0.08);
-            box-shadow: inset 0 1px 3px rgba(0,0,0,0.60), inset 0 0 0 0.5px rgba(0,0,0,0.50);
-        }
-
-        body.dark-mode .progress-wrap:hover { background: rgba(255,255,255,0.13); }
-
-        body.dark-mode .progress-bar {
-            background: linear-gradient(90deg, var(--accent) 0%, #E0A870 60%, #F0C090 100%);
-            box-shadow:
-                0 0 16px rgba(212,149,106,0.58),
-                0 0 5px rgba(212,149,106,0.42),
-                inset 0 1px 2px rgba(255,255,255,0.28);
-        }
-
-        body.dark-mode .volume-slider {
-            background: rgba(255,255,255,0.10);
-        }
-
-        body.dark-mode .volume-slider:hover { background: rgba(255,255,255,0.16); }
-
-        @media (max-width: 900px) {
-            body.dark-mode .project-shorts {
-                background-color: rgba(14,13,18,0.98);
-            }
-        }
-
-        /* ─── SMOOTH THEME TRANSITIONS ─── */
-        body, header, .slideshow-wrapper, .project-meta, .slide-nav, .project-shorts,
-        .playlist-card, .grid-item, .custom-controls, .nav-btn, .bts-item {
-            transition:
-                background-color 300ms var(--ease-out-quart),
-                color 300ms var(--ease-out-quart),
-                border-color 300ms var(--ease-out-quart);
-        }
-
-        /* ─── HEADER RIGHT + THEME BUTTON ─── */
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .theme-btn {
-            background-color: var(--surface);
-            background-image: linear-gradient(180deg,
-                rgba(255,255,255,0.55) 0%,
-                rgba(255,255,255,0.18) 25%,
-                transparent 55%,
-                rgba(0,0,0,0.05) 100%
-            );
-            border: 1px solid var(--border-active);
-            border-bottom: 2px solid rgba(0,0,0,0.16);
-            color: var(--text);
-            width: 32px; height: 32px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition:
-                transform 140ms var(--ease-out-quart),
-                box-shadow 140ms var(--ease-out-quart),
-                background-color 100ms;
-            padding: 0;
-            box-shadow:
-                0 2px 6px rgba(0,0,0,0.12),
-                inset 0 1px 0 rgba(255,255,255,0.92),
-                inset 1px 0 0 rgba(255,255,255,0.55),
-                inset -1px 0 0 rgba(0,0,0,0.04);
-            font-weight: 600;
-            will-change: transform;
-        }
-
-        .theme-btn:hover {
-            transform: translateY(-2px);
-            box-shadow:
-                0 5px 12px rgba(0,0,0,0.17),
-                inset 0 1px 0 rgba(255,255,255,0.92),
-                inset 1px 0 0 rgba(255,255,255,0.55),
-                inset -1px 0 0 rgba(0,0,0,0.04);
-        }
-
-        .theme-btn:active {
-            transform: translateY(1px);
-            border-bottom-width: 1px;
-            background-color: var(--surface-sunken);
-            background-image: none;
-            box-shadow: var(--shadow-pressed);
-            transition-duration: 70ms;
-        }
-
-        /* ─── REDUCED MOTION ─── */
-        @media (prefers-reduced-motion: reduce) {
-            .slide.active { animation: none; opacity: 1; }
-            .dot.active { animation: none; transform: scale(1.4); }
-            .grid-item { animation: none; opacity: 1; transform: none; }
-            .gallery-modal.active { animation: none; }
-            .key-flash { transition: opacity 100ms; }
-            .custom-controls { transition: opacity 100ms; transform: none !important; }
-            .progress-bar::before { animation: none; }
-            .nav-btn,
-            .theme-btn,
-            .ctrl-btn,
-            .bts-item,
-            .playlist-card {
-                transition-duration: 50ms;
-            }
-        }
-
-        @media (max-width: 600px) {
-            .header-right { gap: 12px; }
-            .theme-btn { border: none; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Portfolio Jana Levínského — cinematography & photography.">
+<title>Jan Levínský — Cinematography & Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --md-primary: #c4956a;
+  --md-on-primary: #0c0c0c;
+  --md-primary-container: rgba(196, 149, 106, 0.12);
+  --md-secondary-container: rgba(196, 149, 106, 0.06);
+  --md-surface: #faf8f5;
+  --md-surface-variant: #f0ece6;
+  --md-surface-container: #f5f2ee;
+  --md-surface-container-high: #eae6e0;
+  --md-surface-container-low: #fdfcfa;
+  --md-outline: #d4cfc7;
+  --md-outline-variant: #e8e4dd;
+  --md-on-surface: #1c1917;
+  --md-on-surface-variant: #6b6560;
+  --md-inverse-surface: #1c1917;
+  --md-inverse-on-surface: #faf8f5;
+  --serif: 'Bricolage Grotesque', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  color-scheme: light;
+}
+
+html, body { height: 100%; color: var(--md-on-surface); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { background: var(--md-surface); }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--md-outline); border-radius: var(--r-full); }
+
+a:focus-visible,
+button:focus-visible,
+.tile:focus-visible {
+  outline: 2px solid var(--md-primary);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+.wrap {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  max-width: 1420px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.brand {
+  padding: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 24px;
+  height: fit-content;
+}
+
+.kicker {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.05s var(--ease-out-expo) forwards;
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+  color: var(--md-on-surface);
+  opacity: 0;
+  animation: fadeUp 0.8s 0.15s var(--ease-out-expo) forwards;
+}
+
+h1 span { display: block; }
+h1 .last { font-style: italic; color: var(--md-primary); }
+
+.divider {
+  width: 28px;
+  height: 1.5px;
+  background: var(--md-primary);
+  margin: 26px 0;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.25s var(--ease-out-expo) forwards;
+}
+
+.intro {
+  color: var(--md-on-surface-variant);
+  font-size: 13px;
+  line-height: 1.75;
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.3s var(--ease-out-expo) forwards;
+}
+
+.greeting-row { display: flex; align-items: flex-start; gap: 9px; }
+.greeting-row .emoji { font-size: 15px; margin-top: 3px; flex-shrink: 0; }
+
+.links {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.38s var(--ease-out-expo) forwards;
+}
+
+.links a {
+  color: var(--md-on-surface-variant);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease, gap 0.4s var(--ease-out-expo);
+  width: fit-content;
+  padding: 2px 0;
+}
+
+.links a i {
+  font-size: 14px;
+  opacity: 0.55;
+  transition: opacity 0.3s ease, color 0.3s ease, transform 0.4s var(--ease-out-expo);
+  display: inline-block;
+}
+
+.links a:hover { color: var(--md-primary); gap: 10px; }
+.links a:hover i { opacity: 1; color: var(--md-primary); transform: translate(1px, -1px); }
+
+main {
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  animation: fadeIn 0.9s 0.2s var(--ease-out-expo) forwards;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.filter-pill-bg {
+  position: absolute;
+  height: 30px;
+  background: var(--md-primary-container);
+  border: 1px solid rgba(196, 149, 106, 0.2);
+  border-radius: 100px;
+  transition: all 0.4s var(--ease-out-expo);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.filter-row a {
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--md-on-surface-variant);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  transition: color 0.3s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.filter-row a:first-child { padding-left: 8px; }
+.filter-row a.active { color: var(--md-primary); }
+.sep { color: var(--md-on-surface-variant); font-size: 12px; opacity: 0.3; padding: 0 2px; user-select: none; }
+
+.bento {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 220px;
+  grid-auto-flow: dense;
+  gap: 14px;
+  width: 100%;
+}
+
+.tile {
+  position: relative;
+  background: var(--md-surface-variant);
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: opacity 0.6s ease, transform 0.6s var(--ease-out-expo), border-color 0.4s ease;
+  will-change: transform;
+  border: 1px solid var(--md-outline);
+  min-height: 220px;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tile.wide { grid-column: span 2; min-height: 220px; }
+.tile.tall { grid-row: span 2; min-height: auto; }
+.tile.large { grid-column: span 2; grid-row: span 2; min-height: auto; }
+
+.tile:hover {
+  transform: translateY(-4px) scale(1.015);
+  border-color: var(--md-outline-variant);
+  z-index: 2;
+}
+
+.tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease-out-expo), opacity 0.6s ease, filter 0.6s ease;
+  opacity: 0;
+}
+
+.tile:hover img {
+  transform: scale(1.03);
+  filter: brightness(0.92);
+}
+
+.tile img.loaded { opacity: 1; }
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--md-surface-variant) 25%, var(--md-surface-container) 50%, var(--md-surface-variant) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  z-index: 0;
+}
+
+.tile img { position: relative; z-index: 1; }
+.tile:hover::before { opacity: 0; }
+
+.film-perf-h, .film-perf-v {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.5s var(--ease-out-expo);
+}
+
+.film-perf-h {
+  left: 4%;
+  right: 4%;
+  height: calc(var(--perf-dot-height, 8%) + 2%);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.5%;
+}
+
+.film-perf-h.top { top: 3%; }
+.film-perf-h.bottom { bottom: 3%; }
+
+.film-perf-h .perf-dot {
+  width: var(--perf-dot-width, 1.2%);
+  height: var(--perf-dot-height, 8%);
+  border-radius: 999px;
+  background: var(--md-surface);
+  flex-shrink: 0;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.35), inset 0 -2px 4px rgba(255,255,255,0.08), 0 0 0 0.5px rgba(255,255,255,0.15);
+  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
+}
+
+.film-perf-v {
+  top: 4%;
+  bottom: 4%;
+  width: calc(var(--perf-dot-width, 11%) + 2%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.5%;
+}
+
+.film-perf-v.left { left: 3%; }
+.film-perf-v.right { right: 3%; }
+
+.film-perf-v .perf-dot {
+  width: var(--perf-dot-width, 11%);
+  height: var(--perf-dot-height, 1.2%);
+  border-radius: 999px;
+  background: var(--md-surface);
+  flex-shrink: 0;
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.35), inset 0 -2px 4px rgba(255,255,255,0.08), 0 0 0 0.5px rgba(255,255,255,0.15);
+  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
+}
+
+.tile:hover .film-perf-h,
+.tile:hover .film-perf-v {
+  opacity: 0.85;
+}
+
+.tile:hover .perf-dot {
+  box-shadow: inset 0 3px 8px rgba(0,0,0,0.45), inset 0 -2px 4px rgba(255,255,255,0.12), 0 0 0 0.5px rgba(255,255,255,0.2);
+}
+
+.film-shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-lg);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.4;
+  transition: opacity 0.5s ease;
+}
+
+.tile:hover .film-shadow {
+  opacity: 0.65;
+}
+
+.tile.photo-tile .film-shadow {
+  box-shadow: inset 0 80px 32px -32px rgba(0, 0, 0), inset 0 -80px 32px -32px rgba(0, 0, 0);
+}
+
+.tile.video-tile .film-shadow {
+  box-shadow: inset 80px 0 32px -32px rgb(0, 0, 0), inset -80px 0 32px -32px rgba(0, 0, 0);
+}
+
+.tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.25) 45%, transparent 75%);
+  opacity: 0;
+  transition: opacity 0.5s var(--ease-in-out);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.tile:hover::after { opacity: 1; }
+
+.flyout {
+  position: absolute;
+  z-index: 5;
+  color: #fff;
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.25;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.55), 0 1px 3px rgba(0,0,0,0.4);
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-in-out), transform 0.45s var(--ease-out-expo), left 0.45s ease, top 0.45s ease, right 0.45s ease, bottom 0.45s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+  max-width: 85%;
+}
+
+.from-left .flyout {
+  left: 16px;
+  bottom: 14px;
+  transform: translateX(-120%) translateY(6px);
+}
+
+.from-right .flyout {
+  right: 16px;
+  bottom: 14px;
+  left: auto;
+  transform: translateX(120%) translateY(6px);
+}
+
+.tile:hover .flyout {
+  opacity: 1;
+  left: 50%;
+  top: 50%;
+  right: auto;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+}
+
+.flyout-year {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.06em;
+  margin-top: 5px;
+  font-weight: 500;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.45);
+}
+
+.grid-loading {
+  position: absolute;
+  inset: 0;
+  background: var(--md-surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  transition: opacity 0.5s ease, visibility 0s 0.5s;
+  visibility: visible;
+  min-height: 300px;
+}
+
+.grid-loading.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-text {
+  color: var(--md-on-surface-variant);
+  font-size: 11.5px;
+  letter-spacing: 0.07em;
+  font-weight: 400;
+  margin-top: 12px;
+}
+
+.g-footer {
+  padding: 60px 0 40px;
+  border-top: 1px solid var(--md-outline);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  margin-top: 40px;
+}
+
+.g-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: var(--md-primary);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+.f-name {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--md-on-surface);
+  text-wrap: balance;
+}
+
+.f-role {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--md-on-surface-variant);
+  margin-top: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.f-contact {
+  margin-top: 20px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--md-on-surface-variant);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--md-outline);
+  padding-bottom: 3px;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.f-contact:hover { color: var(--md-primary); border-color: var(--md-primary); }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (max-width: 1024px) {
+  .wrap { grid-template-columns: 210px 1fr; gap: 28px; }
+  h1 { font-size: 48px; }
+  .bento { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 880px) {
+  .wrap { grid-template-columns: 1fr; gap: 24px; padding: 16px; }
+  .brand { position: static; }
+  h1 { font-size: 44px; }
+  .bento { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 200px; }
+  .tile.wide, .tile.large { grid-column: span 2; }
+  .tile.tall { grid-row: span 2; }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 12px; }
+  h1 { font-size: 36px; }
+  .bento { grid-template-columns: 1fr; grid-auto-rows: 240px; }
+  .tile.wide, .tile.tall, .tile.large { grid-column: span 1; grid-row: span 1; }
+  .filter-row a { font-size: 11px; padding: 5px 10px; }
+  .flyout { font-size: 18px; }
+  .film-perf-h,
+  .film-perf-v { display: none !important; }
+  .tile .flyout {
+    position: absolute;
+    left: 12px;
+    bottom: 12px;
+    right: auto;
+    top: auto;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: none;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 90%;
+  }
+  .flyout-year { font-size: 11px; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+<base target="_blank">
 </head>
 <body>
 
-    <header>
-        <div class="logo">LEVINSKYJ<span>.</span>PROD <span style="color:var(--text-muted);margin:0 8px">//</span> PORTFOLIO</div>
-        <div class="kbd-hint">
-            <kbd>←</kbd><kbd>→</kbd> navigate &nbsp;·&nbsp; <kbd>Space</kbd> play/pause &nbsp;·&nbsp; <kbd>F</kbd> fullscreen
-        </div>
-        
-        <!-- NOVÝ BLOK PRO NAVIGACI A TLAČÍTKO -->
-        <div class="header-right">
-            <div class="nav-links">SELECTED WORKS &copy; 2026</div>
-            <button class="theme-btn" id="theme-btn" title="Přepnout režim">
-                <!-- Měsíc -->
-                <svg id="moon-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                <!-- Slunce -->
-                <svg id="sun-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-            </button>
-        </div>
-        <!-- KONEC NOVÉHO BLOKU -->
+<div class="wrap">
+  <aside class="brand">
+    <div class="kicker">Portfolio // 2025</div>
+    <h1>
+      <span>Jan</span>
+      <span class="last">Levínský</span>
+    </h1>
+    <div class="divider"></div>
+    <div class="intro">
+      <div class="greeting-row">
+        <span class="emoji">👋</span>
+        <span>Filmař a fotograf z Opavy. Tvořím obrazy, které mluví.</span>
+      </div>
+    </div>
+    <nav class="links">
+      <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
+      <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
+      <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
+    </nav>
+  </aside>
 
-        <button class="menu-btn" id="menu-btn" aria-label="Menu">
-            <span class="menu-btn-line"></span>
-            <span class="menu-btn-line"></span>
-            <span class="menu-btn-line"></span>
-        </button>
-    </header>
-
-    <div class="portfolio-container">
-
-        <div class="portfolio-intro">
-            <h1>Jan Levínský</h1>
-            <p>CINEMATOGRAPHY / VIDEO EDITING / COLOR GRADING / PHOTOGRAPHY</p>
-        </div>
-
-        <div class="slideshow-wrapper">
-
-            <!-- ══ SLIDE 1 — VIDEO ══ -->
-            <div class="slide active" data-type="video">
-                <div class="media-area" id="media-0">
-                    <video id="vid-0" src="1.AutoPortret.mp4" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-0">
-                            <div class="progress-bar" id="pb-0"></div>
-                        </div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="0" title="Play/Pause">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                            </button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="0">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-                                </button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="0">
-                            </div>
-                            <span class="time-display" id="time-0">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="0">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[01 / 08]</span>
-                        <h2 class="project-title">AutoPortret</h2>
-                        <span class="project-tags">Experimental / Fine Art / Cinematography</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Hluboká introspektivní sonda do duše tvůrce. Práce s kontrastem, stíny a minimalistickým zvukovým designem definující moderní pojetí vizuálního vyprávění.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 2 — VIDEO ══ -->
-            <div class="slide" data-type="video">
-                <div class="media-area" id="media-1">
-                    <video id="vid-1" src="2.Reklama.mov" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-1"><div class="progress-bar" id="pb-1"></div></div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="1"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="1">
-                            </div>
-                            <span class="time-display" id="time-1">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="1"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[02 / 08]</span>
-                        <h2 class="project-title">Reklama</h2>
-                        <span class="project-tags">Commercial / Brand Identity / Direction</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Komerční projekt s důrazem na špičkový color grading a dynamický střih. Transformace korporátní identity v silný emotivní zážitek pro diváka.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 3 — VIDEO ══ -->
-            <div class="slide" data-type="video">
-                <div class="media-area" id="media-2">
-                    <video id="vid-2" src="3.AP-Trailer.mp4" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-2"><div class="progress-bar" id="pb-2"></div></div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="2"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="2">
-                            </div>
-                            <span class="time-display" id="time-2">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="2"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[03 / 08]</span>
-                        <h2 class="project-title">AP-Trailer</h2>
-                        <span class="project-tags">Promo / Fast Pace / Sound Design</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Úderný, kinetický trailer navržený tak, aby okamžitě upoutal pozornost. Maximální synergie mezi hudebním podtextem a rytmem střihové skladby.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 4 — VIDEO ══ -->
-            <div class="slide" data-type="video">
-                <div class="media-area" id="media-3">
-                    <video id="vid-3" src="4.AP-Hodinář.mp4" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-3"><div class="progress-bar" id="pb-3"></div></div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="3"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="3"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="3">
-                            </div>
-                            <span class="time-display" id="time-3">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="3"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[04 / 08]</span>
-                        <h2 class="project-title">AP-Hodinář</h2>
-                        <span class="project-tags">Documentary / Narrative / Macro Detail</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Dokumentární esej zachycující preciznost lidského řemesla. Detailní macro záběry, fascinující práce s časem a intimní atmosféra dílny.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 5 — VIDEO ══ -->
-            <div class="slide" data-type="video">
-                <div class="media-area" id="media-4">
-                    <video id="vid-4" src="5.AP-Zubní_Technik.mp4" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-4"><div class="progress-bar" id="pb-4"></div></div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="4"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="4"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="4">
-                            </div>
-                            <span class="time-display" id="time-4">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="4"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[05 / 08]</span>
-                        <h2 class="project-title">AP-Zubní Technik</h2>
-                        <span class="project-tags">Professional Profile / Industrial / Precision</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Vizuální studie profesní preciznosti. Chladné tóny, sterilní čistota prostředí kontrastující s organickou povahou tvůrčí ruční práce.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 6 — VIDEO ══ -->
-            <div class="slide" data-type="video">
-                <div class="media-area" id="media-5">
-                    <video id="vid-5" src="6.Semifinále Zlatého Ámose 2025.mp4" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-5"><div class="progress-bar" id="pb-5"></div></div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="5"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="5"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="5">
-                            </div>
-                            <span class="time-display" id="time-5">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="5"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[06 / 08]</span>
-                        <h2 class="project-title">Semifinále Zlatého Ámose</h2>
-                        <span class="project-tags">Event / Reportage / Live Action</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Reportážní zachycení prestižní události roku 2025. Autentické emoce, dynamická kamera přímo v centru dění a čistý storytelling.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 7 — VIDEO ══ -->
-            <div class="slide" data-type="video">
-                <div class="media-area" id="media-6">
-                    <video id="vid-6" src="7.Svačinka.mp4" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-6"><div class="progress-bar" id="pb-6"></div></div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="6"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="6"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="6">
-                            </div>
-                            <span class="time-display" id="time-6">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="6"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[07 / 08]</span>
-                        <h2 class="project-title">Svačinka</h2>
-                        <span class="project-tags">Short Fiction / Comedy / Narrative</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Krátkometrážní narativní projekt s odlehčenou atmosférou. Hra s každodenní situací dovedenou do absurdního, vizuálně saturovaného detailu.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 8 — VIDEO ══ -->
-            <div class="slide" data-type="video">
-                <div class="media-area" id="media-7">
-                    <video id="vid-7" src="8.ZaOkny.mov" preload="metadata"></video>
-                    <div class="media-type-badge">Video</div>
-                    <div class="custom-controls">
-                        <div class="progress-wrap" id="pw-7"><div class="progress-bar" id="pb-7"></div></div>
-                        <div class="controls-row">
-                            <button class="ctrl-btn play-btn" data-vid="7"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
-                            <div class="volume-wrap">
-                                <button class="ctrl-btn mute-btn" data-vid="7"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg></button>
-                                <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="7">
-                            </div>
-                            <span class="time-display" id="time-7">0:00 / 0:00</span>
-                            <button class="ctrl-btn fullscreen-btn" data-vid="7"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg></button>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[08 / 08]</span>
-                        <h2 class="project-title">ZaOkny</h2>
-                        <span class="project-tags">Atmospheric / Mood Film / Ambient</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Vizuální báseň a lo-fi atmosférická studie okolního světa pozorovaného skrze sklo. Pomalé tempo, hluboká melancholie a hra světla s deštěm.
-                    </div>
-                </div>
-            </div>
-
-            <!-- ══ SLIDE 9 — PHOTO EXAMPLE ══
-                 Chcete přidat fotku? Stačí zkopírovat tento blok a změnit src a texty.
-            -->
-            <!--
-            <div class="slide" data-type="photo">
-                <div class="media-area">
-                    <img class="photo-display" src="moje_fotka.jpg" alt="Název projektu">
-                    <div class="media-type-badge photo">Photo</div>
-                </div>
-                <div class="project-meta">
-                    <div class="project-info">
-                        <span class="project-number">[09 / 09]</span>
-                        <h2 class="project-title">Název Fotoprojektu</h2>
-                        <span class="project-tags">Photography / Still / Portrait</span>
-                    </div>
-                    <div class="project-desc-box">
-                        Popis projektu.
-                    </div>
-                </div>
-            </div>
-            -->
-
-            <!-- ══ SLIDE NAV BAR ══ -->
-            <div class="slide-nav">
-                <div class="nav-btns">
-                    <button class="nav-btn" id="btn-prev">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                        PREV
-                    </button>
-                    <button class="nav-btn" id="btn-next">
-                        NEXT
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-                    </button>
-                </div>
-
-                <div class="progress-dots" id="dots"></div>
-
-                <div class="counter-display">
-                    PROJECT <b id="cur">1</b> / <span id="total">8</span>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- INDEX GRID -->
-        <div class="project-shorts">
-            <div class="shorts-title">INDEX / SELECT WORK</div>
-            <div class="grid-links" id="grid"></div>
-        </div>
-
+  <main>
+    <div class="filter-row" id="filterRow">
+      <div class="filter-pill-bg" id="filterPill"></div>
+      <a data-group="all" class="active" role="button" tabindex="0">All</a>
+      <span class="sep">/</span>
+      <a data-group="photo" role="button" tabindex="0">Photo</a>
+      <span class="sep">/</span>
+      <a data-group="video" role="button" tabindex="0">Video</a>
     </div>
 
-    <footer>
-        <span>LEVINSKYJ PORTFOLIO</span>
-        <span>DESIGNED FOR VISUAL EXPERIENCE &copy; 2026</span>
-        <span><a href="project-manager.html" style="color: var(--accent); text-decoration: none;">PROJECT MANAGER</a> | ALL RIGHTS RESERVED</span>
+    <div style="position: relative; flex: 1; min-height: 400px;">
+      <div class="grid-loading" id="gridLoading">
+        <i class="ph ph-spinner" style="font-size: 32px; color: var(--md-primary); animation: spin 0.85s linear infinite;"></i>
+        <div class="loading-text">Loading projects…</div>
+      </div>
+      <section class="bento" id="grid" role="list"></section>
+    </div>
+
+    <footer class="g-footer">
+      <div class="f-name">Jan Levínský</div>
+      <div class="f-role">Cinematography & Photography</div>
+      <a class="f-contact" href="mailto:levinskyj.cine@gmail.com">
+        <i class="ph ph-envelope" style="font-size: 14px;"></i>
+        Kontakt
+      </a>
     </footer>
-    <div class="key-flash" id="key-flash"></div>
+  </main>
+</div>
 
-    <script>
-    (() => {
-        /* ─── DATA ─── */
-        // Load projects from localStorage or use defaults
-        let projects = [];
-        const stored = localStorage.getItem('portfolio_projects');
-        if (stored) {
-            try {
-                projects = JSON.parse(stored);
-            } catch (e) {
-                console.error('Chyba při načítání projektů:', e);
-                projects = [];
-            }
+<script>
+let currentGroup = 'all';
+
+function updateFilterPill() {
+  const row = document.getElementById('filterRow');
+  const pill = document.getElementById('filterPill');
+  const active = row.querySelector('a.active');
+  if (!active) return;
+  const rowRect = row.getBoundingClientRect();
+  const aRect = active.getBoundingClientRect();
+  pill.style.width = aRect.width + 'px';
+  pill.style.left = (aRect.left - rowRect.left) + 'px';
+  pill.style.top = ((aRect.top - rowRect.top) + (aRect.height - 30) / 2) + 'px';
+}
+
+function loadImage(img) {
+  return new Promise(resolve => {
+    if (img.complete && img.naturalWidth) { resolve(true); return; }
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+  });
+}
+
+async function initPortfolio() {
+  const grid = document.getElementById('grid');
+  const gridLoading = document.getElementById('gridLoading');
+
+  try {
+    const res = await fetch('./projects.json');
+    if (!res.ok) throw new Error('JSON failed');
+    const projects = await res.json();
+
+    let loaded = 0;
+    const total = projects.length;
+
+    for (const project of projects) {
+      let thumbnailSrc = project.thumbnail || '';
+      if (!thumbnailSrc && project.media && project.media[0]) {
+        const m = project.media[0];
+        if (m.type === 'photo') thumbnailSrc = m.src;
+      }
+
+      const a = document.createElement('a');
+      a.href = 'project.html?id=' + project.id;
+      a.className = 'tile ' + (project.layout || 'normal') + ' ' + (project.type === 'video' ? 'video-tile' : 'photo-tile');
+      a.dataset.type = project.type;
+      a.dataset.id = project.id;
+      a.setAttribute('role', 'listitem');
+      a.setAttribute('aria-label', project.title + (project.year ? ' (' + project.year + ')' : ''));
+
+      const isVideo = project.type === 'video';
+      const layout = project.layout || 'normal';
+      const filmSizes = {
+        photo: {
+          normal: { width: 36, height: 24 },
+          wide: { width: 42.7, height: 24 },
+          tall: { width: 13.5, height: 24 }
+        },
+        video: {
+          normal: { width: 24, height: 18.6 },
+          wide: { width: 24, height: 14 },
+          tall: { width: 24, height: 44.2 }
         }
+      };
+      const hole = { width: 2.79, height: 1.98, pitch: 4.75 };
+      const frame = filmSizes[isVideo ? 'video' : 'photo'][layout] || filmSizes[isVideo ? 'video' : 'photo'].normal;
+      const edgeLength = isVideo ? frame.height : frame.width;
+      const count = Math.max(2, Math.round(edgeLength / hole.pitch));
 
-        // Fallback na výchozí projekty pokud není nic uloženo
-        if (projects.length === 0) {
-            projects = [
-                {
-                    id: 1,
-                    num: '01',
-                    title: 'Auto-Potrét',
-                    tags: 'Experimental / Fine Art / Cinematography',
-                    type: 'video',
-                    camera: 'Canon eos250D',
-                    lens: 'Helios-44M, Canon 18-55mm, + olympus 0.8x converter',
-                    software: '',
-                    media: './video/1.AutoPortret.mp4',
-                    videos: ['./video/1.AutoPortret.mp4'],
-                    photos: [],
-                    description: 'Hluboká introspektivní sonda do duše tvůrce. Kamera oko'
-                },
-                {
-                    id: 2,
-                    num: '02',
-                    title: 'Reklama',
-                    tags: 'Commercial / Brand Identity / Direction',
-                    type: 'video',
-                    camera: 'Canon eos 250D',
-                    lens: 'Helios-44M, Canon 18-50mm',
-                    software: 'Davinci resolve',
-                    media: './video/2.Reklama.mp4',
-                    videos: ['./video/2.Reklama.mp4'],
-                    photos: [],
-                    description: 'Reklama na parfém Jack Saloon značky Angry Beards. Nekomerční projekt'
-                },
-                {
-                    id: 4,
-                    num: '03',
-                    title: 'Postupy práce',
-                    tags: 'Documentary / Cinema verité / Macro Detail',
-                    type: 'video',
-                    camera: 'Blackmagic pocket cinema 6k pro',
-                    lens: 'Helios-44M, Nikkor 55mm macro, Tamron 24-135',
-                    software: 'Davinci resolve',
-                    media: './video/3.AP-Trailer.mp4',
-                    videos: [
-                        './video/3.AP-Trailer.mp4',
-                        './video/4.AP-Hodinář.mp4',
-                        './video/5.AP-Zubní_Technik.mp4'
-                    ],
-                    photos: [
-                        'photo/hodinar/still (1).jpg',
-                        'photo/hodinar/still (1).png',
-                        'photo/hodinar/still (2).png',
-                        'photo/hodinar/still (3).png',
-                        'photo/hodinar/still (4).png',
-                        'photo/zubni_technik/still (1).png',
-                        'photo/zubni_technik/still (2).png',
-                        'photo/zubni_technik/still (3).png',
-                        'photo/zubni_technik/still (4).png'
-                    ],
-                    description: 'Dokumentární esej zachycující preciznost lidského řemesla. Detailní macro záběry, fascinující práce řemeslníků a intimní atmosféra dílen.'
-                },
-                {
-                    id: 9,
-                    num: '04',
-                    title: 'ShotBox',
-                    tags: 'Experimental / Cinematography',
-                    type: 'video',
-                    camera: 'Phantom Flex 4K GS',
-                    lens: '',
-                    software: '',
-                    media: './video/9.Phantom (3).mp4',
-                    videos: [
-                        './video/9.Phantom (3).mp4',
-                        './video/9.Phantom (1).mp4',
-                        './video/9.Phantom (2).mp4'
-                    ],
-                    photos: [],
-                    description: 'Praxe v reklamním studiu ShotBox s.r.o. Práce s MRMC Bolt, Phantom Flex 4K GS'
-                },
-                {
-                    id: 6,
-                    num: '05',
-                    title: 'Zlatý Ámos',
-                    tags: 'Event / Reportage / Live Action',
-                    type: 'video',
-                    camera: 'Sony FX3, Sony FS5',
-                    lens: 'Škála 24-135',
-                    software: 'DaVinci Resolve',
-                    media: './video/6. 1. Regionální kolo Zlatého Ámose 2025.mp4',
-                    videos: [
-                        './video/6. 1. Regionální kolo Zlatého Ámose 2025.mp4',
-                        './video/6. 4. Regionální kolo Zlatého Ámose 2025.mp4',
-                        './video/6.Semifinále Zlatého Ámose 2025.mp4',
-                        './video/6. Finále Zlatého Ámose 2025.mp4'
-                    ],
-                    photos: [],
-                    description: 'Reportážní zachycení prestižní události roku 2025. Autentické emoce, dynamická kamera přímo v centru dění a čistý storytelling.'
-                },
-                {
-                    id: 7,
-                    num: '06',
-                    title: 'Svačinka',
-                    tags: 'Short Fiction / Comedy / Narrative',
-                    type: 'video',
-                    camera: 'Blackmagic ursa',
-                    lens: 'Tamron 24-135',
-                    software: 'Davinci resolve',
-                    media: './video/7.Svačinka.mp4',
-                    videos: ['./video/7.Svačinka.mp4'],
-                    photos: [],
-                    description: 'Krátkometrážní narativní projekt s odlehčenou atmosférou. Hra s každodenní situací dovedenou do absurdního, vizuálně saturovaného detailu.'
-                },
-                {
-                    id: 8,
-                    num: '07',
-                    title: 'Za Okny',
-                    tags: 'Atmospheric / Mood Film / Ambient',
-                    type: 'video',
-                    camera: 'Blackmagic ursa',
-                    lens: 'Tamron 24-135',
-                    software: 'Davinci resolve',
-                    media: './video/8.ZaOkny.mp4',
-                    videos: ['./video/8.ZaOkny.mp4'],
-                    photos: [],
-                    description: 'Vizuální báseň a lo-fi atmosférická studie okolního světa pozorovaného skrze sklo. Pomalé tempo, hluboká melancholie a hra světla, stínu.'
-                },
-                {
-                    id: 10,
-                    num: '08',
-                    title: 'Oswiecim',
-                    tags: 'Photography / Auschwitz / History',
-                    type: 'photo',
-                    camera: 'Canon eos 250D',
-                    lens: 'Canon 18-55mm, 70-300mm',
-                    software: 'Adobe Lightroom',
-                    media: './photo/oswiecim/oswiecim (1).JPG',
-                    videos: [],
-                    photos: [
-                        './photo/oswiecim/oswiecim (1).JPG',
-                        './photo/oswiecim/oswiecim (2).JPG',
-                        './photo/oswiecim/oswiecim (3).JPG',
-                        './photo/oswiecim/oswiecim (4).JPG'
-                    ],
-                    description: 'Fotografická série z koncentračního tábora Osvětim zachycující tíživou historickou atmosféru.'
-                },
-                {
-                    id: 11,
-                    num: '09',
-                    title: 'Vánoční jarmark',
-                    tags: 'Photography / Event / Christmas',
-                    type: 'photo',
-                    camera: 'Canon eos 250D',
-                    lens: 'Canon 18-55mm, 70-300mm',
-                    software: 'Adobe Lightroom',
-                    media: './photo/vanocni_jarmark/vanoce (1).JPG',
-                    videos: [],
-                    photos: [
-                        './photo/vanocni_jarmark/vanoce (1).JPG',
-                        './photo/vanocni_jarmark/vanoce (1).webp',
-                        './photo/vanocni_jarmark/vanoce (2).JPG',
-                        './photo/vanocni_jarmark/vanoce (2).webp',
-                        './photo/vanocni_jarmark/vanoce (3).JPG',
-                        './photo/vanocni_jarmark/vanoce (4).JPG',
-                        './photo/vanocni_jarmark/vanoce (5).JPG',
-                        './photo/vanocni_jarmark/vanoce (6).JPG',
-                        './photo/vanocni_jarmark/vanoce (7).JPG',
-                        './photo/vanocni_jarmark/vanoce (8).JPG',
-                        './photo/vanocni_jarmark/vanoce (9).JPG'
-                    ],
-                    description: 'Reportážní a detailní záběry z tradičního vánočního jarmarku.'
-                },
-                {
-                    id: 12,
-                    num: '10',
-                    title: 'RGB Light',
-                    tags: 'Photography / Studio / Lighting',
-                    type: 'photo',
-                    camera: 'Sony FX3',
-                    lens: 'Sigma 24-70mm f/2.8',
-                    software: 'Adobe Lightroom',
-                    media: './photo/color/color (1).jpg',
-                    videos: [],
-                    photos: [
-                        './photo/color/color (1).jpg',
-                        './photo/color/color (9).jpg',
-                        './photo/color/color (10).jpg',
-                        './photo/color/color (11).jpg',
-                        './photo/color/color (12).jpg',
-                        './photo/color/color (13).JPG',
-                        './photo/color/color (14).JPG',
-                        './photo/color/color (15).JPG',
-                        './photo/color/color (16).jpg',
-                        './photo/color/color (17).jpg',
-                        './photo/color/color (18).jpg',
-                        './photo/color/color (19).jpg',
-                        './photo/color/color (20).jpg'
-                    ],
-                    description: 'Ateliérové fotografie s využitím kreativního barevného RGB osvětlení.'
-                }
-            ];
-        }
+      a.dataset.perfType = isVideo ? 'video' : 'photo';
+      a.dataset.perfFrameWidth = frame.width;
+      a.dataset.perfFrameHeight = frame.height;
+      a.dataset.perfHoleWidth = hole.width;
+      a.dataset.perfHoleHeight = hole.height;
+      a.dataset.perfCount = count;
+      // expose first media src for thumbnail generation (if any)
+      a.dataset.src = (project.media && project.media[0] && project.media[0].src) ? project.media[0].src : '';
 
-        // Add total count for project numbering
-        const projectCount = projects.length;
+      const perfHtml = isVideo 
+        ? '<div class="film-perf-v left">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>' + 
+          '<div class="film-perf-v right">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>'
+        : '<div class="film-perf-h top">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>' + 
+          '<div class="film-perf-h bottom">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>';
 
-        /* ─── GENERATE SLIDES FROM PROJECTS ─── */
-        const slideshowWrapper = document.querySelector('.slideshow-wrapper');
-        const slidesContainer = slideshowWrapper.querySelector(':scope > div:not(.slide-nav):not(.custom-controls):not(.project-meta):not(.media-type-badge):first-of-type') || slideshowWrapper;
-        
-        // Clear existing slides except nav bar and grid
-        Array.from(slideshowWrapper.querySelectorAll('.slide')).forEach(el => el.remove());
+      a.innerHTML = '<div class="film-shadow"></div>' + perfHtml + 
+        '<div class="flyout">' + project.title + '<div class="flyout-year">' + (project.year || '') + '</div></div>';
+      grid.appendChild(a);
 
-        function formatVideoName(path) {
-            if (!path) return '';
-            const filename = path.split('/').pop().split('\\').pop();
-            const withoutExt = filename.replace(/\.[^/.]+$/, "");
-            return withoutExt.replace(/^\d+\.\s*/, "");
-        }
+      const rect = a.getBoundingClientRect();
+      const pitchPx = isVideo ? (hole.pitch / frame.height) * rect.height : (hole.pitch / frame.width) * rect.width;
+      const dotWidthPx = (hole.width / frame.width) * rect.width;
+      const dotHeightPx = (hole.height / frame.height) * rect.height;
 
-        // Generate HTML for each project
-        const slideNavBar = slideshowWrapper.querySelector('.slide-nav');
-        projects.forEach((p, idx) => {
-            const isVideo = p.type === 'video';
-            const photoItems = isVideo ? [] : (Array.isArray(p.photos) ? p.photos : (p.media ? [p.media] : []));
-            const maxShow = 6; // Show max 6 in the grid preview
-            const visiblePhotos = photoItems.slice(0, maxShow);
-            const overflow = photoItems.length - maxShow;
-            const mediaTag = isVideo
-                ? `<video id="vid-${idx}" src="${p.media}" preload="metadata"></video>`
-                : `<div class="gallery-preview" data-slide="${idx}">
-                        <div class="gallery-grid" data-count="${Math.min(photoItems.length, maxShow)}">
-                            ${visiblePhotos.map((src, j) => `
-                                <div class="gallery-item" data-slide="${idx}" data-photo-index="${j}">
-                                    <img src="${src}" alt="${p.title} ${j + 1}" loading="lazy">
-                                    <span class="gallery-item-badge">${j + 1} / ${photoItems.length}</span>
-                                    ${j === visiblePhotos.length - 1 && overflow > 0 ? `<div class="gallery-overflow" data-slide="${idx}" data-photo-index="${j}">+${overflow}</div>` : ''}
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>`;
+      const gapForH = Math.max(1, pitchPx - dotWidthPx);
+      const gapForV = Math.max(1, pitchPx - dotHeightPx);
 
-            const badge = isVideo ? 'Video' : 'Photo';
-            const badgeClass = isVideo ? '' : ' photo';
-            const controlsHTML = isVideo ? `
-                        <div class="custom-controls">
-                            <div class="progress-wrap" id="pw-${idx}">
-                                <div class="progress-bar" id="pb-${idx}"></div>
-                            </div>
-                            <div class="controls-row">
-                                <button class="ctrl-btn play-btn" data-vid="${idx}" title="Play/Pause">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                                </button>
-                                <div class="volume-wrap">
-                                    <button class="ctrl-btn mute-btn" data-vid="${idx}">
-                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>
-                                    </button>
-                                    <input class="volume-slider" type="range" min="0" max="1" step="0.05" value="1" data-vid="${idx}">
-                                </div>
-                                <span class="time-display" id="time-${idx}">0:00 / 0:00</span>
-                                <button class="ctrl-btn fullscreen-btn" data-vid="${idx}">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                    ` : '';
+      a.style.setProperty('--perf-dot-width', Math.round(dotWidthPx) + 'px');
+      a.style.setProperty('--perf-dot-height', Math.round(dotHeightPx) + 'px');
 
-            let playlistHTML = '';
-            const videoList = Array.isArray(p.videos) && p.videos.length > 0 ? p.videos : [p.media];
-            if (isVideo && videoList.length > 1) {
-                playlistHTML = `
-                    <div class="video-playlist">
-                        ${videoList.map((vSrc, j) => `
-                            <div class="playlist-card${j === 0 ? ' active' : ''}" data-slide="${idx}" data-video-src="${vSrc}" data-video-index="${j}">
-                                <div class="playlist-card-ep">Část 0${j + 1}</div>
-                                <div class="playlist-card-title">${formatVideoName(vSrc)}</div>
-                                <div class="playlist-card-status">
-                                    ${j === 0 
-                                        ? `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg> Nyní hraje` 
-                                        : `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Přehrát`
-                                    }
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
+      const perfHTop = a.querySelector('.film-perf-h.top');
+      const perfHBottom = a.querySelector('.film-perf-h.bottom');
+      const perfVLeft = a.querySelector('.film-perf-v.left');
+      const perfVRight = a.querySelector('.film-perf-v.right');
 
-            let btsGalleryHTML = '';
-            if (isVideo && Array.isArray(p.photos) && p.photos.length > 0) {
-                btsGalleryHTML = `
-                    <div class="bts-gallery">
-                        <div class="bts-gallery-title">Behind the scenes / Fotky</div>
-                        <div class="bts-grid">
-                            ${p.photos.map((src, j) => `
-                                <div class="bts-item" data-slide="${idx}" data-photo-index="${j}">
-                                    <img src="${src}" alt="BTS ${p.title} ${j + 1}" loading="lazy">
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-
-            let gearHTML = '';
-            if (p.camera || p.lens || p.software) {
-                gearHTML = `
-                    <div class="project-gear">
-                        ${p.camera ? `<div><span>KAMERA:</span> ${p.camera}</div>` : ''}
-                        ${p.lens ? `<div><span>OPTIKA:</span> ${p.lens}</div>` : ''}
-                        ${p.software ? `<div><span>SOFTWARE:</span> ${p.software}</div>` : ''}
-                    </div>
-                `;
-            }
-
-            const slideHTML = `
-                <div class="slide ${idx === 0 ? 'active' : ''}" data-type="${p.type}">
-                    <div class="media-area" id="media-${idx}">
-                        ${mediaTag}
-                        <div class="media-loader" id="loader-${idx}">
-                            <div class="spinner"></div>
-                        </div>
-                        <div class="media-type-badge${badgeClass}">${badge}</div>
-                        ${controlsHTML}
-                    </div>
-                    ${playlistHTML}
-                    <div class="project-meta">
-                        <div class="project-info">
-                            <span class="project-number">[${p.num} / ${String(projectCount).padStart(2, '0')}]</span>
-                            <h2 class="project-title">${p.title}</h2>
-                            <span class="project-tags">${p.tags}</span>
-                            ${gearHTML}
-                        </div>
-                        <div class="project-desc-box">
-                            ${p.description}
-                        </div>
-                    </div>
-                    ${btsGalleryHTML}
-                </div>
-            `;
-
-            slideshowWrapper.insertBefore(
-                new DOMParser().parseFromString(slideHTML, 'text/html').body.firstChild,
-                slideNavBar
-            );
+      if (perfHTop || perfHBottom) {
+        const containerW = (count * dotWidthPx) + ((count - 1) * gapForH);
+        [perfHTop, perfHBottom].forEach(el => {
+          if (!el) return;
+          el.style.width = Math.round(containerW) + 'px';
+          el.style.left = '50%';
+          el.style.transform = 'translateX(-50%)';
+          el.style.justifyContent = 'flex-start';
+          el.style.gap = Math.round(gapForH) + 'px';
+          el.querySelectorAll('.perf-dot').forEach(d => {
+            d.style.width = Math.round(dotWidthPx) + 'px';
+            d.style.height = Math.round(dotHeightPx) + 'px';
+            d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
+          });
         });
+      }
 
-        const slides  = Array.from(document.querySelectorAll('.slide'));
-        const totalEl = document.getElementById('total');
-        const curEl   = document.getElementById('cur');
-        const dotsEl  = document.getElementById('dots');
-        const gridEl  = document.getElementById('grid');
-        const flashEl = document.getElementById('key-flash');
-        let current   = 0;
-        let flashTimer;
-
-        totalEl.textContent = slides.length;
-
-        /* ─── BUILD DOTS ─── */
-        slides.forEach((_, i) => {
-            const d = document.createElement('div');
-            d.className = 'dot' + (i === 0 ? ' active' : '');
-            d.addEventListener('click', () => go(i));
-            dotsEl.appendChild(d);
+      if (perfVLeft || perfVRight) {
+        const containerH = (count * dotHeightPx) + ((count - 1) * gapForV);
+        [perfVLeft, perfVRight].forEach(el => {
+          if (!el) return;
+          el.style.height = Math.round(containerH) + 'px';
+          el.style.top = '50%';
+          el.style.transform = 'translateY(-50%)';
+          el.style.justifyContent = 'flex-start';
+          el.style.gap = Math.round(gapForV) + 'px';
+          el.querySelectorAll('.perf-dot').forEach(d => {
+            d.style.width = Math.round(dotWidthPx) + 'px';
+            d.style.height = Math.round(dotHeightPx) + 'px';
+            d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
+          });
         });
+      }
 
-        /* ─── BUILD GRID ─── */
-        projects.forEach((p, i) => {
-            const item = document.createElement('div');
-            item.className = 'grid-item' + (i === 0 ? ' active-thumb' : '');
-            item.innerHTML = `
-                <div class="grid-item-num">${p.num}</div>
-                <div class="grid-item-name">${p.title}</div>
-                <div class="grid-item-type ${p.type === 'photo' ? 'photo' : ''}">${p.type}</div>`;
-            item.addEventListener('click', () => go(i));
-            gridEl.appendChild(item);
+      const centerX = rect.left + rect.width / 2;
+      const sideClass = centerX < (window.innerWidth / 2) ? 'from-left' : 'from-right';
+      a.classList.add(sideClass);
+
+      const idx = loaded;
+      setTimeout(async () => {
+        const img = document.createElement('img');
+        img.src = thumbnailSrc ? encodeURI(thumbnailSrc) : thumbnailSrc;
+        img.alt = project.title;
+        img.loading = 'lazy';
+        a.insertBefore(img, a.firstChild);
+        await loadImage(img);
+        img.classList.add('loaded');
+        loaded++;
+        const el = document.querySelector('.loading-text');
+        if (el) el.textContent = 'Loading… ' + Math.round((loaded/total)*100) + '%';
+      }, idx * 70);
+
+      loaded++;
+    }
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        gridLoading.classList.add('hidden');
+        const tiles = Array.from(document.querySelectorAll('.tile'));
+        tiles.forEach((t, i) => {
+          t.style.opacity = '0';
+          t.style.transform = 'translateY(16px)';
+          setTimeout(() => {
+            t.style.opacity = '1';
+            t.style.transform = 'translateY(0)';
+          }, i * 70);
         });
+      });
+    });
 
-        document.querySelectorAll('.gallery-item, .bts-item').forEach(item => {
-            item.addEventListener('click', () => {
-                const slideIndex = Number(item.dataset.slide);
-                const photoIndex = Number(item.dataset.photoIndex);
-                const project = projects[slideIndex];
-                const images = Array.isArray(project.photos) ? project.photos : (project.media ? [project.media] : []);
-                if (!images.length) return;
-                openGalleryModal(images, photoIndex);
-            });
+    initEventListeners();
+    setTimeout(() => { updateFilterPill(); recalcPerforations(); }, 50);
+
+  } catch(err) {
+    console.error(err);
+    gridLoading.classList.add('hidden');
+    grid.innerHTML = '<div style="padding:40px;color:var(--md-on-surface-variant);font-size:13px;">Failed to load projects.json</div>';
+  }
+}
+
+// automatic thumbnail generation removed (disabled)
+
+function initEventListeners() {
+  document.querySelectorAll('.filter-row a').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      document.querySelectorAll('.filter-row a').forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+      updateFilterPill();
+      currentGroup = link.dataset.group;
+      filterTiles();
+    });
+    link.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        link.click();
+      }
+    });
+  });
+
+  window.addEventListener('resize', () => {
+    requestAnimationFrame(updateFilterPill);
+    requestAnimationFrame(recalcPerforations);
+  });
+}
+
+function recalcPerforations() {
+  const tiles = Array.from(document.querySelectorAll('.tile'));
+  tiles.forEach(a => {
+    const type = a.dataset.perfType;
+    if (!type) return;
+    const frameW = parseFloat(a.dataset.perfFrameWidth);
+    const frameH = parseFloat(a.dataset.perfFrameHeight);
+    const holeW = parseFloat(a.dataset.perfHoleWidth);
+    const holeH = parseFloat(a.dataset.perfHoleHeight);
+    const count = parseInt(a.dataset.perfCount, 10) || 2;
+    const rect = a.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const sideClass = centerX < (window.innerWidth / 2) ? 'from-left' : 'from-right';
+    a.classList.toggle('from-left', sideClass === 'from-left');
+    a.classList.toggle('from-right', sideClass === 'from-right');
+    const isVideo = type === 'video';
+    const pitchPx = isVideo ? (4.75 / frameH) * rect.height : (4.75 / frameW) * rect.width;
+    const dotWidthPx = (holeW / frameW) * rect.width;
+    const dotHeightPx = (holeH / frameH) * rect.height;
+    const gapForH = Math.max(1, pitchPx - dotWidthPx);
+    const gapForV = Math.max(1, pitchPx - dotHeightPx);
+    a.style.setProperty('--perf-dot-width', Math.round(dotWidthPx) + 'px');
+    a.style.setProperty('--perf-dot-height', Math.round(dotHeightPx) + 'px');
+
+    const perfHTop = a.querySelector('.film-perf-h.top');
+    const perfHBottom = a.querySelector('.film-perf-h.bottom');
+    const perfVLeft = a.querySelector('.film-perf-v.left');
+    const perfVRight = a.querySelector('.film-perf-v.right');
+    if (perfHTop || perfHBottom) {
+      const containerW = (count * dotWidthPx) + ((count - 1) * gapForH);
+      [perfHTop, perfHBottom].forEach(el => {
+        if (!el) return;
+        el.style.width = Math.round(containerW) + 'px';
+        el.style.left = '50%';
+        el.style.transform = 'translateX(-50%)';
+        el.style.justifyContent = 'flex-start';
+        el.style.gap = Math.round(gapForH) + 'px';
+        el.querySelectorAll('.perf-dot').forEach(d => {
+          d.style.width = Math.round(dotWidthPx) + 'px';
+          d.style.height = Math.round(dotHeightPx) + 'px';
+          d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
         });
-
-        /* ─── NAVIGATE ─── */
-        function go(idx) {
-            // pause / reset current video
-            const prevSlide = slides[current];
-            const prevVid = prevSlide.querySelector('video');
-            if (prevVid) prevVid.pause();
-
-            // update classes
-            slides[current].classList.remove('active');
-            dotsEl.children[current].classList.remove('active');
-            gridEl.children[current].classList.remove('active-thumb');
-
-            current = ((idx % slides.length) + slides.length) % slides.length;
-
-            slides[current].classList.add('active');
-            dotsEl.children[current].classList.add('active');
-            gridEl.children[current].classList.add('active-thumb');
-            curEl.textContent = current + 1;
-
-            // scroll grid item into view if needed
-            gridEl.children[current].scrollIntoView({ block:'nearest', inline:'nearest' });
-        }
-
-        document.getElementById('btn-prev').addEventListener('click', () => go(current - 1));
-        document.getElementById('btn-next').addEventListener('click', () => go(current + 1));
-
-        /* ─── CUSTOM PLAYER LOGIC ─── */
-        const PLAY_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
-        const PAUSE_ICON = `<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
-        const VOL_ON  = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/></svg>`;
-        const VOL_OFF = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>`;
-
-        function formatTime(s) {
-            if (isNaN(s) || !isFinite(s)) return '0:00';
-            const m = Math.floor(s / 60);
-            const sec = Math.floor(s % 60);
-            return `${m}:${sec.toString().padStart(2, '0')}`;
-        }
-
-        document.querySelectorAll('.play-btn').forEach(btn => {
-            const vid = document.getElementById('vid-' + btn.dataset.vid);
-            if (!vid) return;
-
-            btn.addEventListener('click', () => togglePlay(vid, btn));
-
-            // Tap / Click video element to toggle play/pause
-            vid.addEventListener('click', () => togglePlay(vid, btn));
-            vid.style.cursor = 'pointer';
-
-            // Double click video element to toggle fullscreen
-            vid.addEventListener('dblclick', () => {
-                const wrap = vid.closest('.media-area');
-                if (document.fullscreenElement) {
-                    document.exitFullscreen();
-                } else {
-                    wrap.requestFullscreen?.();
-                }
-            });
-
-            // Video buffering loader events
-            const loader = document.getElementById('loader-' + btn.dataset.vid);
-            if (loader) {
-                vid.addEventListener('loadstart', () => loader.classList.add('active'));
-                vid.addEventListener('waiting',   () => loader.classList.add('active'));
-                vid.addEventListener('seeking',   () => loader.classList.add('active'));
-
-                vid.addEventListener('canplay',   () => loader.classList.remove('active'));
-                vid.addEventListener('playing',   () => loader.classList.remove('active'));
-                vid.addEventListener('seeked',    () => loader.classList.remove('active'));
-                vid.addEventListener('error',     () => loader.classList.remove('active'));
-            }
-
-            vid.addEventListener('play',  () => { btn.innerHTML = PAUSE_ICON; });
-            vid.addEventListener('pause', () => { btn.innerHTML = PLAY_ICON; });
-            vid.addEventListener('ended', () => { btn.innerHTML = PLAY_ICON; });
+      });
+    }
+    if (perfVLeft || perfVRight) {
+      const containerH = (count * dotHeightPx) + ((count - 1) * gapForV);
+      [perfVLeft, perfVRight].forEach(el => {
+        if (!el) return;
+        el.style.height = Math.round(containerH) + 'px';
+        el.style.top = '50%';
+        el.style.transform = 'translateY(-50%)';
+        el.style.justifyContent = 'flex-start';
+        el.style.gap = Math.round(gapForV) + 'px';
+        el.querySelectorAll('.perf-dot').forEach(d => {
+          d.style.width = Math.round(dotWidthPx) + 'px';
+          d.style.height = Math.round(dotHeightPx) + 'px';
+          d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
         });
+      });
+    }
+  });
+}
 
-        function togglePlay(vid, btn) {
-            if (vid.paused) { vid.play(); } else { vid.pause(); }
-        }
+function filterTiles() {
+  const tiles = document.querySelectorAll('.tile');
+  tiles.forEach(t => {
+    const type = t.dataset.type;
+    if (currentGroup === 'all' || type === currentGroup) {
+      t.style.display = '';
+      requestAnimationFrame(() => {
+        t.style.opacity = '1';
+        t.style.transform = 'translateY(0)';
+      });
+    } else {
+      t.style.opacity = '0';
+      t.style.transform = 'translateY(16px)';
+      setTimeout(() => { t.style.display = 'none'; }, 300);
+    }
+  });
+}
 
-        // progress
-        document.querySelectorAll('.progress-wrap').forEach(pw => {
-            const idx = pw.id.replace('pw-','');
-            const vid = document.getElementById('vid-' + idx);
-            const pb  = document.getElementById('pb-' + idx);
-            const td  = document.getElementById('time-' + idx);
-            if (!vid) return;
-
-            vid.addEventListener('timeupdate', () => {
-                const pct = vid.duration ? (vid.currentTime / vid.duration) * 100 : 0;
-                pb.style.width = pct + '%';
-                td.textContent = formatTime(vid.currentTime) + ' / ' + formatTime(vid.duration);
-            });
-
-            vid.addEventListener('loadedmetadata', () => {
-                td.textContent = '0:00 / ' + formatTime(vid.duration);
-            });
-
-            pw.addEventListener('click', e => {
-                const rect = pw.getBoundingClientRect();
-                const ratio = (e.clientX - rect.left) / rect.width;
-                vid.currentTime = ratio * vid.duration;
-            });
-        });
-
-        // volume
-        document.querySelectorAll('.volume-slider').forEach(sl => {
-            const vid = document.getElementById('vid-' + sl.dataset.vid);
-            const muteBtn = sl.parentElement.querySelector('.mute-btn');
-            if (!vid) return;
-            sl.addEventListener('input', () => {
-                vid.volume = parseFloat(sl.value);
-                vid.muted = vid.volume === 0;
-                muteBtn.innerHTML = vid.muted ? VOL_OFF : VOL_ON;
-            });
-        });
-
-        document.querySelectorAll('.mute-btn').forEach(btn => {
-            const vid = document.getElementById('vid-' + btn.dataset.vid);
-            const sl  = btn.parentElement.querySelector('.volume-slider');
-            if (!vid) return;
-            btn.addEventListener('click', () => {
-                vid.muted = !vid.muted;
-                btn.innerHTML = vid.muted ? VOL_OFF : VOL_ON;
-                if (sl) sl.value = vid.muted ? 0 : vid.volume;
-            });
-        });
-
-        // fullscreen
-        document.querySelectorAll('.fullscreen-btn').forEach(btn => {
-            const vid = document.getElementById('vid-' + btn.dataset.vid);
-            if (!vid) return;
-            btn.addEventListener('click', () => {
-                const wrap = vid.closest('.media-area');
-                if (document.fullscreenElement) {
-                    document.exitFullscreen();
-                } else {
-                    wrap.requestFullscreen?.();
-                }
-            });
-        });
-
-        // Inactivity behavior for video controls
-        document.querySelectorAll('.slide[data-type="video"]').forEach(slide => {
-            const mediaArea = slide.querySelector('.media-area');
-            const vid = mediaArea.querySelector('video');
-            let timeoutId = null;
-
-            function hideUI() {
-                if (vid && !vid.paused) {
-                    mediaArea.classList.add('hide-controls');
-                }
-            }
-
-            function showUI() {
-                mediaArea.classList.remove('hide-controls');
-                resetTimeout();
-            }
-
-            function resetTimeout() {
-                clearTimeout(timeoutId);
-                if (vid && !vid.paused) {
-                    timeoutId = setTimeout(hideUI, 2500);
-                }
-            }
-
-            mediaArea.addEventListener('mousemove', showUI);
-            mediaArea.addEventListener('mouseleave', () => {
-                clearTimeout(timeoutId);
-                hideUI();
-            });
-
-            vid.addEventListener('play', showUI);
-            vid.addEventListener('pause', () => {
-                clearTimeout(timeoutId);
-                mediaArea.classList.remove('hide-controls');
-            });
-            vid.addEventListener('ended', () => {
-                clearTimeout(timeoutId);
-                mediaArea.classList.remove('hide-controls');
-            });
-        });
-
-        /* ─── KEYBOARD CONTROLS ─── */
-        function flash(msg) {
-            clearTimeout(flashTimer);
-            flashEl.textContent = msg;
-            flashEl.classList.add('show');
-            flashTimer = setTimeout(() => flashEl.classList.remove('show'), 1200);
-        }
-
-        document.addEventListener('keydown', e => {
-            // skip if typing in an input
-            if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
-
-            const isGalleryOpen = galleryModal.classList.contains('active');
-            const activeVid = slides[current].querySelector('video');
-
-            switch(e.key) {
-                case 'ArrowRight':
-                    if (isGalleryOpen) return;
-                    e.preventDefault();
-                    if (document.fullscreenElement && activeVid) {
-                        activeVid.currentTime = Math.min(activeVid.duration || 0, activeVid.currentTime + 5);
-                        flash('»  +5s');
-                    } else {
-                        go(current + 1);
-                        flash('→  NEXT PROJECT');
-                    }
-                    break;
-                case 'ArrowLeft':
-                    if (isGalleryOpen) return;
-                    e.preventDefault();
-                    if (document.fullscreenElement && activeVid) {
-                        activeVid.currentTime = Math.max(0, activeVid.currentTime - 5);
-                        flash('«  -5s');
-                    } else {
-                        go(current - 1);
-                        flash('←  PREV PROJECT');
-                    }
-                    break;
-                case ' ':
-                    e.preventDefault();
-                    if (activeVid) {
-                        const btn = slides[current].querySelector('.play-btn');
-                        togglePlay(activeVid, btn);
-                        flash(activeVid.paused ? '⏸  PAUSE' : '▶  PLAY');
-                    }
-                    break;
-                case 'f':
-                case 'F':
-                    e.preventDefault();
-                    if (activeVid) {
-                        const wrap = activeVid.closest('.media-area');
-                        if (document.fullscreenElement) {
-                            document.exitFullscreen();
-                            flash('⤓  EXIT FULLSCREEN');
-                        } else {
-                            wrap.requestFullscreen?.();
-                            flash('⤢  FULLSCREEN');
-                        }
-                    }
-                    break;
-                case 'ArrowUp':
-                    e.preventDefault();
-                    if (activeVid) {
-                        activeVid.volume = Math.min(1, activeVid.volume + 0.1);
-                        flash('🔊  VOL ' + Math.round(activeVid.volume * 100) + '%');
-                    }
-                    break;
-                case 'ArrowDown':
-                    e.preventDefault();
-                    if (activeVid) {
-                        activeVid.volume = Math.max(0, activeVid.volume - 0.1);
-                        flash('🔉  VOL ' + Math.round(activeVid.volume * 100) + '%');
-                    }
-                    break;
-                case 'm':
-                case 'M':
-                    if (activeVid) {
-                        activeVid.muted = !activeVid.muted;
-                        flash(activeVid.muted ? '🔇  MUTED' : '🔊  UNMUTED');
-                    }
-                    break;
-            }
-        });
-
-        /* ═══════ MODERN GALLERY MODAL ═══════ */
-        const galleryModal = document.createElement('div');
-        galleryModal.className = 'gallery-modal';
-        galleryModal.innerHTML = `
-            <div class="gm-topbar">
-                <div class="gm-counter"><b id="gm-cur">1</b> / <span id="gm-total">1</span></div>
-                <button class="gm-close" id="gm-close-btn">✕</button>
-            </div>
-            <div class="gm-stage">
-                <button class="gm-arrow gm-arrow-left" id="gm-prev">‹</button>
-                <div class="gm-image-wrap">
-                    <img class="gm-image" id="gm-image" src="" alt="">
-                    <div class="gm-info" id="gm-info"></div>
-                </div>
-                <button class="gm-arrow gm-arrow-right" id="gm-next">›</button>
-            </div>
-            <div class="gm-thumbs" id="gm-thumbs"></div>
-        `;
-        document.body.appendChild(galleryModal);
-
-        const gmImage = document.getElementById('gm-image');
-        const gmCur = document.getElementById('gm-cur');
-        const gmTotal = document.getElementById('gm-total');
-        const gmThumbs = document.getElementById('gm-thumbs');
-        const gmInfo = document.getElementById('gm-info');
-
-        let gm = { images: [], idx: 0 };
-
-        window.openGalleryModal = (images, startIdx = 0) => {
-            gm.images = images;
-            gm.idx = startIdx;
-            gmTotal.textContent = images.length;
-
-            // Build thumbnails
-            gmThumbs.innerHTML = images.map((src, i) =>
-                `<div class="gm-thumb ${i === startIdx ? 'active' : ''}" data-i="${i}"><img src="${src}" alt=""></div>`
-            ).join('');
-
-            gmThumbs.querySelectorAll('.gm-thumb').forEach(t => {
-                t.addEventListener('click', () => gmGo(parseInt(t.dataset.i)));
-            });
-
-            gmGo(startIdx, true);
-            galleryModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-
-        function gmGo(idx, instant) {
-            gm.idx = ((idx % gm.images.length) + gm.images.length) % gm.images.length;
-
-            // Animate
-            if (!instant) {
-                gmImage.classList.add('switching');
-                setTimeout(() => {
-                    gmImage.src = gm.images[gm.idx];
-                    gmImage.classList.remove('switching');
-                }, 150);
-            } else {
-                gmImage.src = gm.images[gm.idx];
-            }
-
-            gmImage.classList.remove('zoomed');
-            gmCur.textContent = gm.idx + 1;
-
-            // Filename info
-            const filename = gm.images[gm.idx].split('/').pop();
-            gmInfo.textContent = filename;
-
-            // Update active thumb
-            gmThumbs.querySelectorAll('.gm-thumb').forEach((t, i) => {
-                t.classList.toggle('active', i === gm.idx);
-            });
-            // Scroll active thumb into view
-            const activeThumb = gmThumbs.querySelector('.gm-thumb.active');
-            if (activeThumb) activeThumb.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-
-        window.closeGalleryModal = () => {
-            galleryModal.classList.remove('active');
-            document.body.style.overflow = '';
-            gmImage.classList.remove('zoomed');
-        };
-
-        // Zoom toggle
-        gmImage.addEventListener('click', (e) => {
-            e.stopPropagation();
-            gmImage.classList.toggle('zoomed');
-        });
-
-        // Nav buttons
-        document.getElementById('gm-prev').addEventListener('click', () => gmGo(gm.idx - 1));
-        document.getElementById('gm-next').addEventListener('click', () => gmGo(gm.idx + 1));
-        document.getElementById('gm-close-btn').addEventListener('click', closeGalleryModal);
-
-        // Close on background click
-        galleryModal.addEventListener('click', (e) => {
-            if (e.target === galleryModal || e.target.classList.contains('gm-stage')) {
-                closeGalleryModal();
-            }
-        });
-
-        // Keyboard
-        document.addEventListener('keydown', e => {
-            if (!galleryModal.classList.contains('active')) return;
-            if (e.key === 'Escape') { closeGalleryModal(); return; }
-            if (e.key === 'ArrowRight') { e.preventDefault(); e.stopPropagation(); gmGo(gm.idx + 1); }
-            if (e.key === 'ArrowLeft') { e.preventDefault(); e.stopPropagation(); gmGo(gm.idx - 1); }
-        });
-
-        // Touch swipe support
-        let touchStartX = 0;
-        galleryModal.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
-        galleryModal.addEventListener('touchend', e => {
-            const dx = e.changedTouches[0].clientX - touchStartX;
-            if (Math.abs(dx) > 50) {
-                if (dx > 0) gmGo(gm.idx - 1); else gmGo(gm.idx + 1);
-            }
-        });
-
-        /* ─── VIDEO PLAYLIST LOGIC ─── */
-        document.querySelectorAll('.playlist-card').forEach(card => {
-            card.addEventListener('click', () => {
-                const slideIdx = Number(card.dataset.slide);
-                const videoSrc = card.dataset.videoSrc;
-                const videoIdx = Number(card.dataset.videoIndex);
-
-                const slide = slides[slideIdx];
-                const vid = slide.querySelector('video');
-                if (!vid) return;
-
-                const wasPlaying = !vid.paused;
-
-                // Update active card class and status info
-                slide.querySelectorAll('.playlist-card').forEach(c => {
-                    const idx = Number(c.dataset.videoIndex);
-                    const isActive = idx === videoIdx;
-                    c.classList.toggle('active', isActive);
-                    
-                    const statusEl = c.querySelector('.playlist-card-status');
-                    if (statusEl) {
-                        if (isActive) {
-                            statusEl.innerHTML = `<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg> Nyní hraje`;
-                        } else {
-                            statusEl.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Přehrát`;
-                        }
-                    }
-                });
-
-                vid.src = videoSrc;
-                vid.load();
-
-                // Reset timeline state
-                const pb = document.getElementById('pb-' + slideIdx);
-                if (pb) pb.style.width = '0%';
-
-                const td = document.getElementById('time-' + slideIdx);
-                if (td) td.textContent = '0:00 / 0:00';
-
-                // Sync play button icon
-                const playBtn = slide.querySelector('.play-btn');
-                if (playBtn) {
-                    playBtn.innerHTML = wasPlaying ? PAUSE_ICON : PLAY_ICON;
-                }
-
-                if (wasPlaying) {
-                    vid.play().catch(err => console.log('Autoplay blocked:', err));
-                }
-            });
-        });
-
-        /* ─── MOBILE HAMBURGER MENU ─── */
-        const menuBtn = document.getElementById('menu-btn');
-        const projectShorts = document.querySelector('.project-shorts');
-        
-        if (menuBtn && projectShorts) {
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                menuBtn.classList.toggle('active');
-                projectShorts.classList.toggle('active');
-                
-                // Toggle scroll lock on body
-                if (projectShorts.classList.contains('active')) {
-                    document.body.style.overflow = 'hidden';
-                } else {
-                    document.body.style.overflow = '';
-                }
-            });
-
-            // Close menu when clicking on any grid item (since it changes slide)
-            projectShorts.querySelectorAll('.grid-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    menuBtn.classList.remove('active');
-                    projectShorts.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            });
-
-            // Close menu when clicking outside the panel
-            document.addEventListener('click', (e) => {
-                if (projectShorts.classList.contains('active') && 
-                    !projectShorts.contains(e.target) && 
-                    !menuBtn.contains(e.target)) {
-                    menuBtn.classList.remove('active');
-                    projectShorts.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        }
-
-        /* ─── PHOTO GALLERY LOAD EVENTS ─── */
-        document.querySelectorAll('.gallery-preview').forEach(preview => {
-            const slideIdx = Number(preview.dataset.slide);
-            const loader = document.getElementById('loader-' + slideIdx);
-            if (!loader) return;
-
-            const imgs = Array.from(preview.querySelectorAll('img'));
-            let loadedCount = 0;
-
-            if (imgs.length === 0) return;
-
-            // Show loader initially
-            loader.classList.add('active');
-
-            function checkAllImagesLoaded() {
-                loadedCount++;
-                if (loadedCount >= imgs.length) {
-                    loader.classList.remove('active');
-                }
-            }
-
-            imgs.forEach(img => {
-                if (img.complete) {
-                    checkAllImagesLoaded();
-                } else {
-                    img.addEventListener('load', checkAllImagesLoaded);
-                    img.addEventListener('error', checkAllImagesLoaded);
-                }
-            });
-        });
-
-        /* ─── BACKGROUND IMAGE PRELOADER ─── */
-        window.addEventListener('load', () => {
-            // Defer slightly to avoid interfering with critical rendering path
-            setTimeout(() => {
-                const uniqueImages = new Set();
-                
-                projects.forEach(p => {
-                    const isVideo = p.type === 'video';
-                    if (!isVideo) {
-                        if (p.media) uniqueImages.add(p.media);
-                        if (Array.isArray(p.photos)) {
-                            p.photos.forEach(src => uniqueImages.add(src));
-                        }
-                    } else {
-                        // Video projects BTS images
-                        if (Array.isArray(p.photos)) {
-                            p.photos.forEach(src => uniqueImages.add(src));
-                        }
-                    }
-                });
-
-                uniqueImages.forEach(src => {
-                    if (src) {
-                        const img = new Image();
-                        img.src = src;
-                    }
-                });
-                console.log(`Preloaded ${uniqueImages.size} images in the background.`);
-            }, 1000);
-        });
-
-    })();
-
-    /* ─── THEME TOGGLE LOGIC ─── */
-        const themeBtn = document.getElementById('theme-btn');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-
-        function setTheme(isDark) {
-            if (isDark) {
-                document.body.classList.add('dark-mode');
-                sunIcon.style.display = 'block';
-                moonIcon.style.display = 'none';
-                localStorage.setItem('portfolio_theme', 'dark');
-            } else {
-                document.body.classList.remove('dark-mode');
-                sunIcon.style.display = 'none';
-                moonIcon.style.display = 'block';
-                localStorage.setItem('portfolio_theme', 'light');
-            }
-        }
-
-        // Kontrola uložené preference nebo systémového nastavení při načtení
-        const savedTheme = localStorage.getItem('portfolio_theme');
-        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            setTheme(true);
-        }
-
-        // Event listener pro tlačítko
-        if (themeBtn) {
-            themeBtn.addEventListener('click', () => {
-                const isCurrentlyDark = document.body.classList.contains('dark-mode');
-                setTheme(!isCurrentlyDark);
-            });
-        }
-    </script>
+initPortfolio();
+</script>
 </body>
 </html>
