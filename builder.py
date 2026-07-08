@@ -371,12 +371,15 @@ header .spacer{flex:1}
 }
 .project-list{flex:1;overflow-y:auto;padding:8px}
 .project-item{
-  padding:10px 12px;border-radius:var(--r);cursor:pointer;
+  padding:10px 12px;border-radius:var(--r);cursor:grab;
   border:1px solid transparent;transition:all .15s;
   display:flex;align-items:center;gap:10px;margin-bottom:4px;
+  user-select:none;
 }
 .project-item:hover{background:var(--surface)}
 .project-item.active{background:var(--surface);border-color:var(--accent)}
+.project-item.dragging{opacity:.4;cursor:grabbing;background:var(--surface2)}
+.project-item.drag-over{border-color:var(--accent);background:rgba(196,149,106,.1);box-shadow:inset 0 0 0 1px var(--accent)}
 .project-item .num{color:var(--muted);font-size:11px;min-width:24px}
 .project-item .title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
 .project-item .type{font-size:10px;text-transform:uppercase;color:var(--muted);background:var(--bg2);padding:2px 8px;border-radius:4px}
@@ -410,11 +413,15 @@ header .spacer{flex:1}
 }
 .media-card{
   background:var(--surface);border:1px solid #444;border-radius:var(--r);
-  overflow:hidden;display:flex;flex-direction:column;
+  overflow:hidden;display:flex;flex-direction:column;cursor:grab;
+  transition:all .15s;user-select:none;
 }
+.media-card:hover{border-color:#555}
+.media-card.dragging{opacity:.4;cursor:grabbing;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.media-card.drag-over{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);transform:translateY(-2px)}
 .media-card .thumb{
   height:140px;background:var(--bg2);position:relative;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;
+  display:flex;align-items:center;justify-content:center;pointer-events:none;
 }
 .media-card .thumb img,.media-card .thumb video{
   max-width:100%;max-height:100%;object-fit:cover;display:block;
@@ -424,13 +431,13 @@ header .spacer{flex:1}
   color:#fff;font-size:10px;text-transform:uppercase;padding:3px 8px;border-radius:4px;
   letter-spacing:.05em;
 }
-.media-card .body{padding:12px;display:flex;flex-direction:column;gap:8px}
+.media-card .body{padding:12px;display:flex;flex-direction:column;gap:8px;pointer-events:auto}
 .media-card .body .field{margin:0}
 .media-card .body input,.media-card .body select{
   background:var(--bg2);padding:6px 8px;font-size:12px;
 }
 .media-card .actions{
-  display:flex;gap:6px;padding:0 12px 12px;
+  display:flex;gap:6px;padding:0 12px 12px;pointer-events:auto;
 }
 .media-card .actions .btn{font-size:11px;padding:5px 10px;flex:1;justify-content:center}
 
@@ -563,17 +570,114 @@ function showToast(t){
   setTimeout(()=>el.classList.remove('show'),2500);
 }
 
+/* ─── DRAG & DROP: PROJEKTY ─── */
+let dragProjSrc = null;
+
 function renderList(){
   const list = document.getElementById('projectList');
   list.innerHTML = '';
   projects.forEach((p,i)=>{
     const div = document.createElement('div');
     div.className = 'project-item' + (i===activeIdx?' active':'');
+    div.setAttribute('draggable','true');
+    div.setAttribute('data-index', i);
     div.innerHTML = `<span class="num">${i+1}</span><span class="title">${esc(p.title||'Bez názvu')}</span><span class="type">${p.type||'?'}</span>`;
     div.onclick = ()=>select(i);
+    div.addEventListener('dragstart', onProjDragStart);
+    div.addEventListener('dragover', onProjDragOver);
+    div.addEventListener('drop', onProjDrop);
+    div.addEventListener('dragend', onProjDragEnd);
+    div.addEventListener('dragleave', onProjDragLeave);
     list.appendChild(div);
   });
   document.getElementById('count').textContent = projects.length;
+}
+
+function onProjDragStart(e){
+  dragProjSrc = parseInt(this.getAttribute('data-index'));
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragProjSrc);
+}
+function onProjDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  this.classList.add('drag-over');
+}
+function onProjDragLeave(e){
+  this.classList.remove('drag-over');
+}
+function onProjDrop(e){
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  const src = dragProjSrc;
+  const dst = parseInt(this.getAttribute('data-index'));
+  if(src === null || src === dst || isNaN(dst)) return;
+  const item = projects.splice(src, 1)[0];
+  projects.splice(dst, 0, item);
+  activeIdx = dst;
+  dragProjSrc = null;
+  renderList();
+  select(activeIdx);
+  debounceSave();
+  showToast('Pořadí projektů změněno');
+}
+function onProjDragEnd(e){
+  this.classList.remove('dragging');
+  document.querySelectorAll('.project-item').forEach(el=>el.classList.remove('drag-over'));
+  dragProjSrc = null;
+}
+
+/* ─── DRAG & DROP: MEDIA ─── */
+let dragMediaSrc = null;
+
+function initMediaDrag(){
+  document.querySelectorAll('.media-card').forEach(card=>{
+    card.setAttribute('draggable','true');
+    card.addEventListener('dragstart', onMediaDragStart);
+    card.addEventListener('dragover', onMediaDragOver);
+    card.addEventListener('drop', onMediaDrop);
+    card.addEventListener('dragend', onMediaDragEnd);
+    card.addEventListener('dragleave', onMediaDragLeave);
+  });
+}
+
+function onMediaDragStart(e){
+  if(e.target.closest('.field') || e.target.closest('.actions') || e.target.closest('input') || e.target.closest('select')){
+    e.preventDefault(); return;
+  }
+  dragMediaSrc = parseInt(this.getAttribute('data-index'));
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragMediaSrc);
+}
+function onMediaDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  this.classList.add('drag-over');
+}
+function onMediaDragLeave(e){
+  this.classList.remove('drag-over');
+}
+function onMediaDrop(e){
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  if(activeIdx<0) return;
+  const src = dragMediaSrc;
+  const dst = parseInt(this.getAttribute('data-index'));
+  if(src === null || src === dst || isNaN(dst)) return;
+  const arr = projects[activeIdx].media;
+  const item = arr.splice(src, 1)[0];
+  arr.splice(dst, 0, item);
+  dragMediaSrc = null;
+  renderForm();
+  debounceSave();
+  showToast('Pořadí médií změněno');
+}
+function onMediaDragEnd(e){
+  this.classList.remove('dragging');
+  document.querySelectorAll('.media-card').forEach(el=>el.classList.remove('drag-over'));
+  dragMediaSrc = null;
 }
 
 function select(i){
@@ -602,9 +706,9 @@ function renderForm(){
     const thumbTag = isVideo 
       ? `<video src="${esc(thumb)}" muted preload="metadata"></video>`
       : `<img src="${esc(thumb)}" alt="" onerror="this.style.display='none'">`;
-    
+
     mediaHtml += `
-    <div class="media-card">
+    <div class="media-card" data-index="${mi}">
       <div class="thumb">
         ${thumbTag}
         <span class="badge">${m.type||'?'}</span>
@@ -647,7 +751,7 @@ function renderForm(){
     const items = p.gear[cat] || [];
     const invKey = GEAR_DROPDOWN_MAP[cat];
     const inventory = (invKey && techInventory[invKey]) ? techInventory[invKey] : [];
-    
+
     let addSection = '';
     if(inventory.length){
       let opts = `<option value="">— vyber z inventáře —</option>`;
@@ -661,7 +765,7 @@ function renderForm(){
         <button class="btn" onclick="addGearFromSelect('${cat}')">+ Přidat</button>
       </div>`;
     }
-    
+
     let rows = '';
     items.forEach((item,idx)=>{
       rows += `<div class="gear-row">
@@ -669,7 +773,7 @@ function renderForm(){
         <button class="btn danger" onclick="removeGear('${cat}',${idx})">×</button>
       </div>`;
     });
-    
+
     gearHtml += `<div class="gear-cat">
       <label>${GEAR_LABELS[cat]||cat}</label>
       ${addSection}
@@ -737,6 +841,8 @@ function renderForm(){
       ${mediaHtml || '<div class="empty" id="mediaEmpty">Žádná media</div>'}
     </div>
   `;
+
+  initMediaDrag();
 
   const dz = document.getElementById('dropZone');
   if(dz){
