@@ -1,6 +1,4 @@
-./.builder_backups
-./__pycache__
-./gear
-./photo
-./video
-./builder.py
+.builder_backups
+__pycache__
+gear
+builder.py

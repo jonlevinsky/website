@@ -408,156 +408,38 @@ header .spacer{flex:1}
   display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;max-width:900px;
 }
 
-.bento-gallery{
-  display:grid;
-  grid-template-columns:repeat(3, 1fr);
-  grid-auto-rows:auto;
-  grid-auto-flow:dense;
-  gap:14px;
-  max-width:900px;
-  position:relative;
+.media-list{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;max-width:900px;
 }
-.bento-tile{
-  position:relative;
-  border-radius:12px;
-  overflow:hidden;
-  background:var(--surface);
-  border:1px solid #444;
-  cursor:pointer;
-  transition:transform .3s ease,border-color .3s ease,box-shadow .3s ease;
-  width:100%;
+.media-card{
+  background:var(--surface);border:1px solid #444;border-radius:var(--r);
+  overflow:hidden;display:flex;flex-direction:column;cursor:grab;
+  transition:all .15s;user-select:none;
 }
-.bento-tile.landscape{
-  grid-column:span 1;
-  grid-row:span 1;
-  aspect-ratio:16/9;
+.media-card:hover{border-color:#555}
+.media-card.dragging{opacity:.4;cursor:grabbing;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.media-card.drag-over{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);transform:translateY(-2px)}
+.media-card .thumb{
+  height:140px;background:var(--bg2);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;pointer-events:none;
 }
-.bento-tile.portrait{
-  grid-column:span 1;
-  grid-row:span 2;
-  aspect-ratio:9/16;
+.media-card .thumb img,.media-card .thumb video{
+  max-width:100%;max-height:100%;object-fit:cover;display:block;
 }
-.bento-tile:hover{
-  transform:translateY(-3px) scale(1.015);
-  border-color:var(--accent);
-  z-index:2;
-  box-shadow:0 8px 24px rgba(0,0,0,.25);
-}
-.bento-tile img,.bento-tile video{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
-  pointer-events:none;
-}
-.bento-tile .tile-badge{
-  position:absolute;
-  top:8px;
-  left:8px;
-  background:rgba(0,0,0,.75);
-  color:#fff;
-  font-size:10px;
-  text-transform:uppercase;
-  padding:3px 8px;
-  border-radius:4px;
+.media-card .thumb .badge{
+  position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);
+  color:#fff;font-size:10px;text-transform:uppercase;padding:3px 8px;border-radius:4px;
   letter-spacing:.05em;
-  z-index:3;
-  pointer-events:none;
 }
-.bento-tile .tile-video-icon{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  color:rgba(255,255,255,.92);
-  font-size:36px;
-  filter:drop-shadow(0 2px 6px rgba(0,0,0,.3));
-  pointer-events:none;
-  z-index:2;
-  transition:transform .3s cubic-bezier(0.16,1,0.3,1),opacity .3s ease;
+.media-card .body{padding:12px;display:flex;flex-direction:column;gap:8px;pointer-events:auto}
+.media-card .body .field{margin:0}
+.media-card .body input,.media-card .body select{
+  background:var(--bg2);padding:6px 8px;font-size:12px;
 }
-.bento-tile:hover .tile-video-icon{
-  transform:translate(-50%,-50%) scale(1.1);
+.media-card .actions{
+  display:flex;gap:6px;padding:0 12px 12px;pointer-events:auto;
 }
-.bento-tile .tile-actions{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:10px;
-  opacity:0;
-  transition:opacity .25s ease;
-  z-index:4;
-}
-.bento-tile:hover .tile-actions{
-  opacity:1;
-}
-.bento-tile .tile-actions .btn{
-  font-size:11px;
-  padding:6px 12px;
-}
-.bento-tile .tile-meta{
-  position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:10px 12px;
-  background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 100%);
-  color:#fff;
-  font-size:11px;
-  font-weight:500;
-  pointer-events:none;
-  z-index:3;
-  opacity:0;
-  transition:opacity .3s ease;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-.bento-tile:hover .tile-meta{
-  opacity:1;
-}
-.bento-tile.dragging{
-  opacity:.4;
-  cursor:grabbing;
-  border-color:var(--accent);
-  box-shadow:0 0 0 2px var(--accent);
-}
-.bento-tile.drag-over{
-  border-color:var(--accent);
-  box-shadow:inset 0 0 0 2px var(--accent),0 0 0 1px var(--accent);
-  transform:translateY(-2px);
-}
-.media-edit-panel{
-  display:none;
-  max-width:900px;
-  margin-top:20px;
-  background:var(--surface);
-  border:1px solid #444;
-  border-radius:12px;
-  padding:18px;
-}
-.media-edit-panel .edit-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:14px;
-}
-.media-edit-panel .edit-title{
-  font-size:12px;
-  text-transform:uppercase;
-  letter-spacing:.1em;
-  color:var(--accent);
-  font-weight:600;
-}
-.media-edit-panel .edit-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:12px;
-}
-.media-edit-panel .edit-grid .field{margin:0}
+.media-card .actions .btn{font-size:11px;padding:5px 10px;flex:1;justify-content:center}
 
 .empty{color:var(--muted);font-style:italic;padding:20px;text-align:center}
 
@@ -750,18 +632,18 @@ function onProjDragEnd(e){
 let dragMediaSrc = null;
 
 function initMediaDrag(){
-  document.querySelectorAll('.bento-tile').forEach(tile=>{
-    tile.setAttribute('draggable','true');
-    tile.addEventListener('dragstart', onMediaDragStart);
-    tile.addEventListener('dragover', onMediaDragOver);
-    tile.addEventListener('drop', onMediaDrop);
-    tile.addEventListener('dragend', onMediaDragEnd);
-    tile.addEventListener('dragleave', onMediaDragLeave);
+  document.querySelectorAll('.media-card').forEach(card=>{
+    card.setAttribute('draggable','true');
+    card.addEventListener('dragstart', onMediaDragStart);
+    card.addEventListener('dragover', onMediaDragOver);
+    card.addEventListener('drop', onMediaDrop);
+    card.addEventListener('dragend', onMediaDragEnd);
+    card.addEventListener('dragleave', onMediaDragLeave);
   });
 }
 
 function onMediaDragStart(e){
-  if(e.target.closest('.tile-actions') || e.target.closest('button')){
+  if(e.target.closest('.field') || e.target.closest('.actions') || e.target.closest('input') || e.target.closest('select')){
     e.preventDefault(); return;
   }
   dragMediaSrc = parseInt(this.getAttribute('data-index'));
@@ -794,7 +676,7 @@ function onMediaDrop(e){
 }
 function onMediaDragEnd(e){
   this.classList.remove('dragging');
-  document.querySelectorAll('.bento-tile').forEach(el=>el.classList.remove('drag-over'));
+  document.querySelectorAll('.media-card').forEach(el=>el.classList.remove('drag-over'));
   dragMediaSrc = null;
 }
 
@@ -817,24 +699,49 @@ function renderForm(){
   const p = projects[activeIdx];
   ensureGear(p);
 
-  let bentoHtml = '';
+  let mediaHtml = '';
   (p.media||[]).forEach((m,mi)=>{
     const thumb = m.thumbnail || m.src || '';
     const isVideo = m.type === 'video';
-    const thumbTag = isVideo
-      ? (thumb ? '<img src="'+esc(thumb)+'" alt="" onerror="this.style.display=\'none\'" loading="lazy" decoding="async">' : '')
-      : '<img src="'+esc(thumb)+'" alt="" onerror="this.style.display=\'none\'" loading="lazy" decoding="async">';
-    const cap = [m.title, m.caption].filter(Boolean).join(' — ');
-    bentoHtml += `
-    <div class="bento-tile" data-index="${mi}" draggable="true">
-      ${isVideo ? '<div class="tile-video-icon"><i class="ph ph-play-circle"></i></div>' : ''}
-      <span class="tile-badge">${m.type||'?'}</span>
-      ${thumbTag}
-      ${isVideo && !thumb ? '<video src="'+esc(m.src)+'" muted preload="metadata"></video>' : ''}
-      ${cap ? '<div class="tile-meta">'+esc(cap)+'</div>' : ''}
-      <div class="tile-actions">
-        <button class="btn" onclick="event.stopPropagation();selectMediaForEdit('+mi+')">Upravit</button>
-        <button class="btn danger" onclick="event.stopPropagation();deleteMedia('+mi+')">Smazat</button>
+    const thumbTag = isVideo 
+      ? `<video src="${esc(thumb)}" muted preload="metadata"></video>`
+      : `<img src="${esc(thumb)}" alt="" onerror="this.style.display='none'">`;
+
+    mediaHtml += `
+    <div class="media-card" data-index="${mi}">
+      <div class="thumb">
+        ${thumbTag}
+        <span class="badge">${m.type||'?'}</span>
+      </div>
+      <div class="body">
+        <div class="field">
+          <label>Typ</label>
+          <select onchange="setMedia(${mi},'type',this.value)">
+            <option value="photo" ${m.type==='photo'?'selected':''}>Photo</option>
+            <option value="video" ${m.type==='video'?'selected':''}>Video</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Src (cesta/URL)</label>
+          <input type="text" value="${esc(m.src||'')}" onchange="setMedia(${mi},'src',this.value)">
+        </div>
+        <div class="field">
+          <label>Thumbnail / Poster</label>
+          <input type="text" value="${esc(m.thumbnail||m.poster||'')}" onchange="setMedia(${mi},'thumbnail',this.value)">
+        </div>
+        <div class="field">
+          <label>Titulek</label>
+          <input type="text" value="${esc(m.title||'')}" onchange="setMedia(${mi},'title',this.value)">
+        </div>
+        <div class="field">
+          <label>Caption</label>
+          <input type="text" value="${esc(m.caption||'')}" onchange="setMedia(${mi},'caption',this.value)">
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="moveMedia(${mi},-1)">↑</button>
+        <button class="btn" onclick="moveMedia(${mi},1)">↓</button>
+        <button class="btn danger" onclick="deleteMedia(${mi})">Smazat</button>
       </div>
     </div>`;
   });
@@ -930,50 +837,12 @@ function renderForm(){
       <input type="file" id="folderInput" webkitdirectory directory style="display:none" onchange="handleFiles(this.files)">
     </div>
 
-    <div class="bento-gallery" id="bentoGallery">
-      ${bentoHtml || '<div class="empty" id="mediaEmpty" style="grid-column:1/-1;">Žádná media</div>'}
-    </div>
-
-    <div class="media-edit-panel" id="mediaEditPanel">
-      <div class="edit-head">
-        <span class="edit-title">Editace média</span>
-        <button class="btn" onclick="closeMediaEdit()">Zavřít</button>
-      </div>
-      <div class="edit-grid">
-        <div class="field">
-          <label>Typ</label>
-          <select id="edit-type" onchange="updateSelectedMedia('type',this.value)">
-            <option value="photo">Photo</option>
-            <option value="video">Video</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Src (cesta/URL)</label>
-          <input type="text" id="edit-src" onchange="updateSelectedMedia('src',this.value)">
-        </div>
-        <div class="field">
-          <label>Thumbnail / Poster</label>
-          <input type="text" id="edit-thumb" onchange="updateSelectedMedia('thumbnail',this.value)">
-        </div>
-        <div class="field">
-          <label>Titulek</label>
-          <input type="text" id="edit-title" onchange="updateSelectedMedia('title',this.value)">
-        </div>
-        <div class="field" style="grid-column:1/-1">
-          <label>Caption</label>
-          <input type="text" id="edit-caption" onchange="updateSelectedMedia('caption',this.value)">
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:14px;">
-        <button class="btn" onclick="moveSelectedMedia(-1)">↑ Posunout nahoru</button>
-        <button class="btn" onclick="moveSelectedMedia(1)">↓ Posunout dolů</button>
-        <button class="btn danger" onclick="deleteSelectedMedia()">Smazat</button>
-      </div>
+    <div class="media-list" id="mediaList">
+      ${mediaHtml || '<div class="empty" id="mediaEmpty">Žádná media</div>'}
     </div>
   `;
 
   initMediaDrag();
-  setTimeout(detectOrientations, 80);
 
   const dz = document.getElementById('dropZone');
   if(dz){
@@ -1188,7 +1057,6 @@ async function handleFiles(files){
         });
       }
       renderForm();
-      setTimeout(detectOrientations, 100);
       debounceSave();
       showToast('Nahráno '+result.files.length+' souborů');
     }else{
@@ -1202,113 +1070,16 @@ async function handleFiles(files){
   setTimeout(()=>progress.classList.remove('active'),1500);
 }
 
-
-let selectedMediaIdx = -1;
-
-function setOrientation(tile, w, h){
-  if(!w || !h){ tile.classList.add('landscape'); return; }
-  if(w >= h){
-    tile.classList.add('landscape');
-    tile.classList.remove('portrait');
-  } else {
-    tile.classList.add('portrait');
-    tile.classList.remove('landscape');
-  }
-}
-
-function detectOrientations(){
-  document.querySelectorAll('.bento-tile').forEach(tile=>{
-    const img = tile.querySelector('img');
-    const video = tile.querySelector('video');
-    if(img){
-      if(img.complete && img.naturalWidth){
-        setOrientation(tile, img.naturalWidth, img.naturalHeight);
-      } else {
-        img.addEventListener('load', ()=> setOrientation(tile, img.naturalWidth, img.naturalHeight));
-        img.addEventListener('error', ()=>{ tile.classList.add('landscape'); tile.classList.remove('portrait'); });
-      }
-    } else if(video){
-      if(video.videoWidth){
-        setOrientation(tile, video.videoWidth, video.videoHeight);
-      } else {
-        video.addEventListener('loadedmetadata', ()=> setOrientation(tile, video.videoWidth, video.videoHeight));
-        setTimeout(()=>{
-          if(!tile.classList.contains('landscape') && !tile.classList.contains('portrait')){
-            setOrientation(tile, video.videoWidth || 16, video.videoHeight || 9);
-          }
-        }, 3000);
-      }
-    } else {
-      tile.classList.add('landscape');
-    }
-  });
-}
-
-function selectMediaForEdit(mi){
-  selectedMediaIdx = mi;
-  if(activeIdx<0) return;
-  const m = projects[activeIdx].media[mi];
-  const panel = document.getElementById('mediaEditPanel');
-  document.getElementById('edit-type').value = m.type || 'photo';
-  document.getElementById('edit-src').value = m.src || '';
-  document.getElementById('edit-thumb').value = m.thumbnail || m.poster || '';
-  document.getElementById('edit-title').value = m.title || '';
-  document.getElementById('edit-caption').value = m.caption || '';
-  panel.style.display = 'block';
-  panel.scrollIntoView({behavior:'smooth', block:'nearest'});
-}
-
-function closeMediaEdit(){
-  selectedMediaIdx = -1;
-  const panel = document.getElementById('mediaEditPanel');
-  if(panel) panel.style.display = 'none';
-}
-
-function updateSelectedMedia(key, val){
-  if(selectedMediaIdx<0 || activeIdx<0) return;
-  projects[activeIdx].media[selectedMediaIdx][key] = val;
-  renderForm();
-  debounceSave();
-  setTimeout(()=>{
-    if(selectedMediaIdx >= 0) selectMediaForEdit(selectedMediaIdx);
-  }, 50);
-}
-
-function moveSelectedMedia(dir){
-  if(selectedMediaIdx<0 || activeIdx<0) return;
-  const arr = projects[activeIdx].media;
-  const ni = selectedMediaIdx + dir;
-  if(ni<0 || ni>=arr.length) return;
-  [arr[selectedMediaIdx], arr[ni]] = [arr[ni], arr[selectedMediaIdx]];
-  selectedMediaIdx = ni;
-  renderForm();
-  debounceSave();
-  setTimeout(()=> selectMediaForEdit(selectedMediaIdx), 50);
-}
-
-function deleteSelectedMedia(){
-  if(selectedMediaIdx<0 || activeIdx<0) return;
-  if(!confirm('Opravdu smazat toto médium?')) return;
-  projects[activeIdx].media.splice(selectedMediaIdx, 1);
-  closeMediaEdit();
-  renderForm();
-  debounceSave();
-}
-
 function addMediaUrl(){
   if(activeIdx<0) return;
   if(!projects[activeIdx].media) projects[activeIdx].media = [];
   projects[activeIdx].media.push({type:'photo', src:'', thumbnail:'', title:'', caption:''});
   renderForm();
-  setTimeout(detectOrientations, 100);
   debounceSave();
 }
 function deleteMedia(mi){
   if(activeIdx<0) return;
-  if(selectedMediaIdx === mi) closeMediaEdit();
   projects[activeIdx].media.splice(mi,1);
-  if(selectedMediaIdx > mi) selectedMediaIdx--;
-  if(selectedMediaIdx >= (projects[activeIdx].media||[]).length) selectedMediaIdx = -1;
   renderForm();
   debounceSave();
 }
@@ -1318,8 +1089,6 @@ function moveMedia(mi,dir){
   const ni = mi+dir;
   if(ni<0||ni>=arr.length) return;
   [arr[mi],arr[ni]] = [arr[ni],arr[mi]];
-  if(selectedMediaIdx === mi) selectedMediaIdx = ni;
-  else if(selectedMediaIdx === ni) selectedMediaIdx = mi;
   renderForm();
   debounceSave();
 }

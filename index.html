@@ -528,6 +528,141 @@ main {
   to { opacity: 1; }
 }
 
+.film-key-wrap {
+  margin-top: 36px;
+  padding-top: 16px;
+  border-top: 1px solid var(--md-outline);
+  opacity: 0;
+  animation: fadeUp 0.7s 0.5s var(--ease-out-expo) forwards;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.film-key-toggle {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--md-outline);
+  background: var(--md-surface-variant);
+  color: var(--md-on-surface-variant);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.3s var(--ease-out-expo);
+  opacity: 0.5;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.film-key-toggle:hover {
+  opacity: 1;
+  border-color: var(--md-primary);
+  color: var(--md-primary);
+  transform: scale(1.08);
+}
+
+.film-key-toggle.active {
+  opacity: 1;
+  border-color: var(--md-primary);
+  color: var(--md-primary);
+  background: var(--md-primary-container);
+}
+
+.film-key {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: max-height 0.45s var(--ease-out-expo), opacity 0.35s ease, transform 0.35s var(--ease-out-expo), padding 0.35s ease;
+  padding-top: 0;
+}
+
+.film-key.open {
+  max-height: 120px;
+  opacity: 1;
+  transform: translateY(0);
+  padding-top: 6px;
+}
+
+.film-key-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.film-key-strip {
+  background: var(--md-surface-variant);
+  border: 1px solid var(--md-outline);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.12);
+  flex-shrink: 0;
+}
+
+.film-key-strip-h {
+  width: 26px;
+  height: 9px;
+  padding: 0 3px;
+}
+
+.film-key-strip-v {
+  width: 9px;
+  height: 26px;
+  flex-direction: column;
+  padding: 3px 0;
+}
+
+.film-key-strip .perf {
+  display: block;
+  background: var(--md-surface);
+  border-radius: 999px;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.35), inset 0 -1px 1px rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+.film-key-strip-h .perf {
+  width: 4.5px;
+  height: 3px;
+}
+
+.film-key-strip-v .perf {
+  width: 3px;
+  height: 4.5px;
+}
+
+.film-key-row span {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--md-on-surface-variant);
+  opacity: 0.4;
+}
+
+@media (max-width: 880px) {
+  .film-key-wrap {
+    margin-top: 24px;
+    border-top: none;
+    padding-top: 0;
+    margin-left: 2px;
+  }
+  .film-key.open {
+    flex-direction: row;
+    gap: 16px;
+    padding-top: 6px;
+  }
+}
+
 @media (max-width: 1024px) {
   .wrap { grid-template-columns: 210px 1fr; gap: 28px; }
   h1 { font-size: 48px; }
@@ -584,6 +719,7 @@ main {
 </style>
 <base target="_self">
 <base target="_blank">
+<base target="_blank">
 </head>
 <body>
 
@@ -606,6 +742,26 @@ main {
       <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
       <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
     </nav>
+
+    <div class="film-key-wrap">
+      <button class="film-key-toggle" id="filmKeyToggle" aria-label="Co znamenají perforace?" aria-expanded="false">
+        <i class="ph ph-question"></i>
+      </button>
+      <div class="film-key" id="filmKeyPanel" aria-hidden="true">
+        <div class="film-key-row">
+          <div class="film-key-strip film-key-strip-h" aria-hidden="true">
+            <span class="perf"></span><span class="perf"></span><span class="perf"></span>
+          </div>
+          <span>fotografie</span>
+        </div>
+        <div class="film-key-row">
+          <div class="film-key-strip film-key-strip-v" aria-hidden="true">
+            <span class="perf"></span><span class="perf"></span><span class="perf"></span>
+          </div>
+          <span>video</span>
+        </div>
+      </div>
+    </div>
   </aside>
 
   <main>
@@ -819,6 +975,14 @@ async function initPortfolio() {
 }
 
 // automatic thumbnail generation removed (disabled)
+
+document.getElementById('filmKeyToggle').addEventListener('click', function() {
+  const panel = document.getElementById('filmKeyPanel');
+  const isOpen = panel.classList.toggle('open');
+  this.classList.toggle('active', isOpen);
+  this.setAttribute('aria-expanded', isOpen);
+  panel.setAttribute('aria-hidden', !isOpen);
+});
 
 function initEventListeners() {
   document.querySelectorAll('.filter-row a').forEach(link => {
