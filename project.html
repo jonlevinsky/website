@@ -6,26 +6,30 @@
 <title>Jan Levínský // Project</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 <style>
-:root{
-  --bg:#faf8f5;
-  --bg2:#f5f2ee;
-  --surface:#f0ece6;
-  --surface-high:#eae6e0;
-  --muted:#8a8278;
-  --accent:#c4956a;
-  --text:#1c1917;
-  --text-variant:#6b6560;
-  --outline:#d4cfc7;
-  --outline-variant:#e8e4dd;
-  --card-radius:16px;
-  --gap:14px;
-  --ease-out-expo:cubic-bezier(0.16,1,0.3,1);
-  --ease-in-out:cubic-bezier(0.4,0,0.2,1);
+:root {
+  --accent: #c4956a;
+  --text-on-accent: #0c0c0c;
+  --accent-subtle: rgba(196, 149, 106, 0.12);
+  --accent-subtle-2: rgba(196, 149, 106, 0.06);
+  --bg: #faf8f5;
+  --surface: #f0ece6;
+  --bg-raised: #f5f2ee;
+  --surface-raised: #eae6e0;
+  --bg-subtle: #fdfcfa;
+  --border: #d4cfc7;
+  --border-subtle: #e8e4dd;
+  --text: #1c1917;
+  --muted: #6b6560;
   --serif: 'Bricolage Grotesque', Georgia, serif;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  color-scheme: light;
 }
 
 *{box-sizing:border-box;}
@@ -126,7 +130,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 .dot{width:3px;height:3px;border-radius:50%;background:var(--muted);opacity:0.5;}
 
 .project-bio{
-  font-size:13.5px;line-height:1.8;color:var(--text-variant);
+  font-size:13.5px;line-height:1.8;color:var(--muted);
   font-weight:300;max-width:680px;margin:0 0 26px;
 }
 
@@ -152,7 +156,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 .gear-group-label {
   font-size: 11px;
   font-weight: 500;
-  color: var(--text-variant);
+  color: var(--muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   display: flex;
@@ -170,7 +174,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   align-items: center;
   padding: 5px 12px;
   border-radius: 100px;
-  border: 1px solid var(--outline);
+  border: 1px solid var(--border);
   background: var(--surface);
   font-size: 12.5px;
   font-weight: 400;
@@ -180,7 +184,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 }
 .gear-chip:hover {
   border-color: var(--accent);
-  background: var(--bg2);
+  background: var(--bg-raised);
 }
 
 /* ─── BENTO GALLERY ─── */
@@ -190,17 +194,17 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   grid-auto-rows: auto;
   grid-auto-flow: dense;
   align-items: stretch;
-  gap:var(--gap);
+  gap:14px;
   width:100%;
 }
 
 .tile{
   position:relative;
-  border-radius:var(--card-radius);
+  border-radius:16px;
   overflow:hidden;
   background:var(--surface);
   cursor:pointer;
-  border:1px solid var(--outline);
+  border:1px solid var(--border);
   transition: transform 0.6s var(--ease-out-expo), border-color 0.4s ease;
   width:100%;
 }
@@ -218,7 +222,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 }
 
 .tile.video-tile{
-  background:var(--bg2);
+  background:var(--bg-raised);
 }
 
 .tile.video-tile .tile-thumb{
@@ -250,7 +254,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 
 .tile:hover{
   transform: translateY(-4px) scale(1.015);
-  border-color: var(--outline-variant);
+  border-color: var(--border-subtle);
   z-index:2;
 }
 
@@ -325,28 +329,16 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   margin:0;
   transform:none;
   will-change: transform, opacity;
-  transition: transform 0.42s var(--ease-out-expo), opacity 0.36s var(--ease-in-out);
 }
-.video-overlay .tile-video-icon i {
-  display:block;
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.video-overlay .tile-video-icon .icon-base {
-  opacity:1;
-  transform:scale(1);
+.video-overlay .tile-video-icon span {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 }
 .video-overlay .tile-video-icon .icon-hover {
   position:absolute;
+  top:0; left:0; right:0; bottom:0;
   opacity:0;
-  transform:scale(0.85);
-}
-.tile-thumb:hover .video-overlay .tile-video-icon .icon-base {
-  opacity:0;
-  transform:scale(0.9);
-}
-.tile-thumb:hover .video-overlay .tile-video-icon .icon-hover {
-  opacity:1;
-  transform:scale(1);
 }
 .video-title {
   position:relative;
@@ -373,7 +365,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 .loading-state{display:flex;flex-direction:column;align-items:flex-start;gap:12px;padding:8px 0;}
 .loading-ring{
   width:30px;height:30px;border-radius:50%;
-  border:2px solid var(--outline);border-top-color:var(--accent);
+  border:2px solid var(--border);border-top-color:var(--accent);
   animation:spin 0.85s linear infinite;
 }
 .loading-label{color:var(--muted);font-size:11.5px;letter-spacing:0.06em;}
@@ -778,7 +770,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   top:72px;
   right:20px;
   background:rgba(255,255,255,0.98);
-  border:1px solid var(--outline);
+  border:1px solid var(--border);
   border-radius:14px;
   padding:18px 22px;
   color:rgba(0,0,0,0.7);
@@ -870,7 +862,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 
 .g-footer {
   padding: 60px 0 40px;
-  border-top: 1px solid var(--outline);
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -885,8 +877,8 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   width: 40px; height: 2px; background: var(--accent); border-radius:2px; opacity:0.5;
 }
 .f-name { font-family: var(--serif); font-size: 26px; font-weight: 400; color: var(--text); }
-.f-role { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--text-variant); margin-top:8px; letter-spacing:0.15em; text-transform:uppercase; }
-.f-contact { margin-top:20px; font-family:var(--sans); font-size:13px; font-weight:400; color:var(--text-variant); text-decoration:none; background:transparent; border:none; border-bottom:1px solid var(--outline); padding-bottom:3px; transition: color 0.3s ease, border-color 0.3s ease; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+.f-role { font-family: var(--sans); font-size: 11px; font-weight: 500; color: var(--muted); margin-top:8px; letter-spacing:0.15em; text-transform:uppercase; }
+.f-contact { margin-top:20px; font-family:var(--sans); font-size:13px; font-weight:400; color:var(--muted); text-decoration:none; background:transparent; border:none; border-bottom:1px solid var(--border); padding-bottom:3px; transition: color 0.3s ease, border-color 0.3s ease; cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
 .f-contact:hover { color: var(--accent); border-color: var(--accent); }
 
 .project-tech { margin-top:8px; font-size:13px; color:var(--muted); font-weight:500; }
@@ -907,7 +899,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
     position:relative;
     aspect-ratio:16/9;
     overflow:hidden;
-    border-radius:var(--card-radius);
+    border-radius:16px;
     background:#111;
   }
   .tile.video-tile .tile-thumb img{
@@ -934,7 +926,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
     width:100% !important;
     max-width:100% !important;
     height:100% !important;
-    border-radius:var(--card-radius) !important;
+    border-radius:16px !important;
   }
   /* Mobile player tweaks: larger centered play, touch-friendly controls */
   .tile.video-tile .tile-thumb .player{ z-index:5; }
@@ -1070,7 +1062,7 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2.5px solid var(--outline);
+  border: 2.5px solid var(--border);
   border-top-color: var(--accent);
   animation: spin 0.85s linear infinite;
 }
@@ -1095,6 +1087,9 @@ main{opacity:0;animation:fadeIn 0.8s 0.25s var(--ease-out-expo) forwards;}
 
 </style>
 <base target="_self">
+<base target="_blank">
+<base target="_blank">
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -1205,7 +1200,7 @@ async function loadProject() {
   const pageLoader = document.getElementById('pageLoader');
   if (!id) { 
     container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Missing project ID.</p>'; 
-    if (pageLoader) pageLoader.classList.add('hidden');
+    hidePageLoader();
     return; 
   }
 
@@ -1217,18 +1212,35 @@ async function loadProject() {
     const project = projectList.find(p => p.id === id);
     if (!project) { 
       container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Project not found.</p>'; 
-      if (pageLoader) pageLoader.classList.add('hidden');
+      hidePageLoader();
       return; 
     }
     displayProject(project);
     document.title = project.title + ' — Jan Levínský';
   } catch(e) {
     container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Failed to load project.</p>';
-    if (pageLoader) pageLoader.classList.add('hidden');
+    hidePageLoader();
   }
 }
 
 function isMobile(){ return window.innerWidth <= 640; }
+
+
+function hidePageLoader() {
+  const pageLoader = document.getElementById('pageLoader');
+  if (!pageLoader || pageLoader.classList.contains('hidden')) return;
+  if (typeof anime !== 'undefined') {
+    anime({
+      targets: pageLoader,
+      opacity: 0,
+      duration: 400,
+      easing: 'easeOutExpo',
+      complete: () => { pageLoader.classList.add('hidden'); pageLoader.style.opacity = ''; }
+    });
+  } else {
+    pageLoader.classList.add('hidden');
+  }
+}
 
 function displayProject(project) {
   const container = document.getElementById('project-container');
@@ -1304,8 +1316,8 @@ function displayProject(project) {
         '<div class="video-overlay">' +
         '<div class="video-overlay-inner">' +
         '<div class="tile-video-icon" aria-hidden="true">' +
-        '<i class="ph ph-play-circle icon-base"></i>' +
-        '<i class="ph ph-film-slate icon-hover"></i>' +
+        '<span class="icon-base"><i class="ph ph-play-circle"></i></span>' +
+        '<span class="icon-hover"><i class="ph ph-film-reel"></i></span>' +
         '</div>' +
         (cap ? '<div class="video-title">' + cap + '</div>' : '') +
         '</div>' +
@@ -1340,7 +1352,97 @@ function displayProject(project) {
       '</a>' +
     '</footer>';
 
+  // Footer scroll reveal
+  if (typeof anime !== 'undefined') {
+    const footer = container.querySelector('.g-footer');
+    if (footer) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
+            anime.set(targets, { opacity: 0, translateY: 12 });
+            anime({
+              targets: targets,
+              opacity: 1,
+              translateY: 0,
+              duration: 600,
+              delay: anime.stagger(80),
+              easing: 'easeOutExpo'
+            });
+            observer.unobserve(footer);
+          }
+        });
+      }, { threshold: 0.2 });
+      observer.observe(footer);
+    }
+  }
+
   detectOrientations();
+
+  // ─── Staggered entrance animations (SKILL.md: "Stagger Children") ───
+  if (typeof anime !== 'undefined') {
+    const headerEls = container.querySelectorAll('.project-meta, .project-title, .project-bio, .project-tech');
+    if (headerEls.length) {
+      anime.set(headerEls, { opacity: 0, translateY: 16 });
+      anime({
+        targets: headerEls,
+        opacity: 1,
+        translateY: 0,
+        duration: 600,
+        delay: anime.stagger(100, { start: 100 }),
+        easing: 'easeOutExpo'
+      });
+    }
+    const gearGroups = container.querySelectorAll('.gear-group');
+    if (gearGroups.length) {
+      anime.set(gearGroups, { opacity: 0, translateY: 12 });
+      anime({
+        targets: gearGroups,
+        opacity: 1,
+        translateY: 0,
+        duration: 500,
+        delay: anime.stagger(80, { start: 400 }),
+        easing: 'easeOutExpo'
+      });
+    }
+    const galleryTiles = container.querySelectorAll('.gallery .tile');
+    if (galleryTiles.length) {
+      anime.set(galleryTiles, { opacity: 0, translateY: 16 });
+      anime({
+        targets: galleryTiles,
+        opacity: 1,
+        translateY: 0,
+        duration: 600,
+        delay: anime.stagger(60, { start: 600 }),
+        easing: 'easeOutExpo'
+      });
+    }
+  }
+
+  // Anime.js icon morph on video tile hover
+  if (typeof anime !== 'undefined') {
+    document.querySelectorAll('.tile.video-tile').forEach(tile => {
+      const thumb = tile.querySelector('.tile-thumb');
+      const base = tile.querySelector('.icon-base');
+      const hover = tile.querySelector('.icon-hover');
+      if (!thumb || !base || !hover) return;
+
+      anime.set(hover, { opacity: 0, scale: 0.6, rotate: 25 });
+
+      thumb.addEventListener('mouseenter', () => {
+        anime.timeline({ easing: 'easeOutExpo', duration: 380 })
+          .add({ targets: base, opacity: 0, scale: 0.6, rotate: -25 }, 0)
+          .add({ targets: hover, opacity: 1, scale: 1, rotate: 0 }, 0);
+      });
+
+      thumb.addEventListener('mouseleave', () => {
+        anime.timeline({ easing: 'easeOutExpo', duration: 380 })
+          .add({ targets: base, opacity: 1, scale: 1, rotate: 0 }, 0)
+          .add({ targets: hover, opacity: 0, scale: 0.6, rotate: 25 }, 0);
+      });
+    });
+  }
+
   // create lower-resolution display images (half res) for gallery and thumbs
   optimizeGalleryImages();
 
@@ -1356,7 +1458,7 @@ function displayProject(project) {
     }
   }
   if (totalImages === 0) {
-    if (pageLoader) pageLoader.classList.add('hidden');
+    hidePageLoader();
   } else {
     galleryImages.forEach(img => {
       if (img.complete && img.naturalWidth) {
@@ -1367,11 +1469,7 @@ function displayProject(project) {
       }
     });
   }
-  setTimeout(() => {
-    if (pageLoader && !pageLoader.classList.contains('hidden')) {
-      pageLoader.classList.add('hidden');
-    }
-  }, 4000);
+  setTimeout(() => { hidePageLoader(); }, 4000);
 
   document.querySelectorAll('.tile').forEach(tile => {
     tile.addEventListener('click', e => {
@@ -1464,26 +1562,84 @@ function openModal(i, arr) {
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
   document.addEventListener('keydown', onKey);
+
+  if (typeof anime !== 'undefined') {
+    anime({
+      targets: '.modal-content',
+      opacity: [0, 1],
+      scale: [0.96, 1],
+      translateY: [10, 0],
+      duration: 350,
+      easing: 'easeOutExpo'
+    });
+    anime({
+      targets: '.modal-caption',
+      opacity: [0, 1],
+      translateY: [6, 0],
+      duration: 400,
+      delay: 100,
+      easing: 'easeOutExpo'
+    });
+    anime({
+      targets: ['.modal-prev', '.modal-next'],
+      opacity: [0, 1],
+      translateX: (el, i) => i === 0 ? [-12, 0] : [12, 0],
+      duration: 400,
+      delay: 150,
+      easing: 'easeOutExpo'
+    });
+  }
 }
 
 function closeModal() {
   if (!modal.classList.contains('open')) return;
-  const quickMs = 180;
-  modalContent.style.transition = `opacity ${quickMs}ms var(--ease-out-expo), transform ${quickMs}ms var(--ease-out-expo)`;
-  modalContent.style.opacity = '0';
-  modalContent.style.transform = 'scale(0.97) translateY(6px)';
-  setTimeout(() => {
-    modal.classList.remove('open');
-    document.body.style.overflow = '';
-    document.removeEventListener('keydown', onKey);
-    const v = modalContent.querySelector('video');
-    if (v) v.pause();
-    if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
-    vp = null;
-    modalContent.style.transition = '';
-    modalContent.style.opacity = '';
-    modalContent.style.transform = '';
-  }, quickMs + 20);
+
+  if (typeof anime !== 'undefined') {
+    anime({
+      targets: '.modal-content',
+      opacity: 0,
+      scale: 0.96,
+      translateY: 6,
+      duration: 250,
+      easing: 'easeInQuad',
+      complete: () => {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        document.removeEventListener('keydown', onKey);
+        const v = modalContent.querySelector('video');
+        if (v) v.pause();
+        if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+        vp = null;
+        modalContent.style.opacity = '';
+        modalContent.style.transform = '';
+        modalContent.style.transition = '';
+      }
+    });
+    anime({
+      targets: '.modal-caption',
+      opacity: 0,
+      translateY: 4,
+      duration: 200,
+      easing: 'easeInQuad'
+    });
+  } else {
+    const quickMs = 180;
+    modalContent.style.transition = `opacity ${quickMs}ms var(--ease-out-expo), transform ${quickMs}ms var(--ease-out-expo)`;
+    modalContent.style.opacity = '0';
+    modalContent.style.transform = 'scale(0.97) translateY(6px)';
+    setTimeout(() => {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
+      const v = modalContent.querySelector('video');
+      if (v) v.pause();
+      if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+      vp = null;
+      modalContent.style.transition = '';
+      modalContent.style.opacity = '';
+      modalContent.style.transform = '';
+    }, quickMs + 20);
+  }
 }
 
 function renderMedia() {
@@ -1836,7 +1992,20 @@ document.getElementById('modal-prev').addEventListener('click', prev);
 document.getElementById('modal-next').addEventListener('click', next);
 
 document.getElementById('shortcuts-btn').addEventListener('click', () => {
-  document.getElementById('shortcuts-panel').classList.toggle('show');
+  const panel = document.getElementById('shortcuts-panel');
+  const isShowing = panel.classList.toggle('show');
+  if (typeof anime !== 'undefined' && isShowing) {
+    const rows = panel.querySelectorAll('.sc-row');
+    anime.set(rows, { opacity: 0, translateX: 8 });
+    anime({
+      targets: rows,
+      opacity: 1,
+      translateX: 0,
+      duration: 350,
+      delay: anime.stagger(50),
+      easing: 'easeOutExpo'
+    });
+  }
 });
 
 modal.addEventListener('click', e => {

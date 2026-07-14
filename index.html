@@ -1,33 +1,50 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Portfolio Jana Levínského — cinematography & photography.">
+<meta name="theme-color" content="#c4956a">
+
+<!-- Open Graph / Social -->
+<meta property="og:title" content="Jan Levínský — Cinematography & Photography">
+<meta property="og:description" content="Portfolio Jana Levínského — cinematography & photography.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://levinskyj.art">
+<meta property="og:image" content="https://levinskyj.art/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
 <title>Jan Levínský — Cinematography & Photography</title>
+<link rel="canonical" href="https://levinskyj.art/">
+
+<!-- Preconnect + Preload critical font -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+
+<!-- anime.js deferred so it doesn't block parsing -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" defer></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 :root {
-  --md-primary: #c4956a;
-  --md-on-primary: #0c0c0c;
-  --md-primary-container: rgba(196, 149, 106, 0.12);
-  --md-secondary-container: rgba(196, 149, 106, 0.06);
-  --md-surface: #faf8f5;
-  --md-surface-variant: #f0ece6;
-  --md-surface-container: #f5f2ee;
-  --md-surface-container-high: #eae6e0;
-  --md-surface-container-low: #fdfcfa;
-  --md-outline: #d4cfc7;
-  --md-outline-variant: #e8e4dd;
-  --md-on-surface: #1c1917;
-  --md-on-surface-variant: #6b6560;
-  --md-inverse-surface: #1c1917;
-  --md-inverse-on-surface: #faf8f5;
+  --accent: #c4956a;
+  --text-on-accent: #0c0c0c;
+  --accent-subtle: rgba(196, 149, 106, 0.12);
+  --accent-subtle-2: rgba(196, 149, 106, 0.06);
+  --bg: #faf8f5;
+  --surface: #f0ece6;
+  --bg-raised: #f5f2ee;
+  --surface-raised: #eae6e0;
+  --bg-subtle: #fdfcfa;
+  --border: #d4cfc7;
+  --border-subtle: #e8e4dd;
+  --text: #1c1917;
+  --muted: #6b6560;
   --serif: 'Bricolage Grotesque', Georgia, serif;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
@@ -36,20 +53,20 @@
   color-scheme: light;
 }
 
-html, body { height: 100%; color: var(--md-on-surface); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-body { background: var(--md-surface); }
+html, body { height: 100%; color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { background: var(--bg); }
 button { font-family: inherit; cursor: pointer; border: none; background: none; }
 a { color: inherit; text-decoration: none; }
 img { display: block; max-width: 100%; }
 
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--md-outline); border-radius: var(--r-full); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--r-full); }
 
 a:focus-visible,
 button:focus-visible,
 .tile:focus-visible {
-  outline: 2px solid var(--md-primary);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: var(--r-sm);
 }
@@ -77,7 +94,7 @@ button:focus-visible,
 .kicker {
   font-size: 10px;
   font-weight: 500;
-  color: var(--md-on-surface-variant);
+  color: var(--muted);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   margin-bottom: 30px;
@@ -92,25 +109,25 @@ h1 {
   font-size: 56px;
   line-height: 0.92;
   letter-spacing: -0.015em;
-  color: var(--md-on-surface);
+  color: var(--text);
   opacity: 0;
   animation: fadeUp 0.8s 0.15s var(--ease-out-expo) forwards;
 }
 
 h1 span { display: block; }
-h1 .last { font-style: italic; color: var(--md-primary); }
+h1 .last { font-style: italic; color: var(--accent); }
 
 .divider {
   width: 28px;
   height: 1.5px;
-  background: var(--md-primary);
+  background: var(--accent);
   margin: 26px 0;
   opacity: 0;
   animation: fadeUp 0.7s 0.25s var(--ease-out-expo) forwards;
 }
 
 .intro {
-  color: var(--md-on-surface-variant);
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.75;
   font-weight: 300;
@@ -131,7 +148,7 @@ h1 .last { font-style: italic; color: var(--md-primary); }
 }
 
 .links a {
-  color: var(--md-on-surface-variant);
+  color: var(--muted);
   text-decoration: none;
   font-size: 12.5px;
   font-weight: 500;
@@ -151,8 +168,8 @@ h1 .last { font-style: italic; color: var(--md-primary); }
   display: inline-block;
 }
 
-.links a:hover { color: var(--md-primary); gap: 10px; }
-.links a:hover i { opacity: 1; color: var(--md-primary); transform: translate(1px, -1px); }
+.links a:hover { color: var(--accent); gap: 10px; }
+.links a:hover i { opacity: 1; color: var(--accent); transform: translate(1px, -1px); }
 
 main {
   display: flex;
@@ -172,7 +189,7 @@ main {
 .filter-pill-bg {
   position: absolute;
   height: 30px;
-  background: var(--md-primary-container);
+  background: var(--accent-subtle);
   border: 1px solid rgba(196, 149, 106, 0.2);
   border-radius: 100px;
   transition: all 0.4s var(--ease-out-expo);
@@ -185,7 +202,7 @@ main {
   z-index: 1;
   cursor: pointer;
   text-decoration: none;
-  color: var(--md-on-surface-variant);
+  color: var(--muted);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.09em;
@@ -198,8 +215,8 @@ main {
 }
 
 .filter-row a:first-child { padding-left: 8px; }
-.filter-row a.active { color: var(--md-primary); }
-.sep { color: var(--md-on-surface-variant); font-size: 12px; opacity: 0.3; padding: 0 2px; user-select: none; }
+.filter-row a.active { color: var(--accent); }
+.sep { color: var(--muted); font-size: 12px; opacity: 0.3; padding: 0 2px; user-select: none; }
 
 .bento {
   display: grid;
@@ -212,13 +229,13 @@ main {
 
 .tile {
   position: relative;
-  background: var(--md-surface-variant);
+  background: var(--surface);
   overflow: hidden;
   border-radius: var(--r-lg);
   cursor: pointer;
   transition: opacity 0.6s ease, transform 0.6s var(--ease-out-expo), border-color 0.4s ease;
   will-change: transform;
-  border: 1px solid var(--md-outline);
+  border: 1px solid var(--border);
   min-height: 220px;
   opacity: 1;
   transform: translateY(0);
@@ -230,7 +247,7 @@ main {
 
 .tile:hover {
   transform: translateY(-4px) scale(1.015);
-  border-color: var(--md-outline-variant);
+  border-color: var(--border-subtle);
   z-index: 2;
 }
 
@@ -238,12 +255,11 @@ main {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s var(--ease-out-expo), opacity 0.6s ease, filter 0.6s ease;
+  transition: all 0.8s var(--ease-out-expo);
   opacity: 0;
 }
 
 .tile:hover img {
-  transform: scale(1.03);
   filter: brightness(0.92);
 }
 
@@ -258,13 +274,20 @@ main {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, var(--md-surface-variant) 25%, var(--md-surface-container) 50%, var(--md-surface-variant) 75%);
+  background: linear-gradient(90deg, var(--surface) 25%, var(--bg-raised) 50%, var(--surface) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   z-index: 0;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
+/* Skeleton state: shimmer visible as placeholder while image loads */
+.tile.skeleton::before { opacity: 1; }
+
 .tile img { position: relative; z-index: 1; }
+
+/* Hide shimmer on hover (image is loaded) */
 .tile:hover::before { opacity: 0; }
 
 .film-perf-h, .film-perf-v {
@@ -272,7 +295,8 @@ main {
   pointer-events: none;
   z-index: 3;
   opacity: 1;
-  transition: opacity 0.3s ease, transform 0.5s var(--ease-out-expo);
+  /* no transform transition — must follow parent tile's FLIP transform instantly */
+  transition: opacity 0.3s ease;
 }
 
 .film-perf-h {
@@ -292,10 +316,11 @@ main {
   width: var(--perf-dot-width, 1.2%);
   height: var(--perf-dot-height, 8%);
   border-radius: 999px;
-  background: var(--md-surface);
+  background: var(--bg);
   flex-shrink: 0;
   box-shadow: inset 0 3px 8px rgba(0,0,0,0.35), inset 0 -2px 4px rgba(255,255,255,0.08), 0 0 0 0.5px rgba(255,255,255,0.15);
-  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
+  /* no transform transition — follows parent tile instantly */
+  transition: box-shadow 0.4s ease;
 }
 
 .film-perf-v {
@@ -316,10 +341,11 @@ main {
   width: var(--perf-dot-width, 11%);
   height: var(--perf-dot-height, 1.2%);
   border-radius: 999px;
-  background: var(--md-surface);
+  background: var(--bg);
   flex-shrink: 0;
   box-shadow: inset 0 3px 8px rgba(0,0,0,0.35), inset 0 -2px 4px rgba(255,255,255,0.08), 0 0 0 0.5px rgba(255,255,255,0.15);
-  transition: transform 0.4s var(--ease-out-expo), box-shadow 0.4s ease;
+  /* no transform transition — follows parent tile instantly */
+  transition: box-shadow 0.4s ease;
 }
 
 .tile:hover .film-perf-h,
@@ -417,48 +443,9 @@ main {
   text-shadow: 0 1px 4px rgba(0,0,0,0.45);
 }
 
-.grid-loading {
-  position: relative;
-  width: 100%;
-  min-height: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  transition: opacity 0.6s var(--ease-out-expo), visibility 0s 0.6s, min-height 0.6s var(--ease-out-expo);
-  visibility: visible;
-}
-.grid-loading.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  min-height: 0;
-  padding: 0;
-  margin: 0;
-}
-.gl-spinner {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid var(--md-outline);
-  border-top-color: var(--md-primary);
-  animation: spin 0.85s linear infinite;
-}
-.gl-text {
-  font-family: var(--serif);
-  font-size: 15px;
-  font-weight: 400;
-  font-style: italic;
-  color: var(--md-on-surface-variant);
-  margin-top: 18px;
-  letter-spacing: 0.01em;
-  opacity: 0;
-  animation: fadeUp 0.5s 0.2s var(--ease-out-expo) forwards;
-}
-
 .g-footer {
   padding: 60px 0 40px;
-  border-top: 1px solid var(--md-outline);
+  border-top: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -475,7 +462,7 @@ main {
   transform: translateX(-50%);
   width: 40px;
   height: 2px;
-  background: var(--md-primary);
+  background: var(--accent);
   border-radius: 2px;
   opacity: 0.5;
 }
@@ -484,7 +471,7 @@ main {
   font-family: var(--serif);
   font-size: 26px;
   font-weight: 400;
-  color: var(--md-on-surface);
+  color: var(--text);
   text-wrap: balance;
 }
 
@@ -492,7 +479,7 @@ main {
   font-family: var(--sans);
   font-size: 11px;
   font-weight: 500;
-  color: var(--md-on-surface-variant);
+  color: var(--muted);
   margin-top: 8px;
   letter-spacing: 0.15em;
   text-transform: uppercase;
@@ -503,11 +490,11 @@ main {
   font-family: var(--sans);
   font-size: 13px;
   font-weight: 400;
-  color: var(--md-on-surface-variant);
+  color: var(--muted);
   text-decoration: none;
   background: transparent;
   border: none;
-  border-bottom: 1px solid var(--md-outline);
+  border-bottom: 1px solid var(--border);
   padding-bottom: 3px;
   transition: color 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
@@ -516,7 +503,7 @@ main {
   gap: 8px;
 }
 
-.f-contact:hover { color: var(--md-primary); border-color: var(--md-primary); }
+.f-contact:hover { color: var(--accent); border-color: var(--accent); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeUp {
@@ -531,7 +518,7 @@ main {
 .film-key-wrap {
   margin-top: 36px;
   padding-top: 16px;
-  border-top: 1px solid var(--md-outline);
+  border-top: 1px solid var(--border);
   opacity: 0;
   animation: fadeUp 0.7s 0.5s var(--ease-out-expo) forwards;
   display: flex;
@@ -544,9 +531,9 @@ main {
   width: 28px;
   height: 28px;
   border-radius: var(--r-full);
-  border: 1px solid var(--md-outline);
-  background: var(--md-surface-variant);
-  color: var(--md-on-surface-variant);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -560,16 +547,16 @@ main {
 
 .film-key-toggle:hover {
   opacity: 1;
-  border-color: var(--md-primary);
-  color: var(--md-primary);
+  border-color: var(--accent);
+  color: var(--accent);
   transform: scale(1.08);
 }
 
 .film-key-toggle.active {
   opacity: 1;
-  border-color: var(--md-primary);
-  color: var(--md-primary);
-  background: var(--md-primary-container);
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-subtle);
 }
 
 .film-key {
@@ -598,8 +585,8 @@ main {
 }
 
 .film-key-strip {
-  background: var(--md-surface-variant);
-  border: 1px solid var(--md-outline);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 2px;
   display: flex;
   align-items: center;
@@ -624,7 +611,7 @@ main {
 
 .film-key-strip .perf {
   display: block;
-  background: var(--md-surface);
+  background: var(--bg);
   border-radius: 999px;
   box-shadow: inset 0 1px 2px rgba(0,0,0,0.35), inset 0 -1px 1px rgba(255,255,255,0.08);
   flex-shrink: 0;
@@ -645,7 +632,7 @@ main {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--md-on-surface-variant);
+  color: var(--muted);
   opacity: 0.4;
 }
 
@@ -717,8 +704,12 @@ main {
   }
 }
 </style>
-<base target="_self">
-<base target="_blank">
+
+
+
+
+
+
 <base target="_blank">
 </head>
 <body>
@@ -734,7 +725,7 @@ main {
     <div class="intro">
       <div class="greeting-row">
         <span class="emoji">👋</span>
-        <span>Filmař a fotograf z Opavy. Tvořím obrazy, které mluví.</span>
+        <span>Filmař a fotograf z Prahy. Tvořím obrazy, které mluví.</span>
       </div>
     </div>
     <nav class="links">
@@ -774,13 +765,7 @@ main {
       <a data-group="video" role="button" tabindex="0">Video</a>
     </div>
 
-    <div style="position: relative; flex: 1; min-height: 400px;">
-      <div class="grid-loading" id="gridLoading">
-        <div class="gl-spinner"></div>
-        <div class="gl-text">Načítání projektů</div>
-      </div>
-      <section class="bento" id="grid" role="list"></section>
-    </div>
+    <section class="bento" id="grid" role="list"></section>
 
     <footer class="g-footer">
       <div class="f-name">Jan Levínský</div>
@@ -796,16 +781,31 @@ main {
 <script>
 let currentGroup = 'all';
 
-function updateFilterPill() {
+function updateFilterPill(animate = false) {
   const row = document.getElementById('filterRow');
   const pill = document.getElementById('filterPill');
   const active = row.querySelector('a.active');
   if (!active) return;
   const rowRect = row.getBoundingClientRect();
   const aRect = active.getBoundingClientRect();
-  pill.style.width = aRect.width + 'px';
-  pill.style.left = (aRect.left - rowRect.left) + 'px';
-  pill.style.top = ((aRect.top - rowRect.top) + (aRect.height - 30) / 2) + 'px';
+  const targetLeft = aRect.left - rowRect.left;
+  const targetWidth = aRect.width;
+  const targetTop = ((aRect.top - rowRect.top) + (aRect.height - 30) / 2);
+
+  if (animate && typeof anime !== 'undefined') {
+    anime({
+      targets: pill,
+      left: targetLeft,
+      width: targetWidth,
+      top: targetTop,
+      duration: 450,
+      easing: 'easeOutExpo'
+    });
+  } else {
+    pill.style.width = targetWidth + 'px';
+    pill.style.left = targetLeft + 'px';
+    pill.style.top = targetTop + 'px';
+  }
 }
 
 function loadImage(img) {
@@ -816,14 +816,22 @@ function loadImage(img) {
   });
 }
 
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 async function initPortfolio() {
   const grid = document.getElementById('grid');
-  const gridLoading = document.getElementById('gridLoading');
 
   try {
     const res = await fetch('./projects.json');
     if (!res.ok) throw new Error('JSON failed');
-    const projects = await res.json();
+    let projects = await res.json();
 
     const imagePromises = [];
 
@@ -877,6 +885,11 @@ async function initPortfolio() {
 
       a.innerHTML = '<div class="film-shadow"></div>' + perfHtml + 
         '<div class="flyout">' + project.title + '<div class="flyout-year">' + (project.year || '') + '</div></div>';
+
+      // Start with skeleton shimmer visible, opacity 0 for entrance animation
+      a.classList.add('skeleton');
+      a.style.opacity = '0';
+      a.style.transform = 'translateY(16px)';
       grid.appendChild(a);
 
       const rect = a.getBoundingClientRect();
@@ -933,47 +946,88 @@ async function initPortfolio() {
       const sideClass = centerX < (window.innerWidth / 2) ? 'from-left' : 'from-right';
       a.classList.add(sideClass);
 
+      // Load image in background, fade it in when ready
       const imgPromise = new Promise(resolve => {
-        setTimeout(() => {
-          const img = document.createElement('img');
-          img.src = thumbnailSrc ? encodeURI(thumbnailSrc) : '';
-          img.alt = project.title;
-          img.loading = 'lazy';
-          img.decoding = 'async';
-          img.onload = () => {
-            img.classList.add('loaded');
-            resolve();
-          };
-          img.onerror = () => resolve();
-          a.insertBefore(img, a.firstChild);
-        }, idx * 70);
+        const img = document.createElement('img');
+        img.src = thumbnailSrc ? encodeURI(thumbnailSrc) : '';
+        img.alt = project.title;
+        img.loading = idx < 3 ? 'eager' : 'lazy';
+        img.decoding = 'async';
+        const tileRect = a.getBoundingClientRect();
+        if (tileRect.width && tileRect.height) {
+          img.width = Math.round(tileRect.width);
+          img.height = Math.round(tileRect.height);
+          img.style.aspectRatio = tileRect.width / tileRect.height;
+        }
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.6s var(--ease-out-expo)';
+
+        img.onload = () => {
+          img.classList.add('loaded');
+          requestAnimationFrame(() => {
+            img.style.opacity = '1';
+            setTimeout(() => {
+              a.classList.remove('skeleton');
+            }, 600);
+          });
+          resolve();
+        };
+        img.onerror = () => {
+          a.classList.remove('skeleton');
+          resolve();
+        };
+        a.insertBefore(img, a.firstChild);
       });
       imagePromises.push(imgPromise);
     }
 
-    await Promise.all(imagePromises);
-    gridLoading.classList.add('hidden');
-
+    // Staggered entrance animation for all tiles
     const tiles = Array.from(document.querySelectorAll('.tile'));
-    tiles.forEach((t, i) => {
-      t.style.opacity = '0';
-      t.style.transform = 'translateY(16px)';
-      setTimeout(() => {
-        t.style.opacity = '1';
-        t.style.transform = 'translateY(0)';
-      }, i * 70);
-    });
+    if (typeof anime !== 'undefined') {
+      anime({
+        targets: tiles,
+        opacity: [0, 1],
+        translateY: [16, 0],
+        duration: 600,
+        delay: anime.stagger(70),
+        easing: 'easeOutExpo',
+        complete: function(anim) {
+          // Clean up inline styles so CSS hover transform works
+          tiles.forEach(t => {
+            t.style.opacity = '';
+            t.style.transform = '';
+          });
+        }
+      });
+    } else {
+      tiles.forEach((t, i) => {
+        setTimeout(() => {
+          t.style.opacity = '1';
+          t.style.transform = 'translateY(0)';
+          // Clean up after all are done
+          if (i === tiles.length - 1) {
+            setTimeout(() => {
+              tiles.forEach(tile => {
+                tile.style.opacity = '';
+                tile.style.transform = '';
+              });
+            }, 100);
+          }
+        }, i * 70);
+      });
+    }
 
     initEventListeners();
     setTimeout(() => { updateFilterPill(); recalcPerforations(); }, 50);
 
   } catch(err) {
     console.error(err);
-    gridLoading.classList.add('hidden');
-    grid.innerHTML = '<div style="padding:40px;color:var(--md-on-surface-variant);font-size:13px;">Failed to load projects.json</div>';
+    grid.innerHTML = '<div style="padding:40px;color:var(--muted);font-size:13px;">Failed to load projects.json</div>';
   }
 }
-
 // automatic thumbnail generation removed (disabled)
 
 document.getElementById('filmKeyToggle').addEventListener('click', function() {
@@ -982,6 +1036,26 @@ document.getElementById('filmKeyToggle').addEventListener('click', function() {
   this.classList.toggle('active', isOpen);
   this.setAttribute('aria-expanded', isOpen);
   panel.setAttribute('aria-hidden', !isOpen);
+
+  if (typeof anime !== 'undefined') {
+    anime({
+      targets: this.querySelector('i'),
+      rotate: isOpen ? 90 : 0,
+      duration: 350,
+      easing: 'easeOutExpo'
+    });
+    if (isOpen) {
+      const rows = panel.querySelectorAll('.film-key-row');
+      anime({
+        targets: rows,
+        opacity: [0, 1],
+        translateX: [-8, 0],
+        delay: anime.stagger(90),
+        duration: 450,
+        easing: 'easeOutExpo'
+      });
+    }
+  }
 });
 
 function initEventListeners() {
@@ -990,7 +1064,7 @@ function initEventListeners() {
       e.preventDefault();
       document.querySelectorAll('.filter-row a').forEach(a => a.classList.remove('active'));
       link.classList.add('active');
-      updateFilterPill();
+      updateFilterPill(true);
       currentGroup = link.dataset.group;
       filterTiles();
     });
@@ -1072,21 +1146,139 @@ function recalcPerforations() {
 }
 
 function filterTiles() {
-  const tiles = document.querySelectorAll('.tile');
+  const tiles = Array.from(document.querySelectorAll('.tile'));
+  const grid = document.getElementById('grid');
+
+  if (typeof anime === 'undefined') {
+    tiles.forEach(t => {
+      const type = t.dataset.type;
+      if (currentGroup === 'all' || type === currentGroup) {
+        t.style.display = '';
+        requestAnimationFrame(() => {
+          t.style.opacity = '1';
+          t.style.transform = 'translateY(0)';
+        });
+      } else {
+        t.style.opacity = '0';
+        t.style.transform = 'translateY(16px)';
+        setTimeout(() => { t.style.display = 'none'; }, 300);
+      }
+    });
+    return;
+  }
+
+  // Kill any running anime.js animations on tiles to prevent conflicts
+  if (typeof anime !== 'undefined') anime.remove(tiles);
+
+  // ─── FLIP: record positions before DOM change ───
+  const firstRects = new Map();
+  tiles.forEach(t => {
+    if (t.style.display !== 'none') {
+      firstRects.set(t, t.getBoundingClientRect());
+    }
+  });
+
+  // Filter
+  const visible = [];
+  const hidden = [];
   tiles.forEach(t => {
     const type = t.dataset.type;
     if (currentGroup === 'all' || type === currentGroup) {
-      t.style.display = '';
-      requestAnimationFrame(() => {
-        t.style.opacity = '1';
-        t.style.transform = 'translateY(0)';
-      });
+      visible.push(t);
     } else {
-      t.style.opacity = '0';
-      t.style.transform = 'translateY(16px)';
-      setTimeout(() => { t.style.display = 'none'; }, 300);
+      hidden.push(t);
     }
   });
+
+  // Hide filtered-out tiles immediately so grid recalculates
+  hidden.forEach(t => {
+    t.style.display = 'none';
+    t.style.opacity = '0';
+    t.style.transform = '';
+  });
+  visible.forEach(t => { t.style.display = ''; });
+  // keep builder order, no re-sort
+
+  // ─── FLIP: measure new positions + apply invert synchronously (no flash) ───
+  visible.forEach(t => {
+    const first = firstRects.get(t);
+    const last = t.getBoundingClientRect();
+    t.style.willChange = 'transform, opacity';
+    t.style.transition = 'none';
+    if (first && last) {
+      const dx = first.left - last.left;
+      const dy = first.top - last.top;
+      t.style.transform = 'translateX(' + dx + 'px) translateY(' + dy + 'px)';
+      t.style.opacity = '1';
+    } else {
+      // newly visible: fade + scale in from below
+      t.style.transform = 'translateY(14px) scale(0.96)';
+      t.style.opacity = '0';
+    }
+  });
+
+  // Force reflow so the browser commits the invert transform before animating
+  grid.offsetHeight;
+
+  // Animate to final state — use CSS transition on tiles for compositor sync with children
+  visible.forEach(t => {
+    t.style.transition = 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)';
+    t.style.transform = 'translateX(0px) translateY(0px) scale(1)';
+    t.style.opacity = '1';
+  });
+
+  // Use anime.js only for stagger delay and cleanup
+  if (typeof anime !== 'undefined') {
+    anime({
+      targets: visible,
+      opacity: 1,
+      duration: 1,
+      delay: anime.stagger(35, { from: 'first' }),
+      easing: 'linear',
+      complete: () => {
+        visible.forEach(t => {
+          t.style.transition = '';
+          t.style.transform = '';
+          t.style.willChange = '';
+        });
+        recalcPerforations();
+      }
+    });
+  } else {
+    setTimeout(() => {
+      visible.forEach(t => {
+        t.style.transition = '';
+        t.style.transform = '';
+        t.style.willChange = '';
+      });
+      recalcPerforations();
+    }, 500);
+  }
+}
+
+
+function initScrollAnimations() {
+  if (typeof anime === 'undefined') return;
+  const footer = document.querySelector('.g-footer');
+  if (!footer) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
+        anime.set(targets, { opacity: 0, translateY: 12 });
+        anime({
+          targets: targets,
+          opacity: 1,
+          translateY: 0,
+          duration: 600,
+          delay: anime.stagger(80),
+          easing: 'easeOutExpo'
+        });
+        observer.unobserve(footer);
+      }
+    });
+  }, { threshold: 0.2 });
+  observer.observe(footer);
 }
 
 initPortfolio();

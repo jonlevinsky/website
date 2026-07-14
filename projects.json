@@ -190,6 +190,97 @@
     ]
   },
   {
+    "id": 4,
+    "title": "Španělsko",
+    "type": "photo",
+    "year": "2025",
+    "layout": "tall",
+    "thumbnail": "",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "Color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": [],
+      "color": []
+    },
+    "media": [
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (3).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (3).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (4).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (4).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (2).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (2).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/Nový-projekt/spanelsko (1).jpg",
+        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (1).jpg",
+        "title": "Španělsko",
+        "caption": ""
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Za Okny",
+    "type": "video",
+    "year": "2024",
+    "layout": "normal",
+    "thumbnail": "media/video/2024/Za-Okny/maxresdefault.webp",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "Color": [],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": [],
+      "color": []
+    },
+    "media": [
+      {
+        "type": "video",
+        "src": "media/video/2024/Za-Okny/8.ZaOkny.mp4",
+        "thumbnail": "media/video/2024/Za-Okny/8.ZaOkny_thumb.jpg",
+        "title": "Za Okny",
+        "caption": ""
+      }
+    ]
+  },
+  {
     "id": 3,
     "title": "Portraits",
     "type": "photo",
@@ -283,97 +374,6 @@
         "src": "media/photo/2026/Portraits/Color (12).jpg",
         "thumbnail": "media/photo/2026/Portraits/Color (12).jpg",
         "title": "Color (12)",
-        "caption": ""
-      }
-    ]
-  },
-  {
-    "id": 4,
-    "title": "Španělsko",
-    "type": "photo",
-    "year": "2025",
-    "layout": "tall",
-    "thumbnail": "",
-    "full": "",
-    "bio": "",
-    "techniques": [],
-    "gear": {
-      "camera": [],
-      "lenses": [],
-      "gimbal/stabilization": [],
-      "lighting": [],
-      "audio": [],
-      "software": [],
-      "Color": [],
-      "drone": [],
-      "filter": [],
-      "tripod": [],
-      "monitor": [],
-      "recorder": [],
-      "color": []
-    },
-    "media": [
-      {
-        "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (3).jpg",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (3).jpg",
-        "title": "Španělsko",
-        "caption": ""
-      },
-      {
-        "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (4).jpg",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (4).jpg",
-        "title": "Španělsko",
-        "caption": ""
-      },
-      {
-        "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (2).jpg",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (2).jpg",
-        "title": "Španělsko",
-        "caption": ""
-      },
-      {
-        "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (1).jpg",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (1).jpg",
-        "title": "Španělsko",
-        "caption": ""
-      }
-    ]
-  },
-  {
-    "id": 7,
-    "title": "Za Okny",
-    "type": "video",
-    "year": "2024",
-    "layout": "normal",
-    "thumbnail": "media/video/2024/Za-Okny/maxresdefault.webp",
-    "full": "",
-    "bio": "",
-    "techniques": [],
-    "gear": {
-      "camera": [],
-      "lenses": [],
-      "gimbal/stabilization": [],
-      "lighting": [],
-      "audio": [],
-      "software": [],
-      "Color": [],
-      "drone": [],
-      "filter": [],
-      "tripod": [],
-      "monitor": [],
-      "recorder": [],
-      "color": []
-    },
-    "media": [
-      {
-        "type": "video",
-        "src": "media/video/2024/Za-Okny/8.ZaOkny.mp4",
-        "thumbnail": "media/video/2024/Za-Okny/8.ZaOkny_thumb.jpg",
-        "title": "Za Okny",
         "caption": ""
       }
     ]
