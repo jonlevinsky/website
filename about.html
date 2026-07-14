@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Životopis Jana Levínského — cinematography & photography.">
+<meta name="theme-color" content="#c4956a">
+
+<meta property="og:title" content="O mně — Jan Levínský">
+<meta property="og:description" content="Cinematography & Photography. Filmař a fotograf z Prahy.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://levinskyj.art/about.html">
+<meta property="og:image" content="https://levinskyj.art/og-cover.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<title>O mně — Jan Levínský</title>
+<link rel="canonical" href="https://levinskyj.art/about.html">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" defer></script>
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --accent: #c4956a;
+  --text-on-accent: #0c0c0c;
+  --accent-subtle: rgba(196, 149, 106, 0.12);
+  --accent-subtle-2: rgba(196, 149, 106, 0.06);
+  --bg: #faf8f5;
+  --surface: #f0ece6;
+  --bg-raised: #f5f2ee;
+  --surface-raised: #eae6e0;
+  --bg-subtle: #fdfcfa;
+  --border: #d4cfc7;
+  --border-subtle: #e8e4dd;
+  --text: #1c1917;
+  --muted: #6b6560;
+  --serif: 'Bricolage Grotesque', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  color-scheme: light;
+}
+
+html, body { height: 100%; color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+body { background: var(--bg); }
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--r-full); }
+
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
+
+.wrap {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* ─── Sidebar ─── */
+.brand {
+  padding: 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 24px;
+  height: fit-content;
+}
+
+.kicker {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  opacity: 0;
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 56px;
+  line-height: 0.92;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  opacity: 0;
+}
+
+h1 span { display: block; }
+h1 .last { font-style: italic; color: var(--accent); }
+
+.divider {
+  width: 28px;
+  height: 1.5px;
+  background: var(--accent);
+  margin: 26px 0;
+  opacity: 0;
+}
+
+.intro {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.75;
+  font-weight: 300;
+  opacity: 0;
+}
+
+.links {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  opacity: 0;
+}
+
+.links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.3s ease, gap 0.4s var(--ease-out-expo);
+  width: fit-content;
+  padding: 2px 0;
+}
+
+.links a i {
+  font-size: 14px;
+  opacity: 0.55;
+  transition: opacity 0.3s ease, color 0.3s ease, transform 0.4s var(--ease-out-expo);
+  display: inline-block;
+}
+
+.links a:hover { color: var(--accent); gap: 10px; }
+.links a:hover i { opacity: 1; color: var(--accent); transform: translate(1px, -1px); }
+
+.back-link {
+  margin-top: auto;
+  padding-top: 32px;
+  opacity: 0;
+}
+
+.back-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.03em;
+  transition: color 0.3s ease;
+}
+
+.back-link a:hover { color: var(--accent); }
+.back-link a i { font-size: 14px; opacity: 0.55; }
+.back-link a:hover i { opacity: 1; color: var(--accent); }
+
+/* ─── Main Content ─── */
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding-top: 8px;
+  opacity: 0;
+}
+
+/* ─── Section Base ─── */
+.cv-section {
+  opacity: 0;
+}
+
+.cv-section h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+/* ─── Profile Block ─── */
+.profile-block {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+.profile-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.profile-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo);
+}
+
+.profile-photo img.loaded { opacity: 1; }
+
+.profile-text h3 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.profile-text .role {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.profile-text p {
+  color: var(--muted);
+  font-size: 13.5px;
+  line-height: 1.75;
+  font-weight: 300;
+}
+
+.profile-text p + p {
+  margin-top: 12px;
+}
+
+/* ─── Timeline (CV entries) ─── */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 10px;
+  bottom: 10px;
+  width: 1.5px;
+  background: var(--border);
+}
+
+.timeline-item {
+  display: flex;
+  gap: 20px;
+  padding: 18px 0;
+  position: relative;
+  opacity: 0;
+}
+
+.timeline-item:first-child { padding-top: 0; }
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  flex-shrink: 0;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.3s var(--ease-out-expo), box-shadow 0.3s ease;
+}
+
+.timeline-item:hover .timeline-dot {
+  transform: scale(1.25);
+  box-shadow: 0 0 0 5px var(--accent-subtle);
+}
+
+.timeline-content { flex: 1; min-width: 0; }
+
+.timeline-content .period {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.timeline-content h3 {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+
+.timeline-content .role-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--surface);
+  padding: 3px 8px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.timeline-content p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+/* ─── Spolupráce ─── */
+.collab-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.collab-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 24px;
+  transition: transform 0.35s var(--ease-out-expo), border-color 0.3s ease;
+}
+
+.collab-card:hover {
+  transform: translateX(4px);
+  border-color: var(--border-subtle);
+}
+
+.collab-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--r-sm);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.collab-logo img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.collab-card:hover .collab-logo img {
+  opacity: 1;
+}
+
+.collab-logo-placeholder {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.collab-info { flex: 1; min-width: 0; }
+
+.collab-info h3 {
+  font-family: var(--serif);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+}
+
+.collab-type {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--accent-subtle);
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 10px;
+}
+
+.collab-info p {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+@media (max-width: 640px) {
+  .collab-card {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .collab-logo {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+/* ─── Skills Grid ─── */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.skill-group {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 20px;
+}
+
+.skill-group h3 {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -0.01em;
+}
+
+.skill-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-tag {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--bg-raised);
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--border-subtle);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.skill-tag:hover {
+  color: var(--accent);
+  border-color: rgba(196, 149, 106, 0.3);
+  background: var(--accent-subtle);
+}
+
+/* ─── Gear Compact ─── */
+.gear-compact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.gear-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px;
+  text-align: center;
+  transition: transform 0.3s var(--ease-out-expo), border-color 0.3s ease;
+}
+
+.gear-item:hover {
+  transform: translateY(-3px);
+  border-color: var(--border-subtle);
+}
+
+.gear-item i {
+  font-size: 20px;
+  color: var(--accent);
+  opacity: 0.7;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.gear-item h4 {
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.gear-item ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gear-item li {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* ─── Languages ─── */
+.lang-row {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.lang-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lang-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.lang-level {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.lang-bar {
+  width: 80px;
+  height: 3px;
+  background: var(--border);
+  border-radius: 100px;
+  overflow: hidden;
+  position: relative;
+}
+
+.lang-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 100px;
+  transition: width 1s var(--ease-out-expo);
+}
+
+/* ─── Footer ─── */
+.g-footer {
+  padding: 60px 0 40px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  margin-top: 20px;
+  opacity: 0;
+}
+
+.g-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 2px;
+  background: var(--accent);
+  border-radius: 2px;
+  opacity: 0.5;
+}
+
+.f-name {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  color: var(--text);
+  text-wrap: balance;
+}
+
+.f-role {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 8px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.f-contact {
+  margin-top: 20px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 3px;
+  transition: color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.f-contact:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .wrap { grid-template-columns: 210px 1fr; gap: 28px; }
+  h1 { font-size: 48px; }
+  .gear-compact { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 880px) {
+  .wrap { grid-template-columns: 1fr; gap: 24px; padding: 16px; }
+  .brand { position: static; }
+  h1 { font-size: 44px; }
+  .back-link { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .profile-block { grid-template-columns: 100px 1fr; gap: 20px; }
+  .profile-photo { width: 100px; height: 100px; }
+  .skills-grid { grid-template-columns: 1fr; }
+  .gear-compact { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .wrap { padding: 12px; }
+  h1 { font-size: 36px; }
+  .profile-block { grid-template-columns: 1fr; }
+  .profile-photo { width: 100%; height: 200px; }
+  .gear-compact { grid-template-columns: 1fr; }
+  .timeline::before { left: 4px; }
+  .timeline-dot { width: 10px; height: 10px; margin-top: 2px; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+</style>
+<base target="_self">
+</head>
+<body>
+
+<div class="wrap">
+  <aside class="brand">
+    <div class="kicker">O mně / Životopis</div>
+    <h1>
+      <span>Jan</span>
+      <span class="last">Levínský</span>
+    </h1>
+    <div class="divider"></div>
+    <div class="intro">
+      Pražský kameraman, fotograf a student filmové tvorby. Ve své práci se úzce specializuji na cinematografii a poutavý vizuální storytelling.
+    </div>
+    <nav class="links">
+        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
+        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
+        <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
+    </nav>
+    <div class="back-link">
+      <a href="index.html"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
+    </div>
+  </aside>
+
+  <main>
+    <!-- Profil -->
+    <section class="cv-section" id="secProfile">
+      <h2>Profil</h2>
+      <div class="profile-block">
+        <div class="profile-photo">
+          <img src="./media/portrait.jpg" alt="Jan Levínský" loading="eager" decoding="async" id="profileImg">
+        </div>
+        <div class="profile-text">
+          <h3>Jan Levínský</h3>
+          <div class="role">Cinematographer &amp; Photographer</div>
+          <p>
+            Studuji filmovou tvorbu a mou největší vášní je cinematografie a fotografie. Ve své tvorbě propojuji technickou preciznost s uměleckým cítěním, protože věřím, že každý záběr musí vyprávět příběh. Dosud jsem nasbíral zkušenosti napříč různými žánry – od krátkometrážních filmů a dokumentární tvorby až po reklamní spoty. Fascinuje mě zachycování tradičních řemesel, portrétní fotografie a zkoumání experimentálních forem vizuálního vyjádření.
+          </p>
+          <p>
+            Jsem otevřený novým kreativním výzvám a neustále se v oboru vzdělávám. Aktivně hledám projekty a spolupráce, do kterých mohu vnést svůj autorský pohled i technické dovednosti.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Vzdělání -->
+    <section class="cv-section" id="secEdu">
+      <h2>Vzdělání</h2>
+      <div class="timeline">
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2022 — 2026</div>
+            <h3>SPŠST PANSKÁ | Filová a televizní tvorba</h3>
+            <div class="role-tag">Student</div>
+            <p>Studium poskytující pevné technické i řemeslné základy v oblasti audiovize. Intenzivní praxe s kamerovou technikou, osvětlením, střihem a postprodukcí. Studium úspěšně završeno maturitní zkouškou s vyznamenáním a absolventským dokumentárním filmem.</p>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2026 - současnost</div>
+            <h3>Slezská univerzita v Opavě | Multimédia a popularizace</h3>
+            <div class="role-tag">Student</div>
+            <p>Vysokoškolské studium propojující audiovizuální praxi s širším teoretickým přesahem. Zaměření na tvorbu komplexních multimediálních projektů, vizuální komunikaci a efektivní předávání příběhů a informací současnému publiku.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<!-- Filmografie & Praxe -->
+    <section class="cv-section" id="secWork">
+      <h2>Filmografie &amp; Praxe</h2>
+      <div class="timeline">
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2024</div>
+            <h3>Za Okny</h3>
+            <div class="role-tag">Režie / Kamera / Střih</div>
+            <p>Experimentální krátkometrážní film. První větší projekt zaměřený na precizní práci s přirozeným světlem a budování vizuální atmosféry.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2025</div>
+            <h3>Zlatý Ámos</h3>
+            <div class="role-tag">Kamera / Střih</div>
+            <p>Audiovizuální záznam z ankety o nejoblíbenějšího učitele. Zaměřeno na pohotovou reportážní kameru, zachycení autentických emocí a plynulý střih události.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2025</div>
+            <h3>Reklama — Jack Saloon</h3>
+            <div class="role-tag">Kamera / Postprodukce</div>
+            <p>Reklamní spot pro značku Angry Beards vytvořený v rámci kamerových praxí. Kombinuje čistou produktovou kompozici s dynamickým střihem.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2025</div>
+            <h3>Tábor Dvojka</h3>
+            <div class="role-tag">Kamera / Střih</div>
+            <p>Série krátkých každodenních video reportáží z letního tábora. Formát se cíleně vyhýbá klasickému televiznímu zpravodajství a sází na filmovou estetiku, zachycení přirozeného světla a autentické letní atmosféry.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2025 — 2026</div>
+            <h3>Postupy práce</h3>
+            <div class="role-tag">Režie / Kamera / Střih</div>
+            <p>Absolventský dokumentární projekt zaměřený na řemesla, koncipovaný jako dva samostatné podfilmy (zubní technik a hodinář). Střihová skladba není paralelní, ale je věcně postavena na vizuálních návaznostech na základě podobnosti objektů a pohybu napříč záběry.</p>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content">
+            <div class="period">2026</div>
+            <h3>Tábor Dvojka</h3>
+            <div class="role-tag">Kamera / Střih</div>
+            <p>Navazující ročník každodenních táborových reportáží. Posun k ještě výraznějšímu filmovému pojetí a vizuálnímu storytellingu, který divákovi zprostředkovává náladu a energii jednotlivých dní namísto pouhého popisu událostí.</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="cv-section" id="secCollabs">
+        <h2>Spolupráce</h2>
+            <div class="collab-grid">
+                <div class="collab-card">
+                <div class="collab-logo">
+                    <img src="https://www.watchmakers.cz/Assets/favicon/apple-touch-icon.png" alt="Watchmakers.cz" loading="lazy" decoding="async">
+                </div>
+                <div class="collab-info">
+                    <h3>Watch Makers</h3>
+                    <div class="collab-type">Postupy práce</div>
+                    <p></p>
+                </div>
+                </div>
+                <div class="collab-card">
+                <div class="collab-logo">
+                    <img src="https://laborator-dentlife.cz/files/res/icon-dent-dark.png" alt="laborator-dentlife.cz" loading="lazy" decoding="async">
+                </div>
+                <div class="collab-info">
+                    <h3>Dent&Life</h3>
+                    <div class="collab-type">Postupy práce, Propagační video</div>
+                    <p></p>
+                </div>
+                </div>
+            </div>
+    </section>
+
+    <!-- Dovednosti -->
+    <section class="cv-section" id="secSkills">
+      <h2>Dovednosti</h2>
+      <div class="skills-grid">
+        <div class="skill-group">
+          <h3>Cinematografie</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Kamera</span>
+            <span class="skill-tag">Osvětlení</span>
+            <span class="skill-tag">Kompozice</span>
+            <span class="skill-tag">Pohyb kamery</span>
+            <span class="skill-tag">Dokument</span>
+            <span class="skill-tag">Reportáž</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Postprodukce</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">DaVinci Resolve</span>
+            <span class="skill-tag">Color grading</span>
+            <span class="skill-tag">Střih</span>
+            <span class="skill-tag">Zvukový design</span>
+            <span class="skill-tag">Zvuková postprodukce</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Fotografie</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Portrét</span>
+            <span class="skill-tag">Reportáž</span>
+            <span class="skill-tag">Produktová</span>
+            <span class="skill-tag">Architektura</span>
+          </div>
+        </div>
+        <div class="skill-group">
+          <h3>Technické</h3>
+          <div class="skill-tags">
+            <span class="skill-tag">Blackmagic 6K Pro</span>
+            <span class="skill-tag">Blackmagic URSA</span>
+            <span class="skill-tag">Canon DSLR</span>
+            <span class="skill-tag">Zoom H6</span>
+            <span class="skill-tag">Sony FX6</span>
+            <span class="skill-tag">Sony FS5</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<!-- Vybavení -->
+    <section class="cv-section" id="secGear">
+      <h2>Vybavení</h2>
+      <div class="gear-compact">
+        <div class="gear-item">
+          <i class="ph ph-camera"></i>
+          <h4>Kamera</h4>
+          <ul>
+            <li>Canon EOS 250D</li>
+          </ul>
+        </div>
+        <div class="gear-item">
+          <i class="ph ph-aperture"></i>
+          <h4>Objektivy</h4>
+          <ul>
+            <li>Canon 18-55</li>
+            <li>Helios 44-M</li>
+            <li>Tamron 24-105</li>
+            <li>Canon 70-300</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Jazyky -->
+    <section class="cv-section" id="secLang">
+      <h2>Jazyky</h2>
+      <div class="lang-row">
+        <div class="lang-item">
+          <div class="lang-name">Čeština</div>
+          <div class="lang-bar">
+            <div class="lang-bar-fill" style="width: 100%;"></div>
+          </div>
+          <div class="lang-level">Rodilý</div>
+        </div>
+        <div class="lang-item">
+          <div class="lang-name">Angličtina</div>
+          <div class="lang-bar">
+            <div class="lang-bar-fill" style="width: 80%;"></div>
+          </div>
+          <div class="lang-level">C1 (Advanced)</div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="g-footer" id="footer">
+      <div class="f-name">Jan Levínský</div>
+      <div class="f-role">Cinematography &amp; Photography</div>
+      <a class="f-contact" href="mailto:levinskyj.cine@gmail.com">
+        <i class="ph ph-envelope" style="font-size: 14px;"></i>
+        Kontakt
+      </a>
+    </footer>
+  </main>
+</div>
+
+<script>
+// Profile photo load
+const profileImg = document.getElementById('profileImg');
+if (profileImg) {
+  if (profileImg.complete && profileImg.naturalWidth) {
+    profileImg.classList.add('loaded');
+  } else {
+    profileImg.onload = () => profileImg.classList.add('loaded');
+  }
+}
+
+// Entrance animations
+function initAnimations() {
+  if (typeof anime === 'undefined') {
+    document.querySelectorAll('.kicker, h1, .divider, .intro, .links, .back-link, main, .cv-section, .timeline-item, .skill-group, .gear-item, .g-footer')
+      .forEach(el => el.style.opacity = '1');
+    document.querySelectorAll('.lang-bar-fill').forEach(bar => bar.style.width = bar.style.width);
+    return;
+  }
+
+  // Sidebar stagger
+  const sidebarEls = ['.kicker', 'h1', '.divider', '.intro', '.links', '.back-link'];
+  sidebarEls.forEach((sel, i) => {
+    const el = document.querySelector(sel);
+    if (!el) return;
+    anime({
+      targets: el,
+      opacity: [0, 1],
+      translateY: [12, 0],
+      duration: 600,
+      delay: 80 + (i * 70),
+      easing: 'easeOutExpo'
+    });
+  });
+
+  // Main fade
+  anime({
+    targets: 'main',
+    opacity: [0, 1],
+    duration: 700,
+    delay: 150,
+    easing: 'easeOutExpo'
+  });
+
+  // CV sections
+  anime({
+    targets: '.cv-section',
+    opacity: [0, 1],
+    translateY: [18, 0],
+    duration: 600,
+    delay: anime.stagger(150, { start: 300 }),
+    easing: 'easeOutExpo'
+  });
+
+  // Timeline items
+  anime({
+    targets: '.timeline-item',
+    opacity: [0, 1],
+    translateX: [-10, 0],
+    duration: 500,
+    delay: anime.stagger(90, { start: 500 }),
+    easing: 'easeOutExpo'
+  });
+
+  // Collab cards
+  anime({
+    targets: '.collab-card',
+    opacity: [0, 1],
+    translateX: [-12, 0],
+    duration: 500,
+    delay: anime.stagger(80, { start: 600 }),
+    easing: 'easeOutExpo'
+    });
+
+  // Skill groups
+  anime({
+    targets: '.skill-group',
+    opacity: [0, 1],
+    translateY: [14, 0],
+    duration: 500,
+    delay: anime.stagger(70, { start: 600 }),
+    easing: 'easeOutExpo'
+  });
+
+  // Gear items
+  anime({
+    targets: '.gear-item',
+    opacity: [0, 1],
+    translateY: [12, 0],
+    duration: 450,
+    delay: anime.stagger(50, { start: 700 }),
+    easing: 'easeOutExpo'
+  });
+
+  // Language bars animate
+  document.querySelectorAll('.lang-bar-fill').forEach((bar, i) => {
+    const targetW = bar.style.width;
+    bar.style.width = '0%';
+    anime({
+      targets: bar,
+      width: targetW,
+      duration: 800,
+      delay: 800 + (i * 150),
+      easing: 'easeOutExpo'
+    });
+  });
+
+  // Footer
+  anime({
+    targets: '#footer',
+    opacity: [0, 1],
+    translateY: [12, 0],
+    duration: 600,
+    delay: 1000,
+    easing: 'easeOutExpo'
+  });
+}
+
+initAnimations();
+</script>
+
+</body>
+</html>
