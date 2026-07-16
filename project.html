@@ -20,7 +20,13 @@
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" defer></script>
+<!-- GSAP: scroll-driven reveals + modal choreography -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+<!-- Motion: spring micro-interactions -->
+<script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
+<!-- StringTune: parallax + magnetic -->
+<script src="https://unpkg.com/@fiddle-digital/string-tune@1.2.0/dist/index.js" defer></script>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -113,6 +119,32 @@ h1 {
 }
 
 h1 .last { display: block; font-style: italic; color: var(--accent); }
+
+/* Hero char-split (driven by Motion when libs are ready) */
+.h1-word { display: block; }
+.h1-char { display: inline-block; will-change: transform; }
+html.lib-anim h1 { animation: none; opacity: 1; }
+html.lib-anim .h1-char { opacity: 0; }
+
+/* StringTune parallax wrapper — oversized so translate never shows gaps */
+.px-wrap {
+  position: absolute;
+  left: 0; right: 0; top: -8%; bottom: -8%;
+  z-index: 0;
+  will-change: transform;
+  pointer-events: none;
+}
+.px-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* StringTune magnetic elements */
+[string="magnetic"] {
+  transform: translate3d(calc(var(--magnetic-x, 0) * 1px), calc(var(--magnetic-y, 0) * 1px), 0);
+  will-change: transform;
+}
 
 .divider {
   width: 28px;
@@ -1185,7 +1217,7 @@ main {
     <div class="kicker">Portfolio // 2025</div>
     <h1>Jan<br/><span class="last">Levínský</span></h1>
     <div class="divider"></div>
-    <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to portfolio</a>
+    <a href="index.html" class="back-link" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-arrow-left"></i> Back to portfolio</a>
   </aside>
   <main id="project-container">
     <div class="loading-state">
@@ -1232,6 +1264,91 @@ main {
 </div>
 
 <script>
+// ─── Motion stack: GSAP (modal + scroll reveals) · Motion (springs) · StringTune (parallax/magnetic) ───
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(pointer: fine)').matches;
+let heroChars = [];
+let gsapReady = false;
+
+function ensureGsap() {
+  if (gsapReady) return typeof gsap !== 'undefined';
+  if (typeof gsap === 'undefined') return false;
+  if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  gsapReady = true;
+  return true;
+}
+
+/* Split h1 into animatable chars (runs before paint; Motion animates on DOMContentLoaded) */
+function splitChars(root) {
+  const chars = [];
+  const pushChars = (text, parent) => {
+    for (const ch of text) {
+      const c = document.createElement('span');
+      c.className = 'h1-char';
+      c.textContent = ch === ' ' ? '\u00A0' : ch;
+      c.setAttribute('aria-hidden', 'true');
+      parent.appendChild(c);
+      chars.push(c);
+    }
+  };
+  Array.from(root.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (!node.textContent.trim()) return;
+      const wrap = document.createElement('span');
+      wrap.className = 'h1-word';
+      root.insertBefore(wrap, node);
+      pushChars(node.textContent, wrap);
+      root.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+      // block-level .h1-word / .last spans already handle the line break
+      root.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
+      const text = node.textContent;
+      node.setAttribute('aria-label', text);
+      node.textContent = '';
+      pushChars(text, node);
+    }
+  });
+  return chars;
+}
+
+function prepareHero() {
+  if (prefersReduced) return;
+  const h1 = document.querySelector('h1');
+  if (!h1) return;
+  heroChars = splitChars(h1);
+  if (heroChars.length) document.documentElement.classList.add('lib-anim');
+}
+
+function initHeroAnim() {
+  if (!heroChars.length) return;
+  if (!window.Motion) { document.documentElement.classList.remove('lib-anim'); return; }
+  Motion.animate(
+    heroChars,
+    { opacity: [0, 1], y: ['0.6em', '0em'], rotate: [8, 0] },
+    { delay: Motion.stagger(0.03, { start: 0.12 }), duration: 0.75, easing: [0.16, 1, 0.3, 1] }
+  );
+}
+
+function initStringTune() {
+  if (prefersReduced) return;
+  if (typeof StringTune === 'undefined' || !StringTune.StringTune) return;
+  try {
+    const st = StringTune.StringTune.getInstance();
+    st.use(StringTune.StringParallax);
+    if (finePointer) st.use(StringTune.StringMagnetic);
+    st.start(60);
+  } catch (e) { console.warn('StringTune init failed:', e); }
+}
+
+prepareHero();
+
+document.addEventListener('DOMContentLoaded', () => {
+  initHeroAnim();
+  initStringTune();
+  ensureGsap();
+});
+
 function getProjectId() {
   return parseInt(new URLSearchParams(window.location.search).get('id'));
 }
@@ -1376,17 +1493,8 @@ function isMobile(){ return window.innerWidth <= 640; }
 function hidePageLoader() {
   const pageLoader = document.getElementById('pageLoader');
   if (!pageLoader || pageLoader.classList.contains('hidden')) return;
-  if (typeof anime !== 'undefined') {
-    anime({
-      targets: pageLoader,
-      opacity: 0,
-      duration: 400,
-      easing: 'easeOutExpo',
-      complete: () => { pageLoader.classList.add('hidden'); pageLoader.style.opacity = ''; }
-    });
-  } else {
-    pageLoader.classList.add('hidden');
-  }
+  // CSS transition on .page-loader handles the fade-out
+  pageLoader.classList.add('hidden');
 }
 
 function displayProject(project) {
@@ -1453,12 +1561,14 @@ function displayProject(project) {
       // Photo tiles — NO perforations, original structure
       const photoSrc = m.thumbnail || m.src;
       gallery += '<div class="tile" data-index="' + i + '" data-type="photo">' +
+        '<div class="px-wrap" string="parallax" string-parallax="0.05">' +
         '<img src="' + (photoSrc ? encodeURI(photoSrc) : photoSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async">' +
+        '</div>' +
         flyout + '</div>';
     } else {
       // Video tiles — WITH perforations (same system as index.html)
       const thumbSrc = m.thumbnail || m.poster || '';
-      const thumbImg = thumbSrc ? '<img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async">' : '';
+      const thumbImg = thumbSrc ? '<div class="px-wrap" string="parallax" string-parallax="0.05"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async"></div>' : '';
 
       const filmSizes = {
         video: { normal: { width: 24, height: 18.6 }, wide: { width: 24, height: 14 }, tall: { width: 24, height: 44.2 } }
@@ -1507,29 +1617,16 @@ function displayProject(project) {
       '</a>' +
     '</footer>';
 
-  // Footer scroll reveal
-  if (typeof anime !== 'undefined') {
-    const footer = container.querySelector('.g-footer');
-    if (footer) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
-            anime.set(targets, { opacity: 0, translateY: 12 });
-            anime({
-              targets: targets,
-              opacity: 1,
-              translateY: 0,
-              duration: 600,
-              delay: anime.stagger(80),
-              easing: 'easeOutExpo'
-            });
-            observer.unobserve(footer);
-          }
-        });
-      }, { threshold: 0.2 });
-      observer.observe(footer);
-    }
+  // Footer scroll reveal (GSAP ScrollTrigger)
+  const footerEl = container.querySelector('.g-footer');
+  if (footerEl && !prefersReduced && ensureGsap() && typeof ScrollTrigger !== 'undefined') {
+    const fTargets = footerEl.querySelectorAll('.f-name, .f-role, .f-contact');
+    gsap.set(fTargets, { opacity: 0, y: 12 });
+    gsap.to(fTargets, {
+      opacity: 1, y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.08,
+      scrollTrigger: { trigger: footerEl, start: 'top 92%', once: true },
+      onComplete: () => gsap.set(fTargets, { clearProps: 'transform' })
+    });
   }
 
   detectOrientations();
@@ -1538,43 +1635,37 @@ function displayProject(project) {
   setTimeout(recalcPerforations, 300);
   setTimeout(recalcPerforations, 800);
 
-  // ─── Staggered entrance animations (SKILL.md: "Stagger Children") ───
-  if (typeof anime !== 'undefined') {
+  // Refresh ScrollTrigger positions once media settles (aspect ratios shift layout)
+  if (ensureGsap() && typeof ScrollTrigger !== 'undefined') {
+    setTimeout(() => ScrollTrigger.refresh(), 900);
+    window.addEventListener('load', () => ScrollTrigger.refresh());
+  }
+
+  // ─── Staggered entrance animations (Motion) ───
+  if (window.Motion && !prefersReduced) {
     const headerEls = container.querySelectorAll('.project-meta, .project-title, .project-bio, .project-tech');
     if (headerEls.length) {
-      anime.set(headerEls, { opacity: 0, translateY: 16 });
-      anime({
-        targets: headerEls,
-        opacity: 1,
-        translateY: 0,
-        duration: 600,
-        delay: anime.stagger(100, { start: 100 }),
-        easing: 'easeOutExpo'
-      });
+      Motion.animate(
+        headerEls,
+        { opacity: [0, 1], y: [16, 0] },
+        { delay: Motion.stagger(0.1, { start: 0.1 }), duration: 0.6, easing: [0.16, 1, 0.3, 1] }
+      ).finished.then(() => headerEls.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
     const gearGroups = container.querySelectorAll('.gear-group');
     if (gearGroups.length) {
-      anime.set(gearGroups, { opacity: 0, translateY: 12 });
-      anime({
-        targets: gearGroups,
-        opacity: 1,
-        translateY: 0,
-        duration: 500,
-        delay: anime.stagger(80, { start: 400 }),
-        easing: 'easeOutExpo'
-      });
+      Motion.animate(
+        gearGroups,
+        { opacity: [0, 1], y: [12, 0] },
+        { delay: Motion.stagger(0.08, { start: 0.4 }), duration: 0.5, easing: [0.16, 1, 0.3, 1] }
+      ).finished.then(() => gearGroups.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
     const galleryTiles = container.querySelectorAll('.gallery .tile');
     if (galleryTiles.length) {
-      anime.set(galleryTiles, { opacity: 0, translateY: 16 });
-      anime({
-        targets: galleryTiles,
-        opacity: 1,
-        translateY: 0,
-        duration: 600,
-        delay: anime.stagger(60, { start: 600 }),
-        easing: 'easeOutExpo'
-      });
+      Motion.animate(
+        galleryTiles,
+        { opacity: [0, 1], y: [16, 0] },
+        { delay: Motion.stagger(0.06, { start: 0.6 }), duration: 0.6, easing: [0.16, 1, 0.3, 1] }
+      ).finished.then(() => galleryTiles.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
   }
 
@@ -1700,46 +1791,51 @@ function openModal(i, arr) {
   document.body.style.overflow = 'hidden';
   document.addEventListener('keydown', onKey);
 
-  if (typeof anime !== 'undefined') {
-    anime({
-      targets: '.modal-content',
-      opacity: [0, 1],
-      scale: [0.96, 1],
-      translateY: [10, 0],
-      duration: 350,
-      easing: 'easeOutExpo'
+  if (!prefersReduced && ensureGsap()) {
+    // GSAP modal choreography — content settles, caption follows, nav slides in
+    const content = document.querySelector('.modal-content');
+    const caption = document.querySelector('.modal-caption');
+    const navs = ['.modal-prev', '.modal-next'];
+    [content, caption, ...navs.map(n => document.querySelector(n))].forEach(el => {
+      if (el) el.style.transition = 'none';
     });
-    anime({
-      targets: '.modal-caption',
-      opacity: [0, 1],
-      translateY: [6, 0],
-      duration: 400,
-      delay: 100,
-      easing: 'easeOutExpo'
+    const tl = gsap.timeline({
+      onComplete: () => {
+        const navEls = navs.map(n => document.querySelector(n));
+        [content, caption, ...navEls].forEach(el => {
+          if (el) { el.style.transition = ''; }
+        });
+        // Clear transforms so CSS hover nudges (translateY(-50%) etc.) keep working
+        gsap.set([content, caption, ...navEls.filter(Boolean)], { clearProps: 'transform' });
+      }
     });
-    anime({
-      targets: ['.modal-prev', '.modal-next'],
-      opacity: [0, 1],
-      translateX: (el, i) => i === 0 ? [-12, 0] : [12, 0],
-      duration: 400,
-      delay: 150,
-      easing: 'easeOutExpo'
-    });
+    tl.fromTo(content,
+      { opacity: 0, scale: 0.96, y: 10 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: 'expo.out' }, 0);
+    tl.fromTo(caption,
+      { opacity: 0, y: 6 },
+      { opacity: 1, y: 0, duration: 0.4, ease: 'expo.out' }, 0.1);
+    tl.fromTo('.modal-prev',
+      { opacity: 0, x: -12 },
+      { opacity: 1, x: 0, duration: 0.4, ease: 'expo.out' }, 0.15);
+    tl.fromTo('.modal-next',
+      { opacity: 0, x: 12 },
+      { opacity: 1, x: 0, duration: 0.4, ease: 'expo.out' }, 0.15);
   }
 }
 
 function closeModal() {
   if (!modal.classList.contains('open')) return;
 
-  if (typeof anime !== 'undefined') {
-    anime({
-      targets: '.modal-content',
+  if (!prefersReduced && ensureGsap()) {
+    modalContent.style.transition = 'none';
+    gsap.to(modalContent, {
       opacity: 0,
       scale: 0.96,
-      translateY: 6,
-      duration: 250,
-      easing: 'easeInQuad',
-      complete: () => {
+      y: 6,
+      duration: 0.25,
+      ease: 'power2.in',
+      onComplete: () => {
         modal.classList.remove('open');
         document.body.style.overflow = '';
         document.removeEventListener('keydown', onKey);
@@ -1752,13 +1848,7 @@ function closeModal() {
         modalContent.style.transition = '';
       }
     });
-    anime({
-      targets: '.modal-caption',
-      opacity: 0,
-      translateY: 4,
-      duration: 200,
-      easing: 'easeInQuad'
-    });
+    gsap.to('.modal-caption', { opacity: 0, y: 4, duration: 0.2, ease: 'power2.in' });
   } else {
     const quickMs = 180;
     modalContent.style.transition = `opacity ${quickMs}ms var(--ease-out-expo), transform ${quickMs}ms var(--ease-out-expo)`;
@@ -2135,17 +2225,13 @@ document.getElementById('modal-next').addEventListener('click', next);
 document.getElementById('shortcuts-btn').addEventListener('click', () => {
   const panel = document.getElementById('shortcuts-panel');
   const isShowing = panel.classList.toggle('show');
-  if (typeof anime !== 'undefined' && isShowing) {
+  if (window.Motion && !prefersReduced && isShowing) {
     const rows = panel.querySelectorAll('.sc-row');
-    anime.set(rows, { opacity: 0, translateX: 8 });
-    anime({
-      targets: rows,
-      opacity: 1,
-      translateX: 0,
-      duration: 350,
-      delay: anime.stagger(50),
-      easing: 'easeOutExpo'
-    });
+    Motion.animate(
+      rows,
+      { opacity: [0, 1], x: [8, 0] },
+      { delay: Motion.stagger(0.05), duration: 0.35, easing: [0.16, 1, 0.3, 1] }
+    );
   }
 });
 

@@ -26,8 +26,14 @@
 
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 
-<!-- anime.js deferred so it doesn't block parsing -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" defer></script>
+<!-- GSAP: scroll-driven reveals + FLIP filter layout -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/Flip.min.js" defer></script>
+<!-- Motion: spring micro-interactions -->
+<script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
+<!-- StringTune: parallax + magnetic -->
+<script src="https://unpkg.com/@fiddle-digital/string-tune@1.2.0/dist/index.js" defer></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -117,6 +123,32 @@ h1 {
 h1 span { display: block; }
 h1 .last { font-style: italic; color: var(--accent); }
 
+/* Hero char-split (driven by Motion when libs are ready) */
+.h1-word { display: block; }
+.h1-char { display: inline-block; will-change: transform; }
+html.lib-anim h1 { animation: none; opacity: 1; }
+html.lib-anim .h1-char { opacity: 0; }
+
+/* StringTune parallax wrapper — oversized so translate never shows gaps */
+.px-wrap {
+  position: absolute;
+  left: 0; right: 0; top: -10%; bottom: -10%;
+  z-index: 1;
+  will-change: transform;
+  pointer-events: none;
+}
+.px-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* StringTune magnetic elements */
+[string="magnetic"] {
+  transform: translate3d(calc(var(--magnetic-x, 0) * 1px), calc(var(--magnetic-y, 0) * 1px), 0);
+  will-change: transform;
+}
+
 .divider {
   width: 28px;
   height: 1.5px;
@@ -192,7 +224,6 @@ main {
   background: var(--accent-subtle);
   border: 1px solid rgba(196, 149, 106, 0.2);
   border-radius: 100px;
-  transition: all 0.4s var(--ease-out-expo);
   pointer-events: none;
   z-index: 0;
 }
@@ -554,7 +585,7 @@ main {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  transition: all 0.3s var(--ease-out-expo);
+  transition: opacity 0.3s ease, border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
   opacity: 0.5;
   cursor: pointer;
   padding: 0;
@@ -565,7 +596,7 @@ main {
   opacity: 1;
   border-color: var(--accent);
   color: var(--accent);
-  transform: scale(1.08);
+  transform: translate3d(calc(var(--magnetic-x, 0) * 1px), calc(var(--magnetic-y, 0) * 1px), 0) scale(1.08);
 }
 
 .film-key-toggle.active {
@@ -756,14 +787,14 @@ main {
       </div>
     </div>
     <nav class="links">
-        <a href="./about.html" target="_self" rel="noopener noreferrer"><i class="ph ph-user"></i>O mně</a>
-        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
-        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
-        <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
+        <a href="./about.html" target="_self" rel="noopener noreferrer" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-user"></i>O mně</a>
+        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-instagram-logo"></i>Instagram</a>
+        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-youtube-logo"></i>YouTube</a>
+        <a href="mailto:levinskyj.cine@gmail.com" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-envelope"></i>Email</a>
     </nav>
 
     <div class="film-key-wrap">
-      <button class="film-key-toggle" id="filmKeyToggle" aria-label="Co znamenají perforace?" aria-expanded="false">
+      <button class="film-key-toggle" id="filmKeyToggle" aria-label="Co znamenají perforace?" aria-expanded="false" string="magnetic" string-strength="0.35" string-radius="64">
         <i class="ph ph-question"></i>
       </button>
       <div class="film-key" id="filmKeyPanel" aria-hidden="true">
@@ -807,7 +838,92 @@ main {
 </div>
 
 <script>
+// ─── Motion stack: GSAP (scroll/layout) · Motion (springs) · StringTune (parallax/magnetic) ───
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(pointer: fine)').matches;
 let currentGroup = 'all';
+let heroChars = [];
+let gsapReady = false;
+
+function ensureGsap() {
+  if (gsapReady) return typeof gsap !== 'undefined';
+  if (typeof gsap === 'undefined') return false;
+  if (typeof Flip !== 'undefined') gsap.registerPlugin(Flip);
+  if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  gsapReady = true;
+  return true;
+}
+
+/* Split h1 into animatable chars (runs before paint; Motion animates on DOMContentLoaded) */
+function splitChars(root) {
+  const chars = [];
+  const pushChars = (text, parent) => {
+    for (const ch of text) {
+      const c = document.createElement('span');
+      c.className = 'h1-char';
+      c.textContent = ch === ' ' ? '\u00A0' : ch;
+      c.setAttribute('aria-hidden', 'true');
+      parent.appendChild(c);
+      chars.push(c);
+    }
+  };
+  Array.from(root.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (!node.textContent.trim()) return;
+      const wrap = document.createElement('span');
+      wrap.className = 'h1-word';
+      root.insertBefore(wrap, node);
+      pushChars(node.textContent, wrap);
+      root.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+      // block-level .h1-word / .last spans already handle the line break
+      root.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
+      const text = node.textContent;
+      node.setAttribute('aria-label', text);
+      node.textContent = '';
+      pushChars(text, node);
+    }
+  });
+  return chars;
+}
+
+function prepareHero() {
+  if (prefersReduced) return;
+  const h1 = document.querySelector('h1');
+  if (!h1) return;
+  heroChars = splitChars(h1);
+  if (heroChars.length) document.documentElement.classList.add('lib-anim');
+}
+
+function initHeroAnim() {
+  if (!heroChars.length) return;
+  if (!window.Motion) { document.documentElement.classList.remove('lib-anim'); return; }
+  Motion.animate(
+    heroChars,
+    { opacity: [0, 1], y: ['0.6em', '0em'], rotate: [8, 0] },
+    { delay: Motion.stagger(0.03, { start: 0.12 }), duration: 0.75, easing: [0.16, 1, 0.3, 1] }
+  );
+}
+
+function initStringTune() {
+  if (prefersReduced) return;
+  if (typeof StringTune === 'undefined' || !StringTune.StringTune) return;
+  try {
+    const st = StringTune.StringTune.getInstance();
+    st.use(StringTune.StringParallax);
+    if (finePointer) st.use(StringTune.StringMagnetic);
+    st.start(60);
+  } catch (e) { console.warn('StringTune init failed:', e); }
+}
+
+prepareHero();
+
+document.addEventListener('DOMContentLoaded', () => {
+  initHeroAnim();
+  initStringTune();
+  ensureGsap();
+});
 
 function updateFilterPill(animate = false) {
   const row = document.getElementById('filterRow');
@@ -820,15 +936,13 @@ function updateFilterPill(animate = false) {
   const targetWidth = aRect.width;
   const targetTop = ((aRect.top - rowRect.top) + (aRect.height - 30) / 2);
 
-  if (animate && typeof anime !== 'undefined') {
-    anime({
-      targets: pill,
+  if (animate && window.Motion && !prefersReduced) {
+    // Motion spring — physical pill glide between filters
+    Motion.animate(pill, {
       left: targetLeft,
       width: targetWidth,
-      top: targetTop,
-      duration: 450,
-      easing: 'easeOutExpo'
-    });
+      top: targetTop
+    }, { type: 'spring', stiffness: 420, damping: 34, mass: 0.9 });
   } else {
     pill.style.width = targetWidth + 'px';
     pill.style.left = targetLeft + 'px';
@@ -1006,29 +1120,28 @@ async function initPortfolio() {
           a.classList.remove('skeleton');
           resolve();
         };
-        a.insertBefore(img, a.firstChild);
+        // StringTune parallax wrapper (oversized; translates on scroll)
+        const pxWrap = document.createElement('div');
+        pxWrap.className = 'px-wrap';
+        pxWrap.setAttribute('string', 'parallax');
+        pxWrap.setAttribute('string-parallax', '0.05');
+        pxWrap.appendChild(img);
+        a.insertBefore(pxWrap, a.firstChild);
       });
       imagePromises.push(imgPromise);
     }
 
-    // Staggered entrance animation for all tiles
+    // Staggered entrance animation for all tiles (Motion)
     const tiles = Array.from(document.querySelectorAll('.tile'));
-    if (typeof anime !== 'undefined') {
-      anime({
-        targets: tiles,
-        opacity: [0, 1],
-        translateY: [16, 0],
-        duration: 600,
-        delay: anime.stagger(70),
-        easing: 'easeOutExpo',
-        complete: function(anim) {
-          // Clean up inline styles so CSS hover transform works
-          tiles.forEach(t => {
-            t.style.opacity = '';
-            t.style.transform = '';
-          });
-        }
-      });
+    if (window.Motion && !prefersReduced) {
+      Motion.animate(
+        tiles,
+        { opacity: [0, 1], y: [16, 0] },
+        { delay: Motion.stagger(0.06), duration: 0.6, easing: [0.16, 1, 0.3, 1] }
+      ).finished.then(() => {
+        // Clean up inline styles so CSS hover transform works
+        tiles.forEach(t => { t.style.opacity = ''; t.style.transform = ''; });
+      }).catch(() => {});
     } else {
       tiles.forEach((t, i) => {
         setTimeout(() => {
@@ -1043,11 +1156,12 @@ async function initPortfolio() {
               });
             }, 100);
           }
-        }, i * 70);
+        }, prefersReduced ? 0 : i * 70);
       });
     }
 
     initEventListeners();
+    initScrollAnimations();
     setTimeout(() => { updateFilterPill(); recalcPerforations(); }, 50);
 
   } catch(err) {
@@ -1064,23 +1178,15 @@ document.getElementById('filmKeyToggle').addEventListener('click', function() {
   this.setAttribute('aria-expanded', isOpen);
   panel.setAttribute('aria-hidden', !isOpen);
 
-  if (typeof anime !== 'undefined') {
-    anime({
-      targets: this.querySelector('i'),
-      rotate: isOpen ? 90 : 0,
-      duration: 350,
-      easing: 'easeOutExpo'
-    });
+  if (window.Motion && !prefersReduced) {
+    Motion.animate(this.querySelector('i'), { rotate: isOpen ? 90 : 0 }, { type: 'spring', stiffness: 320, damping: 22 });
     if (isOpen) {
       const rows = panel.querySelectorAll('.film-key-row');
-      anime({
-        targets: rows,
-        opacity: [0, 1],
-        translateX: [-8, 0],
-        delay: anime.stagger(90),
-        duration: 450,
-        easing: 'easeOutExpo'
-      });
+      Motion.animate(
+        rows,
+        { opacity: [0, 1], x: [-8, 0] },
+        { delay: Motion.stagger(0.09), duration: 0.45, easing: [0.16, 1, 0.3, 1] }
+      );
     }
   }
 });
@@ -1170,138 +1276,88 @@ function recalcPerforations() {
 
 function filterTiles() {
   const tiles = Array.from(document.querySelectorAll('.tile'));
-  const grid = document.getElementById('grid');
 
-  if (typeof anime === 'undefined') {
-    tiles.forEach(t => {
-      const type = t.dataset.type;
-      if (currentGroup === 'all' || type === currentGroup) {
-        t.style.display = '';
-        requestAnimationFrame(() => {
-          t.style.opacity = '1';
-          t.style.transform = 'translateY(0)';
-        });
-      } else {
-        t.style.opacity = '0';
-        t.style.transform = 'translateY(16px)';
-        setTimeout(() => { t.style.display = 'none'; }, 300);
-      }
-    });
-    return;
-  }
-
-  // Kill any running anime.js animations on tiles to prevent conflicts
-  if (typeof anime !== 'undefined') anime.remove(tiles);
-
-  // ─── FLIP: record positions before DOM change ───
-  const firstRects = new Map();
-  tiles.forEach(t => {
-    if (t.style.display !== 'none') {
-      firstRects.set(t, t.getBoundingClientRect());
-    }
-  });
-
-  // Filter
   const visible = [];
   const hidden = [];
   tiles.forEach(t => {
-    const type = t.dataset.type;
-    if (currentGroup === 'all' || type === currentGroup) {
-      visible.push(t);
-    } else {
-      hidden.push(t);
-    }
+    const match = currentGroup === 'all' || t.dataset.type === currentGroup;
+    (match ? visible : hidden).push(t);
   });
 
-  // Hide filtered-out tiles immediately so grid recalculates
-  hidden.forEach(t => {
-    t.style.display = 'none';
-    t.style.opacity = '0';
-    t.style.transform = '';
-  });
+  const useFlip = ensureGsap() && typeof Flip !== 'undefined' && !prefersReduced;
+
+  if (!useFlip) {
+    // Instant fallback — no libs or reduced motion
+    tiles.forEach(t => {
+      const match = visible.includes(t);
+      t.style.display = match ? '' : 'none';
+      t.style.opacity = match ? '1' : '0';
+      t.style.transform = '';
+    });
+    recalcPerforations();
+    return;
+  }
+
+  // ─── GSAP Flip: record layout state before DOM change ───
+  const previouslyVisible = tiles.filter(t => t.style.display !== 'none');
+  const entering = visible.filter(t => t.style.display === 'none');
+  const state = Flip.getState(previouslyVisible);
+
+  hidden.forEach(t => { t.style.display = 'none'; t.style.opacity = '0'; });
   visible.forEach(t => { t.style.display = ''; });
   // keep builder order, no re-sort
 
-  // ─── FLIP: measure new positions + apply invert synchronously (no flash) ───
-  visible.forEach(t => {
-    const first = firstRects.get(t);
-    const last = t.getBoundingClientRect();
-    t.style.willChange = 'transform, opacity';
-    t.style.transition = 'none';
-    if (first && last) {
-      const dx = first.left - last.left;
-      const dy = first.top - last.top;
-      t.style.transform = 'translateX(' + dx + 'px) translateY(' + dy + 'px)';
-      t.style.opacity = '1';
-    } else {
-      // newly visible: fade + scale in from below
-      t.style.transform = 'translateY(14px) scale(0.96)';
-      t.style.opacity = '0';
-    }
-  });
+  // Kill CSS transitions so GSAP owns every frame of the move
+  tiles.forEach(t => { t.style.transition = 'none'; t.style.willChange = 'transform, opacity'; });
 
-  // Force reflow so the browser commits the invert transform before animating
-  grid.offsetHeight;
-
-  // Animate to final state — use CSS transition on tiles for compositor sync with children
-  visible.forEach(t => {
-    t.style.transition = 'transform 420ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms cubic-bezier(0.16, 1, 0.3, 1)';
-    t.style.transform = 'translateX(0px) translateY(0px) scale(1)';
-    t.style.opacity = '1';
-  });
-
-  // Use anime.js only for stagger delay and cleanup
-  if (typeof anime !== 'undefined') {
-    anime({
-      targets: visible,
-      opacity: 1,
-      duration: 1,
-      delay: anime.stagger(35, { from: 'first' }),
-      easing: 'linear',
-      complete: () => {
-        visible.forEach(t => {
-          t.style.transition = '';
-          t.style.transform = '';
-          t.style.willChange = '';
-        });
-        recalcPerforations();
-      }
-    });
-  } else {
-    setTimeout(() => {
-      visible.forEach(t => {
+  Flip.from(state, {
+    duration: 0.5,
+    ease: 'expo.out',
+    scale: false,
+    absolute: false,
+    stagger: 0.02,
+    onComplete: () => {
+      tiles.forEach(t => {
         t.style.transition = '';
         t.style.transform = '';
         t.style.willChange = '';
+        gsap.set(t, { clearProps: 'transform,opacity' });
       });
       recalcPerforations();
-    }, 500);
+    }
+  });
+
+  // Newly revealed tiles: rise + settle in with a soft stagger
+  if (entering.length) {
+    gsap.fromTo(entering,
+      { opacity: 0, y: 14, scale: 0.96 },
+      {
+        opacity: 1, y: 0, scale: 1,
+        duration: 0.45,
+        ease: 'expo.out',
+        stagger: 0.035,
+        delay: 0.06,
+        onComplete: () => entering.forEach(t => gsap.set(t, { clearProps: 'transform,opacity' }))
+      });
   }
 }
 
 
 function initScrollAnimations() {
-  if (typeof anime === 'undefined') return;
   const footer = document.querySelector('.g-footer');
-  if (!footer) return;
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
-        anime.set(targets, { opacity: 0, translateY: 12 });
-        anime({
-          targets: targets,
-          opacity: 1,
-          translateY: 0,
-          duration: 600,
-          delay: anime.stagger(80),
-          easing: 'easeOutExpo'
-        });
-        observer.unobserve(footer);
-      }
-    });
-  }, { threshold: 0.2 });
-  observer.observe(footer);
+  if (!footer || prefersReduced) return;
+  if (!ensureGsap() || typeof ScrollTrigger === 'undefined') return;
+  const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
+  gsap.set(targets, { opacity: 0, y: 12 });
+  gsap.to(targets, {
+    opacity: 1,
+    y: 0,
+    duration: 0.6,
+    ease: 'expo.out',
+    stagger: 0.08,
+    scrollTrigger: { trigger: footer, start: 'top 90%', once: true },
+    onComplete: () => gsap.set(targets, { clearProps: 'transform' })
+  });
 }
 
 initPortfolio();

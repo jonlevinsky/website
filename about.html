@@ -21,7 +21,13 @@
 <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" defer></script>
+<!-- GSAP: scroll-driven reveals -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+<!-- Motion: spring micro-interactions -->
+<script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
+<!-- StringTune: parallax + magnetic -->
+<script src="https://unpkg.com/@fiddle-digital/string-tune@1.2.0/dist/index.js" defer></script>
 
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -106,6 +112,45 @@ h1 {
 
 h1 span { display: block; }
 h1 .last { font-style: italic; color: var(--accent); }
+
+/* Hero char-split (driven by Motion when libs are ready) */
+.h1-word { display: block; }
+.h1-char { display: inline-block; will-change: transform; }
+html.lib-anim h1 { animation: none; opacity: 1; }
+html.lib-anim .h1-char { opacity: 0; }
+
+/* lib-anim: JS-driven scroll reveals replace CSS load animations.
+   Without JS libs these rules never apply and CSS animations run as fallback. */
+html.lib-anim .cv-section,
+html.lib-anim .timeline-item,
+html.lib-anim .collab-card,
+html.lib-anim .skill-group,
+html.lib-anim .gear-item,
+html.lib-anim .g-footer {
+  animation: none !important;
+  opacity: 0;
+}
+html.lib-anim .lang-bar-fill { transition: none; }
+
+/* StringTune parallax wrapper */
+.px-wrap {
+  position: absolute;
+  left: 0; right: 0; top: -10%; bottom: -10%;
+  z-index: 1;
+  will-change: transform;
+  pointer-events: none;
+}
+.px-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* StringTune magnetic elements */
+[string="magnetic"] {
+  transform: translate3d(calc(var(--magnetic-x, 0) * 1px), calc(var(--magnetic-y, 0) * 1px), 0);
+  will-change: transform;
+}
 
 .divider {
   width: 28px;
@@ -225,6 +270,7 @@ main {
   background: var(--surface);
   border: 1px solid var(--border);
   flex-shrink: 0;
+  position: relative;
 }
 
 .profile-photo img {
@@ -281,6 +327,8 @@ main {
   bottom: 10px;
   width: 1.5px;
   background: var(--border);
+  transform: scaleY(var(--tl-progress, 1));
+  transform-origin: top center;
 }
 
 .timeline-item {
@@ -726,12 +774,12 @@ main {
       Pražský kameraman, fotograf a student filmové tvorby. Ve své práci se úzce specializuji na cinematografii a poutavý vizuální storytelling.
     </div>
     <nav class="links">
-        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
-        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
-        <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
+        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-instagram-logo"></i>Instagram</a>
+        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-youtube-logo"></i>YouTube</a>
+        <a href="mailto:levinskyj.cine@gmail.com" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-envelope"></i>Email</a>
     </nav>
     <div class="back-link">
-      <a href="index.html"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
+      <a href="index.html" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
     </div>
   </aside>
 
@@ -741,7 +789,9 @@ main {
       <h2>Profil</h2>
       <div class="profile-block">
         <div class="profile-photo">
-          <img src="./media/portrait.jpg" alt="Jan Levínský" loading="eager" decoding="async" id="profileImg">
+          <div class="px-wrap" string="parallax" string-parallax="0.04">
+            <img src="./media/portrait.jpg" alt="Jan Levínský" loading="eager" decoding="async" id="profileImg">
+          </div>
         </div>
         <div class="profile-text">
           <h3>Jan Levínský</h3>
@@ -980,6 +1030,172 @@ main {
 </div>
 
 <script>
+// ─── Motion stack: GSAP ScrollTrigger (scroll reveals) · Motion (springs) · StringTune (parallax/magnetic) ───
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = window.matchMedia('(pointer: fine)').matches;
+let heroChars = [];
+let gsapReady = false;
+
+function ensureGsap() {
+  if (gsapReady) return typeof gsap !== 'undefined';
+  if (typeof gsap === 'undefined') return false;
+  if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
+  gsapReady = true;
+  return true;
+}
+
+/* Split h1 into animatable chars (runs before paint; Motion animates on DOMContentLoaded) */
+function splitChars(root) {
+  const chars = [];
+  const pushChars = (text, parent) => {
+    for (const ch of text) {
+      const c = document.createElement('span');
+      c.className = 'h1-char';
+      c.textContent = ch === ' ' ? '\u00A0' : ch;
+      c.setAttribute('aria-hidden', 'true');
+      parent.appendChild(c);
+      chars.push(c);
+    }
+  };
+  Array.from(root.childNodes).forEach(node => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (!node.textContent.trim()) return;
+      const wrap = document.createElement('span');
+      wrap.className = 'h1-word';
+      root.insertBefore(wrap, node);
+      pushChars(node.textContent, wrap);
+      root.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
+      // block-level .h1-word / .last spans already handle the line break
+      root.removeChild(node);
+    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
+      const text = node.textContent;
+      node.setAttribute('aria-label', text);
+      node.textContent = '';
+      pushChars(text, node);
+    }
+  });
+  return chars;
+}
+
+function prepareHero() {
+  if (prefersReduced) return;
+  const h1 = document.querySelector('h1');
+  if (!h1) return;
+  heroChars = splitChars(h1);
+  if (heroChars.length) document.documentElement.classList.add('lib-anim');
+}
+
+function initHeroAnim() {
+  if (!heroChars.length) return true;
+  if (!window.Motion) return false;
+  Motion.animate(
+    heroChars,
+    { opacity: [0, 1], y: ['0.6em', '0em'], rotate: [8, 0] },
+    { delay: Motion.stagger(0.03, { start: 0.12 }), duration: 0.75, easing: [0.16, 1, 0.3, 1] }
+  );
+  return true;
+}
+
+function initStringTune() {
+  if (prefersReduced) return;
+  if (typeof StringTune === 'undefined' || !StringTune.StringTune) return;
+  try {
+    const st = StringTune.StringTune.getInstance();
+    st.use(StringTune.StringParallax);
+    if (finePointer) st.use(StringTune.StringMagnetic);
+    st.start(60);
+  } catch (e) { console.warn('StringTune init failed:', e); }
+}
+
+function initScrollFX() {
+  if (prefersReduced) return true;
+  if (!ensureGsap() || typeof ScrollTrigger === 'undefined') return false;
+
+  // CV sections — reveal when scrolled into view
+  gsap.utils.toArray('.cv-section').forEach(sec => {
+    gsap.fromTo(sec, { opacity: 0, y: 18 }, {
+      opacity: 1, y: 0, duration: 0.7, ease: 'expo.out',
+      scrollTrigger: { trigger: sec, start: 'top 86%', once: true },
+      onComplete: () => gsap.set(sec, { clearProps: 'transform' })
+    });
+  });
+
+  // Timeline items stagger + the vertical line draws itself with scroll
+  gsap.utils.toArray('.timeline').forEach(tl => {
+    const items = tl.querySelectorAll('.timeline-item');
+    if (items.length) {
+      gsap.fromTo(items, { opacity: 0, x: -12 }, {
+        opacity: 1, x: 0, duration: 0.55, ease: 'expo.out', stagger: 0.09,
+        scrollTrigger: { trigger: tl, start: 'top 82%', once: true },
+        onComplete: () => gsap.set(items, { clearProps: 'transform' })
+      });
+    }
+    gsap.fromTo(tl, { '--tl-progress': 0 }, {
+      '--tl-progress': 1, ease: 'none',
+      scrollTrigger: { trigger: tl, start: 'top 78%', end: 'bottom 55%', scrub: 0.6 }
+    });
+  });
+
+  // Collab cards
+  const collabGrid = document.querySelector('.collab-grid');
+  if (collabGrid) {
+    gsap.fromTo(collabGrid.children, { opacity: 0, x: -14 }, {
+      opacity: 1, x: 0, duration: 0.55, ease: 'expo.out', stagger: 0.1,
+      scrollTrigger: { trigger: collabGrid, start: 'top 85%', once: true },
+      onComplete: () => gsap.set(collabGrid.children, { clearProps: 'transform' })
+    });
+  }
+
+  // Skill groups
+  const skillsGrid = document.querySelector('.skills-grid');
+  if (skillsGrid) {
+    gsap.fromTo(skillsGrid.children, { opacity: 0, y: 14 }, {
+      opacity: 1, y: 0, duration: 0.55, ease: 'expo.out', stagger: 0.08,
+      scrollTrigger: { trigger: skillsGrid, start: 'top 85%', once: true },
+      onComplete: () => gsap.set(skillsGrid.children, { clearProps: 'transform' })
+    });
+  }
+
+  // Gear items
+  const gearCompact = document.querySelector('.gear-compact');
+  if (gearCompact) {
+    gsap.fromTo(gearCompact.children, { opacity: 0, y: 12 }, {
+      opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', stagger: 0.06,
+      scrollTrigger: { trigger: gearCompact, start: 'top 88%', once: true },
+      onComplete: () => gsap.set(gearCompact.children, { clearProps: 'transform' })
+    });
+  }
+
+  // Language bars fill when they scroll into view
+  const langRow = document.querySelector('.lang-row');
+  if (langRow) {
+    const bars = langRow.querySelectorAll('.lang-bar-fill');
+    bars.forEach(b => gsap.set(b, { width: 0 }));
+    gsap.to(bars, {
+      width: (i, el) => el.dataset.targetW || '100%',
+      duration: 0.9, ease: 'expo.out', stagger: 0.15,
+      scrollTrigger: { trigger: langRow, start: 'top 90%', once: true }
+    });
+  }
+
+  // Footer
+  const footer = document.querySelector('.g-footer');
+  if (footer) {
+    const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
+    gsap.fromTo(footer, { opacity: 0 }, {
+      opacity: 1, duration: 0.5, ease: 'power2.out',
+      scrollTrigger: { trigger: footer, start: 'top 92%', once: true }
+    });
+    gsap.fromTo(targets, { opacity: 0, y: 10 }, {
+      opacity: 1, y: 0, duration: 0.55, ease: 'expo.out', stagger: 0.08, delay: 0.1,
+      scrollTrigger: { trigger: footer, start: 'top 92%', once: true },
+      onComplete: () => gsap.set(targets, { clearProps: 'transform' })
+    });
+  }
+  return true;
+}
+
 // Profile photo load
 const profileImg = document.getElementById('profileImg');
 if (profileImg) {
@@ -990,113 +1206,27 @@ if (profileImg) {
   }
 }
 
-// Entrance animations — anime.js enhances CSS animations (graceful degradation)
-function initAnimations() {
-  if (typeof anime === 'undefined') {
-    // CSS animations already handle the entrance; nothing to do
-    document.querySelectorAll('.lang-bar-fill').forEach(bar => bar.style.width = bar.style.width);
-    return;
-  }
-
-  // Sidebar stagger (enhances CSS fadeUp)
-  const sidebarEls = ['.kicker', 'h1', '.divider', '.intro', '.links', '.back-link'];
-  sidebarEls.forEach((sel, i) => {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    anime({
-      targets: el,
-      opacity: [0, 1],
-      translateY: [12, 0],
-      duration: 600,
-      delay: 80 + (i * 70),
-      easing: 'easeOutExpo'
-    });
-  });
-
-  // Main fade
-  anime({
-    targets: 'main',
-    opacity: [0, 1],
-    duration: 700,
-    delay: 150,
-    easing: 'easeOutExpo'
-  });
-
-  // CV sections stagger
-  anime({
-    targets: '.cv-section',
-    opacity: [0, 1],
-    translateY: [18, 0],
-    duration: 600,
-    delay: anime.stagger(150, { start: 300 }),
-    easing: 'easeOutExpo'
-  });
-
-  // Timeline items
-  anime({
-    targets: '.timeline-item',
-    opacity: [0, 1],
-    translateX: [-10, 0],
-    duration: 500,
-    delay: anime.stagger(90, { start: 500 }),
-    easing: 'easeOutExpo'
-  });
-
-  // Collab cards
-  anime({
-    targets: '.collab-card',
-    opacity: [0, 1],
-    translateX: [-12, 0],
-    duration: 500,
-    delay: anime.stagger(80, { start: 600 }),
-    easing: 'easeOutExpo'
-  });
-
-  // Skill groups
-  anime({
-    targets: '.skill-group',
-    opacity: [0, 1],
-    translateY: [14, 0],
-    duration: 500,
-    delay: anime.stagger(70, { start: 600 }),
-    easing: 'easeOutExpo'
-  });
-
-  // Gear items
-  anime({
-    targets: '.gear-item',
-    opacity: [0, 1],
-    translateY: [12, 0],
-    duration: 450,
-    delay: anime.stagger(50, { start: 700 }),
-    easing: 'easeOutExpo'
-  });
-
-  // Language bars animate
-  document.querySelectorAll('.lang-bar-fill').forEach((bar, i) => {
-    const targetW = bar.style.width;
-    bar.style.width = '0%';
-    anime({
-      targets: bar,
-      width: targetW,
-      duration: 800,
-      delay: 800 + (i * 150),
-      easing: 'easeOutExpo'
-    });
-  });
-
-  // Footer
-  anime({
-    targets: '#footer',
-    opacity: [0, 1],
-    translateY: [12, 0],
-    duration: 600,
-    delay: 1000,
-    easing: 'easeOutExpo'
+// Sync prep (before paint): split hero + zero lang bars so GSAP can fill them on scroll
+prepareHero();
+if (!prefersReduced) {
+  document.querySelectorAll('.lang-bar-fill').forEach(b => {
+    b.dataset.targetW = b.style.width || '100%';
+    b.style.width = '0%';
   });
 }
 
-initAnimations();
+document.addEventListener('DOMContentLoaded', () => {
+  const motionOk = initHeroAnim();
+  const gsapOk = initScrollFX();
+  initStringTune();
+  if (!motionOk || !gsapOk) {
+    // Graceful fallback: restore CSS load animations + final bar widths
+    document.documentElement.classList.remove('lib-anim');
+    document.querySelectorAll('.lang-bar-fill').forEach(b => {
+      if (b.dataset.targetW) b.style.width = b.dataset.targetW;
+    });
+  }
+});
 </script>
 
 </body>
