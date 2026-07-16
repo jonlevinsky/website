@@ -29,8 +29,8 @@
 :root {
   --accent: #c4956a;
   --text-on-accent: #0c0c0c;
-  --accent-subtle: rgba(196, 149, 106, 0.12);
-  --accent-subtle-2: rgba(196, 149, 106, 0.06);
+  --accent-subtle: #c4966b1f;
+  --accent-subtle-2: #c4956a0f;
   --bg: #faf8f5;
   --surface: #f0ece6;
   --bg-raised: #f5f2ee;
@@ -64,7 +64,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   display: grid;
   grid-template-columns: 260px 1fr;
   gap: 40px;
-  max-width: 1200px;
+  max-width: 1420px;
   width: 100%;
   margin: 0 auto;
   padding: 24px;
@@ -89,6 +89,7 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   text-transform: uppercase;
   margin-bottom: 30px;
   opacity: 0;
+  animation: fadeUp 0.7s 0.05s var(--ease-out-expo) forwards;
 }
 
 h1 {
@@ -100,6 +101,7 @@ h1 {
   letter-spacing: -0.015em;
   color: var(--text);
   opacity: 0;
+  animation: fadeUp 0.8s 0.15s var(--ease-out-expo) forwards;
 }
 
 h1 span { display: block; }
@@ -111,6 +113,7 @@ h1 .last { font-style: italic; color: var(--accent); }
   background: var(--accent);
   margin: 26px 0;
   opacity: 0;
+  animation: fadeUp 0.7s 0.25s var(--ease-out-expo) forwards;
 }
 
 .intro {
@@ -119,6 +122,7 @@ h1 .last { font-style: italic; color: var(--accent); }
   line-height: 1.75;
   font-weight: 300;
   opacity: 0;
+  animation: fadeUp 0.7s 0.3s var(--ease-out-expo) forwards;
 }
 
 .links {
@@ -127,6 +131,7 @@ h1 .last { font-style: italic; color: var(--accent); }
   flex-direction: column;
   gap: 9px;
   opacity: 0;
+  animation: fadeUp 0.7s 0.38s var(--ease-out-expo) forwards;
 }
 
 .links a {
@@ -157,6 +162,7 @@ h1 .last { font-style: italic; color: var(--accent); }
   margin-top: auto;
   padding-top: 32px;
   opacity: 0;
+  animation: fadeUp 0.7s 0.45s var(--ease-out-expo) forwards;
 }
 
 .back-link a {
@@ -171,8 +177,8 @@ h1 .last { font-style: italic; color: var(--accent); }
 }
 
 .back-link a:hover { color: var(--accent); }
-.back-link a i { font-size: 14px; opacity: 0.55; }
-.back-link a:hover i { opacity: 1; color: var(--accent); }
+.back-link a i { font-size: 14px; opacity: 0.55; transition: transform 0.4s var(--ease-out-expo), opacity 0.3s ease; display: inline-block; }
+.back-link a:hover i { opacity: 1; color: var(--accent); transform: translateX(-3px); }
 
 /* ─── Main Content ─── */
 main {
@@ -181,11 +187,13 @@ main {
   gap: 56px;
   padding-top: 8px;
   opacity: 0;
+  animation: fadeIn 0.9s 0.2s var(--ease-out-expo) forwards;
 }
 
 /* ─── Section Base ─── */
 .cv-section {
   opacity: 0;
+  animation: fadeUp 0.7s 0.3s var(--ease-out-expo) forwards;
 }
 
 .cv-section h2 {
@@ -255,9 +263,7 @@ main {
   font-weight: 300;
 }
 
-.profile-text p + p {
-  margin-top: 12px;
-}
+.profile-text p + p { margin-top: 12px; }
 
 /* ─── Timeline (CV entries) ─── */
 .timeline {
@@ -283,6 +289,7 @@ main {
   padding: 18px 0;
   position: relative;
   opacity: 0;
+  animation: fadeUp 0.6s 0.4s var(--ease-out-expo) forwards;
 }
 
 .timeline-item:first-child { padding-top: 0; }
@@ -364,6 +371,8 @@ main {
   border-radius: var(--r-md);
   padding: 24px;
   transition: transform 0.35s var(--ease-out-expo), border-color 0.3s ease;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.5s var(--ease-out-expo) forwards;
 }
 
 .collab-card:hover {
@@ -392,9 +401,7 @@ main {
   transition: opacity 0.3s ease;
 }
 
-.collab-card:hover .collab-logo img {
-  opacity: 1;
-}
+.collab-card:hover .collab-logo img { opacity: 1; }
 
 .collab-logo-placeholder {
   font-family: var(--serif);
@@ -436,14 +443,8 @@ main {
 }
 
 @media (max-width: 640px) {
-  .collab-card {
-    flex-direction: column;
-    gap: 16px;
-  }
-  .collab-logo {
-    width: 48px;
-    height: 48px;
-  }
+  .collab-card { flex-direction: column; gap: 16px; }
+  .collab-logo { width: 48px; height: 48px; }
 }
 
 /* ─── Skills Grid ─── */
@@ -458,6 +459,8 @@ main {
   border: 1px solid var(--border);
   border-radius: var(--r-md);
   padding: 20px;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.5s var(--ease-out-expo) forwards;
 }
 
 .skill-group h3 {
@@ -506,6 +509,8 @@ main {
   padding: 16px;
   text-align: center;
   transition: transform 0.3s var(--ease-out-expo), border-color 0.3s ease;
+  opacity: 0;
+  animation: fadeUp 0.6s 0.55s var(--ease-out-expo) forwards;
 }
 
 .gear-item:hover {
@@ -594,6 +599,7 @@ main {
   position: relative;
   margin-top: 20px;
   opacity: 0;
+  animation: fadeUp 0.7s 0.6s var(--ease-out-expo) forwards;
 }
 
 .g-footer::before {
@@ -653,6 +659,15 @@ main {
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 1024px) {
   .wrap { grid-template-columns: 210px 1fr; gap: 28px; }
@@ -695,6 +710,7 @@ main {
 }
 </style>
 <base target="_self">
+<base target="_blank">
 </head>
 <body>
 
@@ -765,11 +781,11 @@ main {
       </div>
     </section>
 
-<!-- Filmografie & Praxe -->
+    <!-- Filmografie & Praxe -->
     <section class="cv-section" id="secWork">
       <h2>Filmografie &amp; Praxe</h2>
       <div class="timeline">
-        
+
         <div class="timeline-item">
           <div class="timeline-dot"></div>
           <div class="timeline-content">
@@ -851,7 +867,7 @@ main {
                     <img src="https://laborator-dentlife.cz/files/res/icon-dent-dark.png" alt="laborator-dentlife.cz" loading="lazy" decoding="async">
                 </div>
                 <div class="collab-info">
-                    <h3>Dent&Life</h3>
+                    <h3>Dent&amp;Life</h3>
                     <div class="collab-type">Postupy práce, Propagační video</div>
                     <p></p>
                 </div>
@@ -907,7 +923,7 @@ main {
       </div>
     </section>
 
-<!-- Vybavení -->
+    <!-- Vybavení -->
     <section class="cv-section" id="secGear">
       <h2>Vybavení</h2>
       <div class="gear-compact">
@@ -974,16 +990,15 @@ if (profileImg) {
   }
 }
 
-// Entrance animations
+// Entrance animations — anime.js enhances CSS animations (graceful degradation)
 function initAnimations() {
   if (typeof anime === 'undefined') {
-    document.querySelectorAll('.kicker, h1, .divider, .intro, .links, .back-link, main, .cv-section, .timeline-item, .skill-group, .gear-item, .g-footer')
-      .forEach(el => el.style.opacity = '1');
+    // CSS animations already handle the entrance; nothing to do
     document.querySelectorAll('.lang-bar-fill').forEach(bar => bar.style.width = bar.style.width);
     return;
   }
 
-  // Sidebar stagger
+  // Sidebar stagger (enhances CSS fadeUp)
   const sidebarEls = ['.kicker', 'h1', '.divider', '.intro', '.links', '.back-link'];
   sidebarEls.forEach((sel, i) => {
     const el = document.querySelector(sel);
@@ -1007,7 +1022,7 @@ function initAnimations() {
     easing: 'easeOutExpo'
   });
 
-  // CV sections
+  // CV sections stagger
   anime({
     targets: '.cv-section',
     opacity: [0, 1],
@@ -1035,7 +1050,7 @@ function initAnimations() {
     duration: 500,
     delay: anime.stagger(80, { start: 600 }),
     easing: 'easeOutExpo'
-    });
+  });
 
   // Skill groups
   anime({

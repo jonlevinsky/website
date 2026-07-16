@@ -62,15 +62,15 @@
       },
       {
         "type": "photo",
-        "src": "media/video/2025/Postupy-práce/post3.png",
-        "thumbnail": "media/video/2025/Postupy-práce/post3.png",
+        "src": "media/video/2025-2026/Postupy-práce/Plakat-Hodinar.jpeg",
+        "thumbnail": "media/video/2025-2026/Postupy-práce/Plakat-Hodinar.jpeg",
         "title": "Plakát Hodinář",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2025/Postupy-práce/post1.png",
-        "thumbnail": "media/video/2025/Postupy-práce/post1.png",
+        "src": "media/video/2025-2026/Postupy-práce/Plakat-zubni technik.jpeg",
+        "thumbnail": "media/video/2025-2026/Postupy-práce/Plakat-zubni technik.jpeg",
         "title": "Plakát Zubní technik",
         "caption": ""
       },
@@ -256,7 +256,9 @@
     "bio": "",
     "techniques": [],
     "gear": {
-      "camera": [],
+      "camera": [
+        "Blackamgic URSA"
+      ],
       "lenses": [],
       "gimbal/stabilization": [],
       "lighting": [],
@@ -274,7 +276,7 @@
       {
         "type": "video",
         "src": "media/video/2024/Za-Okny/8.ZaOkny.mp4",
-        "thumbnail": "media/video/2024/Za-Okny/8.ZaOkny_thumb.jpg",
+        "thumbnail": "media/video/2024/Za-Okny/maxresdefault.webp",
         "title": "Za Okny",
         "caption": ""
       }
