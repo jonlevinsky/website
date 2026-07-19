@@ -6,20 +6,31 @@
 <meta name="description" content="Portfolio Jana Levínského — cinematography & photography.">
 <meta name="theme-color" content="#c4956a">
 
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://levinskyj.art/">
 <meta property="og:title" content="Jan Levínský — Cinematography & Photography">
 <meta property="og:description" content="Portfolio Jana Levínského — cinematography & photography.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://levinskyj.art">
 <meta property="og:image" content="https://levinskyj.art/media/og-cover.webp">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/webp">
+<meta property="og:image:alt" content="Jan Levínský — Cinematography & Photography portfolio preview">
+<meta property="og:site_name" content="Jan Levínský">
+<meta property="og:locale" content="cs_CZ">
+
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Jan Levínský — Cinematography & Photography">
+<meta name="twitter:description" content="Portfolio Jana Levínského — cinematography & photography.">
+<meta name="twitter:image" content="https://levinskyj.art/media/og-cover.webp">
+<meta name="twitter:image:alt" content="Jan Levínský — Cinematography & Photography portfolio preview">
 
 <title>Jan Levínský // Cinematography & Photography</title>
 <link rel="canonical" href="https://levinskyj.art/">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
@@ -293,6 +304,21 @@ main {
 
 .tile.skeleton::before { opacity: 1; }
 .tile img { position: relative; z-index: 1; }
+
+/* LQIP placeholder */
+.tile .lqip-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) saturate(0.8);
+  transition: opacity 0.6s var(--ease-out-expo);
+}
+.tile img.loaded + .lqip-bg,
+.tile .lqip-bg.hidden {
+  opacity: 0;
+}
 
 /* ─── Unified hover overlay ─── */
 .tile::after {
@@ -752,6 +778,7 @@ main {
     @font-face { font-family: 'Inter'; font-display: swap; }
   </style>
   <link rel="preload" href="./projects.json" as="fetch" crossorigin>
+<base target="_blank">
 </head>
 <body>
 
@@ -929,10 +956,14 @@ async function initPortfolio() {
 
     for (const [idx, project] of projects.entries()) {
       let thumbnailSrc = project.thumbnail || '';
+      let lqipSrc = null;
       if (!thumbnailSrc && project.media && project.media[0]) {
         const m = project.media[0];
-        if (m.type === 'photo') thumbnailSrc = m.src;
+        if (m.type === 'photo') thumbnailSrc = m.thumbnail || m.src;
+        if (m.lqip) lqipSrc = m.lqip;
       }
+      // Prefer project-level thumbnail LQIP if available
+      if (project.lqip) lqipSrc = project.lqip;
 
       const a = document.createElement('a');
       a.href = 'project.html?id=' + project.id;
@@ -1037,9 +1068,22 @@ async function initPortfolio() {
       }
 
       const imgPromise = new Promise(resolve => {
+        const pxWrap = document.createElement('div');
+        pxWrap.className = 'px-wrap';
+        pxWrap.setAttribute('string', 'parallax');
+        pxWrap.setAttribute('string-parallax', '0.05');
+
+        // LQIP placeholder background
+        if (lqipSrc) {
+          const lqipDiv = document.createElement('div');
+          lqipDiv.className = 'lqip-bg';
+          lqipDiv.style.backgroundImage = 'url(' + lqipSrc + ')';
+          pxWrap.appendChild(lqipDiv);
+        }
+
         const img = document.createElement('img');
         img.src = thumbnailSrc ? encodeURI(thumbnailSrc) : '';
-        img.alt = project.title;
+        img.alt = project.title || '';
         img.loading = idx < 3 ? 'eager' : 'lazy';
         img.decoding = 'async';
         const tileRect = a.getBoundingClientRect();
@@ -1068,10 +1112,6 @@ async function initPortfolio() {
           a.classList.remove('skeleton');
           resolve();
         };
-        const pxWrap = document.createElement('div');
-        pxWrap.className = 'px-wrap';
-        pxWrap.setAttribute('string', 'parallax');
-        pxWrap.setAttribute('string-parallax', '0.05');
         pxWrap.appendChild(img);
         a.insertBefore(pxWrap, a.firstChild);
       });

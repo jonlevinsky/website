@@ -193,6 +193,17 @@ def safe_folder_name(s):
     s = s.strip().replace(" ", "-")
     return s or "projekt"
 
+def normalize_filename(filename):
+    """Normalize filename: lowercase, spaces to hyphens, remove special chars."""
+    name = Path(filename).stem
+    ext = Path(filename).suffix.lower()
+    name = name.lower()
+    name = name.replace(" ", "-")
+    name = re.sub(r'[^a-z0-9\-_]', '', name)
+    name = re.sub(r'-+', '-', name)
+    name = name.strip('-')
+    return (name or "file") + ext
+
 def slugify(text):
     text = text.lower()
     text = re.sub(r'[^\w\s-]', '', text)
@@ -412,6 +423,25 @@ def generate_lqip_for_file(filepath):
         return None
 
 # ─── VALIDATION HELPERS ────────────────────────────────────────────────
+def find_case_insensitive_path(rel_path):
+    """Try to find a case-insensitive match for a relative path."""
+    parts = Path(rel_path).parts
+    if not parts:
+        return None
+    current = Path(parts[0])
+    if not current.exists():
+        return None
+    for part in parts[1:]:
+        found = None
+        for child in current.iterdir():
+            if child.name.lower() == part.lower():
+                found = child
+                break
+        if not found:
+            return None
+        current = found
+    return str(current).replace("\\", "/")
+
 def validate_projects():
     issues = []
     seen_ids = set()
@@ -428,15 +458,30 @@ def validate_projects():
             issues.append({"type": "warning", "project": proj_name, "message": "Chybi rok"})
         for field in ["thumbnail", "full"]:
             path = project.get(field)
-            if path and not Path(path).exists():
-                issues.append({"type": "error", "project": proj_name, "message": f"Nefunkcni cesta: {path}"})
+            if path:
+                if not Path(path).exists():
+                    ci = find_case_insensitive_path(path)
+                    if ci:
+                        issues.append({"type": "warning", "project": proj_name, "message": f"Case mismatch {field}: {path} -> {ci}"})
+                    else:
+                        issues.append({"type": "error", "project": proj_name, "message": f"Nefunkcni cesta: {path}"})
         for mi, media in enumerate(project.get("media", [])):
             src = media.get("src")
-            if src and not Path(src).exists():
-                issues.append({"type": "error", "project": proj_name, "message": f"Nefunkcni media src: {src}"})
+            if src:
+                if not Path(src).exists():
+                    ci = find_case_insensitive_path(src)
+                    if ci:
+                        issues.append({"type": "warning", "project": proj_name, "message": f"Case mismatch src: {src} -> {ci}"})
+                    else:
+                        issues.append({"type": "error", "project": proj_name, "message": f"Nefunkcni media src: {src}"})
             thumb = media.get("thumbnail")
-            if thumb and not Path(thumb).exists():
-                issues.append({"type": "warning", "project": proj_name, "message": f"Nefunkcni thumbnail: {thumb}"})
+            if thumb:
+                if not Path(thumb).exists():
+                    ci = find_case_insensitive_path(thumb)
+                    if ci:
+                        issues.append({"type": "warning", "project": proj_name, "message": f"Case mismatch thumb: {thumb} -> {ci}"})
+                    else:
+                        issues.append({"type": "warning", "project": proj_name, "message": f"Nefunkcni thumbnail: {thumb}"})
     return issues
 
 def get_json_diff():
@@ -835,6 +880,7 @@ class Handler(SimpleHTTPRequestHandler):
             filename = Path(f["filename"]).name
             if not filename:
                 continue
+            filename = normalize_filename(filename)
             original_stem = Path(filename).stem
             original_suffix = Path(filename).suffix.lower()
             should_convert_webp = is_image_ext(filename)

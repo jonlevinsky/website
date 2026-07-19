@@ -5,20 +5,34 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="description" content="Detail projektu — Jan Levínský, cinematography & photography.">
 <meta name="theme-color" content="#c4956a">
-<meta property="og:title" content="Projekt — Jan Levínský">
-<meta property="og:description" content="Cinematography & Photography. Detail projektu.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://levinskyj.art/project.html">
-<meta property="og:image" content="https://levinskyj.art/media/og-cover.webp">
-<meta name="twitter:card" content="summary_large_image">
+
+<!-- Dynamic OG meta tags — populated by JS after project load -->
+<meta id="og-type" property="og:type" content="article">
+<meta id="og-url" property="og:url" content="https://levinskyj.art/project.html">
+<meta id="og-title" property="og:title" content="Projekt — Jan Levínský">
+<meta id="og-desc" property="og:description" content="Cinematography & Photography. Detail projektu.">
+<meta id="og-image" property="og:image" content="https://levinskyj.art/media/og-cover.webp">
+<meta id="og-image-w" property="og:image:width" content="1200">
+<meta id="og-image-h" property="og:image:height" content="630">
+<meta id="og-image-type" property="og:image:type" content="image/png">
+<meta id="og-image-alt" property="og:image:alt" content="Project preview">
+<meta id="og-site" property="og:site_name" content="Jan Levínský">
+<meta id="og-locale" property="og:locale" content="cs_CZ">
+
+<meta id="tw-card" name="twitter:card" content="summary_large_image">
+<meta id="tw-title" name="twitter:title" content="Projekt — Jan Levínský">
+<meta id="tw-desc" name="twitter:description" content="Cinematography & Photography. Detail projektu.">
+<meta id="tw-image" name="twitter:image" content="https://levinskyj.art/media/og-cover.webp">
+<meta id="tw-image-alt" name="twitter:image:alt" content="Project preview">
 
 <title>Jan Levínský // Project</title>
 <link rel="canonical" href="https://levinskyj.art/project.html">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
@@ -257,7 +271,7 @@ main {
   background: var(--bg-raised);
 }
 
-/* ─── BENTO GALLERY ─── */
+/* Gallery */
 .gallery {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -327,7 +341,22 @@ main {
 
 .tile:hover img, .tile:hover video { transform: scale(1.03); }
 
-/* ─── Unified hover overlay ─── */
+/* LQIP placeholder */
+.tile .lqip-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) saturate(0.8);
+  transition: opacity 0.6s var(--ease-out-expo);
+}
+.tile img.loaded + .lqip-bg,
+.tile .lqip-bg.hidden {
+  opacity: 0;
+}
+
+/* Hover overlay */
 .tile::after {
   content: '';
   position: absolute;
@@ -341,7 +370,7 @@ main {
 
 .tile:hover::after { opacity: 1; }
 
-/* ─── Film Perforations — video only ─── */
+/* Film Perforations */
 .film-perf-v {
   position: absolute;
   pointer-events: none;
@@ -375,9 +404,7 @@ main {
   transition: box-shadow 0.4s ease, transform 0.4s var(--ease-out-expo);
 }
 
-.tile:hover .film-perf-v {
-  opacity: 0.9;
-}
+.tile:hover .film-perf-v { opacity: 0.9; }
 
 .tile:hover .perf-dot {
   box-shadow:
@@ -397,9 +424,7 @@ main {
   transition: opacity 0.5s ease;
 }
 
-.tile:hover .film-shadow {
-  opacity: 0.75;
-}
+.tile:hover .film-shadow { opacity: 0.75; }
 
 .tile.video-tile .film-shadow {
   box-shadow:
@@ -468,9 +493,7 @@ main {
   transition: opacity 0.45s var(--ease-in-out);
 }
 
-.tile:hover .video-info {
-  opacity: 1;
-}
+.tile:hover .video-info { opacity: 1; }
 
 .video-info-title {
   font-family: var(--serif);
@@ -800,6 +823,7 @@ main {
   align-items: center;
   justify-content: center;
   padding: 72px 80px 48px;
+  overflow: visible;
 }
 
 .modal-content {
@@ -1144,7 +1168,7 @@ main {
   }
 }
 
-/* ─── AMBIENT LIGHTING ─── */
+/* Ambient Lighting */
 .ambient-canvas {
   position: absolute;
   inset: -160px;
@@ -1164,11 +1188,6 @@ main {
 .ambient-canvas.off {
   opacity: 0 !important;
   transition: opacity 0.6s ease;
-}
-
-.modal-inner {
-  position: relative;
-  overflow: visible;
 }
 </style>
 <base target="_self">
@@ -1177,34 +1196,8 @@ main {
   <style>
     @font-face { font-family: 'Bricolage Grotesque'; font-display: swap; }
     @font-face { font-family: 'Inter'; font-display: swap; }
-  
-/* ─── AMBIENT LIGHTING ─── */
-.ambient-canvas {
-  position: absolute;
-  inset: -160px;
-  width: calc(100% + 320px);
-  height: calc(100% + 320px);
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-  filter: blur(180px) saturate(1.1) brightness(0.4);
-}
-
-.modal.open .ambient-canvas {
-  opacity: 1;
-}
-
-.ambient-canvas.off {
-  opacity: 0 !important;
-  transition: opacity 0.6s ease;
-}
-
-.modal-inner {
-  position: relative;
-  overflow: visible;
-}
-</style>
+  </style>
+<base target="_blank">
 <base target="_blank">
 </head>
 <body>
@@ -1219,7 +1212,7 @@ main {
   <main id="project-container">
     <div class="loading-state">
       <div class="loading-ring"></div>
-      <div class="loading-label">Loading project…</div>
+      <div class="loading-label">Loading project...</div>
     </div>
   </main>
 </div>
@@ -1244,12 +1237,12 @@ main {
     <div class="shortcuts-panel" id="shortcuts-panel" role="tooltip">
       <h3>Keyboard shortcuts</h3>
       <div class="sc-row"><span class="sc-label">Play / Pause</span><div class="sc-keys"><span class="key">Space</span><span class="key">K</span></div></div>
-      <div class="sc-row"><span class="sc-label">Seek ±5s</span><div class="sc-keys"><span class="key">←</span><span class="key">→</span></div></div>
+      <div class="sc-row"><span class="sc-label">Seek ±5s</span><div class="sc-keys"><span class="key">&larr;</span><span class="key">&rarr;</span></div></div>
       <div class="sc-row"><span class="sc-label">Seek ±10s</span><div class="sc-keys"><span class="key">J</span><span class="key">L</span></div></div>
-      <div class="sc-row"><span class="sc-label">Volume</span><div class="sc-keys"><span class="key">↑</span><span class="key">↓</span></div></div>
+      <div class="sc-row"><span class="sc-label">Volume</span><div class="sc-keys"><span class="key">&uarr;</span><span class="key">&darr;</span></div></div>
       <div class="sc-row"><span class="sc-label">Mute</span><div class="sc-keys"><span class="key">M</span></div></div>
       <div class="sc-row"><span class="sc-label">Fullscreen</span><div class="sc-keys"><span class="key">F</span></div></div>
-      <div class="sc-row"><span class="sc-label">Prev / Next</span><div class="sc-keys"><span class="key">Shift ←</span><span class="key">Shift →</span></div></div>
+      <div class="sc-row"><span class="sc-label">Prev / Next</span><div class="sc-keys"><span class="key">Shift &larr;</span><span class="key">Shift &rarr;</span></div></div>
       <div class="sc-row"><span class="sc-label">Ambient light</span><div class="sc-keys"><span class="key">A</span></div></div>
       <div class="sc-row"><span class="sc-label">Close</span><div class="sc-keys"><span class="key">Esc</span></div></div>
     </div>
@@ -1341,6 +1334,63 @@ function getProjectId() {
   return parseInt(new URLSearchParams(window.location.search).get('id'));
 }
 
+// ─── CASE-INSENSITIVE PATH RESOLVER ──────────────────────────────────
+const _pathCache = new Map();
+
+function tryHead(url) {
+  return fetch(url, { method: 'HEAD', cache: 'no-store' }).then(r => r.ok).catch(() => false);
+}
+
+async function resolvePath(path) {
+  if (!path || _pathCache.has(path)) return _pathCache.get(path) || path;
+  // 1. Original
+  if (await tryHead(path)) { _pathCache.set(path, path); return path; }
+  // 2. Lowercase
+  const lower = path.toLowerCase();
+  if (lower !== path && await tryHead(lower)) { _pathCache.set(path, lower); return lower; }
+  // 3. Lowercase with spaces->hyphens
+  const lowerHyphen = lower.replace(/ /g, '-');
+  if (lowerHyphen !== path && await tryHead(lowerHyphen)) { _pathCache.set(path, lowerHyphen); return lowerHyphen; }
+  // 4. Lowercase with %20->hyphens
+  const lowerEncoded = lower.replace(/%20/g, '-');
+  if (lowerEncoded !== path && await tryHead(lowerEncoded)) { _pathCache.set(path, lowerEncoded); return lowerEncoded; }
+  _pathCache.set(path, path);
+  return path;
+}
+
+async function resolveProjectPaths(project) {
+  if (!project) return project;
+  const tasks = [];
+  const setters = [];
+  const collect = (key, val, setter) => { if (val) { tasks.push(resolvePath(val)); setters.push(setter); } };
+  collect('thumbnail', project.thumbnail, v => project.thumbnail = v);
+  collect('full', project.full, v => project.full = v);
+  collect('og_image', project.og_image, v => project.og_image = v);
+  if (project.media) {
+    project.media.forEach((m, i) => {
+      collect('src', m.src, v => m.src = v);
+      collect('thumbnail', m.thumbnail, v => m.thumbnail = v);
+      collect('poster', m.poster, v => m.poster = v);
+    });
+  }
+  const resolved = await Promise.all(tasks);
+  resolved.forEach((v, i) => setters[i](v));
+  return project;
+}
+
+function imgErrorFallback(img) {
+  const orig = img.getAttribute('data-orig-src') || img.src;
+  if (!img.getAttribute('data-orig-src')) img.setAttribute('data-orig-src', orig);
+  const n = parseInt(img.getAttribute('data-attempt') || '0');
+  img.setAttribute('data-attempt', String(n + 1));
+  const variants = [orig.toLowerCase(), orig.toLowerCase().replace(/ /g, '-'), orig.toLowerCase().replace(/%20/g, '-')];
+  if (n < variants.length && variants[n] !== img.src) {
+    img.src = variants[n];
+  } else {
+    img.removeAttribute('onerror');
+  }
+}
+
 function setOrientation(tile, w, h) {
   if (!w || !h) { tile.classList.add('landscape'); return; }
   if (w >= h) {
@@ -1382,12 +1432,63 @@ function detectOrientations() {
   });
 }
 
+// DYNAMIC META TAG UPDATE - supports builder features
+function updateMetaTags(project) {
+  const setMeta = (id, attr, val) => {
+    const el = document.getElementById(id);
+    if (el) el.setAttribute(attr, val);
+  };
+
+  // OG image: prefer project.og_image, then thumbnail, then first media src, then fallback
+  let ogImage = 'https://levinskyj.art/media/og-cover.webp';
+  if (project.og_image) {
+    ogImage = 'https://levinskyj.art/' + project.og_image;
+  } else if (project.thumbnail) {
+    ogImage = 'https://levinskyj.art/' + project.thumbnail;
+  } else if (project.media && project.media[0] && project.media[0].src) {
+    ogImage = 'https://levinskyj.art/' + project.media[0].src;
+  }
+
+  const description = project.bio
+    ? project.bio.substring(0, 200).replace(/\n/g, ' ') + (project.bio.length > 200 ? '...' : '')
+    : 'Cinematography & Photography. Detail projektu.';
+
+  const canonicalUrl = 'https://levinskyj.art/project.html?id=' + project.id;
+
+  setMeta('og-url', 'content', canonicalUrl);
+  setMeta('og-title', 'content', project.title + ' — Jan Levínský');
+  setMeta('og-desc', 'content', description);
+  setMeta('og-image', 'content', ogImage);
+  setMeta('og-image-alt', 'content', project.title + ' — project preview');
+
+  // OG image type based on extension
+  const ogExt = ogImage.split('.').pop().toLowerCase();
+  const mimeType = ogExt === 'webp' ? 'image/webp' : ogExt === 'png' ? 'image/png' : ogExt === 'jpg' || ogExt === 'jpeg' ? 'image/jpeg' : 'image/png';
+  setMeta('og-image-type', 'content', mimeType);
+
+  setMeta('tw-title', 'content', project.title + ' — Jan Levínský');
+  setMeta('tw-desc', 'content', description);
+  setMeta('tw-image', 'content', ogImage);
+  setMeta('tw-image-alt', 'content', project.title + ' — project preview');
+
+  // Canonical link
+  const canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.href = canonicalUrl;
+
+  // Meta description
+  const metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.content = description;
+
+  // Title
+  document.title = project.title + ' — Jan Levínský';
+}
+
 async function loadProject() {
   const id = getProjectId();
   const container = document.getElementById('project-container');
-  if (!id) { 
-    container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Missing project ID.</p>'; 
-    return; 
+  if (!id) {
+    container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Missing project ID.</p>';
+    return;
   }
 
   try {
@@ -1396,12 +1497,14 @@ async function loadProject() {
     const projects = await res.json();
     const projectList = Array.isArray(projects) ? projects : (projects.projects || []);
     const project = projectList.find(p => p.id === id);
-    if (!project) { 
-      container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Project not found.</p>'; 
-      return; 
+    if (!project) {
+      container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Project not found.</p>';
+      return;
     }
+    // Resolve case-insensitive paths before displaying
+    await resolveProjectPaths(project);
     displayProject(project);
-    document.title = project.title + ' — Jan Levínský';
+    updateMetaTags(project);
   } catch(e) {
     container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Failed to load project.</p>';
   }
@@ -1512,14 +1615,16 @@ function displayProject(project) {
 
     if (m.type === 'photo') {
       const photoSrc = m.thumbnail || m.src;
+      const lqipAttr = m.lqip ? ' style="background-image:url(' + m.lqip + ')"' : '';
       gallery += '<div class="tile" data-index="' + i + '" data-type="photo">' +
         '<div class="px-wrap">' +
-        '<img src="' + (photoSrc ? encodeURI(photoSrc) : photoSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async">' +
+        (m.lqip ? '<div class="lqip-bg" style="background-image:url(' + m.lqip + ')"></div>' : '') +
+        '<img src="' + (photoSrc ? encodeURI(photoSrc) : photoSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async" onerror="imgErrorFallback(this)">' +
         '</div>' +
         flyout + '</div>';
     } else {
       const thumbSrc = m.thumbnail || m.poster || '';
-      const thumbImg = thumbSrc ? '<div class="px-wrap"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async"></div>' : '';
+      const thumbImg = thumbSrc ? '<div class="px-wrap"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async"></div>' : '';
 
       const filmSizes = {
         video: { normal: { width: 24, height: 18.6 }, wide: { width: 24, height: 14 }, tall: { width: 24, height: 44.2 } }
@@ -1734,7 +1839,6 @@ function drawAmbient() {
   if (!c || !ambientCtx) return;
 
   const now = performance.now();
-  // 60fps for first 5 frames (fast startup), then 30fps (smooth)
   const throttle = ambientFrameCount < 5 ? 16 : 33;
   if (now - lastAmbientTime < throttle) {
     ambientRaf = requestAnimationFrame(drawAmbient);
@@ -1757,7 +1861,6 @@ function drawAmbient() {
   }
 
   try {
-    // Use lower quality but smoother rendering
     ambientCtx.imageSmoothingEnabled = true;
     ambientCtx.imageSmoothingQuality = 'low';
     ambientCtx.drawImage(source, 0, 0, c.width, c.height);
@@ -1787,7 +1890,6 @@ function stopAmbient() {
     ambientRaf = null;
   }
 }
-
 
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
@@ -1898,7 +2000,7 @@ function renderMedia() {
 
   setTimeout(() => {
     if (m.type === 'photo') {
-      modalContent.innerHTML = '<img src="' + m.src + '" alt="' + (m.title||'') + '" id="modal-photo">';
+      modalContent.innerHTML = '<img src="' + m.src + '" alt="' + (m.title || '') + '" id="modal-photo" onerror="imgErrorFallback(this)">';
       vp = null;
       const photoImg = modalContent.querySelector('#modal-photo');
       if (photoImg) {
