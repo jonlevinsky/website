@@ -262,6 +262,148 @@ def generate_lqip(image_bytes, width=LQIP_WIDTH, quality=LQIP_QUALITY, blur=LQIP
         print(f"[LQIP] Error: {e}")
         return None
 
+
+# ─── OG IMAGE GENERATION ───────────────────────────────────────────────
+OG_WIDTH = 1200
+OG_HEIGHT = 630
+OG_BG_COLOR = (12, 12, 12)  # #0c0c0c
+OG_ACCENT_COLOR = (196, 149, 106)  # #c4956a
+OG_TEXT_COLOR = (232, 230, 227)  # #e8e6e3
+
+def generate_og_image(project, output_path=None):
+    """Generate a 1200x630 OG image for a project."""
+    try:
+        from PIL import ImageDraw, ImageFont
+
+        # Create base image
+        img = Image.new('RGB', (OG_WIDTH, OG_HEIGHT), OG_BG_COLOR)
+        draw = ImageDraw.Draw(img)
+
+        # Try to load project thumbnail as background
+        thumb_path = project.get("thumbnail", "")
+        if thumb_path and Path(thumb_path).exists():
+            try:
+                thumb = Image.open(thumb_path)
+                # Resize to cover the OG canvas
+                thumb_ratio = thumb.width / thumb.height
+                og_ratio = OG_WIDTH / OG_HEIGHT
+                if thumb_ratio > og_ratio:
+                    new_height = OG_HEIGHT
+                    new_width = int(OG_HEIGHT * thumb_ratio)
+                else:
+                    new_width = OG_WIDTH
+                    new_height = int(OG_WIDTH / thumb_ratio)
+                thumb = thumb.resize((new_width, new_height), Image.LANCZOS)
+                # Center crop
+                left = (new_width - OG_WIDTH) // 2
+                top = (new_height - OG_HEIGHT) // 2
+                thumb = thumb.crop((left, top, left + OG_WIDTH, top + OG_HEIGHT))
+                # Darken the image
+                thumb = Image.blend(thumb, Image.new('RGB', (OG_WIDTH, OG_HEIGHT), OG_BG_COLOR), 0.6)
+                img = thumb
+                draw = ImageDraw.Draw(img)
+            except Exception:
+                pass
+
+        # Draw accent line at top
+        draw.rectangle([0, 0, OG_WIDTH, 4], fill=OG_ACCENT_COLOR)
+
+        # Draw text
+        title = project.get("title", "Untitled")
+        year = project.get("year", "")
+        ptype = project.get("type", "photo").upper()
+
+        # Try to load fonts
+        try:
+            title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 72)
+            subtitle_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
+            meta_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
+        except Exception:
+            try:
+                title_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 72)
+                subtitle_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 32)
+                meta_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 24)
+            except Exception:
+                title_font = ImageFont.load_default()
+                subtitle_font = ImageFont.load_default()
+                meta_font = ImageFont.load_default()
+
+        # Draw type badge
+        badge_text = f"  {ptype}  "
+        bbox = draw.textbbox((0, 0), badge_text, font=meta_font)
+        badge_width = bbox[2] - bbox[0]
+        badge_height = bbox[3] - bbox[1]
+        draw.rounded_rectangle([60, 60, 60 + badge_width + 20, 60 + badge_height + 16], radius=4, fill=OG_ACCENT_COLOR)
+        draw.text((70, 68), badge_text, fill=OG_BG_COLOR, font=meta_font)
+
+        # Draw title
+        y_offset = 140
+        max_width = OG_WIDTH - 120
+        words = title.split()
+        lines = []
+        current_line = ""
+        for word in words:
+            test = current_line + " " + word if current_line else word
+            bbox = draw.textbbox((0, 0), test, font=title_font)
+            if bbox[2] - bbox[0] <= max_width:
+                current_line = test
+            else:
+                if current_line:
+                    lines.append(current_line)
+                current_line = word
+        if current_line:
+            lines.append(current_line)
+
+        for line in lines[:3]:  # Max 3 lines
+            draw.text((60, y_offset), line, fill=OG_TEXT_COLOR, font=title_font)
+            y_offset += 90
+
+        # Draw year and name
+        if year:
+            draw.text((60, OG_HEIGHT - 100), f"{year}  |  JAN LEVINSKY", fill=OG_ACCENT_COLOR, font=subtitle_font)
+        else:
+            draw.text((60, OG_HEIGHT - 100), "JAN LEVINSKY", fill=OG_ACCENT_COLOR, font=subtitle_font)
+
+        # Draw bottom accent line
+        draw.rectangle([0, OG_HEIGHT - 4, OG_WIDTH, OG_HEIGHT], fill=OG_ACCENT_COLOR)
+
+        # Save
+        if output_path:
+            img.save(output_path, "PNG", optimize=True)
+            return output_path
+        else:
+            output = io.BytesIO()
+            img.save(output, "PNG", optimize=True)
+            output.seek(0)
+            return output.read()
+    except Exception as e:
+        print(f"[OG] Error generating image: {e}")
+        return None
+
+def generate_og_for_project(project_idx):
+    """Generate OG image for a project and update its metadata."""
+    if project_idx < 0 or project_idx >= len(data["projects"]):
+        return False, "Neplatny projekt"
+
+    project = data["projects"][project_idx]
+    ptype = project.get("type", "photo")
+    pyear = project.get("year", "unknown")
+    ptitle = project.get("title", "untitled")
+
+    sub_dir = MEDIA_DIR / ptype / pyear / safe_folder_name(ptitle)
+    sub_dir.mkdir(parents=True, exist_ok=True)
+
+    output_path = sub_dir / "og-image.png"
+    result = generate_og_image(project, output_path)
+
+    if result:
+        rel_path = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/og-image.png"
+        project["og_image"] = rel_path
+        save_json()
+        return True, rel_path
+    else:
+        return False, "Generovani selhalo"
+
 def generate_lqip_for_file(filepath):
     try:
         with open(filepath, "rb") as f:
@@ -515,6 +657,8 @@ class Handler(SimpleHTTPRequestHandler):
             self.handle_bulk_year()
         elif path == "/api/generate-lqip":
             self.handle_generate_lqip()
+        elif path == "/api/generate-og":
+            self.handle_generate_og()
         elif path == "/api/deploy":
             self.handle_deploy()
         else:
@@ -635,6 +779,20 @@ class Handler(SimpleHTTPRequestHandler):
                             generated = 1
             save_json()
             self.send_json({"ok": True, "generated": generated})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_generate_og(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            project_idx = payload.get("project_idx", -1)
+            success, result = generate_og_for_project(project_idx)
+            if success:
+                self.send_json({"ok": True, "path": result})
+            else:
+                self.send_json({"ok": False, "error": result})
         except Exception as e:
             self.send_json({"ok": False, "error": str(e)}, 400)
 

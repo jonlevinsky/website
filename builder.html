@@ -427,7 +427,7 @@ async function generateSitemap(){
   }catch(e){ showToast('Chyba generovani sitemap'); }
 }
 async function deploy(){
-  if(!confirm('Deploy na GitHub Pages? Tato akce provede: &#x2022; git add . &#x2022; git commit &#x2022; git push')) return;
+  if(!confirm('Deploy na GitHub Pages?Tato akce provede:&#x2022; git add .&#x2022; git commit&#x2022; git push')) return;
   setStatus('Deployuji...');
   try{
     const r = await fetch('/api/deploy',{method:'POST'});
@@ -625,6 +625,7 @@ function renderForm(){
       <div class="row"><span class="label">Cas cteni</span><span class="value">~${rt} min</span></div>
       <div class="row"><span class="label">Media</span><span class="value">${(p.media||[]).length}</span></div>
       <div class="row"><span class="label">ID</span><span class="value">${p.id||'?'}</span></div>
+      <div class="row"><span class="label">OG Image</span><span class="value">${p.og_image ? '<a href="'+esc(p.og_image)+'" target="_blank">&#x1F3A8; Zobrazit</a>' : 'Neni'}</span></div>
     </div>
   `;
 
@@ -661,6 +662,7 @@ function renderForm(){
       <button class="btn" onclick="document.getElementById('folderInput').click()">+ Vybrat slozku</button>
       <button class="btn" onclick="addMediaUrl()">+ Pridat URL</button>
       <button class="btn" onclick="generateAllLqip()">&#x2728; Generovat LQIP</button>
+      <button class="btn" onclick="generateOg()">&#x1F3A8; OG Image</button>
       <input type="file" id="folderInput" webkitdirectory directory style="display:none" onchange="handleFiles(this.files)">
     </div>
     <div class="media-list" id="mediaList">${mediaHtml || '<div class="empty" id="mediaEmpty">Zadna media</div>'}</div>
@@ -710,6 +712,16 @@ async function generateLqip(mi){
     else { showToast('Chyba LQIP'); }
   }catch(e){ showToast('Chyba site'); }
   setStatus('Pripraveno');
+}
+async function generateOg(){
+  if(activeIdx<0) return;
+  setStatus('Generuji OG image...');
+  try{
+    const r = await fetch('/api/generate-og',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_idx:activeIdx})});
+    const j = await r.json();
+    if(j.ok){ showToast('OG image vygenerovan'); setStatus('OG hotov'); }
+    else { showToast('Chyba OG: ' + j.error); setStatus('OG selhal'); }
+  }catch(e){ showToast('Chyba site'); setStatus('Chyba site'); }
 }
 async function generateAllLqip(){
   if(activeIdx<0) return;
@@ -916,11 +928,7 @@ function duplicateProject(){
 async function forceConvert(){
   const btn = document.getElementById('forceConvertBtn');
   if(!btn) return;
-  if(!confirm('&#x26A0; Tato akce prevede VSECHNY existujici fotky (jpg/png/gif/bmp/tiff) na WebP.' +
-    '&#x2022; Originalni soubory budou smazan' +
-    '&#x2022; Cesty v projects.json budou aktualizovan' +
-    '&#x2022; Videa zustanou beze zmeny' +
-    'Pokracovat?')) return;
+  if(!confirm('&#x26A0; Tato akce prevede VSECHNY existujici fotky (jpg/png/gif/bmp/tiff) na WebP.' +'&#x2022; Originalni soubory budou smazan' +'&#x2022; Cesty v projects.json budou aktualizovan' +'&#x2022; Videa zustanou beze zmeny' +'Pokracovat?')) return;
   btn.disabled = true; btn.textContent = '&#x1F504; Konvertuji...';
   setStatus('Konvertuji vse na WebP...');
   try{
