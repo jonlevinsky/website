@@ -181,7 +181,8 @@
         "title": "Reklama",
         "caption": ""
       }
-    ]
+    ],
+    "slug": "reklama"
   },
   {
     "id": 4,
@@ -211,33 +212,35 @@
     "media": [
       {
         "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (3).webp",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (3).webp",
+        "src": "media/photo/2025/Španělsko/spanelsko (3).webp",
+        "thumbnail": "media/photo/2025/Španělsko/spanelsko (3).webp",
         "title": "Španělsko",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (4).webp",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (4).webp",
+        "src": "media/photo/2025/Španělsko/spanelsko (4).webp",
+        "thumbnail": "media/photo/2025/Španělsko/spanelsko (4).webp",
         "title": "Španělsko",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (2).webp",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (2).webp",
+        "src": "media/photo/2025/Španělsko/spanelsko (2).webp",
+        "thumbnail": "media/photo/2025/Španělsko/spanelsko (2).webp",
         "title": "Španělsko",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/photo/2025/Nový-projekt/spanelsko (1).webp",
-        "thumbnail": "media/photo/2025/Nový-projekt/spanelsko (1).webp",
+        "src": "media/photo/2025/Španělsko/spanelsko (1).webp",
+        "thumbnail": "media/photo/2025/Španělsko/spanelsko (1).webp",
         "title": "Španělsko",
         "caption": ""
       }
-    ]
+    ],
+    "slug": "panlsko",
+    "og_image": "media/photo/2025/Španělsko/og-image.png"
   },
   {
     "id": 5,
@@ -274,7 +277,8 @@
         "title": "Za Okny",
         "caption": ""
       }
-    ]
+    ],
+    "slug": "za-okny"
   },
   {
     "id": 3,
@@ -372,6 +376,8 @@
         "title": "Color (12)",
         "caption": ""
       }
-    ]
+    ],
+    "slug": "portraits",
+    "og_image": "media/photo/2026/Portraits/og-image.png"
   }
 ]
