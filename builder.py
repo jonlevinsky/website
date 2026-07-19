@@ -61,6 +61,64 @@ GEAR_LABELS = {
     "recorder": "Recorder"
 }
 
+# ─── AD BLOCKER BUZZWORDS ──────────────────────────────────────────────
+# These words in filenames/paths trigger ERR_BLOCKED_BY_CLIENT in browsers
+AD_BLOCKER_BUZZWORDS = [
+    "reklama", "reklamy", "reklamni", "reklamní",
+    "ad", "ads", "advert", "advertisement", "advertising",
+    "banner", "banners",
+    "promo", "promotion", "promotional",
+    "sponsored", "sponsor",
+    "affiliate", "tracking", "tracker",
+    "popunder", "popup", "pop-up",
+    "click", "clickthrough",
+    "conversion", "retargeting",
+    "pixel", "beacon",
+    "analytics", "metric", "metrics",
+    "spy", "spymetrics",
+    "outbrain", "taboola", "revcontent",
+    "doubleclick", "adsense", "adwords",
+    "facebook-pixel", "gtm", "googletag",
+]
+
+AD_BLOCKER_REPLACEMENTS = {
+    "reklama": "spot",
+    "reklamy": "spoty",
+    "reklamni": "spotovy",
+    "reklamní": "spotový",
+    "ad": "promo",
+    "ads": "promos",
+    "advert": "promo",
+    "advertisement": "promo",
+    "advertising": "promo",
+    "banner": "header",
+    "banners": "headers",
+    "promotion": "campaign",
+    "promotional": "campaign",
+    "sponsored": "supported",
+    "sponsor": "partner",
+    "affiliate": "partner",
+    "tracking": "analytics",
+    "tracker": "analytics",
+    "analytics": "stats",
+    "spy": "monitor",
+}
+
+def contains_ad_buzzword(name):
+    """Check if filename/path contains any ad blocker buzzword."""
+    lower = name.lower()
+    for buzz in AD_BLOCKER_BUZZWORDS:
+        if buzz in lower:
+            return buzz
+    return None
+
+def sanitize_ad_buzzwords(name):
+    """Replace ad blocker buzzwords in a filename with safe alternatives."""
+    result = name
+    for buzz, replacement in AD_BLOCKER_REPLACEMENTS.items():
+        result = re.sub(r'(?i)' + re.escape(buzz), replacement, result)
+    return result
+
 # ─── WEBP CONVERSION SETTINGS ──────────────────────────────────────────
 WEBP_QUALITY = 85
 WEBP_THUMB_QUALITY = 80
@@ -191,15 +249,26 @@ def save_json():
 def safe_folder_name(s):
     s = re.sub(r'[\\/:*?"<>|]', "", str(s))
     s = s.strip().replace(" ", "-")
+    # Also sanitize ad buzzwords in folder names
+    s = sanitize_ad_buzzwords(s)
     return s or "projekt"
 
 def normalize_filename(filename):
-    """Normalize filename: lowercase, spaces to hyphens, remove special chars."""
+    """Normalize filename: lowercase, spaces to hyphens, remove special chars, sanitize ad buzzwords."""
     name = Path(filename).stem
     ext = Path(filename).suffix.lower()
+
+    # Check for ad blocker buzzwords BEFORE normalizing
+    buzz = contains_ad_buzzword(name)
+    if buzz:
+        print(f"[AD BLOCKER WARNING] Filename '{filename}' contains buzzword '{buzz}' — will be sanitized")
+
+    # Sanitize ad buzzwords first
+    name = sanitize_ad_buzzwords(name)
+
     name = name.lower()
     name = name.replace(" ", "-")
-    name = re.sub(r'[^a-z0-9\-_]', '', name)
+    name = re.sub(r'[^a-z0-9_-]', '', name)
     name = re.sub(r'-+', '-', name)
     name = name.strip('-')
     return (name or "file") + ext
@@ -660,6 +729,175 @@ def load_editor_html():
 
 EDITOR_HTML = load_editor_html()
 
+# ─── NORMALIZE PROJECT FILENAMES ───────────────────────────────────────
+def find_existing_project_folder(project):
+    """Try to find an existing folder for this project."""
+    ptype = project.get("type", "photo")
+    pyear = project.get("year", "unknown")
+    ptitle = project.get("title", "untitled")
+    expected = MEDIA_DIR / ptype / pyear / safe_folder_name(ptitle)
+    if expected.exists():
+        return expected
+    base_dir = MEDIA_DIR / ptype / pyear
+    if not base_dir.exists():
+        return None
+    for media in project.get("media", []):
+        src = media.get("src", "")
+        if src:
+            src_path = Path(src)
+            if len(src_path.parts) >= 4:
+                folder_name = src_path.parts[3]
+                candidate = base_dir / folder_name
+                if candidate.exists():
+                    return candidate
+    for field in ["thumbnail", "full"]:
+        path = project.get(field, "")
+        if path:
+            src_path = Path(path)
+            if len(src_path.parts) >= 4:
+                folder_name = src_path.parts[3]
+                candidate = base_dir / folder_name
+                if candidate.exists():
+                    return candidate
+    return None
+
+def normalize_project_filenames():
+    """
+    Rename all files inside each project folder to: [project]_YYYY-MM-DD_[id].[ext]
+    Also renames the folder itself to match the project title.
+    Returns list of all rename operations.
+    """
+    import datetime
+    renamed = []
+
+    for project in data["projects"]:
+        ptype = project.get("type", "photo")
+        pyear = project.get("year", "unknown")
+        ptitle = project.get("title", "untitled")
+        pid = project.get("id", 0)
+
+        folder_path = find_existing_project_folder(project)
+        if not folder_path or not folder_path.exists():
+            continue
+
+        safe_title = safe_folder_name(ptitle)
+        new_folder_name = safe_title
+        new_folder_path = MEDIA_DIR / ptype / pyear / new_folder_name
+
+        old_folder_name = folder_path.name
+        old_rel_prefix = f"media/{ptype}/{pyear}/{old_folder_name}"
+
+        if folder_path != new_folder_path:
+            if new_folder_path.exists():
+                counter = 1
+                while (MEDIA_DIR / ptype / pyear / f"{safe_title}_{counter}").exists():
+                    counter += 1
+                new_folder_name = f"{safe_title}_{counter}"
+                new_folder_path = MEDIA_DIR / ptype / pyear / new_folder_name
+
+            try:
+                folder_path.rename(new_folder_path)
+                renamed.append({
+                    "type": "folder",
+                    "old": old_folder_name,
+                    "new": new_folder_name,
+                    "project": ptitle
+                })
+                new_rel_prefix = f"media/{ptype}/{pyear}/{new_folder_name}"
+                for p in data["projects"]:
+                    if p.get("thumbnail") and old_rel_prefix in p["thumbnail"]:
+                        p["thumbnail"] = p["thumbnail"].replace(old_rel_prefix, new_rel_prefix)
+                    if p.get("full") and old_rel_prefix in p["full"]:
+                        p["full"] = p["full"].replace(old_rel_prefix, new_rel_prefix)
+                    for media in p.get("media", []):
+                        if media.get("src") and old_rel_prefix in media["src"]:
+                            media["src"] = media["src"].replace(old_rel_prefix, new_rel_prefix)
+                        if media.get("thumbnail") and old_rel_prefix in media["thumbnail"]:
+                            media["thumbnail"] = media["thumbnail"].replace(old_rel_prefix, new_rel_prefix)
+                        if media.get("poster") and old_rel_prefix in media["poster"]:
+                            media["poster"] = media["poster"].replace(old_rel_prefix, new_rel_prefix)
+                    if p.get("og_image") and old_rel_prefix in p["og_image"]:
+                        p["og_image"] = p["og_image"].replace(old_rel_prefix, new_rel_prefix)
+                folder_path = new_folder_path
+                old_rel_prefix = new_rel_prefix
+            except Exception as e:
+                print(f"[Normalize] Error renaming folder {old_folder_name}: {e}")
+                continue
+
+        new_rel_prefix = f"media/{ptype}/{pyear}/{new_folder_name}"
+
+        if not folder_path.exists():
+            continue
+
+        files_in_folder = sorted([f for f in folder_path.iterdir() if f.is_file()])
+
+        rename_plan = []
+        used_names = set()
+        today = datetime.datetime.now().strftime("%Y-%m-%d")
+        base_new_name = f"{safe_title}_{today}_{pid}"
+
+        for fpath in files_in_folder:
+            old_name = fpath.name
+            ext = fpath.suffix.lower()
+            stem = fpath.stem
+
+            is_thumb = "_thumb" in stem.lower() or stem.endswith("_thumb")
+
+            if is_thumb:
+                new_name = f"{base_new_name}_thumb{ext}"
+            else:
+                new_name = f"{base_new_name}{ext}"
+
+            counter = 1
+            while new_name in used_names:
+                if is_thumb:
+                    new_name = f"{base_new_name}_{counter}_thumb{ext}"
+                else:
+                    new_name = f"{base_new_name}_{counter}{ext}"
+                counter += 1
+
+            used_names.add(new_name)
+
+            if old_name != new_name:
+                rename_plan.append({
+                    "old_path": fpath,
+                    "new_path": folder_path / new_name,
+                    "old_name": old_name,
+                    "new_name": new_name,
+                    "old_rel": f"{new_rel_prefix}/{old_name}",
+                    "new_rel": f"{new_rel_prefix}/{new_name}"
+                })
+
+        for plan in rename_plan:
+            try:
+                plan["old_path"].rename(plan["new_path"])
+                renamed.append({
+                    "type": "file",
+                    "old": plan["old_name"],
+                    "new": plan["new_name"],
+                    "project": ptitle
+                })
+                old_rel = plan["old_rel"]
+                new_rel = plan["new_rel"]
+                for p in data["projects"]:
+                    if p.get("thumbnail") and old_rel in p["thumbnail"]:
+                        p["thumbnail"] = p["thumbnail"].replace(old_rel, new_rel)
+                    if p.get("full") and old_rel in p["full"]:
+                        p["full"] = p["full"].replace(old_rel, new_rel)
+                    for media in p.get("media", []):
+                        if media.get("src") and old_rel in media["src"]:
+                            media["src"] = media["src"].replace(old_rel, new_rel)
+                        if media.get("thumbnail") and old_rel in media["thumbnail"]:
+                            media["thumbnail"] = media["thumbnail"].replace(old_rel, new_rel)
+                        if media.get("poster") and old_rel in media["poster"]:
+                            media["poster"] = media["poster"].replace(old_rel, new_rel)
+                    if p.get("og_image") and old_rel in p["og_image"]:
+                        p["og_image"] = p["og_image"].replace(old_rel, new_rel)
+            except Exception as e:
+                print(f"[Normalize] Error renaming file {plan['old_name']}: {e}")
+
+    return renamed
+
 # ─── HTTP SERVER ───────────────────────────────────────────────────────
 class Handler(SimpleHTTPRequestHandler):
     def log_message(self, format, *args):
@@ -706,9 +944,29 @@ class Handler(SimpleHTTPRequestHandler):
             self.handle_generate_og()
         elif path == "/api/deploy":
             self.handle_deploy()
+        elif path == "/api/normalize-filenames":
+            self.handle_normalize_filenames()
         else:
             self.send_response(404)
             self.end_headers()
+
+    def handle_normalize_filenames(self):
+        try:
+            push_undo_state()
+            renamed = normalize_project_filenames()
+            if renamed:
+                save_json()
+            folder_count = sum(1 for r in renamed if r["type"] == "folder")
+            file_count = sum(1 for r in renamed if r["type"] == "file")
+            self.send_json({
+                "ok": True,
+                "message": f"Prejmenovano {folder_count} slozek a {file_count} souboru",
+                "renamed": renamed,
+                "folder_count": folder_count,
+                "file_count": file_count
+            })
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
 
     def handle_save(self):
         content_len = int(self.headers.get("Content-Length", 0))
@@ -993,6 +1251,12 @@ class Handler(SimpleHTTPRequestHandler):
                 rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{dest.name}"
                 thumb_rel = rel
                 lqip = None
+            # Check for ad blocker buzzwords in the saved filename
+            buzz = contains_ad_buzzword(dest.name)
+            if buzz:
+                print(f"[AD BLOCKER WARNING] Uploaded file '{dest.name}' contains buzzword '{buzz}'!")
+                print(f"  Consider renaming to avoid browser blocking.")
+
             saved.append({
                 "filename": dest.name,
                 "rel_path": rel,

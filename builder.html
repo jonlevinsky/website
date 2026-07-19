@@ -40,6 +40,13 @@ header .spacer{flex:1}
   background:var(--surface);border-bottom:1px solid #333;
   padding:8px 16px;font-size:11px;display:none;
 }
+.adblock-panel{
+  background:rgba(212,160,23,0.1);border-bottom:1px solid var(--warn);
+  padding:8px 16px;font-size:11px;display:none;
+}
+.adblock-panel.active{display:block}
+.adblock-panel .ad-item{color:var(--warn);padding:2px 0}
+.adblock-panel strong{color:var(--warn)}
 .validation-panel.active{display:block}
 .validation-panel .error{color:var(--danger)}
 .validation-panel .warning{color:var(--warn)}
@@ -202,6 +209,8 @@ header .spacer{flex:1}
 .tab-content.active{display:block}
 </style>
 <base target="_blank">
+<base target="_blank">
+<base target="_blank">
 </head>
 <body>
 <header>
@@ -216,6 +225,8 @@ header .spacer{flex:1}
   <button class="btn" onclick="togglePreview()">&#x1F441; Preview</button>
   <button class="btn" onclick="toggleValidation()" id="valBtn">&#x2713; Validace</button>
   <button class="btn" style="border-color:#c4956a;color:#c4956a" onclick="forceConvert()" id="forceConvertBtn">&#x1F504; Force WebP</button>
+  <button class="btn" style="border-color:#5a9e6e;color:#5a9e6e" onclick="normalizeFilenames()" id="normalizeBtn">&#x1F4C1; Normalizuj nazvy</button>
+  <button class="btn" style="border-color:#5a9e6e;color:#5a9e6e" onclick="fixPaths()" id="fixPathsBtn">&#x1F527; Fix cesty</button>
   <button class="btn" onclick="generateSitemap()">&#x1F5FA; Sitemap</button>
   <button class="btn primary" onclick="deploy()">&#x1F680; Deploy</button>
   <button class="btn primary" onclick="saveNow()">&#x1F4BE; Ulozit</button>
@@ -225,6 +236,12 @@ header .spacer{flex:1}
 <div class="validation-panel" id="validationPanel">
   <strong style="color:var(--muted)">Validace:</strong>
   <ul id="validationList"></ul>
+</div>
+
+<div class="adblock-panel" id="adblockPanel">
+  <strong>&#x26A0; Ad Blocker Warning:</strong>
+  <div id="adblockList"></div>
+  <div style="margin-top:6px;color:var(--muted)">Tyto nazvy mohou byt blokovany prohlizecem (uBlock, AdBlock, Brave). Pouzij tlacitko "Fix cesty" nebo prejmenuj soubory.</div>
 </div>
 
 <div class="bulk-bar" id="bulkBar">
@@ -311,17 +328,39 @@ async function redoAction(){
 /* --- VALIDATION --- */
 async function toggleValidation(){
   const panel = document.getElementById('validationPanel');
-  if(panel.classList.contains('active')){ panel.classList.remove('active'); return; }
+  const adPanel = document.getElementById('adblockPanel');
+
+  if(panel.classList.contains('active')){ 
+    panel.classList.remove('active'); 
+    adPanel.classList.remove('active');
+    return; 
+  }
+
   try{
     const r = await fetch('/api/validate');
     validationIssues = await r.json();
     const list = document.getElementById('validationList');
-    if(!validationIssues.length){
+
+    // Filter ad blocker warnings
+    const adWarnings = validationIssues.filter(i => i.message.includes('AD BLOCKER') || i.message.includes('buzzword'));
+    const otherIssues = validationIssues.filter(i => !i.message.includes('AD BLOCKER') && !i.message.includes('buzzword'));
+
+    if(!otherIssues.length){
       list.innerHTML = '<li style="color:var(--ok)">&#x2713; Vse v poradku</li>';
     } else {
-      list.innerHTML = validationIssues.map(i=>`<li class="${i.type}">${i.type==='error'?'&#x2717;':'&#x26A0;'} ${esc(i.project)}: ${esc(i.message)}</li>`).join('');
+      list.innerHTML = otherIssues.map(i=>`<li class="${i.type}">${i.type==='error'?'&#x2717;':'&#x26A0;'} ${esc(i.project)}: ${esc(i.message)}</li>`).join('');
     }
     panel.classList.add('active');
+
+    // Show ad blocker panel if there are warnings
+    const adList = document.getElementById('adblockList');
+    if(adWarnings.length){
+      adList.innerHTML = adWarnings.map(i=>`<div class="ad-item">&#x26A0; ${esc(i.project)}: ${esc(i.message)}</div>`).join('');
+      adPanel.classList.add('active');
+    } else {
+      adPanel.classList.remove('active');
+    }
+
     renderList();
   }catch(e){ showToast('Chyba validace'); }
 }
@@ -426,6 +465,50 @@ async function generateSitemap(){
     showToast('Sitemap vygenerovan');
   }catch(e){ showToast('Chyba generovani sitemap'); }
 }
+async function fixPaths(){
+  const btn = document.getElementById('fixPathsBtn');
+  if(!btn) return;
+  setStatus('Opravuji cesty...');
+  btn.disabled = true; btn.textContent = '&#x1F527; Opravuji...';
+  try{
+    const r = await fetch('/api/fix-paths', {method: 'POST'});
+    const j = await r.json();
+    if(j.ok){
+      showToast('Opraveno ' + j.count + ' cest');
+      setStatus('Cesty opraveny');
+      await load();
+    } else {
+      showToast('Chyba: ' + j.error);
+      setStatus('Chyba opravy');
+    }
+  }catch(e){ showToast('Chyba site'); setStatus('Chyba site'); }
+  finally { btn.disabled = false; btn.textContent = '&#x1F527; Fix cesty'; }
+}
+
+async function normalizeFilenames(){
+  const btn = document.getElementById('normalizeBtn');
+  if(!btn) return;
+  if(!confirm('&#x26A0; Tato akce prejmenuje VSECHNY soubory ve vsech projektech podle vzoru: [project]_YYYY-MM-DD_[id].[ext]' + 
+    '&#x2022; Slozky budou prejmenovany podle nazvu projekt' +
+    '&#x2022; Vsechny soubory v kazde slozce dostanou novy naze' +
+    '&#x2022; Cesty v projects.json budou aktualizovan' +
+    '&#x2022; Tuto akci nelze vzit zpet (ale JSON se zalohuje)' +
+    'Pokracovat?')) return;
+  btn.disabled = true; btn.textContent = '&#x1F4C1; Normalizuji...';
+  setStatus('Normalizuji nazvy souboru...');
+  try{
+    const r = await fetch('/api/normalize-filenames', {method: 'POST'});
+    const j = await r.json();
+    if(j.ok){ 
+      showToast(j.message); 
+      setStatus(j.message);
+      await load();
+    }
+    else { showToast('Chyba: ' + j.error); setStatus('Normalizace selhala'); }
+  }catch(e){ showToast('Chyba site: ' + e.message); setStatus('Chyba site'); }
+  finally { btn.disabled = false; btn.textContent = '&#x1F4C1; Normalizuj nazvy'; }
+}
+
 async function deploy(){
   if(!confirm('Deploy na GitHub Pages?Tato akce provede:&#x2022; git add .&#x2022; git commit&#x2022; git push')) return;
   setStatus('Deployuji...');
