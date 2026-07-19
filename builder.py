@@ -6,6 +6,15 @@ projects_builder.py — Editor pro projects.json s auto-strukturou složek
 Ulož vedle index.html, project.html, projects.json, Kamera.md a Optika.md.
 Spusť: python projects_builder.py
 Otevři: http://localhost:8765
+
+NOVÉ FUNKCE:
+- Validace: duplicitní ID, nefunkční cesty, povinná pole
+- Bulk operace: multi-select, bulk gear, bulk rename
+- Preview: náhled projektu, JSON diff
+- Undo/Redo: stack změn v session
+- SEO: auto slug, auto alt text, word count
+- Placeholders: LQIP (low-res) generace
+- Sitemap + deploy: generátor + git push
 """
 
 import json
@@ -15,8 +24,11 @@ import shutil
 import subprocess
 import threading
 import webbrowser
+import base64
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
+from PIL import Image
+import io
 
 # ─── CONFIG ──────────────────────────────────────────────────────────
 PORT = 8765
@@ -25,6 +37,8 @@ MEDIA_DIR = Path("media")
 BACKUP_DIR = Path(".builder_backups")
 KAMERA_MD = Path("./gear/Kamera.md")
 OPTIKA_MD = Path("./gear/Optika.md")
+HTML_FILE = Path(__file__).parent / "builder.html"
+SITE_URL = "https://jonlevinsky.github.io/website"  # Uprav podle sebe
 
 GEAR_CATEGORIES = [
     "camera", "lenses", "gimbal/stabilization", "lighting",
@@ -47,16 +61,60 @@ GEAR_LABELS = {
     "recorder": "Recorder"
 }
 
+# ─── WEBP CONVERSION SETTINGS ──────────────────────────────────────────
+WEBP_QUALITY = 85
+WEBP_THUMB_QUALITY = 80
+MAX_IMAGE_WIDTH = 1920
+MAX_THUMB_WIDTH = 640
+
+# ─── PLACEHOLDER SETTINGS ──────────────────────────────────────────────
+LQIP_WIDTH = 32
+LQIP_BLUR = 10
+LQIP_QUALITY = 30
+
+# ─── UNDO/REDO STACK ─────────────────────────────────────────────────
+undo_stack = []
+redo_stack = []
+MAX_UNDO = 50
+
+def push_undo_state():
+    global undo_stack, redo_stack
+    state = json.dumps(data["projects"], ensure_ascii=False, sort_keys=True)
+    if undo_stack and undo_stack[-1] == state:
+        return
+    undo_stack.append(state)
+    if len(undo_stack) > MAX_UNDO:
+        undo_stack.pop(0)
+    redo_stack.clear()
+
+def undo():
+    global undo_stack, redo_stack
+    if len(undo_stack) < 2:
+        return False
+    current = undo_stack.pop()
+    redo_stack.append(current)
+    previous = undo_stack[-1]
+    data["projects"] = json.loads(previous)
+    return True
+
+def redo():
+    global undo_stack, redo_stack
+    if not redo_stack:
+        return False
+    state = redo_stack.pop()
+    undo_stack.append(state)
+    data["projects"] = json.loads(state)
+    return True
+
 # ─── PARSE TECHNIKA ────────────────────────────────────────────────────
 def load_tech_inventory():
     inv = {}
-    # Kamera.md
     if KAMERA_MD.exists():
         with open(KAMERA_MD, "r", encoding="utf-8") as f:
             text = f.read()
-        sections = re.split(r'\n#+\s*', text)
+        sections = text.split("\n#")
         for sec in sections:
-            sec_title = sec.split('\n')[0].strip().lower() if sec else ''
+            sec_title = sec.splitlines()[0].strip().lower() if sec else ''
             lines = sec.splitlines()
             in_table = False
             for line in lines:
@@ -69,18 +127,17 @@ def load_tech_inventory():
                         cells = [c.strip() for c in line.split("|")[1:-1]]
                         if cells:
                             name = cells[0].replace("***", "").replace("**", "").replace("*", "").strip()
-                            if name and name.lower() not in ("název", "name", "nazev", ""):
+                            if name and name.lower() not in ("nazev", "name", ""):
                                 if "foto" in sec_title or "photo" in sec_title:
                                     inv.setdefault("camera", []).append(name)
                                 elif "video" in sec_title:
                                     inv.setdefault("camera", []).append(name)
-    # Optika.md
     if OPTIKA_MD.exists():
         with open(OPTIKA_MD, "r", encoding="utf-8") as f:
             text = f.read()
-        sections = re.split(r'\n#+\s*', text)
+        sections = text.split("\n#")
         for sec in sections:
-            sec_title = sec.split('\n')[0].strip().lower() if sec else ''
+            sec_title = sec.splitlines()[0].strip().lower() if sec else ''
             lines = sec.splitlines()
             in_table = False
             for line in lines:
@@ -93,12 +150,11 @@ def load_tech_inventory():
                         cells = [c.strip() for c in line.split("|")[1:-1]]
                         if cells:
                             name = cells[0].replace("***", "").replace("**", "").replace("*", "").strip()
-                            if name and name.lower() not in ("název", "name", "nazev", ""):
+                            if name and name.lower() not in ("nazev", "name", ""):
                                 if "objektiv" in sec_title or "lens" in sec_title or "optika" in sec_title:
                                     inv.setdefault("lenses", []).append(name)
                                 elif "filtr" in sec_title or "filter" in sec_title:
                                     inv.setdefault("filter", []).append(name)
-    # deduplikace
     for k in inv:
         seen = set()
         dedup = []
@@ -137,6 +193,227 @@ def safe_folder_name(s):
     s = s.strip().replace(" ", "-")
     return s or "projekt"
 
+def slugify(text):
+    text = text.lower()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[-\s]+', '-', text)
+    return text.strip('-')
+
+def word_count(text):
+    if not text:
+        return 0
+    return len(text.split())
+
+def reading_time(text):
+    wc = word_count(text)
+    return max(1, round(wc / 200))
+
+# ─── WEBP CONVERSION HELPERS ───────────────────────────────────────────
+def is_image_ext(path):
+    return Path(path).suffix.lower() in (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif")
+
+def is_image_file(path):
+    ext = Path(path).suffix.lower()
+    return ext in (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp")
+
+def convert_to_webp(image_bytes, quality=WEBP_QUALITY, max_width=MAX_IMAGE_WIDTH):
+    try:
+        img = Image.open(io.BytesIO(image_bytes))
+        if img.mode in ('RGBA', 'P'):
+            if img.mode == 'P':
+                img = img.convert('RGBA')
+        elif img.mode != 'RGB':
+            img = img.convert('RGB')
+        if max_width > 0 and img.width > max_width:
+            ratio = max_width / img.width
+            new_height = int(img.height * ratio)
+            img = img.resize((max_width, new_height), Image.LANCZOS)
+        output = io.BytesIO()
+        if img.mode == 'RGBA':
+            img.save(output, format='WEBP', quality=quality, method=6)
+        else:
+            img.save(output, format='WEBP', quality=quality, method=6)
+        output.seek(0)
+        return output.read(), img.width, img.height
+    except Exception as e:
+        print(f"[WebP] Conversion error: {e}")
+        return None, 0, 0
+
+def generate_webp_thumbnail(image_bytes, quality=WEBP_THUMB_QUALITY, max_width=MAX_THUMB_WIDTH):
+    return convert_to_webp(image_bytes, quality=quality, max_width=max_width)
+
+# ─── LQIP / PLACEHOLDER GENERATION ─────────────────────────────────────
+def generate_lqip(image_bytes, width=LQIP_WIDTH, quality=LQIP_QUALITY, blur=LQIP_BLUR):
+    try:
+        img = Image.open(io.BytesIO(image_bytes))
+        if img.mode in ('RGBA', 'P'):
+            img = img.convert('RGB')
+        elif img.mode != 'RGB':
+            img = img.convert('RGB')
+        ratio = img.height / img.width
+        new_height = max(1, int(width * ratio))
+        img = img.resize((width, new_height), Image.LANCZOS)
+        output = io.BytesIO()
+        img.save(output, format='JPEG', quality=quality, optimize=True)
+        output.seek(0)
+        b64 = base64.b64encode(output.read()).decode('utf-8')
+        return f"data:image/jpeg;base64,{b64}"
+    except Exception as e:
+        print(f"[LQIP] Error: {e}")
+        return None
+
+def generate_lqip_for_file(filepath):
+    try:
+        with open(filepath, "rb") as f:
+            return generate_lqip(f.read())
+    except Exception:
+        return None
+
+# ─── VALIDATION HELPERS ────────────────────────────────────────────────
+def validate_projects():
+    issues = []
+    seen_ids = set()
+    for i, project in enumerate(data["projects"]):
+        proj_name = project.get("title", f"Projekt #{i+1}")
+        pid = project.get("id")
+        if pid is not None:
+            if pid in seen_ids:
+                issues.append({"type": "error", "project": proj_name, "message": f"Duplicitni ID: {pid}"})
+            seen_ids.add(pid)
+        if not project.get("title"):
+            issues.append({"type": "warning", "project": proj_name, "message": "Chybi nazev projektu"})
+        if not project.get("year"):
+            issues.append({"type": "warning", "project": proj_name, "message": "Chybi rok"})
+        for field in ["thumbnail", "full"]:
+            path = project.get(field)
+            if path and not Path(path).exists():
+                issues.append({"type": "error", "project": proj_name, "message": f"Nefunkcni cesta: {path}"})
+        for mi, media in enumerate(project.get("media", [])):
+            src = media.get("src")
+            if src and not Path(src).exists():
+                issues.append({"type": "error", "project": proj_name, "message": f"Nefunkcni media src: {src}"})
+            thumb = media.get("thumbnail")
+            if thumb and not Path(thumb).exists():
+                issues.append({"type": "warning", "project": proj_name, "message": f"Nefunkcni thumbnail: {thumb}"})
+    return issues
+
+def get_json_diff():
+    if not JSON_FILE.exists():
+        return "Soubor projects.json neexistuje."
+    with open(JSON_FILE, "r", encoding="utf-8") as f:
+        saved = f.read()
+    current = json.dumps(data["projects"], ensure_ascii=False, indent=2)
+    if saved == current:
+        return "Zadne zmeny."
+    return f"ZMENENO: {len(current)} vs {len(saved)} znaku"
+
+# ─── FORCE CONVERT HELPERS ─────────────────────────────────────────────
+def find_all_image_files():
+    image_files = []
+    if not MEDIA_DIR.exists():
+        return image_files
+    for root, dirs, files in os.walk(MEDIA_DIR):
+        for filename in files:
+            filepath = Path(root) / filename
+            if is_image_ext(filepath) and filepath.suffix.lower() != '.webp':
+                image_files.append(filepath)
+    return image_files
+
+def convert_file_to_webp(filepath):
+    try:
+        with open(filepath, "rb") as f:
+            image_bytes = f.read()
+        webp_bytes, width, height = convert_to_webp(image_bytes, quality=WEBP_QUALITY, max_width=MAX_IMAGE_WIDTH)
+        if not webp_bytes:
+            return False, None, "Conversion failed"
+        new_path = filepath.with_suffix('.webp')
+        counter = 1
+        while new_path.exists():
+            new_path = filepath.parent / f"{filepath.stem}_{counter}.webp"
+            counter += 1
+        with open(new_path, "wb") as f:
+            f.write(webp_bytes)
+        filepath.unlink()
+        return True, new_path, None
+    except Exception as e:
+        return False, None, str(e)
+
+def update_json_paths(old_path, new_path):
+    old_rel = str(old_path).replace('\\', '/')
+    new_rel = str(new_path).replace('\\', '/')
+    changed = False
+    for project in data["projects"]:
+        if project.get("thumbnail") and old_rel in project["thumbnail"]:
+            project["thumbnail"] = project["thumbnail"].replace(old_rel, new_rel)
+            changed = True
+        if project.get("full") and old_rel in project["full"]:
+            project["full"] = project["full"].replace(old_rel, new_rel)
+            changed = True
+        for media in project.get("media", []):
+            if media.get("src") and old_rel in media["src"]:
+                media["src"] = media["src"].replace(old_rel, new_rel)
+                changed = True
+            if media.get("thumbnail") and old_rel in media["thumbnail"]:
+                media["thumbnail"] = media["thumbnail"].replace(old_rel, new_rel)
+                changed = True
+            if media.get("poster") and old_rel in media["poster"]:
+                media["poster"] = media["poster"].replace(old_rel, new_rel)
+                changed = True
+    return changed
+
+def process_force_convert():
+    results = {"converted": [], "failed": [], "skipped": []}
+    image_files = find_all_image_files()
+    for filepath in image_files:
+        if filepath.suffix.lower() == '.webp':
+            results["skipped"].append(str(filepath))
+            continue
+        success, new_path, error = convert_file_to_webp(filepath)
+        if success and new_path:
+            json_changed = update_json_paths(filepath, new_path)
+            results["converted"].append({"old": str(filepath), "new": str(new_path), "json_updated": json_changed})
+        else:
+            results["failed"].append({"file": str(filepath), "error": error})
+    if results["converted"]:
+        save_json()
+    return results
+
+# ─── SITEMAP GENERATOR ─────────────────────────────────────────────────
+def generate_sitemap():
+    urls = []
+    urls.append(f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>")
+    urls.append(f"  <url>\n    <loc>{SITE_URL}/about</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>")
+    for project in data["projects"]:
+        slug = slugify(project.get("title", ""))
+        if slug:
+            urls.append(f"  <url>\n    <loc>{SITE_URL}/project.html?id={project.get('id', '')}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>")
+    sitemap = f"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n{'\n'.join(urls)}\n</urlset>"
+    return sitemap
+
+# ─── DEPLOY HELPERS ──────────────────────────────────────────────────
+def git_deploy():
+    try:
+        if not Path(".git").exists():
+            return False, "Git repository neexistuje. Inicializuj ho: git init"
+        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, check=True)
+        if not result.stdout.strip():
+            return True, "Zadne zmeny k deploy."
+        subprocess.run(["git", "add", "."], check=True, capture_output=True)
+        ts = __import__('datetime').datetime.now().strftime("%Y-%m-%d %H:%M")
+        commit_msg = f"Update projects {ts}"
+        subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
+        push_result = subprocess.run(["git", "push"], capture_output=True, text=True)
+        if push_result.returncode == 0:
+            return True, f"Deploy hotov! {commit_msg}"
+        else:
+            return False, f"Push selhal: {push_result.stderr}"
+    except subprocess.CalledProcessError as e:
+        return False, f"Git chyba: {e.stderr if e.stderr else str(e)}"
+    except FileNotFoundError:
+        return False, "Git neni nainstalovan."
+    except Exception as e:
+        return False, f"Chyba: {str(e)}"
+
 # ─── MULTIPART PARSER ──────────────────────────────────────────────────
 def parse_multipart(body, boundary):
     boundary = boundary.encode() if isinstance(boundary, str) else boundary
@@ -151,10 +428,9 @@ def parse_multipart(body, boundary):
         if header_end == -1:
             continue
         headers = part[:header_end].decode("utf-8", errors="ignore")
-        content = part[header_end + 4 :]
+        content = part[header_end + 4:]
         if content.endswith(b"\r\n"):
             content = content[:-2]
-
         filename = None
         name = None
         for line in headers.split("\r\n"):
@@ -181,19 +457,21 @@ def generate_video_thumbnail(source_path, thumb_path, seek_time=3.0):
     try:
         thumb_path.parent.mkdir(parents=True, exist_ok=True)
         subprocess.run([
-            ffmpeg,
-            "-hide_banner",
-            "-loglevel", "error",
-            "-ss", str(seek_time),
-            "-i", str(source_path),
-            "-frames:v", "1",
-            "-q:v", "2",
-            "-y",
-            str(thumb_path)
+            ffmpeg, "-hide_banner", "-loglevel", "error",
+            "-ss", str(seek_time), "-i", str(source_path),
+            "-frames:v", "1", "-q:v", "2", "-y", str(thumb_path)
         ], check=True)
         return thumb_path.exists()
     except Exception:
         return False
+
+# ─── LOAD EDITOR HTML ─────────────────────────────────────────────────
+def load_editor_html():
+    if HTML_FILE.exists():
+        return HTML_FILE.read_text(encoding="utf-8")
+    return "<h1>Chyba: builder.html nenalezen</h1><p>Uloz builder.html vedle builder.py</p>"
+
+EDITOR_HTML = load_editor_html()
 
 # ─── HTTP SERVER ───────────────────────────────────────────────────────
 class Handler(SimpleHTTPRequestHandler):
@@ -208,6 +486,12 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_json(data["projects"])
         elif path == "/api/tech":
             self.send_json(tech_inventory)
+        elif path == "/api/validate":
+            self.send_json(validate_projects())
+        elif path == "/api/diff":
+            self.send_json({"diff": get_json_diff()})
+        elif path == "/api/sitemap":
+            self.send_xml(generate_sitemap())
         else:
             super().do_GET()
 
@@ -217,6 +501,22 @@ class Handler(SimpleHTTPRequestHandler):
             self.handle_save()
         elif path == "/api/upload":
             self.handle_upload()
+        elif path == "/api/force-convert":
+            self.handle_force_convert()
+        elif path == "/api/undo":
+            self.handle_undo()
+        elif path == "/api/redo":
+            self.handle_redo()
+        elif path == "/api/bulk-delete":
+            self.handle_bulk_delete()
+        elif path == "/api/bulk-gear":
+            self.handle_bulk_gear()
+        elif path == "/api/bulk-year":
+            self.handle_bulk_year()
+        elif path == "/api/generate-lqip":
+            self.handle_generate_lqip()
+        elif path == "/api/deploy":
+            self.handle_deploy()
         else:
             self.send_response(404)
             self.end_headers()
@@ -226,85 +526,276 @@ class Handler(SimpleHTTPRequestHandler):
         body = self.rfile.read(content_len).decode("utf-8")
         try:
             new_data = json.loads(body)
+            push_undo_state()
             data["projects"] = new_data
             save_json()
             self.send_json({"ok": True})
         except Exception as e:
             self.send_json({"ok": False, "error": str(e)}, 400)
 
+    def handle_undo(self):
+        if undo():
+            save_json()
+            self.send_json({"ok": True, "message": "Undo provedeno"})
+        else:
+            self.send_json({"ok": False, "error": "Neni co undo"})
+
+    def handle_redo(self):
+        if redo():
+            save_json()
+            self.send_json({"ok": True, "message": "Redo provedeno"})
+        else:
+            self.send_json({"ok": False, "error": "Neni co redo"})
+
+    def handle_bulk_delete(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            indices = json.loads(body)
+            push_undo_state()
+            for idx in sorted(indices, reverse=True):
+                if 0 <= idx < len(data["projects"]):
+                    data["projects"].pop(idx)
+            save_json()
+            self.send_json({"ok": True, "deleted": len(indices)})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_bulk_gear(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            indices = payload.get("indices", [])
+            category = payload.get("category", "")
+            item = payload.get("item", "")
+            action = payload.get("action", "add")
+            push_undo_state()
+            for idx in indices:
+                if 0 <= idx < len(data["projects"]):
+                    project = data["projects"][idx]
+                    if not project.get("gear"):
+                        project["gear"] = {}
+                    if category not in project["gear"]:
+                        project["gear"][category] = []
+                    if action == "add" and item not in project["gear"][category]:
+                        project["gear"][category].append(item)
+                    elif action == "remove" and item in project["gear"][category]:
+                        project["gear"][category].remove(item)
+            save_json()
+            self.send_json({"ok": True, "message": f"Gear {action} pro {len(indices)} projektu"})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_bulk_year(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            indices = payload.get("indices", [])
+            new_year = payload.get("year", "")
+            push_undo_state()
+            for idx in indices:
+                if 0 <= idx < len(data["projects"]):
+                    data["projects"][idx]["year"] = new_year
+            save_json()
+            self.send_json({"ok": True, "message": f"Rok zmenen na {new_year} pro {len(indices)} projektu"})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_generate_lqip(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            project_idx = payload.get("project_idx", -1)
+            media_idx = payload.get("media_idx", -1)
+            if project_idx < 0 or project_idx >= len(data["projects"]):
+                self.send_json({"ok": False, "error": "Neplatny projekt"})
+                return
+            project = data["projects"][project_idx]
+            media_list = project.get("media", [])
+            generated = 0
+            if media_idx < 0:
+                for m in media_list:
+                    src = m.get("src")
+                    if src and Path(src).exists() and is_image_file(src):
+                        lqip = generate_lqip_for_file(src)
+                        if lqip:
+                            m["lqip"] = lqip
+                            generated += 1
+            else:
+                if media_idx < len(media_list):
+                    m = media_list[media_idx]
+                    src = m.get("src")
+                    if src and Path(src).exists() and is_image_file(src):
+                        lqip = generate_lqip_for_file(src)
+                        if lqip:
+                            m["lqip"] = lqip
+                            generated = 1
+            save_json()
+            self.send_json({"ok": True, "generated": generated})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_deploy(self):
+        success, message = git_deploy()
+        if success:
+            self.send_json({"ok": True, "message": message})
+        else:
+            self.send_json({"ok": False, "error": message}, 500)
+
+    def handle_force_convert(self):
+        try:
+            results = process_force_convert()
+            self.send_json({
+                "ok": True,
+                "message": f"Konvertovano {len(results['converted'])} souboru, {len(results['failed'])} selhalo, {len(results['skipped'])} preskoceno",
+                "results": results
+            })
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
+
     def handle_upload(self):
         content_type = self.headers.get("Content-Type", "")
         if "boundary=" not in content_type:
             self.send_json({"ok": False, "error": "No boundary"}, 400)
             return
-
         boundary = content_type.split("boundary=")[1].strip('"')
         content_len = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_len)
         files, fields = parse_multipart(body, boundary)
-
         file_parts = [f for f in files if f.get('name') and (f['name'].startswith('file_') or f['name'] == 'files')]
         thumb_parts = {f['name']: f for f in files if f.get('name') and f['name'].startswith('thumb_')}
-
         ptype = fields.get("project_type", "photo")
         pyear = fields.get("project_year", "unknown")
         ptitle = fields.get("project_title", "untitled")
-
         sub_dir = MEDIA_DIR / ptype / pyear / safe_folder_name(ptitle)
         sub_dir.mkdir(parents=True, exist_ok=True)
-
         saved = []
         for f in file_parts:
             filename = Path(f["filename"]).name
             if not filename:
                 continue
-
-            dest = sub_dir / filename
-            stem = Path(filename).stem
-            suffix = Path(filename).suffix
-            counter = 1
-            while dest.exists():
-                dest = sub_dir / f"{stem}_{counter}{suffix}"
-                counter += 1
-
-            with open(dest, "wb") as out:
-                out.write(f["content"])
-
-            ext = suffix.lower()
-            if ext in (".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff", ".tif", ".svg"):
-                ftype = "photo"
-            elif ext in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v"):
+            original_stem = Path(filename).stem
+            original_suffix = Path(filename).suffix.lower()
+            should_convert_webp = is_image_ext(filename)
+            is_video_file = is_video_ext(filename)
+            if should_convert_webp:
+                webp_stem = original_stem
+                dest = sub_dir / f"{webp_stem}.webp"
+                counter = 1
+                while dest.exists():
+                    dest = sub_dir / f"{webp_stem}_{counter}.webp"
+                    counter += 1
+                webp_bytes, img_width, img_height = convert_to_webp(f["content"], quality=WEBP_QUALITY, max_width=MAX_IMAGE_WIDTH)
+                if webp_bytes:
+                    with open(dest, "wb") as out:
+                        out.write(webp_bytes)
+                    ftype = "photo"
+                    rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{dest.name}"
+                    lqip = generate_lqip(f["content"], width=LQIP_WIDTH, quality=LQIP_QUALITY, blur=LQIP_BLUR)
+                    thumb_bytes, thumb_w, thumb_h = generate_webp_thumbnail(f["content"], quality=WEBP_THUMB_QUALITY, max_width=MAX_THUMB_WIDTH)
+                    if thumb_bytes:
+                        thumb_name = f"{webp_stem}_thumb.webp"
+                        thumb_dest = sub_dir / thumb_name
+                        thumb_counter = 1
+                        while thumb_dest.exists():
+                            thumb_dest = sub_dir / f"{webp_stem}_thumb_{thumb_counter}.webp"
+                            thumb_counter += 1
+                        with open(thumb_dest, "wb") as out:
+                            out.write(thumb_bytes)
+                        thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{thumb_dest.name}"
+                    else:
+                        thumb_rel = rel
+                else:
+                    dest = sub_dir / filename
+                    counter = 1
+                    while dest.exists():
+                        dest = sub_dir / f"{original_stem}_{counter}{original_suffix}"
+                        counter += 1
+                    with open(dest, "wb") as out:
+                        out.write(f["content"])
+                    ftype = "photo"
+                    rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{dest.name}"
+                    thumb_rel = rel
+                    lqip = None
+            elif is_video_file:
+                dest = sub_dir / filename
+                counter = 1
+                while dest.exists():
+                    dest = sub_dir / f"{original_stem}_{counter}{original_suffix}"
+                    counter += 1
+                with open(dest, "wb") as out:
+                    out.write(f["content"])
                 ftype = "video"
-            else:
-                ftype = "photo"
-
-            rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{dest.name}"
-            thumb_rel = rel
-            if ftype == "video":
+                rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{dest.name}"
                 thumb_key = f"thumb_{f['name'].split('_', 1)[1]}" if f['name'].startswith('file_') else None
                 thumb_source = thumb_parts.get(thumb_key)
                 if thumb_source:
-                    thumb_name = f"{stem}_thumb.jpg"
+                    thumb_stem = original_stem
+                    thumb_name = f"{thumb_stem}_thumb.webp"
                     thumb_dest = sub_dir / thumb_name
                     thumb_counter = 1
                     while thumb_dest.exists():
-                        thumb_dest = sub_dir / f"{stem}_thumb_{thumb_counter}.jpg"
+                        thumb_dest = sub_dir / f"{thumb_stem}_thumb_{thumb_counter}.webp"
                         thumb_counter += 1
-                    with open(thumb_dest, "wb") as out:
-                        out.write(thumb_source["content"])
-                    thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{thumb_dest.name}"
-                elif generate_video_thumbnail(dest, sub_dir / f"{stem}_thumb.jpg", seek_time=3.0):
-                    thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{stem}_thumb.jpg"
+                    thumb_bytes, _, _ = convert_to_webp(thumb_source["content"], quality=WEBP_THUMB_QUALITY, max_width=MAX_THUMB_WIDTH)
+                    if thumb_bytes:
+                        with open(thumb_dest, "wb") as out:
+                            out.write(thumb_bytes)
+                        thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{thumb_dest.name}"
+                    else:
+                        thumb_name = f"{thumb_stem}_thumb.jpg"
+                        thumb_dest = sub_dir / thumb_name
+                        thumb_counter = 1
+                        while thumb_dest.exists():
+                            thumb_dest = sub_dir / f"{thumb_stem}_thumb_{thumb_counter}.jpg"
+                            thumb_counter += 1
+                        with open(thumb_dest, "wb") as out:
+                            out.write(thumb_source["content"])
+                        thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{thumb_dest.name}"
+                elif generate_video_thumbnail(dest, sub_dir / f"{original_stem}_thumb.jpg", seek_time=3.0):
+                    jpg_thumb = sub_dir / f"{original_stem}_thumb.jpg"
+                    if jpg_thumb.exists():
+                        webp_thumb = sub_dir / f"{original_stem}_thumb.webp"
+                        try:
+                            with open(jpg_thumb, "rb") as jf:
+                                jpg_bytes = jf.read()
+                            thumb_bytes, _, _ = convert_to_webp(jpg_bytes, quality=WEBP_THUMB_QUALITY, max_width=MAX_THUMB_WIDTH)
+                            if thumb_bytes:
+                                with open(webp_thumb, "wb") as wf:
+                                    wf.write(thumb_bytes)
+                                thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{webp_thumb.name}"
+                                jpg_thumb.unlink(missing_ok=True)
+                            else:
+                                thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{jpg_thumb.name}"
+                        except Exception:
+                            thumb_rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{jpg_thumb.name}"
+                    else:
+                        thumb_rel = rel
                 else:
                     thumb_rel = rel
-
+                lqip = None
+            else:
+                dest = sub_dir / filename
+                counter = 1
+                while dest.exists():
+                    dest = sub_dir / f"{original_stem}_{counter}{original_suffix}"
+                    counter += 1
+                with open(dest, "wb") as out:
+                    out.write(f["content"])
+                ftype = "photo"
+                rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{dest.name}"
+                thumb_rel = rel
+                lqip = None
             saved.append({
                 "filename": dest.name,
                 "rel_path": rel,
                 "type": ftype,
-                "thumbnail": thumb_rel
+                "thumbnail": thumb_rel,
+                "lqip": lqip
             })
-
         self.send_json({"ok": True, "files": saved})
 
     def send_html(self, html):
@@ -320,837 +811,16 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(json.dumps(obj, ensure_ascii=False).encode("utf-8"))
 
+    def send_xml(self, xml, code=200):
+        self.send_response(code)
+        self.send_header("Content-Type", "application/xml; charset=utf-8")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.end_headers()
+        self.wfile.write(xml.encode("utf-8"))
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
         super().end_headers()
-
-# ─── EDITOR UI ─────────────────────────────────────────────────────────
-EDITOR_HTML = r'''<!DOCTYPE html>
-<html lang="cs">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Projects Builder</title>
-<style>
-:root{
-  --bg:#0c0c0c;--bg2:#141414;--surface:#1e1e1e;--surface2:#282828;
-  --text:#e8e6e3;--muted:#8a8580;--accent:#c4956a;--accent2:#d4a87a;
-  --danger:#c45a5a;--ok:#5a9e6e;--r:8px;--gap:12px;
-  font-family:'Inter',system-ui,sans-serif;font-size:13px;color:var(--text);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
-
-header{
-  background:var(--surface);border-bottom:1px solid #333;
-  padding:12px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
-}
-header h1{font-family:'Bricolage Grotesque',Georgia,serif;font-size:20px;font-weight:400;color:var(--accent)}
-header .spacer{flex:1}
-.btn{
-  background:var(--surface2);border:1px solid #444;color:var(--text);
-  padding:7px 14px;border-radius:var(--r);cursor:pointer;font-size:12px;
-  transition:all .15s;display:inline-flex;align-items:center;gap:6px;
-}
-.btn:hover{border-color:var(--accent);color:var(--accent)}
-.btn.primary{background:var(--accent);color:#111;border-color:var(--accent);font-weight:600}
-.btn.primary:hover{background:var(--accent2)}
-.btn.danger{color:var(--danger);border-color:var(--danger)}
-.btn.danger:hover{background:rgba(196,90,90,.1)}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.status{font-size:11px;color:var(--muted);margin-left:auto}
-
-.wrap{display:flex;flex:1;overflow:hidden}
-.sidebar{
-  width:300px;background:var(--bg2);border-right:1px solid #333;
-  display:flex;flex-direction:column;overflow:hidden;
-}
-.sidebar .head{
-  padding:12px 16px;border-bottom:1px solid #333;
-  display:flex;align-items:center;gap:8px;
-}
-.project-list{flex:1;overflow-y:auto;padding:8px}
-.project-item{
-  padding:10px 12px;border-radius:var(--r);cursor:grab;
-  border:1px solid transparent;transition:all .15s;
-  display:flex;align-items:center;gap:10px;margin-bottom:4px;
-  user-select:none;
-}
-.project-item:hover{background:var(--surface)}
-.project-item.active{background:var(--surface);border-color:var(--accent)}
-.project-item.dragging{opacity:.4;cursor:grabbing;background:var(--surface2)}
-.project-item.drag-over{border-color:var(--accent);background:rgba(196,149,106,.1);box-shadow:inset 0 0 0 1px var(--accent)}
-.project-item .num{color:var(--muted);font-size:11px;min-width:24px}
-.project-item .title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
-.project-item .type{font-size:10px;text-transform:uppercase;color:var(--muted);background:var(--bg2);padding:2px 8px;border-radius:4px}
-
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.form-area{flex:1;overflow-y:auto;padding:24px}
-.form-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:var(--gap);max-width:900px;
-}
-.field{display:flex;flex-direction:column;gap:5px}
-.field label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
-.field input,.field select,.field textarea{
-  background:var(--surface);border:1px solid #444;color:var(--text);
-  padding:9px 11px;border-radius:var(--r);font-size:13px;font-family:inherit;
-  outline:none;transition:border-color .15s;width:100%;
-}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
-.field textarea{resize:vertical;min-height:70px}
-
-.section-title{
-  font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);
-  margin:28px 0 14px;padding-bottom:8px;border-bottom:1px solid #333;max-width:900px;
-}
-
-.media-toolbar{
-  display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap;max-width:900px;
-}
-
-.media-list{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;max-width:900px;
-}
-.media-card{
-  background:var(--surface);border:1px solid #444;border-radius:var(--r);
-  overflow:hidden;display:flex;flex-direction:column;cursor:grab;
-  transition:all .15s;user-select:none;
-}
-.media-card:hover{border-color:#555}
-.media-card.dragging{opacity:.4;cursor:grabbing;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
-.media-card.drag-over{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);transform:translateY(-2px)}
-.media-card .thumb{
-  height:140px;background:var(--bg2);position:relative;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;pointer-events:none;
-}
-.media-card .thumb img,.media-card .thumb video{
-  max-width:100%;max-height:100%;object-fit:cover;display:block;
-}
-.media-card .thumb .badge{
-  position:absolute;top:8px;left:8px;background:rgba(0,0,0,.7);
-  color:#fff;font-size:10px;text-transform:uppercase;padding:3px 8px;border-radius:4px;
-  letter-spacing:.05em;
-}
-.media-card .body{padding:12px;display:flex;flex-direction:column;gap:8px;pointer-events:auto}
-.media-card .body .field{margin:0}
-.media-card .body input,.media-card .body select{
-  background:var(--bg2);padding:6px 8px;font-size:12px;
-}
-.media-card .actions{
-  display:flex;gap:6px;padding:0 12px 12px;pointer-events:auto;
-}
-.media-card .actions .btn{font-size:11px;padding:5px 10px;flex:1;justify-content:center}
-
-.empty{color:var(--muted);font-style:italic;padding:20px;text-align:center}
-
-.toast{
-  position:fixed;bottom:20px;right:20px;background:var(--surface2);
-  border:1px solid var(--accent);color:var(--text);padding:10px 16px;
-  border-radius:var(--r);font-size:12px;opacity:0;transform:translateY(10px);
-  transition:all .3s;pointer-events:none;z-index:100;
-}
-.toast.show{opacity:1;transform:translateY(0)}
-
-.drop-zone{
-  border:2px dashed #444;border-radius:var(--r);padding:24px;text-align:center;
-  color:var(--muted);transition:all .2s;cursor:pointer;margin-bottom:14px;max-width:900px;
-}
-.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);color:var(--accent);background:rgba(196,149,106,.05)}
-.drop-zone span{display:block;font-size:20px;margin-bottom:8px}
-
-.upload-progress{
-  max-width:900px;margin-bottom:14px;display:none;
-}
-.upload-progress.active{display:block}
-.upload-progress-bar{
-  height:4px;background:var(--surface);border-radius:var(--r);overflow:hidden;
-}
-.upload-progress-fill{
-  height:100%;background:var(--accent);width:0%;transition:width .3s;
-}
-
-/* Gear */
-.gear-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;max-width:900px;
-}
-.gear-cat{
-  background:var(--surface);border:1px solid #444;border-radius:var(--r);padding:12px;
-}
-.gear-cat > label{
-  font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);
-  display:block;margin-bottom:10px;font-weight:600;
-}
-.gear-add-row{
-  display:flex;gap:6px;margin-bottom:10px;
-}
-.gear-add-row select{
-  flex:1;background:var(--bg2);border:1px solid #444;padding:6px 8px;border-radius:6px;
-  color:var(--text);font-size:12px;outline:none;transition:border-color .15s;
-}
-.gear-add-row select:focus{border-color:var(--accent)}
-.gear-row{
-  display:flex;gap:6px;margin-bottom:6px;align-items:center;
-}
-.gear-row input{
-  flex:1;background:var(--bg2);border:1px solid #444;padding:6px 8px;border-radius:6px;
-  color:var(--text);font-size:12px;outline:none;transition:border-color .15s;
-}
-.gear-row input:focus{border-color:var(--accent)}
-.gear-row .btn{
-  padding:4px 8px;font-size:11px;min-width:32px;justify-content:center;
-}
-</style>
-</head>
-<body>
-<header>
-  <h1>Projects Builder</h1>
-  <div class="spacer"></div>
-  <button class="btn" onclick="addProject()">+ Nový projekt</button>
-  <button class="btn danger" onclick="deleteProject()">🗑 Smazat</button>
-  <button class="btn" onclick="duplicateProject()">⎘ Duplikovat</button>
-  <button class="btn primary" onclick="saveNow()">💾 Uložit</button>
-  <span class="status" id="status">Načítání…</span>
-</header>
-<div class="wrap">
-  <aside class="sidebar">
-    <div class="head">
-      <span style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)">Projekty</span>
-      <span class="spacer"></span>
-      <span id="count" style="font-size:11px;color:var(--muted)">0</span>
-    </div>
-    <div class="project-list" id="projectList"></div>
-  </aside>
-  <div class="main">
-    <div class="form-area" id="formArea">
-      <div class="empty">Vyber projekt vlevo</div>
-    </div>
-  </div>
-</div>
-<div class="toast" id="toast">Uloženo</div>
-
-<script>
-const GEAR_CATS = ["camera","lenses","gimbal/stabilization","lighting","audio","software","color","drone","filter","tripod","monitor","recorder"];
-const GEAR_LABELS = {
-  "camera":"Camera",
-  "lenses":"Lenses",
-  "gimbal/stabilization":"Gimbal / Stabilization",
-  "lighting":"Lighting",
-  "audio":"Audio",
-  "software":"Software",
-  "color":"Color",
-  "drone":"Drone",
-  "filter":"Filter",
-  "tripod":"Tripod",
-  "monitor":"Monitor",
-  "recorder":"Recorder"
-};
-const GEAR_DROPDOWN_MAP = {
-  "camera":"camera",
-  "lenses":"lenses",
-  "filter":"filter"
-};
-let projects = [];
-let activeIdx = -1;
-let techInventory = {};
-
-async function load(){
-  const [pr, tr] = await Promise.all([fetch('/api/projects'), fetch('/api/tech')]);
-  projects = await pr.json();
-  techInventory = await tr.json();
-  renderList();
-  setStatus('Připraveno');
-  if(projects.length) select(0);
-}
-load();
-
-function setStatus(t){ document.getElementById('status').textContent = t; }
-function showToast(t){
-  const el = document.getElementById('toast');
-  el.textContent = t; el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2500);
-}
-
-/* ─── DRAG & DROP: PROJEKTY ─── */
-let dragProjSrc = null;
-
-function renderList(){
-  const list = document.getElementById('projectList');
-  list.innerHTML = '';
-  projects.forEach((p,i)=>{
-    const div = document.createElement('div');
-    div.className = 'project-item' + (i===activeIdx?' active':'');
-    div.setAttribute('draggable','true');
-    div.setAttribute('data-index', i);
-    div.innerHTML = `<span class="num">${i+1}</span><span class="title">${esc(p.title||'Bez názvu')}</span><span class="type">${p.type||'?'}</span>`;
-    div.onclick = ()=>select(i);
-    div.addEventListener('dragstart', onProjDragStart);
-    div.addEventListener('dragover', onProjDragOver);
-    div.addEventListener('drop', onProjDrop);
-    div.addEventListener('dragend', onProjDragEnd);
-    div.addEventListener('dragleave', onProjDragLeave);
-    list.appendChild(div);
-  });
-  document.getElementById('count').textContent = projects.length;
-}
-
-function onProjDragStart(e){
-  dragProjSrc = parseInt(this.getAttribute('data-index'));
-  this.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', dragProjSrc);
-}
-function onProjDragOver(e){
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  this.classList.add('drag-over');
-}
-function onProjDragLeave(e){
-  this.classList.remove('drag-over');
-}
-function onProjDrop(e){
-  e.preventDefault();
-  this.classList.remove('drag-over');
-  const src = dragProjSrc;
-  const dst = parseInt(this.getAttribute('data-index'));
-  if(src === null || src === dst || isNaN(dst)) return;
-  const item = projects.splice(src, 1)[0];
-  projects.splice(dst, 0, item);
-  activeIdx = dst;
-  dragProjSrc = null;
-  renderList();
-  select(activeIdx);
-  debounceSave();
-  showToast('Pořadí projektů změněno');
-}
-function onProjDragEnd(e){
-  this.classList.remove('dragging');
-  document.querySelectorAll('.project-item').forEach(el=>el.classList.remove('drag-over'));
-  dragProjSrc = null;
-}
-
-/* ─── DRAG & DROP: MEDIA ─── */
-let dragMediaSrc = null;
-
-function initMediaDrag(){
-  document.querySelectorAll('.media-card').forEach(card=>{
-    card.setAttribute('draggable','true');
-    card.addEventListener('dragstart', onMediaDragStart);
-    card.addEventListener('dragover', onMediaDragOver);
-    card.addEventListener('drop', onMediaDrop);
-    card.addEventListener('dragend', onMediaDragEnd);
-    card.addEventListener('dragleave', onMediaDragLeave);
-  });
-}
-
-function onMediaDragStart(e){
-  if(e.target.closest('.field') || e.target.closest('.actions') || e.target.closest('input') || e.target.closest('select')){
-    e.preventDefault(); return;
-  }
-  dragMediaSrc = parseInt(this.getAttribute('data-index'));
-  this.classList.add('dragging');
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', dragMediaSrc);
-}
-function onMediaDragOver(e){
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  this.classList.add('drag-over');
-}
-function onMediaDragLeave(e){
-  this.classList.remove('drag-over');
-}
-function onMediaDrop(e){
-  e.preventDefault();
-  this.classList.remove('drag-over');
-  if(activeIdx<0) return;
-  const src = dragMediaSrc;
-  const dst = parseInt(this.getAttribute('data-index'));
-  if(src === null || src === dst || isNaN(dst)) return;
-  const arr = projects[activeIdx].media;
-  const item = arr.splice(src, 1)[0];
-  arr.splice(dst, 0, item);
-  dragMediaSrc = null;
-  renderForm();
-  debounceSave();
-  showToast('Pořadí médií změněno');
-}
-function onMediaDragEnd(e){
-  this.classList.remove('dragging');
-  document.querySelectorAll('.media-card').forEach(el=>el.classList.remove('drag-over'));
-  dragMediaSrc = null;
-}
-
-function select(i){
-  activeIdx = i;
-  renderList();
-  renderForm();
-}
-
-function esc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
-
-function ensureGear(p){
-  if(!p.gear) p.gear = {};
-  GEAR_CATS.forEach(c=>{ if(!p.gear[c]) p.gear[c] = []; });
-}
-
-function renderForm(){
-  const area = document.getElementById('formArea');
-  if(activeIdx<0){ area.innerHTML='<div class="empty">Vyber projekt</div>'; return; }
-  const p = projects[activeIdx];
-  ensureGear(p);
-
-  let mediaHtml = '';
-  (p.media||[]).forEach((m,mi)=>{
-    const thumb = m.thumbnail || m.src || '';
-    const isVideo = m.type === 'video';
-    const thumbTag = isVideo 
-      ? `<video src="${esc(thumb)}" muted preload="metadata"></video>`
-      : `<img src="${esc(thumb)}" alt="" onerror="this.style.display='none'">`;
-
-    mediaHtml += `
-    <div class="media-card" data-index="${mi}">
-      <div class="thumb">
-        ${thumbTag}
-        <span class="badge">${m.type||'?'}</span>
-      </div>
-      <div class="body">
-        <div class="field">
-          <label>Typ</label>
-          <select onchange="setMedia(${mi},'type',this.value)">
-            <option value="photo" ${m.type==='photo'?'selected':''}>Photo</option>
-            <option value="video" ${m.type==='video'?'selected':''}>Video</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Src (cesta/URL)</label>
-          <input type="text" value="${esc(m.src||'')}" onchange="setMedia(${mi},'src',this.value)">
-        </div>
-        <div class="field">
-          <label>Thumbnail / Poster</label>
-          <input type="text" value="${esc(m.thumbnail||m.poster||'')}" onchange="setMedia(${mi},'thumbnail',this.value)">
-        </div>
-        <div class="field">
-          <label>Titulek</label>
-          <input type="text" value="${esc(m.title||'')}" onchange="setMedia(${mi},'title',this.value)">
-        </div>
-        <div class="field">
-          <label>Caption</label>
-          <input type="text" value="${esc(m.caption||'')}" onchange="setMedia(${mi},'caption',this.value)">
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn" onclick="moveMedia(${mi},-1)">↑</button>
-        <button class="btn" onclick="moveMedia(${mi},1)">↓</button>
-        <button class="btn danger" onclick="deleteMedia(${mi})">Smazat</button>
-      </div>
-    </div>`;
-  });
-
-  let gearHtml = '';
-  GEAR_CATS.forEach(cat=>{
-    const items = p.gear[cat] || [];
-    const invKey = GEAR_DROPDOWN_MAP[cat];
-    const inventory = (invKey && techInventory[invKey]) ? techInventory[invKey] : [];
-
-    let addSection = '';
-    if(inventory.length){
-      let opts = `<option value="">— vyber z inventáře —</option>`;
-      inventory.forEach(it=>{
-        opts += `<option value="${esc(it)}">${esc(it)}</option>`;
-      });
-      addSection = `<div class="gear-add-row">
-        <select id="gear-add-${cat}">
-          ${opts}
-        </select>
-        <button class="btn" onclick="addGearFromSelect('${cat}')">+ Přidat</button>
-      </div>`;
-    }
-
-    let rows = '';
-    items.forEach((item,idx)=>{
-      rows += `<div class="gear-row">
-        <input type="text" value="${esc(item)}" onchange="updateGear('${cat}',${idx},this.value)">
-        <button class="btn danger" onclick="removeGear('${cat}',${idx})">×</button>
-      </div>`;
-    });
-
-    gearHtml += `<div class="gear-cat">
-      <label>${GEAR_LABELS[cat]||cat}</label>
-      ${addSection}
-      ${rows}
-      <button class="btn" style="width:100%;margin-top:4px" onclick="addGear('${cat}')">+ Přidat ručně</button>
-    </div>`;
-  });
-
-  area.innerHTML = `
-    <div class="section-title">Projekt: ${esc(p.title||'Bez názvu')}</div>
-    <div class="form-grid">
-      <div class="field"><label>ID</label><input type="number" value="${p.id||''}" onchange="set('id',parseInt(this.value)||0)"></div>
-      <div class="field"><label>Název</label><input type="text" value="${esc(p.title||'')}" onchange="set('title',this.value)"></div>
-      <div class="field">
-        <label>Typ projektu</label>
-        <select onchange="set('type',this.value)">
-          <option value="photo" ${p.type==='photo'?'selected':''}>Photo</option>
-          <option value="video" ${p.type==='video'?'selected':''}>Video</option>
-        </select>
-      </div>
-      <div class="field"><label>Rok</label><input type="text" value="${esc(p.year||'')}" onchange="set('year',this.value)"></div>
-      <div class="field">
-        <label>Layout</label>
-        <select onchange="set('layout',this.value)">
-          <option value="normal" ${p.layout==='normal'?'selected':''}>Normal</option>
-          <option value="wide" ${p.layout==='wide'?'selected':''}>Wide</option>
-          <option value="tall" ${p.layout==='tall'?'selected':''}>Tall</option>
-          <option value="large" ${p.layout==='large'?'selected':''}>Large</option>
-        </select>
-      </div>
-      <div class="field"><label>Thumbnail URL</label><input type="text" value="${esc(p.thumbnail||'')}" onchange="set('thumbnail',this.value)"></div>
-      <div class="field"><label>Full URL</label><input type="text" value="${esc(p.full||'')}" onchange="set('full',this.value)"></div>
-      <div class="field" style="grid-column:1/-1"><label>Bio</label><textarea onchange="set('bio',this.value)">${esc(p.bio||'')}</textarea></div>
-      <div class="field" style="grid-column:1/-1"><label>Techniques (oddělené čárkou)</label><input type="text" value="${esc(Array.isArray(p.techniques)?p.techniques.join(', '):(p.techniques||''))}" onchange="setTech(this.value)"></div>
-    </div>
-
-    <div class="section-title">Gear</div>
-    <div class="gear-grid">${gearHtml}</div>
-
-    <div class="section-title">Media</div>
-
-    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-      <span>📁</span>
-      <div>Klikni pro výběr souborů, nebo přetáhni sem</div>
-      <div style="font-size:11px;margin-top:4px;opacity:.7">Ctrl+A pro výběr všech souborů ve složce</div>
-      <input type="file" id="fileInput" multiple style="display:none" onchange="handleFiles(this.files)">
-    </div>
-
-    <div class="upload-progress" id="uploadProgress">
-      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px">
-        <span id="uploadLabel">Nahrávání…</span>
-        <span id="uploadPercent">0%</span>
-      </div>
-      <div class="upload-progress-bar"><div class="upload-progress-fill" id="uploadFill"></div></div>
-    </div>
-
-    <div class="media-toolbar">
-      <button class="btn" onclick="document.getElementById('fileInput').click()">+ Vybrat soubory</button>
-      <button class="btn" onclick="document.getElementById('folderInput').click()">+ Vybrat složku</button>
-      <button class="btn" onclick="addMediaUrl()">+ Přidat URL</button>
-      <input type="file" id="folderInput" webkitdirectory directory style="display:none" onchange="handleFiles(this.files)">
-    </div>
-
-    <div class="media-list" id="mediaList">
-      ${mediaHtml || '<div class="empty" id="mediaEmpty">Žádná media</div>'}
-    </div>
-  `;
-
-  initMediaDrag();
-
-  const dz = document.getElementById('dropZone');
-  if(dz){
-    dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('dragover');});
-    dz.addEventListener('dragleave', e=>{dz.classList.remove('dragover');});
-    dz.addEventListener('drop', e=>{
-      e.preventDefault();dz.classList.remove('dragover');
-      if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);
-    });
-  }
-}
-
-function set(key,val){
-  if(activeIdx<0) return;
-  projects[activeIdx][key] = val;
-  if(key==='title'||key==='type') renderList();
-  debounceSave();
-}
-function setTech(val){
-  if(activeIdx<0) return;
-  const arr = val.split(',').map(s=>s.trim()).filter(Boolean);
-  projects[activeIdx].techniques = arr.length?arr:null;
-  debounceSave();
-}
-function setMedia(mi,key,val){
-  if(activeIdx<0) return;
-  projects[activeIdx].media[mi][key] = val;
-  debounceSave();
-}
-
-const VIDEO_EXTS = ['.mp4','.mov','.webm','.avi','.mkv','.m4v'];
-function isVideoFileName(name){
-  if(!name) return false;
-  const lower = name.toLowerCase();
-  return VIDEO_EXTS.some(ext => lower.endsWith(ext));
-}
-
-function createVideoThumbnailFromFile(file){
-  return new Promise(resolve => {
-    const url = URL.createObjectURL(file);
-    const video = document.createElement('video');
-    video.src = url;
-    video.muted = true;
-    video.playsInline = true;
-    video.preload = 'metadata';
-    video.style.position = 'fixed';
-    video.style.left = '-9999px';
-    video.style.width = '1px';
-    video.style.height = '1px';
-    document.body.appendChild(video);
-
-    let done = false;
-    let timeoutId = null;
-    const cleanup = () => {
-      if(done) return;
-      done = true;
-      video.pause();
-      video.remove();
-      URL.revokeObjectURL(url);
-    };
-    const fail = () => {
-      clearTimeout(timeoutId);
-      cleanup();
-      resolve(null);
-    };
-    const finish = blob => {
-      clearTimeout(timeoutId);
-      cleanup();
-      resolve(blob);
-    };
-
-    const queueCapture = () => {
-      if (done) return;
-      try {
-        const w = video.videoWidth || 640;
-        const h = video.videoHeight || 360;
-        const width = Math.min(640, w);
-        const height = Math.max(1, Math.round((width * h) / w));
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, width, height);
-        canvas.toBlob(blob => {
-          if (blob) finish(blob);
-          else fail();
-        }, 'image/jpeg', 0.92);
-      } catch (e) {
-        fail();
-      }
-    };
-
-    let targetTime = 3;
-    video.addEventListener('loadedmetadata', () => {
-      if (video.duration && video.duration < 3) {
-        targetTime = Math.max(0.1, video.duration / 2);
-      }
-      if (video.duration && targetTime >= video.duration) {
-        targetTime = Math.max(0.1, video.duration - 0.1);
-      }
-      video.currentTime = targetTime;
-    });
-
-    video.addEventListener('seeked', () => {
-      if (!done) queueCapture();
-    });
-
-    video.addEventListener('loadeddata', () => {
-      if (!done && Math.abs(video.currentTime - targetTime) < 0.1) {
-        queueCapture();
-      }
-    });
-
-    video.addEventListener('error', fail);
-    video.addEventListener('abort', fail);
-
-    timeoutId = setTimeout(fail, 8000);
-    video.load();
-  });
-}
-
-// Gear
-function addGear(cat){
-  if(activeIdx<0) return;
-  ensureGear(projects[activeIdx]);
-  projects[activeIdx].gear[cat].push('');
-  renderForm();
-}
-function addGearFromSelect(cat){
-  const sel = document.getElementById('gear-add-'+cat);
-  if(!sel || !sel.value) return;
-  if(activeIdx<0) return;
-  ensureGear(projects[activeIdx]);
-  if(!projects[activeIdx].gear[cat].includes(sel.value)){
-    projects[activeIdx].gear[cat].push(sel.value);
-  }
-  renderForm();
-  debounceSave();
-}
-function removeGear(cat,idx){
-  if(activeIdx<0) return;
-  projects[activeIdx].gear[cat].splice(idx,1);
-  renderForm();
-  debounceSave();
-}
-function updateGear(cat,idx,val){
-  if(activeIdx<0) return;
-  projects[activeIdx].gear[cat][idx] = val;
-  debounceSave();
-}
-
-// Upload
-async function handleFiles(files){
-  if(!files.length || activeIdx<0) return;
-  const progress = document.getElementById('uploadProgress');
-  const fill = document.getElementById('uploadFill');
-  const label = document.getElementById('uploadLabel');
-  const pct = document.getElementById('uploadPercent');
-  progress.classList.add('active');
-
-  const fd = new FormData();
-  const fileArray = Array.from(files);
-  const thumbTasks = [];
-
-  fileArray.forEach((f, idx) => {
-    fd.append(`file_${idx}`, f, f.name);
-    if (f.type.startsWith('video/') || isVideoFileName(f.name)) {
-      thumbTasks.push((async () => {
-        const thumb = await createVideoThumbnailFromFile(f);
-        if (thumb) {
-          const thumbName = f.name.replace(/\.[^.]+$/, '') + '_thumb.jpg';
-          fd.append(`thumb_${idx}`, thumb, thumbName);
-        }
-      })());
-    }
-  });
-
-  await Promise.all(thumbTasks);
-  fd.append('project_type', projects[activeIdx].type || 'photo');
-  fd.append('project_year', projects[activeIdx].year || 'unknown');
-  fd.append('project_title', projects[activeIdx].title || 'untitled');
-
-  try{
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST','/api/upload');
-    xhr.upload.onprogress = e=>{
-      if(e.lengthComputable){
-        const p = Math.round((e.loaded/e.total)*100);
-        fill.style.width = p+'%';
-        pct.textContent = p+'%';
-      }
-    };
-    const result = await new Promise((res,rej)=>{
-      xhr.onload = ()=>res(JSON.parse(xhr.responseText));
-      xhr.onerror = rej;
-      xhr.send(fd);
-    });
-
-    if(result.ok){
-      label.textContent = 'Hotovo!';
-      pct.textContent = '100%';
-      fill.style.width = '100%';
-
-      if(!projects[activeIdx].media) projects[activeIdx].media = [];
-      for(const f of result.files){
-        projects[activeIdx].media.push({
-          type: f.type,
-          src: f.rel_path,
-          thumbnail: f.thumbnail || f.rel_path,
-          title: f.filename.replace(/\.[^.]+$/,''),
-          caption: ''
-        });
-      }
-      renderForm();
-      debounceSave();
-      showToast('Nahráno '+result.files.length+' souborů');
-    }else{
-      throw new Error(result.error||'Chyba');
-    }
-  }catch(e){
-    label.textContent = 'Chyba: '+e.message;
-    pct.textContent = '';
-    showToast('Chyba nahrávání');
-  }
-  setTimeout(()=>progress.classList.remove('active'),1500);
-}
-
-function addMediaUrl(){
-  if(activeIdx<0) return;
-  if(!projects[activeIdx].media) projects[activeIdx].media = [];
-  projects[activeIdx].media.push({type:'photo', src:'', thumbnail:'', title:'', caption:''});
-  renderForm();
-  debounceSave();
-}
-function deleteMedia(mi){
-  if(activeIdx<0) return;
-  projects[activeIdx].media.splice(mi,1);
-  renderForm();
-  debounceSave();
-}
-function moveMedia(mi,dir){
-  if(activeIdx<0) return;
-  const arr = projects[activeIdx].media;
-  const ni = mi+dir;
-  if(ni<0||ni>=arr.length) return;
-  [arr[mi],arr[ni]] = [arr[ni],arr[mi]];
-  renderForm();
-  debounceSave();
-}
-
-function addProject(){
-  const maxId = projects.reduce((m,p)=>Math.max(m,p.id||0),0);
-  const gearDefault = {};
-  GEAR_CATS.forEach(c=>gearDefault[c]=[]);
-  const np = {
-    id: maxId+1,
-    title: "Nový projekt",
-    type: "photo",
-    year: "2025",
-    layout: "normal",
-    thumbnail: "",
-    full: "",
-    bio: "",
-    techniques: [],
-    gear: gearDefault,
-    media: []
-  };
-  projects.push(np);
-  renderList();
-  select(projects.length-1);
-  debounceSave();
-}
-function deleteProject(){
-  if(activeIdx<0||!confirm('Opravdu smazat projekt "'+(projects[activeIdx].title||'')+'"?')) return;
-  projects.splice(activeIdx,1);
-  activeIdx = Math.min(activeIdx, projects.length-1);
-  renderList(); renderForm(); debounceSave();
-}
-function duplicateProject(){
-  if(activeIdx<0) return;
-  const clone = JSON.parse(JSON.stringify(projects[activeIdx]));
-  const maxId = projects.reduce((m,p)=>Math.max(m,p.id||0),0);
-  clone.id = maxId+1;
-  clone.title = (clone.title||'') + ' (kopie)';
-  projects.splice(activeIdx+1,0,clone);
-  renderList();
-  select(activeIdx+1);
-  debounceSave();
-}
-
-let saveTimer;
-function debounceSave(){
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveNow, 800);
-}
-async function saveNow(){
-  setStatus('Ukládání…');
-  try{
-    const r = await fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(projects)});
-    const j = await r.json();
-    if(j.ok){ setStatus('Uloženo'); showToast('Uloženo'); }
-    else { setStatus('Chyba: '+j.error); }
-  }catch(e){ setStatus('Chyba sítě'); }
-}
-</script>
-</body>
-</html>
-'''
 
 # ─── MAIN ──────────────────────────────────────────────────────────────
 def main():
@@ -1165,9 +835,9 @@ def main():
 
     url = f"http://localhost:{PORT}"
     print("=" * 50)
-    print(f"  Projects Builder běží na {url}")
-    print(f"  Načteno z Kamera.md: {len(tech_inventory.get('camera', []))} kamer")
-    print(f"  Načteno z Optika.md: {len(tech_inventory.get('lenses', []))} objektivů, {len(tech_inventory.get('filter', []))} filtrů")
+    print(f"  Projects Builder bezi na {url}")
+    print(f"  Nacteno z Kamera.md: {len(tech_inventory.get('camera', []))} kamer")
+    print(f"  Nacteno z Optika.md: {len(tech_inventory.get('lenses', []))} objektivu, {len(tech_inventory.get('filter', []))} filtru")
     print("=" * 50)
 
     try:
@@ -1179,7 +849,7 @@ def main():
         while True:
             __import__('time').sleep(1)
     except KeyboardInterrupt:
-        print("\nUkončuji…")
+        print("\nUkoncuji...")
         server.shutdown()
 
 if __name__ == "__main__":

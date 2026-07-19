@@ -9,25 +9,20 @@
 <meta property="og:description" content="Cinematography & Photography. Detail projektu.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://levinskyj.art/project.html">
-<meta property="og:image" content="https://levinskyj.art/media/og-cover.png">
+<meta property="og:image" content="https://levinskyj.art/media/og-cover.webp">
 <meta name="twitter:card" content="summary_large_image">
 
 <title>Jan Levínský // Project</title>
 <link rel="canonical" href="https://levinskyj.art/project.html">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-<!-- GSAP: scroll-driven reveals + modal choreography -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
-<!-- Motion: spring micro-interactions -->
 <script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
-<!-- StringTune: parallax + magnetic -->
-<script src="https://unpkg.com/@fiddle-digital/string-tune@1.2.0/dist/index.js" defer></script>
-
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -50,7 +45,6 @@
   --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  color-scheme: light;
 }
 
 html, body { height: 100%; color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -63,13 +57,9 @@ img { display: block; max-width: 100%; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--r-full); }
 
-a:focus-visible,
-button:focus-visible,
-.tile:focus-visible,
-.modal-close:focus-visible,
-.modal-shortcuts-btn:focus-visible,
-.modal-nav:focus-visible,
-.ctrl-btn:focus-visible {
+a:focus-visible, button:focus-visible, .tile:focus-visible,
+.modal-close:focus-visible, .modal-shortcuts-btn:focus-visible,
+.modal-nav:focus-visible, .ctrl-btn:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
   border-radius: var(--r-sm);
@@ -120,30 +110,21 @@ h1 {
 
 h1 .last { display: block; font-style: italic; color: var(--accent); }
 
-/* Hero char-split (driven by Motion when libs are ready) */
 .h1-word { display: block; }
 .h1-char { display: inline-block; will-change: transform; }
 html.lib-anim h1 { animation: none; opacity: 1; }
 html.lib-anim .h1-char { opacity: 0; }
 
-/* StringTune parallax wrapper — oversized so translate never shows gaps */
 .px-wrap {
   position: absolute;
-  left: 0; right: 0; top: -8%; bottom: -8%;
+  left: 0; right: 0; top: 0; bottom: 0;
   z-index: 0;
-  will-change: transform;
   pointer-events: none;
 }
 .px-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* StringTune magnetic elements */
-[string="magnetic"] {
-  transform: translate3d(calc(var(--magnetic-x, 0) * 1px), calc(var(--magnetic-y, 0) * 1px), 0);
-  will-change: transform;
 }
 
 .divider {
@@ -346,14 +327,16 @@ main {
 
 .tile:hover img, .tile:hover video { transform: scale(1.03); }
 
+/* ─── Unified hover overlay ─── */
 .tile::after {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.25) 45%, transparent 75%);
+  background: rgba(0,0,0,0.45);
   opacity: 0;
   transition: opacity 0.5s var(--ease-in-out);
   pointer-events: none;
+  z-index: 2;
 }
 
 .tile:hover::after { opacity: 1; }
@@ -426,8 +409,6 @@ main {
 
 .tile.video-tile::after { opacity: 0; }
 .tile.video-tile:hover::after { opacity: 0; }
-
-
 
 .flyout {
   position: absolute;
@@ -805,9 +786,9 @@ main {
 }
 
 .modal.open {
-  background: rgba(250,248,245,0.98);
+  background: #000;
   visibility: visible;
-  transition: background 0.4s var(--ease-in-out), visibility 0s 0s;
+  transition: background 0.5s var(--ease-in-out), visibility 0s 0s;
 }
 
 .modal-inner {
@@ -847,13 +828,13 @@ main {
 }
 
 .modal-caption {
-  color: rgba(0,0,0,0.45);
+  color: rgba(255,255,255,0.45);
   font-size: 12.5px;
   font-weight: 300;
-  margin-top: 16px;
+  margin-top: 20px;
   text-align: center;
   letter-spacing: 0.04em;
-  height: 18px;
+  min-height: 18px;
   opacity: 0;
   transform: translateY(4px);
   transition: opacity 0.4s 0.15s var(--ease-out-expo), transform 0.4s 0.15s var(--ease-out-expo);
@@ -875,7 +856,7 @@ main {
 }
 
 .modal-counter {
-  color: rgba(0,0,0,0.35);
+  color: rgba(255,255,255,0.4);
   font-size: 11.5px;
   font-weight: 500;
   letter-spacing: 0.1em;
@@ -884,25 +865,28 @@ main {
   transition: opacity 0.25s;
 }
 
-.modal-close, .modal-shortcuts-btn {
+.modal-close, .modal-shortcuts-btn, .modal-ambient-btn {
   width: 40px; height: 40px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  background: rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.1);
-  color: rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.6);
   cursor: pointer;
   transition: background 0.25s, color 0.25s, transform 0.25s var(--ease-out-expo), border-color 0.25s;
   flex-shrink: 0;
 }
 
-.modal-close:hover, .modal-shortcuts-btn:hover {
-  background: rgba(0,0,0,0.08);
-  color: var(--text);
-  border-color: rgba(0,0,0,0.15);
+.modal-close:hover, .modal-shortcuts-btn:hover, .modal-ambient-btn:hover {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border-color: rgba(255,255,255,0.25);
 }
 
-.modal-close:active, .modal-shortcuts-btn:active { transform: scale(0.9); }
+.modal-close:active, .modal-shortcuts-btn:active, .modal-ambient-btn:active { transform: scale(0.9); }
+
+.modal-ambient-btn.off i { color: rgba(255,255,255,0.2); }
+.modal-ambient-btn i { transition: color 0.3s ease; }
 
 .modal-nav {
   position: absolute;
@@ -910,9 +894,9 @@ main {
   transform: translateY(-50%);
   width: 50px; height: 50px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.05);
-  border: 1px solid rgba(0,0,0,0.1);
-  color: rgba(0,0,0,0.5);
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.5);
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   transition: background 0.25s, color 0.25s, transform 0.3s var(--ease-out-expo), border-color 0.25s, opacity 0.25s;
@@ -921,9 +905,9 @@ main {
 }
 
 .modal-nav:hover {
-  background: rgba(0,0,0,0.08);
-  color: var(--text);
-  border-color: rgba(0,0,0,0.15);
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border-color: rgba(255,255,255,0.2);
 }
 
 .modal-prev { left: 16px; }
@@ -936,11 +920,11 @@ main {
   position: absolute;
   top: 72px;
   right: 20px;
-  background: rgba(255,255,255,0.98);
-  border: 1px solid var(--border);
+  background: rgba(30,30,30,0.98);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--r-md);
   padding: 18px 22px;
-  color: rgba(0,0,0,0.7);
+  color: rgba(255,255,255,0.7);
   font-size: 12px;
   z-index: 20;
   min-width: 230px;
@@ -956,7 +940,7 @@ main {
 
 .shortcuts-panel h3 {
   margin: 0 0 14px; font-size: 10px; font-weight: 600;
-  color: rgba(0,0,0,0.3); letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.3); letter-spacing: 0.14em; text-transform: uppercase;
 }
 
 .sc-row {
@@ -965,22 +949,21 @@ main {
 }
 .sc-row:last-child { margin-bottom: 0; }
 
-.sc-label { color: rgba(0,0,0,0.65); }
+.sc-label { color: rgba(255,255,255,0.65); }
 
 .sc-keys { display: flex; gap: 4px; }
 
 .key {
-  background: rgba(0,0,0,0.06);
-  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 5px;
   padding: 2px 7px;
   font-family: monospace; font-size: 10.5px;
-  color: rgba(0,0,0,0.4);
+  color: rgba(255,255,255,0.5);
   white-space: nowrap;
 }
 
-/* ─── Footer ─── */
-.g-footer {
+.g-footer { content-visibility: auto; contain-intrinsic-size: auto 200px;
   padding: 60px 0 40px;
   border-top: 1px solid var(--border);
   display: flex;
@@ -989,8 +972,6 @@ main {
   text-align: center;
   position: relative;
   margin-top: 40px;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.5s var(--ease-out-expo) forwards;
 }
 
 .g-footer::before {
@@ -1011,37 +992,6 @@ main {
 }
 .f-contact:hover { color: var(--accent); border-color: var(--accent); }
 
-/* ─── Page Loader ─── */
-.page-loader {
-  position: fixed; inset: 0;
-  background: var(--bg);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 9999;
-  transition: opacity 0.6s var(--ease-out-expo), visibility 0s 0.6s;
-}
-.page-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.loader-ring {
-  width: 40px; height: 40px; border-radius: 50%;
-  border: 2.5px solid var(--border); border-top-color: var(--accent);
-  animation: spin 0.85s linear infinite;
-}
-.loader-text {
-  margin-top: 18px; font-size: 11px; font-weight: 500;
-  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
-}
-.loader-text::after {
-  content: '...';
-  animation: loaderDots 1.5s steps(4, end) infinite;
-}
-@keyframes loaderDots {
-  0%, 20% { content: ''; }
-  40% { content: '.'; }
-  60% { content: '..'; }
-  80%, 100% { content: '...'; }
-}
-
-/* ─── Animations ─── */
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -1052,7 +1002,6 @@ main {
   to { opacity: 1; }
 }
 
-/* ─── Responsive ─── */
 @media (max-width: 1024px) {
   .wrap { grid-template-columns: 210px 1fr; gap: 28px; }
   h1 { font-size: 48px; }
@@ -1082,11 +1031,9 @@ main {
   .tile-inline-player { display: none; }
   .tile-caption { display: none; }
 
-  /* Hide perforations on mobile — too small, clutter the view */
   .film-perf-v { display: none !important; }
   .film-shadow { display: none !important; }
 
-  /* Video tiles on mobile */
   .tile.video-tile {
     aspect-ratio: unset !important;
     height: auto;
@@ -1110,7 +1057,6 @@ main {
     transition: none;
   }
 
-  /* Video info on mobile — show at bottom, always visible */
   .tile.video-tile .video-info {
     position: absolute;
     left: 12px; bottom: 12px; right: 12px;
@@ -1138,13 +1084,11 @@ main {
     display: none;
   }
 
-  /* Video overlay on mobile */
   .tile.video-tile .video-overlay {
     background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
     opacity: 1;
   }
 
-  /* Mobile play hint */
   .mob-play-hint {
     display: flex;
     position: absolute; inset: 0;
@@ -1162,7 +1106,6 @@ main {
   .mob-play-hint i { font-size: 22px; color: #fff; }
   .tile.video-tile.playing .mob-play-hint { opacity: 0; }
 
-  /* Player on mobile */
   .tile.video-tile .tile-thumb .player {
     position: absolute; inset: 0;
     width: 100% !important; max-width: 100% !important;
@@ -1200,24 +1143,78 @@ main {
     scroll-behavior: auto !important;
   }
 }
+
+/* ─── AMBIENT LIGHTING ─── */
+.ambient-canvas {
+  position: absolute;
+  inset: -160px;
+  width: calc(100% + 320px);
+  height: calc(100% + 320px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  filter: blur(180px) saturate(1.1) brightness(0.4);
+}
+
+.modal.open .ambient-canvas {
+  opacity: 1;
+}
+
+.ambient-canvas.off {
+  opacity: 0 !important;
+  transition: opacity 0.6s ease;
+}
+
+.modal-inner {
+  position: relative;
+  overflow: visible;
+}
 </style>
 <base target="_self">
-<base target="_blank">
-<base target="_blank">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="//unpkg.com">
+  <style>
+    @font-face { font-family: 'Bricolage Grotesque'; font-display: swap; }
+    @font-face { font-family: 'Inter'; font-display: swap; }
+  
+/* ─── AMBIENT LIGHTING ─── */
+.ambient-canvas {
+  position: absolute;
+  inset: -160px;
+  width: calc(100% + 320px);
+  height: calc(100% + 320px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  filter: blur(180px) saturate(1.1) brightness(0.4);
+}
+
+.modal.open .ambient-canvas {
+  opacity: 1;
+}
+
+.ambient-canvas.off {
+  opacity: 0 !important;
+  transition: opacity 0.6s ease;
+}
+
+.modal-inner {
+  position: relative;
+  overflow: visible;
+}
+</style>
 <base target="_blank">
 </head>
 <body>
-<div class="page-loader" id="pageLoader">
-  <div class="loader-ring"></div>
-  <div class="loader-text">Načítání projektu</div>
-</div>
 
 <div class="wrap">
   <aside class="brand">
     <div class="kicker">Portfolio // 2025</div>
     <h1>Jan<br/><span class="last">Levínský</span></h1>
     <div class="divider"></div>
-    <a href="index.html" class="back-link" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-arrow-left"></i> Back to portfolio</a>
+    <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to portfolio</a>
   </aside>
   <main id="project-container">
     <div class="loading-state">
@@ -1229,11 +1226,16 @@ main {
 
 <div class="modal" id="modal" role="dialog" aria-modal="true">
   <div class="modal-inner">
+    <canvas class="ambient-canvas" id="ambient-canvas"></canvas>
+
     <div class="modal-topbar">
       <div class="modal-close" id="modal-close" title="Close (Esc)" role="button" tabindex="0" aria-label="Close">
         <i class="ph ph-x" style="font-size:18px;"></i>
       </div>
       <div class="modal-counter" id="modal-counter"></div>
+      <div class="modal-ambient-btn" id="ambient-btn" title="Ambient light (A)" role="button" tabindex="0" aria-label="Toggle ambient light">
+        <i class="ph ph-lightbulb" style="font-size:18px;"></i>
+      </div>
       <div class="modal-shortcuts-btn" id="shortcuts-btn" title="Keyboard shortcuts (?)" role="button" tabindex="0" aria-label="Keyboard shortcuts">
         <i class="ph ph-keyboard" style="font-size:18px;"></i>
       </div>
@@ -1248,6 +1250,7 @@ main {
       <div class="sc-row"><span class="sc-label">Mute</span><div class="sc-keys"><span class="key">M</span></div></div>
       <div class="sc-row"><span class="sc-label">Fullscreen</span><div class="sc-keys"><span class="key">F</span></div></div>
       <div class="sc-row"><span class="sc-label">Prev / Next</span><div class="sc-keys"><span class="key">Shift ←</span><span class="key">Shift →</span></div></div>
+      <div class="sc-row"><span class="sc-label">Ambient light</span><div class="sc-keys"><span class="key">A</span></div></div>
       <div class="sc-row"><span class="sc-label">Close</span><div class="sc-keys"><span class="key">Esc</span></div></div>
     </div>
 
@@ -1264,7 +1267,6 @@ main {
 </div>
 
 <script>
-// ─── Motion stack: GSAP (modal + scroll reveals) · Motion (springs) · StringTune (parallax/magnetic) ───
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = window.matchMedia('(pointer: fine)').matches;
 let heroChars = [];
@@ -1278,7 +1280,6 @@ function ensureGsap() {
   return true;
 }
 
-/* Split h1 into animatable chars (runs before paint; Motion animates on DOMContentLoaded) */
 function splitChars(root) {
   const chars = [];
   const pushChars = (text, parent) => {
@@ -1300,7 +1301,6 @@ function splitChars(root) {
       pushChars(node.textContent, wrap);
       root.removeChild(node);
     } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-      // block-level .h1-word / .last spans already handle the line break
       root.removeChild(node);
     } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
       const text = node.textContent;
@@ -1330,22 +1330,10 @@ function initHeroAnim() {
   );
 }
 
-function initStringTune() {
-  if (prefersReduced) return;
-  if (typeof StringTune === 'undefined' || !StringTune.StringTune) return;
-  try {
-    const st = StringTune.StringTune.getInstance();
-    st.use(StringTune.StringParallax);
-    if (finePointer) st.use(StringTune.StringMagnetic);
-    st.start(60);
-  } catch (e) { console.warn('StringTune init failed:', e); }
-}
-
 prepareHero();
 
 document.addEventListener('DOMContentLoaded', () => {
   initHeroAnim();
-  initStringTune();
   ensureGsap();
 });
 
@@ -1362,7 +1350,6 @@ function setOrientation(tile, w, h) {
     tile.classList.add('portrait');
     tile.classList.remove('landscape');
   }
-  // Recalc perforations after layout change (only video tiles have data-perf-type)
   requestAnimationFrame(() => recalcPerforations());
 }
 
@@ -1398,10 +1385,8 @@ function detectOrientations() {
 async function loadProject() {
   const id = getProjectId();
   const container = document.getElementById('project-container');
-  const pageLoader = document.getElementById('pageLoader');
   if (!id) { 
     container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Missing project ID.</p>'; 
-    hidePageLoader();
     return; 
   }
 
@@ -1413,14 +1398,12 @@ async function loadProject() {
     const project = projectList.find(p => p.id === id);
     if (!project) { 
       container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Project not found.</p>'; 
-      hidePageLoader();
       return; 
     }
     displayProject(project);
     document.title = project.title + ' — Jan Levínský';
   } catch(e) {
     container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Failed to load project.</p>';
-    hidePageLoader();
   }
 }
 
@@ -1435,10 +1418,6 @@ function recalcPerforations() {
     const holeH = parseFloat(a.dataset.perfHoleHeight);
     const count = parseInt(a.dataset.perfCount, 10) || 2;
     const rect = a.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const sideClass = centerX < (window.innerWidth / 2) ? 'from-left' : 'from-right';
-    a.classList.toggle('from-left', sideClass === 'from-left');
-    a.classList.toggle('from-right', sideClass === 'from-right');
     const isVideo = type === 'video';
     const pitchPx = isVideo ? (4.75 / frameH) * rect.height : (4.75 / frameW) * rect.width;
     const dotWidthPx = (holeW / frameW) * rect.width;
@@ -1448,26 +1427,8 @@ function recalcPerforations() {
     a.style.setProperty('--perf-dot-width', Math.round(dotWidthPx) + 'px');
     a.style.setProperty('--perf-dot-height', Math.round(dotHeightPx) + 'px');
 
-    const perfHTop = a.querySelector('.film-perf-h.top');
-    const perfHBottom = a.querySelector('.film-perf-h.bottom');
     const perfVLeft = a.querySelector('.film-perf-v.left');
     const perfVRight = a.querySelector('.film-perf-v.right');
-    if (perfHTop || perfHBottom) {
-      const containerW = (count * dotWidthPx) + ((count - 1) * gapForH);
-      [perfHTop, perfHBottom].forEach(el => {
-        if (!el) return;
-        el.style.width = Math.round(containerW) + 'px';
-        el.style.left = '50%';
-        el.style.transform = 'translateX(-50%)';
-        el.style.justifyContent = 'flex-start';
-        el.style.gap = Math.round(gapForH) + 'px';
-        el.querySelectorAll('.perf-dot').forEach(d => {
-          d.style.width = Math.round(dotWidthPx) + 'px';
-          d.style.height = Math.round(dotHeightPx) + 'px';
-          d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
-        });
-      });
-    }
     if (perfVLeft || perfVRight) {
       const containerH = (count * dotHeightPx) + ((count - 1) * gapForV);
       [perfVLeft, perfVRight].forEach(el => {
@@ -1488,14 +1449,6 @@ function recalcPerforations() {
 }
 
 function isMobile(){ return window.innerWidth <= 640; }
-
-
-function hidePageLoader() {
-  const pageLoader = document.getElementById('pageLoader');
-  if (!pageLoader || pageLoader.classList.contains('hidden')) return;
-  // CSS transition on .page-loader handles the fade-out
-  pageLoader.classList.add('hidden');
-}
 
 function displayProject(project) {
   const container = document.getElementById('project-container');
@@ -1558,17 +1511,15 @@ function displayProject(project) {
     const flyout = cap ? '<div class="flyout">' + cap + '</div>' : '';
 
     if (m.type === 'photo') {
-      // Photo tiles — NO perforations, original structure
       const photoSrc = m.thumbnail || m.src;
       gallery += '<div class="tile" data-index="' + i + '" data-type="photo">' +
-        '<div class="px-wrap" string="parallax" string-parallax="0.05">' +
+        '<div class="px-wrap">' +
         '<img src="' + (photoSrc ? encodeURI(photoSrc) : photoSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async">' +
         '</div>' +
         flyout + '</div>';
     } else {
-      // Video tiles — WITH perforations (same system as index.html)
       const thumbSrc = m.thumbnail || m.poster || '';
-      const thumbImg = thumbSrc ? '<div class="px-wrap" string="parallax" string-parallax="0.05"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async"></div>' : '';
+      const thumbImg = thumbSrc ? '<div class="px-wrap"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title||'') + '" loading="lazy" decoding="async"></div>' : '';
 
       const filmSizes = {
         video: { normal: { width: 24, height: 18.6 }, wide: { width: 24, height: 14 }, tall: { width: 24, height: 44.2 } }
@@ -1617,7 +1568,6 @@ function displayProject(project) {
       '</a>' +
     '</footer>';
 
-  // Footer scroll reveal (GSAP ScrollTrigger)
   const footerEl = container.querySelector('.g-footer');
   if (footerEl && !prefersReduced && ensureGsap() && typeof ScrollTrigger !== 'undefined') {
     const fTargets = footerEl.querySelectorAll('.f-name, .f-role, .f-contact');
@@ -1630,18 +1580,14 @@ function displayProject(project) {
   }
 
   detectOrientations();
-
-  // Recalc video perforations after layout settles
   setTimeout(recalcPerforations, 300);
   setTimeout(recalcPerforations, 800);
 
-  // Refresh ScrollTrigger positions once media settles (aspect ratios shift layout)
   if (ensureGsap() && typeof ScrollTrigger !== 'undefined') {
     setTimeout(() => ScrollTrigger.refresh(), 900);
     window.addEventListener('load', () => ScrollTrigger.refresh());
   }
 
-  // ─── Staggered entrance animations (Motion) ───
   if (window.Motion && !prefersReduced) {
     const headerEls = container.querySelectorAll('.project-meta, .project-title, .project-bio, .project-tech');
     if (headerEls.length) {
@@ -1668,36 +1614,6 @@ function displayProject(project) {
       ).finished.then(() => galleryTiles.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
   }
-
-
-
-  // create lower-resolution display images (half res) for gallery and thumbs
-  optimizeGalleryImages();
-
-  // Hide page loader after gallery images load
-  const pageLoader = document.getElementById('pageLoader');
-  const galleryImages = container.querySelectorAll('.gallery img, .tile-thumb img');
-  let loadedCount = 0;
-  const totalImages = galleryImages.length;
-  function tryHideLoader() {
-    loadedCount++;
-    if (loadedCount >= totalImages && pageLoader) {
-      pageLoader.classList.add('hidden');
-    }
-  }
-  if (totalImages === 0) {
-    hidePageLoader();
-  } else {
-    galleryImages.forEach(img => {
-      if (img.complete && img.naturalWidth) {
-        tryHideLoader();
-      } else {
-        img.addEventListener('load', tryHideLoader);
-        img.addEventListener('error', tryHideLoader);
-      }
-    });
-  }
-  setTimeout(() => { hidePageLoader(); }, 4000);
 
   document.querySelectorAll('.tile').forEach(tile => {
     tile.addEventListener('click', e => {
@@ -1776,8 +1692,102 @@ function displayProject(project) {
   });
 }
 
-
 let idx = 0, media = [], vp = null;
+let ambientRaf = null, ambientCtx = null, lastAmbientTime = 0;
+let ambientEnabled = true;
+let currentPhotoImg = null;
+let ambientFrameCount = 0;
+
+function toggleAmbient() {
+  ambientEnabled = !ambientEnabled;
+  const btn = document.getElementById('ambient-btn');
+  const canvas = document.getElementById('ambient-canvas');
+  if (btn) btn.classList.toggle('off', !ambientEnabled);
+  if (canvas) canvas.classList.toggle('off', !ambientEnabled);
+  if (ambientEnabled && modal.classList.contains('open')) {
+    startAmbient();
+  } else {
+    stopAmbient();
+  }
+}
+
+function getAmbientCanvas() {
+  const c = document.getElementById('ambient-canvas');
+  if (!c) return null;
+  if (!ambientCtx) ambientCtx = c.getContext('2d');
+  return c;
+}
+
+function resizeAmbient() {
+  const c = getAmbientCanvas();
+  if (!c) return;
+  const inner = document.querySelector('.modal-inner');
+  if (!inner) return;
+  const rect = inner.getBoundingClientRect();
+  c.width = rect.width + 160;
+  c.height = rect.height + 160;
+}
+
+function drawAmbient() {
+  if (!ambientEnabled) { ambientRaf = null; return; }
+  const c = getAmbientCanvas();
+  if (!c || !ambientCtx) return;
+
+  const now = performance.now();
+  // 60fps for first 5 frames (fast startup), then 30fps (smooth)
+  const throttle = ambientFrameCount < 5 ? 16 : 33;
+  if (now - lastAmbientTime < throttle) {
+    ambientRaf = requestAnimationFrame(drawAmbient);
+    return;
+  }
+  lastAmbientTime = now;
+  ambientFrameCount++;
+
+  let source = null;
+  const vid = document.querySelector('#vid');
+  if (vid && vid.readyState >= 2) {
+    source = vid;
+  } else if (currentPhotoImg && currentPhotoImg.complete && currentPhotoImg.naturalWidth) {
+    source = currentPhotoImg;
+  }
+
+  if (!source) {
+    ambientRaf = requestAnimationFrame(drawAmbient);
+    return;
+  }
+
+  try {
+    // Use lower quality but smoother rendering
+    ambientCtx.imageSmoothingEnabled = true;
+    ambientCtx.imageSmoothingQuality = 'low';
+    ambientCtx.drawImage(source, 0, 0, c.width, c.height);
+  } catch(e) {}
+
+  ambientRaf = requestAnimationFrame(drawAmbient);
+}
+
+function startAmbient() {
+  if (!ambientEnabled || ambientRaf) return;
+  ambientFrameCount = 0;
+  resizeAmbient();
+  ambientRaf = requestAnimationFrame(drawAmbient);
+}
+
+function setAmbientPhoto(img) {
+  currentPhotoImg = img;
+  ambientFrameCount = 0;
+  if (ambientEnabled && modal.classList.contains('open')) {
+    startAmbient();
+  }
+}
+
+function stopAmbient() {
+  if (ambientRaf) {
+    cancelAnimationFrame(ambientRaf);
+    ambientRaf = null;
+  }
+}
+
 
 const modal = document.getElementById('modal');
 const modalContent = document.getElementById('modal-content');
@@ -1792,7 +1802,6 @@ function openModal(i, arr) {
   document.addEventListener('keydown', onKey);
 
   if (!prefersReduced && ensureGsap()) {
-    // GSAP modal choreography — content settles, caption follows, nav slides in
     const content = document.querySelector('.modal-content');
     const caption = document.querySelector('.modal-caption');
     const navs = ['.modal-prev', '.modal-next'];
@@ -1805,7 +1814,6 @@ function openModal(i, arr) {
         [content, caption, ...navEls].forEach(el => {
           if (el) { el.style.transition = ''; }
         });
-        // Clear transforms so CSS hover nudges (translateY(-50%) etc.) keep working
         gsap.set([content, caption, ...navEls.filter(Boolean)], { clearProps: 'transform' });
       }
     });
@@ -1843,6 +1851,8 @@ function closeModal() {
         if (v) v.pause();
         if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
         vp = null;
+        currentPhotoImg = null;
+        stopAmbient();
         modalContent.style.opacity = '';
         modalContent.style.transform = '';
         modalContent.style.transition = '';
@@ -1851,7 +1861,7 @@ function closeModal() {
     gsap.to('.modal-caption', { opacity: 0, y: 4, duration: 0.2, ease: 'power2.in' });
   } else {
     const quickMs = 180;
-    modalContent.style.transition = `opacity ${quickMs}ms var(--ease-out-expo), transform ${quickMs}ms var(--ease-out-expo)`;
+    modalContent.style.transition = 'opacity ' + quickMs + 'ms var(--ease-out-expo), transform ' + quickMs + 'ms var(--ease-out-expo)';
     modalContent.style.opacity = '0';
     modalContent.style.transform = 'scale(0.97) translateY(6px)';
     setTimeout(() => {
@@ -1888,11 +1898,21 @@ function renderMedia() {
 
   setTimeout(() => {
     if (m.type === 'photo') {
-      modalContent.innerHTML = '<img src="' + m.src + '" alt="' + (m.title||'') + '">';
+      modalContent.innerHTML = '<img src="' + m.src + '" alt="' + (m.title||'') + '" id="modal-photo">';
       vp = null;
+      const photoImg = modalContent.querySelector('#modal-photo');
+      if (photoImg) {
+        if (photoImg.complete) {
+          setAmbientPhoto(photoImg);
+        } else {
+          photoImg.addEventListener('load', () => setAmbientPhoto(photoImg));
+        }
+      }
     } else {
       modalContent.innerHTML = buildPlayer(m.src);
-      setTimeout(() => { vp = initPlayer(); }, 60);
+      currentPhotoImg = null;
+      ambientFrameCount = 0;
+      setTimeout(() => { vp = initPlayer(); startAmbient(); }, 60);
     }
     modalCaption.textContent = cap;
 
@@ -1910,7 +1930,7 @@ function next() { idx = (idx + 1) % media.length; renderMedia(); }
 function buildPlayer(src) {
   const s = src ? encodeURI(src) : src;
   return '<div class="player paused" id="player">' +
-    '<video id="vid" src="' + s + '" playsinline preload="metadata" controlsList="nodownload"></video>' +
+    '<video id="vid" crossorigin="anonymous" src="' + s + '" playsinline preload="metadata" controlsList="nodownload"></video>' +
     '<div class="player-loading" id="player-loading"></div>' +
     '<div class="yt-big-play" id="yt-big-play">' +
     '<i class="ph ph-play"></i>' +
@@ -2205,6 +2225,9 @@ function onKey(e) {
     case '?':
       document.getElementById('shortcuts-panel').classList.toggle('show');
       break;
+    case 'a': case 'A':
+      toggleAmbient();
+      break;
     case 'Escape':
       if (document.fullscreenElement) document.exitFullscreen().catch(()=>{});
       else if (document.getElementById('shortcuts-panel').classList.contains('show'))
@@ -2216,11 +2239,14 @@ function onKey(e) {
 
 window.addEventListener('resize', () => {
   requestAnimationFrame(recalcPerforations);
+  resizeAmbient();
 });
 
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-prev').addEventListener('click', prev);
 document.getElementById('modal-next').addEventListener('click', next);
+
+document.getElementById('ambient-btn').addEventListener('click', toggleAmbient);
 
 document.getElementById('shortcuts-btn').addEventListener('click', () => {
   const panel = document.getElementById('shortcuts-panel');
@@ -2245,54 +2271,6 @@ modal.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
   if (Math.abs(dx) > 60) dx < 0 ? next() : prev();
 }, { passive: true });
-
-// Downscale large gallery and thumbnail images to half resolution (client-side).
-function optimizeGalleryImages() {
-  const imgs = Array.from(document.querySelectorAll('.gallery img, .tile-thumb img'));
-  imgs.forEach(img => {
-    if (img.dataset.optimized) return;
-    img.dataset.optimized = 'pending';
-    img.loading = 'lazy';
-    img.decoding = 'async';
-    const src = img.src;
-    if (!src) { img.dataset.optimized = 'skipped'; return; }
-
-    const off = new Image();
-    off.crossOrigin = 'anonymous';
-    off.onload = () => {
-      try {
-        const w = off.naturalWidth || off.width || 0;
-        const h = off.naturalHeight || off.height || 0;
-        if (w > 800 && h > 0) {
-          const targetW = Math.max(240, Math.round(w / 2));
-          const targetH = Math.round((targetW / w) * h);
-          const canvas = document.createElement('canvas');
-          canvas.width = targetW;
-          canvas.height = targetH;
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(off, 0, 0, targetW, targetH);
-          try {
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
-            img.src = dataUrl;
-            img.dataset.optimized = 'true';
-          } catch (err) {
-            img.src = src;
-            img.dataset.optimized = 'failed';
-          }
-          canvas.remove();
-        } else {
-          img.src = src;
-          img.dataset.optimized = 'skipped';
-        }
-      } catch (e) {
-        img.src = src;
-        img.dataset.optimized = 'error';
-      }
-    };
-    off.onerror = () => { img.dataset.optimized = 'error'; };
-    off.src = src;
-  });
-}
 
 loadProject();
 </script>

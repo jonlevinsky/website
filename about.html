@@ -10,25 +10,20 @@
 <meta property="og:description" content="Cinematography & Photography. Filmař a fotograf z Prahy.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://levinskyj.art/about.html">
-<meta property="og:image" content="https://levinskyj.art/og-cover.jpg">
+<meta property="og:image" content="https://levinskyj.art/og-cover.webp">
 <meta name="twitter:card" content="summary_large_image">
 
 <title>Jan Levínský // O mně</title>
 <link rel="canonical" href="https://levinskyj.art/about.html">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-<!-- GSAP: scroll-driven reveals -->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
-<!-- Motion: spring micro-interactions -->
 <script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
-<!-- StringTune: parallax + magnetic -->
-<script src="https://unpkg.com/@fiddle-digital/string-tune@1.2.0/dist/index.js" defer></script>
-
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
@@ -51,7 +46,6 @@
   --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-  color-scheme: light;
 }
 
 html, body { height: 100%; color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -77,7 +71,6 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outlin
   min-height: 100vh;
 }
 
-/* ─── Sidebar ─── */
 .brand {
   padding: 4px 0 0;
   display: flex;
@@ -113,43 +106,32 @@ h1 {
 h1 span { display: block; }
 h1 .last { font-style: italic; color: var(--accent); }
 
-/* Hero char-split (driven by Motion when libs are ready) */
 .h1-word { display: block; }
 .h1-char { display: inline-block; will-change: transform; }
 html.lib-anim h1 { animation: none; opacity: 1; }
 html.lib-anim .h1-char { opacity: 0; }
 
-/* lib-anim: JS-driven scroll reveals replace CSS load animations.
-   Without JS libs these rules never apply and CSS animations run as fallback. */
 html.lib-anim .cv-section,
 html.lib-anim .timeline-item,
 html.lib-anim .collab-card,
 html.lib-anim .skill-group,
 html.lib-anim .gear-item,
-html.lib-anim .g-footer {
+html.lib-anim .g-footer { content-visibility: auto; contain-intrinsic-size: auto 200px;
   animation: none !important;
   opacity: 0;
 }
 html.lib-anim .lang-bar-fill { transition: none; }
 
-/* StringTune parallax wrapper */
 .px-wrap {
   position: absolute;
-  left: 0; right: 0; top: -10%; bottom: -10%;
+  left: 0; right: 0; top: 0; bottom: 0;
   z-index: 1;
-  will-change: transform;
   pointer-events: none;
 }
 .px-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-}
-
-/* StringTune magnetic elements */
-[string="magnetic"] {
-  transform: translate3d(calc(var(--magnetic-x, 0) * 1px), calc(var(--magnetic-y, 0) * 1px), 0);
-  will-change: transform;
 }
 
 .divider {
@@ -225,7 +207,6 @@ html.lib-anim .lang-bar-fill { transition: none; }
 .back-link a i { font-size: 14px; opacity: 0.55; transition: transform 0.4s var(--ease-out-expo), opacity 0.3s ease; display: inline-block; }
 .back-link a:hover i { opacity: 1; color: var(--accent); transform: translateX(-3px); }
 
-/* ─── Main Content ─── */
 main {
   display: flex;
   flex-direction: column;
@@ -235,7 +216,6 @@ main {
   animation: fadeIn 0.9s 0.2s var(--ease-out-expo) forwards;
 }
 
-/* ─── Section Base ─── */
 .cv-section {
   opacity: 0;
   animation: fadeUp 0.7s 0.3s var(--ease-out-expo) forwards;
@@ -254,7 +234,6 @@ main {
   border-bottom: 1px solid var(--border);
 }
 
-/* ─── Profile Block ─── */
 .profile-block {
   display: grid;
   grid-template-columns: 140px 1fr;
@@ -311,7 +290,6 @@ main {
 
 .profile-text p + p { margin-top: 12px; }
 
-/* ─── Timeline (CV entries) ─── */
 .timeline {
   display: flex;
   flex-direction: column;
@@ -403,7 +381,6 @@ main {
   font-weight: 300;
 }
 
-/* ─── Spolupráce ─── */
 .collab-grid {
   display: flex;
   flex-direction: column;
@@ -490,12 +467,6 @@ main {
   font-weight: 300;
 }
 
-@media (max-width: 640px) {
-  .collab-card { flex-direction: column; gap: 16px; }
-  .collab-logo { width: 48px; height: 48px; }
-}
-
-/* ─── Skills Grid ─── */
 .skills-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -543,7 +514,6 @@ main {
   background: var(--accent-subtle);
 }
 
-/* ─── Gear Compact ─── */
 .gear-compact {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -595,7 +565,6 @@ main {
   font-weight: 400;
 }
 
-/* ─── Languages ─── */
 .lang-row {
   display: flex;
   gap: 24px;
@@ -636,8 +605,7 @@ main {
   transition: width 1s var(--ease-out-expo);
 }
 
-/* ─── Footer ─── */
-.g-footer {
+.g-footer { content-visibility: auto; contain-intrinsic-size: auto 200px;
   padding: 60px 0 40px;
   border-top: 1px solid var(--border);
   display: flex;
@@ -701,7 +669,6 @@ main {
 
 .f-contact:hover { color: var(--accent); border-color: var(--accent); }
 
-/* ─── Animations ─── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
@@ -716,7 +683,6 @@ main {
   to { transform: rotate(360deg); }
 }
 
-/* ─── Responsive ─── */
 @media (max-width: 1024px) {
   .wrap { grid-template-columns: 210px 1fr; gap: 28px; }
   h1 { font-size: 48px; }
@@ -758,7 +724,12 @@ main {
 }
 </style>
 <base target="_self">
-<base target="_blank">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="//unpkg.com">
+  <style>
+    @font-face { font-family: 'Bricolage Grotesque'; font-display: swap; }
+    @font-face { font-family: 'Inter'; font-display: swap; }
+  </style>
 </head>
 <body>
 
@@ -774,23 +745,22 @@ main {
       Pražský kameraman, fotograf a student filmové tvorby. Ve své práci se úzce specializuji na cinematografii a poutavý vizuální storytelling.
     </div>
     <nav class="links">
-        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-instagram-logo"></i>Instagram</a>
-        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-youtube-logo"></i>YouTube</a>
-        <a href="mailto:levinskyj.cine@gmail.com" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-envelope"></i>Email</a>
+        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
+        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
+        <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
     </nav>
     <div class="back-link">
-      <a href="index.html" string="magnetic" string-strength="0.3" string-radius="72"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
+      <a href="index.html"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
     </div>
   </aside>
 
   <main>
-    <!-- Profil -->
     <section class="cv-section" id="secProfile">
       <h2>Profil</h2>
       <div class="profile-block">
-        <div class="profile-photo">
-          <div class="px-wrap" string="parallax" string-parallax="0.04">
-            <img src="./media/portrait.jpg" alt="Jan Levínský" loading="eager" decoding="async" id="profileImg">
+        <div class="profile-photo" style="min-height:140px;">
+          <div class="px-wrap">
+            <img src="./media/portrait.webp" alt="Jan Levínský" loading="eager" decoding="async" id="profileImg" fetchpriority="high" width="140" height="140">
           </div>
         </div>
         <div class="profile-text">
@@ -806,7 +776,6 @@ main {
       </div>
     </section>
 
-    <!-- Vzdělání -->
     <section class="cv-section" id="secEdu">
       <h2>Vzdělání</h2>
       <div class="timeline">
@@ -831,7 +800,6 @@ main {
       </div>
     </section>
 
-    <!-- Filmografie & Praxe -->
     <section class="cv-section" id="secWork">
       <h2>Filmografie &amp; Praxe</h2>
       <div class="timeline">
@@ -925,7 +893,6 @@ main {
             </div>
     </section>
 
-    <!-- Dovednosti -->
     <section class="cv-section" id="secSkills">
       <h2>Dovednosti</h2>
       <div class="skills-grid">
@@ -973,7 +940,6 @@ main {
       </div>
     </section>
 
-    <!-- Vybavení -->
     <section class="cv-section" id="secGear">
       <h2>Vybavení</h2>
       <div class="gear-compact">
@@ -997,7 +963,6 @@ main {
       </div>
     </section>
 
-    <!-- Jazyky -->
     <section class="cv-section" id="secLang">
       <h2>Jazyky</h2>
       <div class="lang-row">
@@ -1030,7 +995,6 @@ main {
 </div>
 
 <script>
-// ─── Motion stack: GSAP ScrollTrigger (scroll reveals) · Motion (springs) · StringTune (parallax/magnetic) ───
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = window.matchMedia('(pointer: fine)').matches;
 let heroChars = [];
@@ -1044,7 +1008,6 @@ function ensureGsap() {
   return true;
 }
 
-/* Split h1 into animatable chars (runs before paint; Motion animates on DOMContentLoaded) */
 function splitChars(root) {
   const chars = [];
   const pushChars = (text, parent) => {
@@ -1066,7 +1029,6 @@ function splitChars(root) {
       pushChars(node.textContent, wrap);
       root.removeChild(node);
     } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-      // block-level .h1-word / .last spans already handle the line break
       root.removeChild(node);
     } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
       const text = node.textContent;
@@ -1097,22 +1059,10 @@ function initHeroAnim() {
   return true;
 }
 
-function initStringTune() {
-  if (prefersReduced) return;
-  if (typeof StringTune === 'undefined' || !StringTune.StringTune) return;
-  try {
-    const st = StringTune.StringTune.getInstance();
-    st.use(StringTune.StringParallax);
-    if (finePointer) st.use(StringTune.StringMagnetic);
-    st.start(60);
-  } catch (e) { console.warn('StringTune init failed:', e); }
-}
-
 function initScrollFX() {
   if (prefersReduced) return true;
   if (!ensureGsap() || typeof ScrollTrigger === 'undefined') return false;
 
-  // CV sections — reveal when scrolled into view
   gsap.utils.toArray('.cv-section').forEach(sec => {
     gsap.fromTo(sec, { opacity: 0, y: 18 }, {
       opacity: 1, y: 0, duration: 0.7, ease: 'expo.out',
@@ -1121,7 +1071,6 @@ function initScrollFX() {
     });
   });
 
-  // Timeline items stagger + the vertical line draws itself with scroll
   gsap.utils.toArray('.timeline').forEach(tl => {
     const items = tl.querySelectorAll('.timeline-item');
     if (items.length) {
@@ -1137,7 +1086,6 @@ function initScrollFX() {
     });
   });
 
-  // Collab cards
   const collabGrid = document.querySelector('.collab-grid');
   if (collabGrid) {
     gsap.fromTo(collabGrid.children, { opacity: 0, x: -14 }, {
@@ -1147,7 +1095,6 @@ function initScrollFX() {
     });
   }
 
-  // Skill groups
   const skillsGrid = document.querySelector('.skills-grid');
   if (skillsGrid) {
     gsap.fromTo(skillsGrid.children, { opacity: 0, y: 14 }, {
@@ -1157,7 +1104,6 @@ function initScrollFX() {
     });
   }
 
-  // Gear items
   const gearCompact = document.querySelector('.gear-compact');
   if (gearCompact) {
     gsap.fromTo(gearCompact.children, { opacity: 0, y: 12 }, {
@@ -1167,7 +1113,6 @@ function initScrollFX() {
     });
   }
 
-  // Language bars fill when they scroll into view
   const langRow = document.querySelector('.lang-row');
   if (langRow) {
     const bars = langRow.querySelectorAll('.lang-bar-fill');
@@ -1179,7 +1124,6 @@ function initScrollFX() {
     });
   }
 
-  // Footer
   const footer = document.querySelector('.g-footer');
   if (footer) {
     const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
@@ -1196,7 +1140,6 @@ function initScrollFX() {
   return true;
 }
 
-// Profile photo load
 const profileImg = document.getElementById('profileImg');
 if (profileImg) {
   if (profileImg.complete && profileImg.naturalWidth) {
@@ -1206,7 +1149,6 @@ if (profileImg) {
   }
 }
 
-// Sync prep (before paint): split hero + zero lang bars so GSAP can fill them on scroll
 prepareHero();
 if (!prefersReduced) {
   document.querySelectorAll('.lang-bar-fill').forEach(b => {
@@ -1218,9 +1160,7 @@ if (!prefersReduced) {
 document.addEventListener('DOMContentLoaded', () => {
   const motionOk = initHeroAnim();
   const gsapOk = initScrollFX();
-  initStringTune();
   if (!motionOk || !gsapOk) {
-    // Graceful fallback: restore CSS load animations + final bar widths
     document.documentElement.classList.remove('lib-anim');
     document.querySelectorAll('.lang-bar-fill').forEach(b => {
       if (b.dataset.targetW) b.style.width = b.dataset.targetW;

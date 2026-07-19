@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Projects Builder</title>
+<style>
+:root{
+  --bg:#0c0c0c;--bg2:#141414;--surface:#1e1e1e;--surface2:#282828;
+  --text:#e8e6e3;--muted:#8a8580;--accent:#c4956a;--accent2:#d4a87a;
+  --danger:#c45a5a;--ok:#5a9e6e;--warn:#d4a017;--r:8px;--gap:12px;
+  font-family:Inter,system-ui,sans-serif;font-size:13px;color:var(--text);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+
+header{
+  background:var(--surface);border-bottom:1px solid #333;
+  padding:10px 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+header h1{font-family:Bricolage Grotesque,Georgia,serif;font-size:18px;font-weight:400;color:var(--accent)}
+header .spacer{flex:1}
+.btn{
+  background:var(--surface2);border:1px solid #444;color:var(--text);
+  padding:6px 12px;border-radius:var(--r);cursor:pointer;font-size:11px;
+  transition:all .15s;display:inline-flex;align-items:center;gap:5px;
+}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);color:#111;border-color:var(--accent);font-weight:600}
+.btn.primary:hover{background:var(--accent2)}
+.btn.danger{color:var(--danger);border-color:var(--danger)}
+.btn.danger:hover{background:rgba(196,90,90,.1)}
+.btn.warn{color:var(--warn);border-color:var(--warn)}
+.btn.warn:hover{background:rgba(212,160,23,.1)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.small{padding:4px 8px;font-size:10px}
+.status{font-size:11px;color:var(--muted);margin-left:auto}
+
+.validation-panel{
+  background:var(--surface);border-bottom:1px solid #333;
+  padding:8px 16px;font-size:11px;display:none;
+}
+.validation-panel.active{display:block}
+.validation-panel .error{color:var(--danger)}
+.validation-panel .warning{color:var(--warn)}
+.validation-panel ul{list-style:none;padding:0;margin:0}
+.validation-panel li{padding:2px 0}
+
+.bulk-bar{
+  background:var(--bg2);border-bottom:1px solid #333;
+  padding:8px 16px;display:none;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.bulk-bar.active{display:flex}
+.bulk-bar span{color:var(--muted);font-size:11px}
+
+.preview-panel{
+  position:fixed;right:0;top:0;width:400px;height:100vh;
+  background:var(--surface);border-left:1px solid #333;
+  transform:translateX(100%);transition:transform .3s;
+  z-index:200;overflow-y:auto;padding:16px;
+}
+.preview-panel.open{transform:translateX(0)}
+.preview-panel h3{color:var(--accent);font-size:14px;margin-bottom:12px}
+.preview-panel .close{position:absolute;top:8px;right:12px;background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px}
+.preview-panel .close:hover{color:var(--text)}
+.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.preview-item{background:var(--bg2);border-radius:var(--r);overflow:hidden}
+.preview-item img{width:100%;height:120px;object-fit:cover}
+.preview-item .info{padding:8px;font-size:11px;color:var(--muted)}
+
+.diff-panel{
+  background:var(--bg2);border:1px solid #333;border-radius:var(--r);
+  padding:12px;margin-top:12px;font-size:11px;color:var(--muted);display:none;
+  max-height:200px;overflow-y:auto;white-space:pre-wrap;font-family:monospace;
+}
+.diff-panel.active{display:block}
+
+.seo-info{
+  background:var(--bg2);border:1px solid #333;border-radius:var(--r);
+  padding:10px 12px;margin-top:12px;font-size:11px;
+}
+.seo-info .row{display:flex;justify-content:space-between;padding:3px 0}
+.seo-info .label{color:var(--muted)}
+.seo-info .value{color:var(--accent)}
+
+.wrap{display:flex;flex:1;overflow:hidden}
+.sidebar{
+  width:320px;background:var(--bg2);border-right:1px solid #333;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.sidebar .head{
+  padding:10px 12px;border-bottom:1px solid #333;
+  display:flex;align-items:center;gap:8px;
+}
+.project-list{flex:1;overflow-y:auto;padding:6px}
+.project-item{
+  padding:8px 10px;border-radius:var(--r);cursor:grab;
+  border:1px solid transparent;transition:all .15s;
+  display:flex;align-items:center;gap:8px;margin-bottom:3px;
+  user-select:none;
+}
+.project-item:hover{background:var(--surface)}
+.project-item.active{background:var(--surface);border-color:var(--accent)}
+.project-item.selected{background:rgba(196,149,106,.15);border-color:var(--accent)}
+.project-item.dragging{opacity:.4;cursor:grabbing;background:var(--surface2)}
+.project-item.drag-over{border-color:var(--accent);background:rgba(196,149,106,.1);box-shadow:inset 0 0 0 1px var(--accent)}
+.project-item .checkbox{cursor:pointer;width:16px;height:16px;accent-color:var(--accent)}
+.project-item .num{color:var(--muted);font-size:10px;min-width:20px}
+.project-item .title{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+.project-item .type{font-size:9px;text-transform:uppercase;color:var(--muted);background:var(--bg2);padding:2px 6px;border-radius:3px}
+.project-item .warning{color:var(--warn);font-size:12px;margin-left:4px}
+.project-item .error{color:var(--danger);font-size:12px;margin-left:4px}
+
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.form-area{flex:1;overflow-y:auto;padding:20px}
+.form-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:var(--gap);max-width:900px;
+}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.field input,.field select,.field textarea{
+  background:var(--surface);border:1px solid #444;color:var(--text);
+  padding:8px 10px;border-radius:var(--r);font-size:12px;font-family:inherit;
+  outline:none;transition:border-color .15s;width:100%;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:60px}
+.field .hint{font-size:10px;color:var(--muted);margin-top:2px}
+
+.section-title{
+  font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent);
+  margin:24px 0 12px;padding-bottom:6px;border-bottom:1px solid #333;max-width:900px;
+}
+
+.media-toolbar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap;max-width:900px}
+.media-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;max-width:900px}
+.media-card{
+  background:var(--surface);border:1px solid #444;border-radius:var(--r);
+  overflow:hidden;display:flex;flex-direction:column;cursor:grab;
+  transition:all .15s;user-select:none;
+}
+.media-card:hover{border-color:#555}
+.media-card.dragging{opacity:.4;cursor:grabbing;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.media-card.drag-over{border-color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);transform:translateY(-2px)}
+.media-card .thumb{
+  height:120px;background:var(--bg2);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;pointer-events:none;
+}
+.media-card .thumb img,.media-card .thumb video{max-width:100%;max-height:100%;object-fit:cover;display:block}
+.media-card .thumb .badge{
+  position:absolute;top:6px;left:6px;background:rgba(0,0,0,.7);
+  color:#fff;font-size:9px;text-transform:uppercase;padding:2px 6px;border-radius:3px;
+}
+.media-card .thumb .lqip-badge{
+  position:absolute;top:6px;right:6px;background:rgba(90,158,110,.8);
+  color:#fff;font-size:9px;padding:2px 6px;border-radius:3px;
+}
+.media-card .body{padding:10px;display:flex;flex-direction:column;gap:6px;pointer-events:auto}
+.media-card .body .field{margin:0}
+.media-card .body input,.media-card .body select{background:var(--bg2);padding:5px 7px;font-size:11px}
+.media-card .actions{display:flex;gap:5px;padding:0 10px 10px;pointer-events:auto}
+.media-card .actions .btn{font-size:10px;padding:4px 8px;flex:1;justify-content:center}
+
+.empty{color:var(--muted);font-style:italic;padding:16px;text-align:center}
+
+.toast{
+  position:fixed;bottom:16px;right:16px;background:var(--surface2);
+  border:1px solid var(--accent);color:var(--text);padding:8px 14px;
+  border-radius:var(--r);font-size:11px;opacity:0;transform:translateY(10px);
+  transition:all .3s;pointer-events:none;z-index:100;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+
+.drop-zone{
+  border:2px dashed #444;border-radius:var(--r);padding:20px;text-align:center;
+  color:var(--muted);transition:all .2s;cursor:pointer;margin-bottom:12px;max-width:900px;
+}
+.drop-zone:hover,.drop-zone.dragover{border-color:var(--accent);color:var(--accent);background:rgba(196,149,106,.05)}
+.drop-zone span{display:block;font-size:18px;margin-bottom:6px}
+
+.upload-progress{max-width:900px;margin-bottom:12px;display:none}
+.upload-progress.active{display:block}
+.upload-progress-bar{height:3px;background:var(--surface);border-radius:var(--r);overflow:hidden}
+.upload-progress-fill{height:100%;background:var(--accent);width:0%;transition:width .3s}
+
+.gear-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;max-width:900px}
+.gear-cat{background:var(--surface);border:1px solid #444;border-radius:var(--r);padding:10px}
+.gear-cat > label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);display:block;margin-bottom:8px;font-weight:600}
+.gear-add-row{display:flex;gap:5px;margin-bottom:8px}
+.gear-add-row select{flex:1;background:var(--bg2);border:1px solid #444;padding:5px 7px;border-radius:6px;color:var(--text);font-size:11px;outline:none}
+.gear-add-row select:focus{border-color:var(--accent)}
+.gear-row{display:flex;gap:5px;margin-bottom:5px;align-items:center}
+.gear-row input{flex:1;background:var(--bg2);border:1px solid #444;padding:5px 7px;border-radius:6px;color:var(--text);font-size:11px;outline:none}
+.gear-row input:focus{border-color:var(--accent)}
+.gear-row .btn{padding:3px 7px;font-size:10px;min-width:28px;justify-content:center}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid #333;margin-bottom:12px;max-width:900px}
+.tab{padding:8px 14px;background:none;border:none;color:var(--muted);font-size:11px;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+</style>
+<base target="_blank">
+</head>
+<body>
+<header>
+  <h1>Projects Builder</h1>
+  <div class="spacer"></div>
+  <button class="btn small" onclick="undoAction()" id="undoBtn" title="Undo">&#x21A9; Undo</button>
+  <button class="btn small" onclick="redoAction()" id="redoBtn" title="Redo">&#x21AA; Redo</button>
+  <button class="btn" onclick="addProject()">+ Novy</button>
+  <button class="btn danger" onclick="deleteProject()">&#x1F5D1; Smazat</button>
+  <button class="btn" onclick="duplicateProject()">&#x2388; Duplikovat</button>
+  <button class="btn" onclick="toggleBulk()" id="bulkToggle">&#x2610; Bulk</button>
+  <button class="btn" onclick="togglePreview()">&#x1F441; Preview</button>
+  <button class="btn" onclick="toggleValidation()" id="valBtn">&#x2713; Validace</button>
+  <button class="btn" style="border-color:#c4956a;color:#c4956a" onclick="forceConvert()" id="forceConvertBtn">&#x1F504; Force WebP</button>
+  <button class="btn" onclick="generateSitemap()">&#x1F5FA; Sitemap</button>
+  <button class="btn primary" onclick="deploy()">&#x1F680; Deploy</button>
+  <button class="btn primary" onclick="saveNow()">&#x1F4BE; Ulozit</button>
+  <span class="status" id="status">Nacitani...</span>
+</header>
+
+<div class="validation-panel" id="validationPanel">
+  <strong style="color:var(--muted)">Validace:</strong>
+  <ul id="validationList"></ul>
+</div>
+
+<div class="bulk-bar" id="bulkBar">
+  <span id="bulkCount">0 vybrano</span>
+  <button class="btn small" onclick="bulkDelete()">&#x1F5D1; Smazat</button>
+  <button class="btn small" onclick="bulkDuplicate()">&#x2388; Duplikovat</button>
+  <button class="btn small" onclick="bulkYear()">&#x1F4C5; Zmenit rok</button>
+  <button class="btn small" onclick="bulkGearAdd()">+ Gear</button>
+  <button class="btn small danger" onclick="clearSelection()">&#x2715; Zrusit</button>
+</div>
+
+<div class="wrap">
+  <aside class="sidebar">
+    <div class="head">
+      <span style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)">Projekty</span>
+      <span class="spacer"></span>
+      <span id="count" style="font-size:10px;color:var(--muted)">0</span>
+    </div>
+    <div class="project-list" id="projectList"></div>
+  </aside>
+  <div class="main">
+    <div class="form-area" id="formArea">
+      <div class="empty">Vyber projekt vlevo</div>
+    </div>
+  </div>
+</div>
+
+<div class="preview-panel" id="previewPanel">
+  <button class="close" onclick="togglePreview()">&times;</button>
+  <h3>Nahled projektu</h3>
+  <div id="previewContent">Vyber projekt pro nahled</div>
+</div>
+
+<div class="toast" id="toast">Ulozeno</div>
+
+<script>
+const GEAR_CATS = ["camera","lenses","gimbal/stabilization","lighting","audio","software","color","drone","filter","tripod","monitor","recorder"];
+const GEAR_LABELS = {
+  "camera":"Camera","lenses":"Lenses","gimbal/stabilization":"Gimbal / Stabilization",
+  "lighting":"Lighting","audio":"Audio","software":"Software","color":"Color",
+  "drone":"Drone","filter":"Filter","tripod":"Tripod","monitor":"Monitor","recorder":"Recorder"
+};
+const GEAR_DROPDOWN_MAP = {"camera":"camera","lenses":"lenses","filter":"filter"};
+let projects = [];
+let activeIdx = -1;
+let techInventory = {};
+let selectedIndices = new Set();
+let bulkMode = false;
+let validationIssues = [];
+
+async function load(){
+  const [pr, tr] = await Promise.all([fetch('/api/projects'), fetch('/api/tech')]);
+  projects = await pr.json();
+  techInventory = await tr.json();
+  renderList();
+  setStatus('Pripraveno');
+  if(projects.length) select(0);
+}
+load();
+
+function setStatus(t){ document.getElementById('status').textContent = t; }
+function showToast(t){
+  const el = document.getElementById('toast');
+  el.textContent = t; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2500);
+}
+
+/* --- UNDO / REDO --- */
+async function undoAction(){
+  try{
+    const r = await fetch('/api/undo',{method:'POST'});
+    const j = await r.json();
+    if(j.ok){ await load(); showToast('Undo provedeno'); }
+  }catch(e){}
+}
+async function redoAction(){
+  try{
+    const r = await fetch('/api/redo',{method:'POST'});
+    const j = await r.json();
+    if(j.ok){ await load(); showToast('Redo provedeno'); }
+  }catch(e){}
+}
+
+/* --- VALIDATION --- */
+async function toggleValidation(){
+  const panel = document.getElementById('validationPanel');
+  if(panel.classList.contains('active')){ panel.classList.remove('active'); return; }
+  try{
+    const r = await fetch('/api/validate');
+    validationIssues = await r.json();
+    const list = document.getElementById('validationList');
+    if(!validationIssues.length){
+      list.innerHTML = '<li style="color:var(--ok)">&#x2713; Vse v poradku</li>';
+    } else {
+      list.innerHTML = validationIssues.map(i=>`<li class="${i.type}">${i.type==='error'?'&#x2717;':'&#x26A0;'} ${esc(i.project)}: ${esc(i.message)}</li>`).join('');
+    }
+    panel.classList.add('active');
+    renderList();
+  }catch(e){ showToast('Chyba validace'); }
+}
+
+/* --- BULK SELECTION --- */
+function toggleBulk(){
+  bulkMode = !bulkMode;
+  selectedIndices.clear();
+  document.getElementById('bulkBar').classList.toggle('active', bulkMode);
+  document.getElementById('bulkToggle').textContent = bulkMode ? '&#x2611; Bulk' : '&#x2610; Bulk';
+  updateBulkCount();
+  renderList();
+}
+function toggleSelect(idx, e){
+  e.stopPropagation();
+  if(selectedIndices.has(idx)) selectedIndices.delete(idx);
+  else selectedIndices.add(idx);
+  updateBulkCount();
+  renderList();
+}
+function updateBulkCount(){ document.getElementById('bulkCount').textContent = selectedIndices.size + ' vybrano'; }
+function clearSelection(){ selectedIndices.clear(); updateBulkCount(); renderList(); }
+async function bulkDelete(){
+  if(!selectedIndices.size || !confirm('Opravdu smazat ' + selectedIndices.size + ' projektu?')) return;
+  try{
+    const r = await fetch('/api/bulk-delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Array.from(selectedIndices))});
+    const j = await r.json();
+    if(j.ok){ selectedIndices.clear(); updateBulkCount(); await load(); showToast('Smazano ' + j.deleted + ' projektu'); }
+  }catch(e){ showToast('Chyba'); }
+}
+async function bulkDuplicate(){
+  if(!selectedIndices.size) return;
+  const indices = Array.from(selectedIndices).sort((a,b)=>b-a);
+  for(const idx of indices){
+    if(idx >= 0 && idx < projects.length){
+      const clone = JSON.parse(JSON.stringify(projects[idx]));
+      const maxId = projects.reduce((m,p)=>Math.max(m,p.id||0),0);
+      clone.id = maxId + 1;
+      clone.title = (clone.title||'') + ' (kopie)';
+      projects.splice(idx + 1, 0, clone);
+    }
+  }
+  await saveNow();
+  selectedIndices.clear(); updateBulkCount(); await load();
+  showToast('Duplikovano ' + indices.length + ' projektu');
+}
+async function bulkYear(){
+  if(!selectedIndices.size) return;
+  const newYear = prompt('Novy rok pro ' + selectedIndices.size + ' projektu:');
+  if(!newYear) return;
+  try{
+    const r = await fetch('/api/bulk-year',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({indices:Array.from(selectedIndices),year:newYear})});
+    const j = await r.json();
+    if(j.ok){ await load(); showToast(j.message); }
+  }catch(e){ showToast('Chyba'); }
+}
+async function bulkGearAdd(){
+  if(!selectedIndices.size) return;
+  const cat = prompt('Kategorie gear: ' + GEAR_CATS.join(', '));
+  if(!cat || !GEAR_CATS.includes(cat)) return;
+  const item = prompt('Nazev polozky:');
+  if(!item) return;
+  try{
+    const r = await fetch('/api/bulk-gear',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({indices:Array.from(selectedIndices),category:cat,item:item,action:'add'})});
+    const j = await r.json();
+    if(j.ok){ await load(); showToast(j.message); }
+  }catch(e){ showToast('Chyba'); }
+}
+
+/* --- PREVIEW --- */
+function togglePreview(){
+  document.getElementById('previewPanel').classList.toggle('open');
+  if(activeIdx >= 0) renderPreview();
+}
+function renderPreview(){
+  if(activeIdx < 0){ document.getElementById('previewContent').innerHTML = 'Vyber projekt pro nahled'; return; }
+  const p = projects[activeIdx];
+  let mediaHtml = '';
+  (p.media||[]).slice(0,4).forEach(m=>{
+    const thumb = m.thumbnail || m.src || '';
+    mediaHtml += `<div class="preview-item"><img src="${esc(thumb)}" alt="" onerror="this.style.display='none'"><div class="info">${esc(m.type||'?')} | ${esc((m.title||'').substring(0,20))}</div></div>`;
+  });
+  document.getElementById('previewContent').innerHTML = `
+    <div style="font-size:16px;font-weight:600;margin-bottom:8px">${esc(p.title||'Bez nazvu')}</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">${p.type||'?'} | ${p.year||'?'} | ${p.media?.length||0} media</div>
+    <div style="font-size:12px;line-height:1.5;margin-bottom:12px">${esc((p.bio||'').substring(0,200))}${(p.bio||'').length>200?'...':''}</div>
+    <div style="font-size:11px;color:var(--muted)">Techniky: ${esc((p.techniques||[]).join(', '))}</div>
+    <div class="preview-grid">${mediaHtml}</div>
+  `;
+}
+
+/* --- SITEMAP & DEPLOY --- */
+async function generateSitemap(){
+  try{
+    const r = await fetch('/api/sitemap');
+    const xml = await r.text();
+    const blob = new Blob([xml],{type:'application/xml'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'sitemap.xml'; a.click();
+    URL.revokeObjectURL(url);
+    showToast('Sitemap vygenerovan');
+  }catch(e){ showToast('Chyba generovani sitemap'); }
+}
+async function deploy(){
+  if(!confirm('Deploy na GitHub Pages? Tato akce provede: &#x2022; git add . &#x2022; git commit &#x2022; git push')) return;
+  setStatus('Deployuji...');
+  try{
+    const r = await fetch('/api/deploy',{method:'POST'});
+    const j = await r.json();
+    if(j.ok){ showToast(j.message); setStatus('Deploy hotov'); }
+    else { showToast('Chyba: ' + j.error); setStatus('Deploy selhal'); }
+  }catch(e){ showToast('Chyba site'); setStatus('Chyba site'); }
+}
+
+/* --- DRAG & DROP: PROJEKTY --- */
+let dragProjSrc = null;
+function renderList(){
+  const list = document.getElementById('projectList');
+  list.innerHTML = '';
+  projects.forEach((p,i)=>{
+    const div = document.createElement('div');
+    const isSelected = selectedIndices.has(i);
+    const hasErrors = validationIssues.some(v=>v.project===p.title&&v.type==='error');
+    const hasWarnings = validationIssues.some(v=>v.project===p.title&&v.type==='warning');
+    div.className = 'project-item' + (i===activeIdx?' active':'') + (isSelected?' selected':'');
+    div.setAttribute('draggable','true');
+    div.setAttribute('data-index', i);
+    let checkboxHtml = bulkMode ? `<input type="checkbox" class="checkbox" ${isSelected?'checked':''} onclick="toggleSelect(${i},event)">` : '';
+    let warningHtml = hasErrors ? '<span class="error" title="Chyba">&#x2717;</span>' : hasWarnings ? '<span class="warning" title="Varovani">&#x26A0;</span>' : '';
+    div.innerHTML = `${checkboxHtml}<span class="num">${i+1}</span><span class="title">${esc(p.title||'Bez nazvu')}</span>${warningHtml}<span class="type">${p.type||'?'}</span>`;
+    div.onclick = ()=>{ if(!bulkMode) select(i); };
+    div.addEventListener('dragstart', onProjDragStart);
+    div.addEventListener('dragover', onProjDragOver);
+    div.addEventListener('drop', onProjDrop);
+    div.addEventListener('dragend', onProjDragEnd);
+    div.addEventListener('dragleave', onProjDragLeave);
+    list.appendChild(div);
+  });
+  document.getElementById('count').textContent = projects.length;
+}
+function onProjDragStart(e){
+  dragProjSrc = parseInt(this.getAttribute('data-index'));
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragProjSrc);
+}
+function onProjDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  this.classList.add('drag-over');
+}
+function onProjDragLeave(e){ this.classList.remove('drag-over'); }
+function onProjDrop(e){
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  const src = dragProjSrc;
+  const dst = parseInt(this.getAttribute('data-index'));
+  if(src === null || src === dst || isNaN(dst)) return;
+  const item = projects.splice(src, 1)[0];
+  projects.splice(dst, 0, item);
+  activeIdx = dst;
+  dragProjSrc = null;
+  renderList();
+  select(activeIdx);
+  debounceSave();
+  showToast('Poradi projektu zmeneno');
+}
+function onProjDragEnd(e){
+  this.classList.remove('dragging');
+  document.querySelectorAll('.project-item').forEach(el=>el.classList.remove('drag-over'));
+  dragProjSrc = null;
+}
+
+/* --- DRAG & DROP: MEDIA --- */
+let dragMediaSrc = null;
+function initMediaDrag(){
+  document.querySelectorAll('.media-card').forEach(card=>{
+    card.setAttribute('draggable','true');
+    card.addEventListener('dragstart', onMediaDragStart);
+    card.addEventListener('dragover', onMediaDragOver);
+    card.addEventListener('drop', onMediaDrop);
+    card.addEventListener('dragend', onMediaDragEnd);
+    card.addEventListener('dragleave', onMediaDragLeave);
+  });
+}
+function onMediaDragStart(e){
+  if(e.target.closest('.field') || e.target.closest('.actions') || e.target.closest('input') || e.target.closest('select')){
+    e.preventDefault(); return;
+  }
+  dragMediaSrc = parseInt(this.getAttribute('data-index'));
+  this.classList.add('dragging');
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', dragMediaSrc);
+}
+function onMediaDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  this.classList.add('drag-over');
+}
+function onMediaDragLeave(e){ this.classList.remove('drag-over'); }
+function onMediaDrop(e){
+  e.preventDefault();
+  this.classList.remove('drag-over');
+  if(activeIdx<0) return;
+  const src = dragMediaSrc;
+  const dst = parseInt(this.getAttribute('data-index'));
+  if(src === null || src === dst || isNaN(dst)) return;
+  const arr = projects[activeIdx].media;
+  const item = arr.splice(src, 1)[0];
+  arr.splice(dst, 0, item);
+  dragMediaSrc = null;
+  renderForm();
+  debounceSave();
+  showToast('Poradi medii zmeneno');
+}
+function onMediaDragEnd(e){
+  this.classList.remove('dragging');
+  document.querySelectorAll('.media-card').forEach(el=>el.classList.remove('drag-over'));
+  dragMediaSrc = null;
+}
+
+function select(i){
+  activeIdx = i;
+  renderList();
+  renderForm();
+  renderPreview();
+}
+
+function esc(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+function slugify(text){
+  return text.toLowerCase().replace(/[^\w\s-]/g,'').replace(/[-\s]+/g,'-').replace(/^-+|-+$/g,'');
+}
+function wordCount(text){ return text ? text.trim().split(/\s+/).length : 0; }
+function readingTime(text){ return Math.max(1, Math.round(wordCount(text)/200)); }
+
+function ensureGear(p){
+  if(!p.gear) p.gear = {};
+  GEAR_CATS.forEach(c=>{ if(!p.gear[c]) p.gear[c] = []; });
+}
+
+function renderForm(){
+  const area = document.getElementById('formArea');
+  if(activeIdx<0){ area.innerHTML='<div class="empty">Vyber projekt</div>'; return; }
+  const p = projects[activeIdx];
+  ensureGear(p);
+  if(!p.slug && p.title) p.slug = slugify(p.title);
+
+  let mediaHtml = '';
+  (p.media||[]).forEach((m,mi)=>{
+    const thumb = m.thumbnail || m.src || '';
+    const isVideo = m.type === 'video';
+    const thumbTag = isVideo 
+      ? `<video src="${esc(thumb)}" muted preload="metadata"></video>`
+      : `<img src="${esc(thumb)}" alt="" onerror="this.style.display='none'">`;
+    const lqipBadge = m.lqip ? '<span class="lqip-badge">LQIP</span>' : '';
+    mediaHtml += `
+    <div class="media-card" data-index="${mi}">
+      <div class="thumb">${thumbTag}<span class="badge">${m.type||'?'}</span>${lqipBadge}</div>
+      <div class="body">
+        <div class="field"><label>Typ</label><select onchange="setMedia(${mi},'type',this.value)"><option value="photo" ${m.type==='photo'?'selected':''}>Photo</option><option value="video" ${m.type==='video'?'selected':''}>Video</option></select></div>
+        <div class="field"><label>Src (cesta/URL)</label><input type="text" value="${esc(m.src||'')}" onchange="setMedia(${mi},'src',this.value)"></div>
+        <div class="field"><label>Thumbnail / Poster</label><input type="text" value="${esc(m.thumbnail||m.poster||'')}" onchange="setMedia(${mi},'thumbnail',this.value)"></div>
+        <div class="field"><label>Titulek</label><input type="text" value="${esc(m.title||'')}" onchange="setMedia(${mi},'title',this.value)"></div>
+        <div class="field"><label>Caption</label><input type="text" value="${esc(m.caption||'')}" onchange="setMedia(${mi},'caption',this.value)"></div>
+        <div class="field"><label>Alt text (SEO)</label><input type="text" value="${esc(m.alt||'')}" placeholder="Auto: ${esc(p.title||'')} ${mi+1}" onchange="setMedia(${mi},'alt',this.value)"></div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="moveMedia(${mi},-1)">&#x2191;</button>
+        <button class="btn" onclick="moveMedia(${mi},1)">&#x2193;</button>
+        <button class="btn" onclick="generateLqip(${mi})">LQIP</button>
+        <button class="btn danger" onclick="deleteMedia(${mi})">Smazat</button>
+      </div>
+    </div>`;
+  });
+
+  let gearHtml = '';
+  GEAR_CATS.forEach(cat=>{
+    const items = p.gear[cat] || [];
+    const invKey = GEAR_DROPDOWN_MAP[cat];
+    const inventory = (invKey && techInventory[invKey]) ? techInventory[invKey] : [];
+    let addSection = '';
+    if(inventory.length){
+      let opts = `<option value="">- vyber z inventare -</option>`;
+      inventory.forEach(it=>{ opts += `<option value="${esc(it)}">${esc(it)}</option>`; });
+      addSection = `<div class="gear-add-row"><select id="gear-add-${cat}">${opts}</select><button class="btn" onclick="addGearFromSelect('${cat}')">+ Pridat</button></div>`;
+    }
+    let rows = '';
+    items.forEach((item,idx)=>{
+      rows += `<div class="gear-row"><input type="text" value="${esc(item)}" onchange="updateGear('${cat}',${idx},this.value)"><button class="btn danger" onclick="removeGear('${cat}',${idx})">&#x2715;</button></div>`;
+    });
+    gearHtml += `<div class="gear-cat"><label>${GEAR_LABELS[cat]||cat}</label>${addSection}${rows}<button class="btn" style="width:100%;margin-top:4px" onclick="addGear('${cat}')">+ Pridat rucne</button></div>`;
+  });
+
+  const wc = wordCount(p.bio||'');
+  const rt = readingTime(p.bio||'');
+  const seoHtml = `
+    <div class="seo-info">
+      <div class="row"><span class="label">Slug (URL)</span><span class="value">${esc(p.slug||'')}</span></div>
+      <div class="row"><span class="label">Slov v bio</span><span class="value">${wc}</span></div>
+      <div class="row"><span class="label">Cas cteni</span><span class="value">~${rt} min</span></div>
+      <div class="row"><span class="label">Media</span><span class="value">${(p.media||[]).length}</span></div>
+      <div class="row"><span class="label">ID</span><span class="value">${p.id||'?'}</span></div>
+    </div>
+  `;
+
+  area.innerHTML = `
+    <div class="section-title">Projekt: ${esc(p.title||'Bez nazvu')}</div>
+    <div class="form-grid">
+      <div class="field"><label>ID</label><input type="number" value="${p.id||''}" onchange="set('id',parseInt(this.value)||0)"></div>
+      <div class="field"><label>Nazev</label><input type="text" value="${esc(p.title||'')}" onchange="set('title',this.value); autoSlug()" id="projectTitle"></div>
+      <div class="field"><label>Typ projektu</label><select onchange="set('type',this.value)"><option value="photo" ${p.type==='photo'?'selected':''}>Photo</option><option value="video" ${p.type==='video'?'selected':''}>Video</option></select></div>
+      <div class="field"><label>Rok</label><input type="text" value="${esc(p.year||'')}" onchange="set('year',this.value)"></div>
+      <div class="field"><label>Layout</label><select onchange="set('layout',this.value)"><option value="normal" ${p.layout==='normal'?'selected':''}>Normal</option><option value="wide" ${p.layout==='wide'?'selected':''}>Wide</option><option value="tall" ${p.layout==='tall'?'selected':''}>Tall</option><option value="large" ${p.layout==='large'?'selected':''}>Large</option></select></div>
+      <div class="field"><label>Thumbnail URL</label><input type="text" value="${esc(p.thumbnail||'')}" onchange="set('thumbnail',this.value)"></div>
+      <div class="field"><label>Full URL</label><input type="text" value="${esc(p.full||'')}" onchange="set('full',this.value)"></div>
+      <div class="field"><label>Slug (auto)</label><input type="text" value="${esc(p.slug||'')}" onchange="set('slug',this.value)" id="projectSlug"></div>
+      <div class="field" style="grid-column:1/-1"><label>Bio</label><textarea onchange="set('bio',this.value); updateSeoInfo()" id="projectBio">${esc(p.bio||'')}</textarea><div class="hint">${wc} slov, ~${rt} min cteni</div></div>
+      <div class="field" style="grid-column:1/-1"><label>Techniques (oddelene carkou)</label><input type="text" value="${esc(Array.isArray(p.techniques)?p.techniques.join(', '):(p.techniques||''))}" onchange="setTech(this.value)"></div>
+    </div>
+    ${seoHtml}
+    <div class="section-title">Gear</div>
+    <div class="gear-grid">${gearHtml}</div>
+    <div class="section-title">Media</div>
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+      <span>&#x1F4C1;</span>
+      <div>Klikni pro vyber souboru, nebo pretahni sem</div>
+      <div style="font-size:11px;margin-top:4px;opacity:.7">Ctrl+A pro vyber vsech souboru ve slozce</div>
+      <input type="file" id="fileInput" multiple style="display:none" onchange="handleFiles(this.files)">
+    </div>
+    <div class="upload-progress" id="uploadProgress">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px"><span id="uploadLabel">Nahravani...</span><span id="uploadPercent">0%</span></div>
+      <div class="upload-progress-bar"><div class="upload-progress-fill" id="uploadFill"></div></div>
+    </div>
+    <div class="media-toolbar">
+      <button class="btn" onclick="document.getElementById('fileInput').click()">+ Vybrat soubory</button>
+      <button class="btn" onclick="document.getElementById('folderInput').click()">+ Vybrat slozku</button>
+      <button class="btn" onclick="addMediaUrl()">+ Pridat URL</button>
+      <button class="btn" onclick="generateAllLqip()">&#x2728; Generovat LQIP</button>
+      <input type="file" id="folderInput" webkitdirectory directory style="display:none" onchange="handleFiles(this.files)">
+    </div>
+    <div class="media-list" id="mediaList">${mediaHtml || '<div class="empty" id="mediaEmpty">Zadna media</div>'}</div>
+    <div class="section-title">JSON Diff</div>
+    <button class="btn" onclick="loadDiff()">&#x1F4CA; Zobrazit zmeny</button>
+    <div class="diff-panel" id="diffPanel"></div>
+  `;
+
+  initMediaDrag();
+  const dz = document.getElementById('dropZone');
+  if(dz){
+    dz.addEventListener('dragover', e=>{e.preventDefault();dz.classList.add('dragover');});
+    dz.addEventListener('dragleave', e=>{dz.classList.remove('dragover');});
+    dz.addEventListener('drop', e=>{e.preventDefault();dz.classList.remove('dragover');if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files);});
+  }
+}
+
+function autoSlug(){
+  const title = document.getElementById('projectTitle')?.value || '';
+  const slug = slugify(title);
+  const slugInput = document.getElementById('projectSlug');
+  if(slugInput && !slugInput.value){ slugInput.value = slug; set('slug', slug); }
+}
+function updateSeoInfo(){
+  const bio = document.getElementById('projectBio')?.value || '';
+  const wc = wordCount(bio);
+  const rt = readingTime(bio);
+  const hint = document.querySelector('.field textarea + .hint');
+  if(hint) hint.textContent = wc + ' slov, ~' + rt + ' min cteni';
+}
+async function loadDiff(){
+  const panel = document.getElementById('diffPanel');
+  try{
+    const r = await fetch('/api/diff');
+    const j = await r.json();
+    panel.textContent = j.diff;
+    panel.classList.toggle('active', true);
+  }catch(e){ panel.textContent = 'Chyba nacitani diff'; panel.classList.add('active'); }
+}
+async function generateLqip(mi){
+  if(activeIdx<0) return;
+  setStatus('Generuji LQIP...');
+  try{
+    const r = await fetch('/api/generate-lqip',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_idx:activeIdx,media_idx:mi})});
+    const j = await r.json();
+    if(j.ok){ showToast('LQIP vygenerovan'); renderForm(); debounceSave(); }
+    else { showToast('Chyba LQIP'); }
+  }catch(e){ showToast('Chyba site'); }
+  setStatus('Pripraveno');
+}
+async function generateAllLqip(){
+  if(activeIdx<0) return;
+  setStatus('Generuji LQIP pro vsechna media...');
+  try{
+    const r = await fetch('/api/generate-lqip',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({project_idx:activeIdx,media_idx:-1})});
+    const j = await r.json();
+    if(j.ok){ showToast('LQIP vygenerovan pro ' + j.generated + ' medii'); renderForm(); debounceSave(); }
+    else { showToast('Chyba LQIP'); }
+  }catch(e){ showToast('Chyba site'); }
+  setStatus('Pripraveno');
+}
+
+function set(key,val){
+  if(activeIdx<0) return;
+  projects[activeIdx][key] = val;
+  if(key==='title'||key==='type') renderList();
+  debounceSave();
+}
+function setTech(val){
+  if(activeIdx<0) return;
+  const arr = val.split(',').map(s=>s.trim()).filter(Boolean);
+  projects[activeIdx].techniques = arr.length?arr:null;
+  debounceSave();
+}
+function setMedia(mi,key,val){
+  if(activeIdx<0) return;
+  projects[activeIdx].media[mi][key] = val;
+  debounceSave();
+}
+
+const VIDEO_EXTS = ['.mp4','.mov','.webm','.avi','.mkv','.m4v'];
+function isVideoFileName(name){
+  if(!name) return false;
+  const lower = name.toLowerCase();
+  return VIDEO_EXTS.some(ext => lower.endsWith(ext));
+}
+
+function createVideoThumbnailFromFile(file){
+  return new Promise(resolve => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.src = url;
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = 'metadata';
+    video.style.position = 'fixed';
+    video.style.left = '-9999px';
+    video.style.width = '1px';
+    video.style.height = '1px';
+    document.body.appendChild(video);
+    let done = false;
+    let timeoutId = null;
+    const cleanup = () => { if(done) return; done = true; video.pause(); video.remove(); URL.revokeObjectURL(url); };
+    const fail = () => { clearTimeout(timeoutId); cleanup(); resolve(null); };
+    const finish = blob => { clearTimeout(timeoutId); cleanup(); resolve(blob); };
+    const queueCapture = () => {
+      if (done) return;
+      try {
+        const w = video.videoWidth || 640;
+        const h = video.videoHeight || 360;
+        const width = Math.min(640, w);
+        const height = Math.max(1, Math.round((width * h) / w));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, width, height);
+        canvas.toBlob(blob => { if (blob) finish(blob); else fail(); }, 'image/jpeg', 0.92);
+      } catch (e) { fail(); }
+    };
+    let targetTime = 3;
+    video.addEventListener('loadedmetadata', () => {
+      if (video.duration && video.duration < 3) targetTime = Math.max(0.1, video.duration / 2);
+      if (video.duration && targetTime >= video.duration) targetTime = Math.max(0.1, video.duration - 0.1);
+      video.currentTime = targetTime;
+    });
+    video.addEventListener('seeked', () => { if (!done) queueCapture(); });
+    video.addEventListener('loadeddata', () => { if (!done && Math.abs(video.currentTime - targetTime) < 0.1) queueCapture(); });
+    video.addEventListener('error', fail);
+    video.addEventListener('abort', fail);
+    timeoutId = setTimeout(fail, 8000);
+    video.load();
+  });
+}
+
+function addGear(cat){
+  if(activeIdx<0) return;
+  ensureGear(projects[activeIdx]);
+  projects[activeIdx].gear[cat].push('');
+  renderForm();
+}
+function addGearFromSelect(cat){
+  const sel = document.getElementById('gear-add-'+cat);
+  if(!sel || !sel.value) return;
+  if(activeIdx<0) return;
+  ensureGear(projects[activeIdx]);
+  if(!projects[activeIdx].gear[cat].includes(sel.value)){
+    projects[activeIdx].gear[cat].push(sel.value);
+  }
+  renderForm();
+  debounceSave();
+}
+function removeGear(cat,idx){
+  if(activeIdx<0) return;
+  projects[activeIdx].gear[cat].splice(idx,1);
+  renderForm();
+  debounceSave();
+}
+function updateGear(cat,idx,val){
+  if(activeIdx<0) return;
+  projects[activeIdx].gear[cat][idx] = val;
+  debounceSave();
+}
+
+async function handleFiles(files){
+  if(!files.length || activeIdx<0) return;
+  const progress = document.getElementById('uploadProgress');
+  const fill = document.getElementById('uploadFill');
+  const label = document.getElementById('uploadLabel');
+  const pct = document.getElementById('uploadPercent');
+  progress.classList.add('active');
+  const fd = new FormData();
+  const fileArray = Array.from(files);
+  const thumbTasks = [];
+  fileArray.forEach((f, idx) => {
+    fd.append(`file_${idx}`, f, f.name);
+    if (f.type.startsWith('video/') || isVideoFileName(f.name)) {
+      thumbTasks.push((async () => {
+        const thumb = await createVideoThumbnailFromFile(f);
+        if (thumb) { const thumbName = f.name.replace(/\.[^.]+$/, '') + '_thumb.jpg'; fd.append(`thumb_${idx}`, thumb, thumbName); }
+      })());
+    }
+  });
+  await Promise.all(thumbTasks);
+  fd.append('project_type', projects[activeIdx].type || 'photo');
+  fd.append('project_year', projects[activeIdx].year || 'unknown');
+  fd.append('project_title', projects[activeIdx].title || 'untitled');
+  try{
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST','/api/upload');
+    xhr.upload.onprogress = e=>{ if(e.lengthComputable){ const p = Math.round((e.loaded/e.total)*100); fill.style.width = p+'%'; pct.textContent = p+'%'; } };
+    const result = await new Promise((res,rej)=>{ xhr.onload = ()=>res(JSON.parse(xhr.responseText)); xhr.onerror = rej; xhr.send(fd); });
+    if(result.ok){
+      label.textContent = 'Hotovo!';
+      pct.textContent = '100%';
+      fill.style.width = '100%';
+      if(!projects[activeIdx].media) projects[activeIdx].media = [];
+      for(const f of result.files){
+        projects[activeIdx].media.push({type: f.type, src: f.rel_path, thumbnail: f.thumbnail || f.rel_path, title: f.filename.replace(/\.[^.]+$/,''), caption: '', lqip: f.lqip || null});
+      }
+      renderForm(); debounceSave(); showToast('Nahrano '+result.files.length+' souboru');
+    }else{ throw new Error(result.error||'Chyba'); }
+  }catch(e){
+    label.textContent = 'Chyba: '+e.message; pct.textContent = '';
+    showToast('Chyba nahravani');
+  }
+  setTimeout(()=>progress.classList.remove('active'),1500);
+}
+
+function addMediaUrl(){
+  if(activeIdx<0) return;
+  if(!projects[activeIdx].media) projects[activeIdx].media = [];
+  projects[activeIdx].media.push({type:'photo', src:'', thumbnail:'', title:'', caption:'', alt:''});
+  renderForm(); debounceSave();
+}
+function deleteMedia(mi){
+  if(activeIdx<0) return;
+  projects[activeIdx].media.splice(mi,1);
+  renderForm(); debounceSave();
+}
+function moveMedia(mi,dir){
+  if(activeIdx<0) return;
+  const arr = projects[activeIdx].media;
+  const ni = mi+dir;
+  if(ni<0||ni>=arr.length) return;
+  [arr[mi],arr[ni]] = [arr[ni],arr[mi]];
+  renderForm(); debounceSave();
+}
+
+function addProject(){
+  const maxId = projects.reduce((m,p)=>Math.max(m,p.id||0),0);
+  const gearDefault = {};
+  GEAR_CATS.forEach(c=>gearDefault[c]=[]);
+  const np = { id: maxId+1, title: "Novy projekt", type: "photo", year: "2025", layout: "normal", thumbnail: "", full: "", bio: "", techniques: [], gear: gearDefault, media: [], slug: "" };
+  projects.push(np);
+  renderList(); select(projects.length-1); debounceSave();
+}
+function deleteProject(){
+  if(activeIdx<0||!confirm('Opravdu smazat projekt "'+(projects[activeIdx].title||'')+'"?')) return;
+  projects.splice(activeIdx,1);
+  activeIdx = Math.min(activeIdx, projects.length-1);
+  renderList(); renderForm(); debounceSave();
+}
+function duplicateProject(){
+  if(activeIdx<0) return;
+  const clone = JSON.parse(JSON.stringify(projects[activeIdx]));
+  const maxId = projects.reduce((m,p)=>Math.max(m,p.id||0),0);
+  clone.id = maxId+1; clone.title = (clone.title||'') + ' (kopie)';
+  projects.splice(activeIdx+1,0,clone);
+  renderList(); select(activeIdx+1); debounceSave();
+}
+
+async function forceConvert(){
+  const btn = document.getElementById('forceConvertBtn');
+  if(!btn) return;
+  if(!confirm('&#x26A0; Tato akce prevede VSECHNY existujici fotky (jpg/png/gif/bmp/tiff) na WebP.' +
+    '&#x2022; Originalni soubory budou smazan' +
+    '&#x2022; Cesty v projects.json budou aktualizovan' +
+    '&#x2022; Videa zustanou beze zmeny' +
+    'Pokracovat?')) return;
+  btn.disabled = true; btn.textContent = '&#x1F504; Konvertuji...';
+  setStatus('Konvertuji vse na WebP...');
+  try{
+    const r = await fetch('/api/force-convert', {method: 'POST'});
+    const j = await r.json();
+    if(j.ok){ showToast(j.message); setStatus('Konverze hotova'); await load(); }
+    else { showToast('Chyba: ' + (j.error || 'Neznama chyba')); setStatus('Chyba konverze'); }
+  }catch(e){ showToast('Chyba site: ' + e.message); setStatus('Chyba site'); }
+  finally { btn.disabled = false; btn.textContent = '&#x1F504; Force WebP'; }
+}
+
+let saveTimer;
+function debounceSave(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 800);
+}
+async function saveNow(){
+  setStatus('Ukladam...');
+  try{
+    const r = await fetch('/api/save',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(projects)});
+    const j = await r.json();
+    if(j.ok){ setStatus('Ulozeno'); showToast('Ulozeno'); }
+    else { setStatus('Chyba: '+j.error); }
+  }catch(e){ setStatus('Chyba site'); }
+}
+</script>
+</body>
+</html>
