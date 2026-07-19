@@ -76,69 +76,70 @@
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (1).webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (1).webp",
-        "title": "Still (1)",
+        "src": "media/video/2026/Postupy-práce/still (1).webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (1).webp",
+        "title": "still (1)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (2).webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (2).webp",
-        "title": "Still (3)",
+        "src": "media/video/2026/Postupy-práce/still (2).webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (2).webp",
+        "title": "still (3)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (4).webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (4).webp",
-        "title": "Still (4)",
+        "src": "media/video/2026/Postupy-práce/still (4).webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (4).webp",
+        "title": "still (4)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (3).webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (3).webp",
-        "title": "Still (5)",
+        "src": "media/video/2026/Postupy-práce/still (3).webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (3).webp",
+        "title": "still (5)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still 2026-03-29 195902_3.1.3.webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still 2026-03-29 195902_3.1.3.webp",
-        "title": "Still (6)",
+        "src": "media/video/2026/Postupy-práce/still 2026-03-29 195902_3.1.3.webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still 2026-03-29 195902_3.1.3.webp",
+        "title": "still (6)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (1)_1.webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (1)_1.webp",
-        "title": "Still (7)",
+        "src": "media/video/2026/Postupy-práce/still (1)_1.webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (1)_1.webp",
+        "title": "still (7)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (2)_1.webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (2)_1.webp",
-        "title": "Still (8)",
+        "src": "media/video/2026/Postupy-práce/still (2)_1.webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (2)_1.webp",
+        "title": "still (8)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (3)_1.webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (3)_1.webp",
-        "title": "Still (9)",
+        "src": "media/video/2026/Postupy-práce/still (3)_1.webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (3)_1.webp",
+        "title": "still (9)",
         "caption": ""
       },
       {
         "type": "photo",
-        "src": "media/video/2026/Postupy-práce/Still (4)_1.webp",
-        "thumbnail": "media/video/2026/Postupy-práce/Still (4)_1.webp",
-        "title": "Still (10)",
+        "src": "media/video/2026/Postupy-práce/still (4)_1.webp",
+        "thumbnail": "media/video/2026/Postupy-práce/still (4)_1.webp",
+        "title": "still (10)",
         "caption": ""
       }
     ],
-    "slug": "postupy-prce"
+    "slug": "postupy-prce",
+    "og_image": "media/video/2026/Postupy-práce/og-image.png"
   },
   {
     "id": 2,
@@ -182,7 +183,8 @@
         "caption": ""
       }
     ],
-    "slug": "reklama"
+    "slug": "reklama",
+    "og_image": "media/video/2025/Reklama/og-image.png"
   },
   {
     "id": 4,
@@ -278,7 +280,8 @@
         "caption": ""
       }
     ],
-    "slug": "za-okny"
+    "slug": "za-okny",
+    "og_image": "media/video/2024/Za-Okny/og-image.png"
   },
   {
     "id": 3,
