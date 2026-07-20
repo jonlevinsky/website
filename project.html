@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="description" content="Detail projektu — Jan Levínský, cinematography & photography.">
-<meta name="theme-color" content="#c4956a">
+<meta name="theme-color" content="#b8804e">
 
 <!-- Dynamic OG meta tags — populated by JS after project load -->
 <meta id="og-type" property="og:type" content="article">
@@ -14,7 +14,7 @@
 <meta id="og-image" property="og:image" content="https://levinskyj.art/media/og-cover.webp">
 <meta id="og-image-w" property="og:image:width" content="1200">
 <meta id="og-image-h" property="og:image:height" content="630">
-<meta id="og-image-type" property="og:image:type" content="image/png">
+<meta id="og-image-type" property="og:image:type" content="image/webp">
 <meta id="og-image-alt" property="og:image:alt" content="Project preview">
 <meta id="og-site" property="og:site_name" content="Jan Levínský">
 <meta id="og-locale" property="og:locale" content="cs_CZ">
@@ -27,6 +27,7 @@
 
 <title>Jan Levínský // Project</title>
 <link rel="canonical" href="https://levinskyj.art/project.html">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,40 +38,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
+<link rel="stylesheet" href="style.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-:root {
-  --accent: #c4956a;
-  --text-on-accent: #0c0c0c;
-  --accent-subtle: #c4966b1f;
-  --accent-subtle-2: #c4956a0f;
-  --bg: #faf8f5;
-  --surface: #f0ece6;
-  --bg-raised: #f5f2ee;
-  --surface-raised: #eae6e0;
-  --bg-subtle: #fdfcfa;
-  --border: #d4cfc7;
-  --border-subtle: #e8e4dd;
-  --text: #1c1917;
-  --muted: #6b6560;
-  --serif: 'Bricolage Grotesque', Georgia, serif;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-html, body { height: 100%; color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-body { background: var(--bg); }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
-a { color: inherit; text-decoration: none; }
-img { display: block; max-width: 100%; }
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--r-full); }
-
 a:focus-visible, button:focus-visible, .tile:focus-visible,
 .modal-close:focus-visible, .modal-shortcuts-btn:focus-visible,
 .modal-nav:focus-visible, .ctrl-btn:focus-visible {
@@ -79,101 +48,7 @@ a:focus-visible, button:focus-visible, .tile:focus-visible,
   border-radius: var(--r-sm);
 }
 
-.wrap {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 40px;
-  max-width: 1420px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 24px;
-  min-height: 100vh;
-}
-
-.brand {
-  padding: 4px 0 0;
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 24px;
-  height: fit-content;
-}
-
-.kicker {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 30px;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.05s var(--ease-out-expo) forwards;
-}
-
-h1 {
-  margin: 0;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 56px;
-  line-height: 0.92;
-  letter-spacing: -0.015em;
-  color: var(--text);
-  opacity: 0;
-  animation: fadeUp 0.8s 0.15s var(--ease-out-expo) forwards;
-}
-
-h1 .last { display: block; font-style: italic; color: var(--accent); }
-
-.h1-word { display: block; }
-.h1-char { display: inline-block; will-change: transform; }
-html.lib-anim h1 { animation: none; opacity: 1; }
-html.lib-anim .h1-char { opacity: 0; }
-
-.px-wrap {
-  position: absolute;
-  left: 0; right: 0; top: 0; bottom: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.px-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.divider {
-  width: 28px;
-  height: 1.5px;
-  background: var(--accent);
-  margin: 26px 0;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.25s var(--ease-out-expo) forwards;
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--accent);
-  text-decoration: none;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  transition: color 0.3s ease, gap 0.4s var(--ease-out-expo);
-  opacity: 0;
-  animation: fadeUp 0.7s 0.3s var(--ease-out-expo) forwards;
-  width: fit-content;
-}
-
-.back-link i {
-  font-size: 14px;
-  opacity: 0.7;
-  transition: transform 0.4s var(--ease-out-expo), opacity 0.3s ease;
-  display: inline-block;
-}
-
-.back-link:hover { color: var(--text); gap: 10px; }
-.back-link:hover i { transform: translateX(-3px); opacity: 1; }
+.px-wrap { z-index: 0; }
 
 main {
   display: flex;
@@ -1197,15 +1072,16 @@ main {
     @font-face { font-family: 'Bricolage Grotesque'; font-display: swap; }
     @font-face { font-family: 'Inter'; font-display: swap; }
   </style>
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 
 <div class="wrap">
   <aside class="brand">
     <div class="kicker">Portfolio // 2025</div>
-    <h1>Jan<br/><span class="last">Levínský</span></h1>
+    <h1>
+      <span>Jan</span>
+      <span class="last">Levínský</span>
+    </h1>
     <div class="divider"></div>
     <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to portfolio</a>
   </aside>
@@ -1259,70 +1135,8 @@ main {
   </div>
 </div>
 
+<script src="main.js"></script>
 <script>
-const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const finePointer = window.matchMedia('(pointer: fine)').matches;
-let heroChars = [];
-let gsapReady = false;
-
-function ensureGsap() {
-  if (gsapReady) return typeof gsap !== 'undefined';
-  if (typeof gsap === 'undefined') return false;
-  if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
-  gsapReady = true;
-  return true;
-}
-
-function splitChars(root) {
-  const chars = [];
-  const pushChars = (text, parent) => {
-    for (const ch of text) {
-      const c = document.createElement('span');
-      c.className = 'h1-char';
-      c.textContent = ch === ' ' ? '\u00A0' : ch;
-      c.setAttribute('aria-hidden', 'true');
-      parent.appendChild(c);
-      chars.push(c);
-    }
-  };
-  Array.from(root.childNodes).forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (!node.textContent.trim()) return;
-      const wrap = document.createElement('span');
-      wrap.className = 'h1-word';
-      root.insertBefore(wrap, node);
-      pushChars(node.textContent, wrap);
-      root.removeChild(node);
-    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-      root.removeChild(node);
-    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
-      const text = node.textContent;
-      node.setAttribute('aria-label', text);
-      node.textContent = '';
-      pushChars(text, node);
-    }
-  });
-  return chars;
-}
-
-function prepareHero() {
-  if (prefersReduced) return;
-  const h1 = document.querySelector('h1');
-  if (!h1) return;
-  heroChars = splitChars(h1);
-  if (heroChars.length) document.documentElement.classList.add('lib-anim');
-}
-
-function initHeroAnim() {
-  if (!heroChars.length) return;
-  if (!window.Motion) { document.documentElement.classList.remove('lib-anim'); return; }
-  Motion.animate(
-    heroChars,
-    { opacity: [0, 1], y: ['0.6em', '0em'], rotate: [8, 0] },
-    { delay: Motion.stagger(0.03, { start: 0.12 }), duration: 0.75, easing: [0.16, 1, 0.3, 1] }
-  );
-}
-
 prepareHero();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1376,19 +1190,6 @@ async function resolveProjectPaths(project) {
   const resolved = await Promise.all(tasks);
   resolved.forEach((v, i) => setters[i](v));
   return project;
-}
-
-function imgErrorFallback(img) {
-  const orig = img.getAttribute('data-orig-src') || img.src;
-  if (!img.getAttribute('data-orig-src')) img.setAttribute('data-orig-src', orig);
-  const n = parseInt(img.getAttribute('data-attempt') || '0');
-  img.setAttribute('data-attempt', String(n + 1));
-  const variants = [orig.toLowerCase(), orig.toLowerCase().replace(/ /g, '-'), orig.toLowerCase().replace(/%20/g, '-')];
-  if (n < variants.length && variants[n] !== img.src) {
-    img.src = variants[n];
-  } else {
-    img.removeAttribute('onerror');
-  }
 }
 
 function setOrientation(tile, w, h) {
@@ -1508,47 +1309,6 @@ async function loadProject() {
   } catch(e) {
     container.innerHTML = '<p style="color:var(--muted);font-size:13px;">Failed to load project.</p>';
   }
-}
-
-function recalcPerforations() {
-  const tiles = Array.from(document.querySelectorAll('.tile'));
-  tiles.forEach(a => {
-    const type = a.dataset.perfType;
-    if (!type) return;
-    const frameW = parseFloat(a.dataset.perfFrameWidth);
-    const frameH = parseFloat(a.dataset.perfFrameHeight);
-    const holeW = parseFloat(a.dataset.perfHoleWidth);
-    const holeH = parseFloat(a.dataset.perfHoleHeight);
-    const count = parseInt(a.dataset.perfCount, 10) || 2;
-    const rect = a.getBoundingClientRect();
-    const isVideo = type === 'video';
-    const pitchPx = isVideo ? (4.75 / frameH) * rect.height : (4.75 / frameW) * rect.width;
-    const dotWidthPx = (holeW / frameW) * rect.width;
-    const dotHeightPx = (holeH / frameH) * rect.height;
-    const gapForH = Math.max(1, pitchPx - dotWidthPx);
-    const gapForV = Math.max(1, pitchPx - dotHeightPx);
-    a.style.setProperty('--perf-dot-width', Math.round(dotWidthPx) + 'px');
-    a.style.setProperty('--perf-dot-height', Math.round(dotHeightPx) + 'px');
-
-    const perfVLeft = a.querySelector('.film-perf-v.left');
-    const perfVRight = a.querySelector('.film-perf-v.right');
-    if (perfVLeft || perfVRight) {
-      const containerH = (count * dotHeightPx) + ((count - 1) * gapForV);
-      [perfVLeft, perfVRight].forEach(el => {
-        if (!el) return;
-        el.style.height = Math.round(containerH) + 'px';
-        el.style.top = '50%';
-        el.style.transform = 'translateY(-50%)';
-        el.style.justifyContent = 'flex-start';
-        el.style.gap = Math.round(gapForV) + 'px';
-        el.querySelectorAll('.perf-dot').forEach(d => {
-          d.style.width = Math.round(dotWidthPx) + 'px';
-          d.style.height = Math.round(dotHeightPx) + 'px';
-          d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
-        });
-      });
-    }
-  });
 }
 
 function isMobile(){ return window.innerWidth <= 640; }
@@ -1678,7 +1438,7 @@ function displayProject(project) {
     const fTargets = footerEl.querySelectorAll('.f-name, .f-role, .f-contact');
     gsap.set(fTargets, { opacity: 0, y: 12 });
     gsap.to(fTargets, {
-      opacity: 1, y: 0, duration: 0.6, ease: 'expo.out', stagger: 0.08,
+      opacity: 1, y: 0, duration: 0.6, ease: 'power3.out', stagger: 0.08,
       scrollTrigger: { trigger: footerEl, start: 'top 92%', once: true },
       onComplete: () => gsap.set(fTargets, { clearProps: 'transform' })
     });
@@ -1699,7 +1459,7 @@ function displayProject(project) {
       Motion.animate(
         headerEls,
         { opacity: [0, 1], y: [16, 0] },
-        { delay: Motion.stagger(0.1, { start: 0.1 }), duration: 0.6, easing: [0.16, 1, 0.3, 1] }
+        { delay: Motion.stagger(0.1, { start: 0.1 }), duration: 0.6, easing: [0.22, 1, 0.36, 1] }
       ).finished.then(() => headerEls.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
     const gearGroups = container.querySelectorAll('.gear-group');
@@ -1707,7 +1467,7 @@ function displayProject(project) {
       Motion.animate(
         gearGroups,
         { opacity: [0, 1], y: [12, 0] },
-        { delay: Motion.stagger(0.08, { start: 0.4 }), duration: 0.5, easing: [0.16, 1, 0.3, 1] }
+        { delay: Motion.stagger(0.08, { start: 0.4 }), duration: 0.5, easing: [0.22, 1, 0.36, 1] }
       ).finished.then(() => gearGroups.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
     const galleryTiles = container.querySelectorAll('.gallery .tile');
@@ -1715,7 +1475,7 @@ function displayProject(project) {
       Motion.animate(
         galleryTiles,
         { opacity: [0, 1], y: [16, 0] },
-        { delay: Motion.stagger(0.06, { start: 0.6 }), duration: 0.6, easing: [0.16, 1, 0.3, 1] }
+        { delay: Motion.stagger(0.06, { start: 0.6 }), duration: 0.6, easing: [0.22, 1, 0.36, 1] }
       ).finished.then(() => galleryTiles.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
   }
@@ -1921,16 +1681,16 @@ function openModal(i, arr) {
     });
     tl.fromTo(content,
       { opacity: 0, scale: 0.96, y: 10 },
-      { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: 'expo.out' }, 0);
+      { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: 'power3.out' }, 0);
     tl.fromTo(caption,
       { opacity: 0, y: 6 },
-      { opacity: 1, y: 0, duration: 0.4, ease: 'expo.out' }, 0.1);
+      { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, 0.1);
     tl.fromTo('.modal-prev',
       { opacity: 0, x: -12 },
-      { opacity: 1, x: 0, duration: 0.4, ease: 'expo.out' }, 0.15);
+      { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' }, 0.15);
     tl.fromTo('.modal-next',
       { opacity: 0, x: 12 },
-      { opacity: 1, x: 0, duration: 0.4, ease: 'expo.out' }, 0.15);
+      { opacity: 1, x: 0, duration: 0.4, ease: 'power3.out' }, 0.15);
   }
 }
 
@@ -2358,7 +2118,7 @@ document.getElementById('shortcuts-btn').addEventListener('click', () => {
     Motion.animate(
       rows,
       { opacity: [0, 1], x: [8, 0] },
-      { delay: Motion.stagger(0.05), duration: 0.35, easing: [0.16, 1, 0.3, 1] }
+      { delay: Motion.stagger(0.05), duration: 0.35, easing: [0.22, 1, 0.36, 1] }
     );
   }
 });

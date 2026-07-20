@@ -25,12 +25,14 @@ import subprocess
 import threading
 import webbrowser
 import base64
+import sys
+import tempfile
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 from PIL import Image
 import io
 
-# ─── CONFIG ──────────────────────────────────────────────────────────
+# --- CONFIG ---------------------------------------------------------
 PORT = 8765
 JSON_FILE = Path("projects.json")
 MEDIA_DIR = Path("media")
@@ -38,7 +40,7 @@ BACKUP_DIR = Path(".builder_backups")
 KAMERA_MD = Path("./gear/Kamera.md")
 OPTIKA_MD = Path("./gear/Optika.md")
 HTML_FILE = Path(__file__).parent / "builder.html"
-SITE_URL = "https://jonlevinsky.github.io/website"  # Uprav podle sebe
+SITE_URL = "https://levinskyj.art"
 
 GEAR_CATEGORIES = [
     "camera", "lenses", "gimbal/stabilization", "lighting",
@@ -61,7 +63,7 @@ GEAR_LABELS = {
     "recorder": "Recorder"
 }
 
-# ─── AD BLOCKER BUZZWORDS ──────────────────────────────────────────────
+# --- AD BLOCKER BUZZWORDS ---------------------------------------------
 # These words in filenames/paths trigger ERR_BLOCKED_BY_CLIENT in browsers
 AD_BLOCKER_BUZZWORDS = [
     "reklama", "reklamy", "reklamni", "reklamní",
@@ -119,18 +121,18 @@ def sanitize_ad_buzzwords(name):
         result = re.sub(r'(?i)' + re.escape(buzz), replacement, result)
     return result
 
-# ─── WEBP CONVERSION SETTINGS ──────────────────────────────────────────
+# --- WEBP CONVERSION SETTINGS -----------------------------------------
 WEBP_QUALITY = 85
 WEBP_THUMB_QUALITY = 80
 MAX_IMAGE_WIDTH = 1920
 MAX_THUMB_WIDTH = 640
 
-# ─── PLACEHOLDER SETTINGS ──────────────────────────────────────────────
+# --- PLACEHOLDER SETTINGS ---------------------------------------------
 LQIP_WIDTH = 32
 LQIP_BLUR = 10
 LQIP_QUALITY = 30
 
-# ─── UNDO/REDO STACK ─────────────────────────────────────────────────
+# --- UNDO/REDO STACK -------------------------------------------------
 undo_stack = []
 redo_stack = []
 MAX_UNDO = 50
@@ -164,7 +166,7 @@ def redo():
     data["projects"] = json.loads(state)
     return True
 
-# ─── PARSE TECHNIKA ────────────────────────────────────────────────────
+# --- PARSE TECH INVENTORY ---------------------------------------------
 def load_tech_inventory():
     inv = {}
     if KAMERA_MD.exists():
@@ -223,7 +225,7 @@ def load_tech_inventory():
         inv[k] = dedup
     return inv
 
-# ─── DATA ──────────────────────────────────────────────────────────────
+# --- DATA -------------------------------------------------------------
 data = {"projects": []}
 tech_inventory = {}
 
@@ -243,8 +245,11 @@ def save_json():
         ts = datetime.datetime.now().strftime("%H%M%S")
         shutil.copy(JSON_FILE, BACKUP_DIR / f"projects_{ts}.json")
     MEDIA_DIR.mkdir(exist_ok=True)
-    with open(JSON_FILE, "w", encoding="utf-8") as f:
+    # Atomic write: write to temp file, then rename
+    tmp = JSON_FILE.with_suffix(".json.tmp")
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data["projects"], f, ensure_ascii=False, indent=2)
+    tmp.replace(JSON_FILE)
 
 def safe_folder_name(s):
     s = re.sub(r'[\\/:*?"<>|]', "", str(s))
@@ -288,7 +293,7 @@ def reading_time(text):
     wc = word_count(text)
     return max(1, round(wc / 200))
 
-# ─── WEBP CONVERSION HELPERS ───────────────────────────────────────────
+# --- WEBP CONVERSION HELPERS ------------------------------------------
 def is_image_ext(path):
     return Path(path).suffix.lower() in (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif")
 
@@ -322,7 +327,7 @@ def convert_to_webp(image_bytes, quality=WEBP_QUALITY, max_width=MAX_IMAGE_WIDTH
 def generate_webp_thumbnail(image_bytes, quality=WEBP_THUMB_QUALITY, max_width=MAX_THUMB_WIDTH):
     return convert_to_webp(image_bytes, quality=quality, max_width=max_width)
 
-# ─── LQIP / PLACEHOLDER GENERATION ─────────────────────────────────────
+# --- LQIP / PLACEHOLDER GENERATION ------------------------------------
 def generate_lqip(image_bytes, width=LQIP_WIDTH, quality=LQIP_QUALITY, blur=LQIP_BLUR):
     try:
         img = Image.open(io.BytesIO(image_bytes))
@@ -343,127 +348,290 @@ def generate_lqip(image_bytes, width=LQIP_WIDTH, quality=LQIP_QUALITY, blur=LQIP
         return None
 
 
-# ─── OG IMAGE GENERATION ───────────────────────────────────────────────
+# --- OG IMAGE GENERATION ----------------------------------------------
 OG_WIDTH = 1200
 OG_HEIGHT = 630
 OG_BG_COLOR = (12, 12, 12)  # #0c0c0c
-OG_ACCENT_COLOR = (196, 149, 106)  # #c4956a
+OG_ACCENT_COLOR = (184, 128, 78)  # #b8804e
 OG_TEXT_COLOR = (232, 230, 227)  # #e8e6e3
 
+PERF_COLOR = (250, 248, 245)  # #faf8f5 - light film perforation dots
+
+def _load_og_fonts():
+    """Load fonts for OG image generation, returns (title_font, subtitle_font, meta_font)."""
+    from PIL import ImageFont
+    FONT_CANDIDATES = [
+        ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
+        ("/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/Helvetica.ttc"),
+        (os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts", "arialbd.ttf"),
+         os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts", "arial.ttf")),
+        (os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts", "segoeui.ttf"),
+         os.path.join(os.environ.get("WINDIR", "C:\\Windows"), "Fonts", "segoeui.ttf")),
+    ]
+    for bold_path, regular_path in FONT_CANDIDATES:
+        try:
+            if os.path.exists(bold_path):
+                title = ImageFont.truetype(bold_path, 64)
+                subtitle = ImageFont.truetype(regular_path, 28) if os.path.exists(regular_path) else ImageFont.truetype(bold_path, 28)
+                meta = ImageFont.truetype(regular_path, 20) if os.path.exists(regular_path) else ImageFont.truetype(bold_path, 20)
+                small = ImageFont.truetype(regular_path, 16) if os.path.exists(regular_path) else ImageFont.truetype(bold_path, 16)
+                return title, subtitle, meta, small
+        except Exception:
+            continue
+    default = ImageFont.load_default()
+    return default, default, default, default
+
+def _draw_perforations(draw, x, y, w, h, count=8, horizontal=True, dot_color=PERF_COLOR):
+    """Draw film perforations along an edge."""
+    if horizontal:
+        dot_w = max(3, w // count // 3)
+        dot_h = max(4, h // 8)
+        gap = (w - dot_w * count) // (count + 1)
+        for i in range(count):
+            dx = x + gap + i * (dot_w + gap)
+            draw.ellipse([dx, y, dx + dot_w, y + dot_h], fill=dot_color)
+            draw.ellipse([dx, y + h - dot_h, dx + dot_w, y + h], fill=dot_color)
+    else:
+        dot_w = max(4, w // 8)
+        dot_h = max(3, h // count // 3)
+        gap = (h - dot_h * count) // (count + 1)
+        for i in range(count):
+            dy = y + gap + i * (dot_h + gap)
+            draw.ellipse([x, dy, x + dot_w, dy + dot_h], fill=dot_color)
+            draw.ellipse([x + w - dot_w, dy, x + w, dy + dot_h], fill=dot_color)
+
+def _load_thumbnail(path):
+    """Load and resize a thumbnail to fit within max_size while preserving aspect ratio."""
+    try:
+        if not path or not Path(path).exists():
+            return None
+        return Image.open(path)
+    except Exception:
+        return None
+
+def _paste_thumb_tile(base, thumb, x, y, tw, th, is_video=False, index=0):
+    """Paste a thumbnail into a tile area with film perforations and shadow overlay."""
+    from PIL import ImageDraw
+    if thumb is None:
+        return
+    # Resize thumb to fill the tile
+    thumb_copy = thumb.copy()
+    r = thumb_copy.width / thumb_copy.height
+    target_r = tw / th
+    if r > target_r:
+        new_h = th
+        new_w = int(th * r)
+    else:
+        new_w = tw
+        new_h = int(tw / r)
+    thumb_copy = thumb_copy.resize((new_w, new_h), Image.LANCZOS)
+    # Center crop
+    left = (new_w - tw) // 2
+    top = (new_h - th) // 2
+    thumb_copy = thumb_copy.crop((left, top, left + tw, top + th))
+    # Darken
+    dark = Image.new('RGB', (tw, th), OG_BG_COLOR)
+    thumb_copy = Image.blend(thumb_copy, dark, 0.35)
+    base.paste(thumb_copy, (x, y))
+
+    draw = ImageDraw.Draw(base)
+    # Film perforations
+    if is_video:
+        hole_count = max(3, th // 60)
+        _draw_perforations(draw, x, y, tw, th, count=hole_count, horizontal=False, dot_color=PERF_COLOR)
+    else:
+        hole_count = max(3, tw // 60)
+        _draw_perforations(draw, x, y, tw, th, count=hole_count, horizontal=True, dot_color=PERF_COLOR)
+
+def _draw_text_with_shadow(draw, xy, text, font, fill, shadow_offset=2):
+    """Draw text with a dark shadow for readability."""
+    sx, sy = xy
+    draw.text((sx + shadow_offset, sy + shadow_offset), text, font=font, fill=(0, 0, 0))
+    draw.text(xy, text, font=font, fill=fill)
+
 def generate_og_image(project, output_path=None):
-    """Generate a 1200x630 OG image for a project."""
+    """Generate a 1200x630 OG image for a project with bento-grid style layout."""
     try:
         from PIL import ImageDraw, ImageFont
+        title_font, sub_font, meta_font, small_font = _load_og_fonts()
 
-        # Create base image
         img = Image.new('RGB', (OG_WIDTH, OG_HEIGHT), OG_BG_COLOR)
         draw = ImageDraw.Draw(img)
 
-        # Try to load project thumbnail as background
-        thumb_path = project.get("thumbnail", "")
-        if thumb_path and Path(thumb_path).exists():
-            try:
-                thumb = Image.open(thumb_path)
-                # Resize to cover the OG canvas
-                thumb_ratio = thumb.width / thumb.height
-                og_ratio = OG_WIDTH / OG_HEIGHT
-                if thumb_ratio > og_ratio:
-                    new_height = OG_HEIGHT
-                    new_width = int(OG_HEIGHT * thumb_ratio)
-                else:
-                    new_width = OG_WIDTH
-                    new_height = int(OG_WIDTH / thumb_ratio)
-                thumb = thumb.resize((new_width, new_height), Image.LANCZOS)
-                # Center crop
-                left = (new_width - OG_WIDTH) // 2
-                top = (new_height - OG_HEIGHT) // 2
-                thumb = thumb.crop((left, top, left + OG_WIDTH, top + OG_HEIGHT))
-                # Darken the image
-                thumb = Image.blend(thumb, Image.new('RGB', (OG_WIDTH, OG_HEIGHT), OG_BG_COLOR), 0.6)
-                img = thumb
-                draw = ImageDraw.Draw(img)
-            except Exception:
-                pass
-
-        # Draw accent line at top
-        draw.rectangle([0, 0, OG_WIDTH, 4], fill=OG_ACCENT_COLOR)
-
-        # Draw text
         title = project.get("title", "Untitled")
         year = project.get("year", "")
-        ptype = project.get("type", "photo").upper()
+        ptype = project.get("type", "photo")
+        is_video = ptype == "video"
+        media_list = project.get("media", [])
 
-        # Try to load fonts
-        try:
-            title_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 72)
-            subtitle_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
-            meta_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 24)
-        except Exception:
-            try:
-                title_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 72)
-                subtitle_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 32)
-                meta_font = ImageFont.truetype("/System/Library/Fonts/Helvetica.ttc", 24)
-            except Exception:
-                title_font = ImageFont.load_default()
-                subtitle_font = ImageFont.load_default()
-                meta_font = ImageFont.load_default()
+        # Gather available thumbnails
+        thumbs = []
+        if project.get("thumbnail") and Path(project["thumbnail"]).exists():
+            thumbs.append(_load_thumbnail(project["thumbnail"]))
+        for m in media_list:
+            src = m.get("thumbnail") or m.get("src")
+            if src and Path(src).exists():
+                thumbs.append(_load_thumbnail(src))
+        thumbs = [t for t in thumbs if t is not None]
 
-        # Draw type badge
-        badge_text = f"  {ptype}  "
-        bbox = draw.textbbox((0, 0), badge_text, font=meta_font)
-        badge_width = bbox[2] - bbox[0]
-        badge_height = bbox[3] - bbox[1]
-        draw.rounded_rectangle([60, 60, 60 + badge_width + 20, 60 + badge_height + 16], radius=4, fill=OG_ACCENT_COLOR)
-        draw.text((70, 68), badge_text, fill=OG_BG_COLOR, font=meta_font)
-
-        # Draw title
-        y_offset = 140
-        max_width = OG_WIDTH - 120
-        words = title.split()
-        lines = []
-        current_line = ""
-        for word in words:
-            test = current_line + " " + word if current_line else word
-            bbox = draw.textbbox((0, 0), test, font=title_font)
-            if bbox[2] - bbox[0] <= max_width:
-                current_line = test
+        # --- Layout: bento-style grid of thumbnails ---
+        if thumbs:
+            tiles = thumbs[:4]
+            if len(tiles) == 1:
+                _paste_thumb_tile(img, tiles[0], 0, 0, OG_WIDTH, OG_HEIGHT, is_video, 0)
+            elif len(tiles) == 2:
+                half = OG_WIDTH // 2
+                _paste_thumb_tile(img, tiles[0], 0, 0, half, OG_HEIGHT, is_video, 0)
+                _paste_thumb_tile(img, tiles[1], half, 0, half, OG_HEIGHT, is_video, 1)
+            elif len(tiles) == 3:
+                half_w = OG_WIDTH // 2
+                half_h = OG_HEIGHT // 2
+                _paste_thumb_tile(img, tiles[0], 0, 0, half_w, OG_HEIGHT, is_video, 0)
+                _paste_thumb_tile(img, tiles[1], half_w, 0, half_w, half_h, is_video, 1)
+                _paste_thumb_tile(img, tiles[2], half_w, half_h, half_w, OG_HEIGHT - half_h, is_video, 2)
             else:
-                if current_line:
-                    lines.append(current_line)
-                current_line = word
-        if current_line:
-            lines.append(current_line)
+                half = OG_WIDTH // 2
+                quart = OG_HEIGHT // 2
+                _paste_thumb_tile(img, tiles[0], 0, 0, half, quart, is_video, 0)
+                _paste_thumb_tile(img, tiles[1], half, 0, half, quart, is_video, 1)
+                _paste_thumb_tile(img, tiles[2], 0, quart, half, quart, is_video, 2)
+                _paste_thumb_tile(img, tiles[3], half, quart, half, quart, is_video, 3)
 
-        for line in lines[:3]:  # Max 3 lines
-            draw.text((60, y_offset), line, fill=OG_TEXT_COLOR, font=title_font)
-            y_offset += 90
+        # --- Gradient overlay at bottom for text ---
+        for i in range(180):
+            ratio = (1 - i / 180) ** 2
+            r = int(OG_BG_COLOR[0] * ratio)
+            g = int(OG_BG_COLOR[1] * ratio)
+            b = int(OG_BG_COLOR[2] * ratio)
+            draw.rectangle([0, OG_HEIGHT - 180 + i, OG_WIDTH, OG_HEIGHT - 180 + i + 1],
+                          fill=(r, g, b))
 
-        # Draw year and name
+        # --- Accent lines (film frame borders) ---
+        draw.rectangle([0, 0, OG_WIDTH, 3], fill=OG_ACCENT_COLOR)
+        draw.rectangle([0, OG_HEIGHT - 3, OG_WIDTH, OG_HEIGHT], fill=OG_ACCENT_COLOR)
+
+        # --- Type badge ---
+        badge_text = f"  {ptype.upper()}  "
+        bbox = draw.textbbox((0, 0), badge_text, font=meta_font)
+        bw, bh = bbox[2] - bbox[0], bbox[3] - bbox[1]
+        bx, by = 40, 40
+        draw.rounded_rectangle([bx, by, bx + bw + 16, by + bh + 12], radius=4, fill=OG_ACCENT_COLOR)
+        draw.text((bx + 8, by + 6), badge_text, fill=OG_BG_COLOR, font=meta_font)
+
+        # --- Project title ---
+        y_off = OG_HEIGHT - 150
+        max_w = OG_WIDTH - 100
+        words = title.split()
+        lines, cur = [], ""
+        for word in words:
+            test = (cur + " " + word).strip()
+            tb = draw.textbbox((0, 0), test, font=title_font)
+            if tb[2] - tb[0] <= max_w:
+                cur = test
+            else:
+                if cur:
+                    lines.append(cur)
+                cur = word
+        if cur:
+            lines.append(cur)
+        for line in lines[:2]:
+            _draw_text_with_shadow(draw, (50, y_off), line, title_font, OG_TEXT_COLOR)
+            y_off += 78
+
+        # --- Year + type line ---
         if year:
-            draw.text((60, OG_HEIGHT - 100), f"{year}  |  JAN LEVINSKY", fill=OG_ACCENT_COLOR, font=subtitle_font)
-        else:
-            draw.text((60, OG_HEIGHT - 100), "JAN LEVINSKY", fill=OG_ACCENT_COLOR, font=subtitle_font)
-
-        # Draw bottom accent line
-        draw.rectangle([0, OG_HEIGHT - 4, OG_WIDTH, OG_HEIGHT], fill=OG_ACCENT_COLOR)
+            meta_text = f"{year}  |  {ptype.upper()}"
+            _draw_text_with_shadow(draw, (50, OG_HEIGHT - 58), meta_text, sub_font, OG_ACCENT_COLOR)
+        _draw_text_with_shadow(draw, (50, OG_HEIGHT - 44), "JAN LEVINSKY", small_font, (OG_TEXT_COLOR[0], OG_TEXT_COLOR[1], OG_TEXT_COLOR[2], 180))
 
         # Save
         if output_path:
             img.save(output_path, "PNG", optimize=True)
             return output_path
-        else:
-            output = io.BytesIO()
-            img.save(output, "PNG", optimize=True)
-            output.seek(0)
-            return output.read()
+        output = io.BytesIO()
+        img.save(output, "PNG", optimize=True)
+        output.seek(0)
+        return output.read()
     except Exception as e:
         print(f"[OG] Error generating image: {e}")
+        return None
+
+def generate_main_og_image(output_path=None):
+    """Generate the main site OG image (og-cover.webp) using all project thumbnails in a bento grid."""
+    try:
+        from PIL import ImageDraw, ImageFont
+        title_font, sub_font, _, small_font = _load_og_fonts()
+
+        img = Image.new('RGB', (OG_WIDTH, OG_HEIGHT), OG_BG_COLOR)
+        draw = ImageDraw.Draw(img)
+
+        # Collect project thumbnails
+        all_thumbs = []
+        for proj in data["projects"]:
+            src = proj.get("thumbnail") or (proj.get("media", [{}])[0].get("thumbnail") if proj.get("media") else None) or (proj.get("media", [{}])[0].get("src") if proj.get("media") else None)
+            if src:
+                thumb = _load_thumbnail(src)
+                if thumb:
+                    all_thumbs.append((thumb, proj.get("type", "photo") == "video"))
+
+        # Arrange in a grid (up to 6 tiles)
+        tiles_to_show = all_thumbs[:6]
+        if tiles_to_show:
+            cols = 3 if len(tiles_to_show) >= 3 else len(tiles_to_show)
+            rows = (len(tiles_to_show) + cols - 1) // cols
+            tw = OG_WIDTH // cols
+            th = OG_HEIGHT // rows
+            for i, (t, is_vid) in enumerate(tiles_to_show):
+                cx = (i % cols) * tw
+                cy = (i // cols) * th
+                _paste_thumb_tile(img, t, cx, cy, tw, th, is_vid, i)
+
+        # Dark gradient overlay
+        for i in range(120):
+            ratio = (1 - i / 120) ** 2
+            r = int(OG_BG_COLOR[0] * ratio)
+            g = int(OG_BG_COLOR[1] * ratio)
+            b = int(OG_BG_COLOR[2] * ratio)
+            draw.rectangle([0, i, OG_WIDTH, i + 1], fill=(r, g, b))
+
+        # Accent lines
+        draw.rectangle([0, 0, OG_WIDTH, 3], fill=OG_ACCENT_COLOR)
+        draw.rectangle([0, OG_HEIGHT - 3, OG_WIDTH, OG_HEIGHT], fill=OG_ACCENT_COLOR)
+
+        # Title
+        name_text = "Jan Levinsky"
+        tb = draw.textbbox((0, 0), name_text, font=title_font)
+        tx = (OG_WIDTH - (tb[2] - tb[0])) // 2
+        _draw_text_with_shadow(draw, (tx, OG_HEIGHT // 2 - 60), name_text, title_font, OG_TEXT_COLOR)
+
+        # Subtitle
+        sub_text = "CINEMATOGRAPHY  &  PHOTOGRAPHY"
+        tb = draw.textbbox((0, 0), sub_text, font=sub_font)
+        sx = (OG_WIDTH - (tb[2] - tb[0])) // 2
+        draw.text((sx, OG_HEIGHT // 2 + 20), sub_text, fill=OG_ACCENT_COLOR, font=sub_font)
+
+        # Project count
+        count_text = f"{len(data['projects'])} projects"
+        tb = draw.textbbox((0, 0), count_text, font=small_font)
+        cx2 = (OG_WIDTH - (tb[2] - tb[0])) // 2
+        draw.text((cx2, OG_HEIGHT // 2 + 60), count_text, fill=(OG_TEXT_COLOR[0], OG_TEXT_COLOR[1], OG_TEXT_COLOR[2], 160), font=small_font)
+
+        if output_path:
+            Path(output_path).parent.mkdir(parents=True, exist_ok=True)
+            img.save(output_path, "PNG", optimize=True)
+            return output_path
+        output = io.BytesIO()
+        img.save(output, "PNG", optimize=True)
+        output.seek(0)
+        return output.read()
+    except Exception as e:
+        print(f"[OG] Error generating main OG image: {e}")
         return None
 
 def generate_og_for_project(project_idx):
     """Generate OG image for a project and update its metadata."""
     if project_idx < 0 or project_idx >= len(data["projects"]):
-        return False, "Neplatny projekt"
+        return False, "Invalid project"
 
     project = data["projects"][project_idx]
     ptype = project.get("type", "photo")
@@ -482,7 +650,7 @@ def generate_og_for_project(project_idx):
         save_json()
         return True, rel_path
     else:
-        return False, "Generovani selhalo"
+        return False, "Generation failed"
 
 def generate_lqip_for_file(filepath):
     try:
@@ -491,7 +659,7 @@ def generate_lqip_for_file(filepath):
     except Exception:
         return None
 
-# ─── VALIDATION HELPERS ────────────────────────────────────────────────
+# --- VALIDATION HELPERS -----------------------------------------------
 def find_case_insensitive_path(rel_path):
     """Try to find a case-insensitive match for a relative path."""
     parts = Path(rel_path).parts
@@ -638,7 +806,7 @@ def process_force_convert():
 def generate_sitemap():
     urls = []
     urls.append(f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>")
-    urls.append(f"  <url>\n    <loc>{SITE_URL}/about</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>")
+    urls.append(f"  <url>\n    <loc>{SITE_URL}/about.html</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>")
     for project in data["projects"]:
         slug = slugify(project.get("title", ""))
         if slug:
@@ -917,6 +1085,8 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_json({"diff": get_json_diff()})
         elif path == "/api/sitemap":
             self.send_xml(generate_sitemap())
+        elif path == "/api/generate-main-og":
+            self.handle_generate_main_og()
         else:
             super().do_GET()
 
@@ -1084,6 +1254,17 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_json({"ok": True, "generated": generated})
         except Exception as e:
             self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_generate_main_og(self):
+        try:
+            output_path = MEDIA_DIR / "og-cover.png"
+            result = generate_main_og_image(output_path)
+            if result:
+                self.send_json({"ok": True, "path": str(output_path)})
+            else:
+                self.send_json({"ok": False, "error": "Generation failed"})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
 
     def handle_generate_og(self):
         content_len = int(self.headers.get("Content-Length", 0))
@@ -1275,14 +1456,12 @@ class Handler(SimpleHTTPRequestHandler):
     def send_json(self, obj, code=200):
         self.send_response(code)
         self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write(json.dumps(obj, ensure_ascii=False).encode("utf-8"))
 
     def send_xml(self, xml, code=200):
         self.send_response(code)
         self.send_header("Content-Type", "application/xml; charset=utf-8")
-        self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
         self.wfile.write(xml.encode("utf-8"))
 
@@ -1297,7 +1476,7 @@ def main():
     tech_inventory = load_tech_inventory()
     save_json()
 
-    server = HTTPServer(("0.0.0.0", PORT), Handler)
+    server = HTTPServer(("127.0.0.1", PORT), Handler)
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
 

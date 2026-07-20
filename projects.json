@@ -25,7 +25,6 @@
       "software": [
         "Davinci Resolve"
       ],
-      "Color": [],
       "drone": [],
       "filter": [
         "Close-UP",
@@ -132,17 +131,17 @@
       }
     ],
     "slug": "postupy-prace",
-    "og_image": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1.png"
+    "og_image": "media/video/2026/Postupy-práce/og-image.png"
   },
   {
     "id": 2,
-    "title": "Reklama",
+    "title": "Spot",
     "type": "video",
     "year": "2025",
     "layout": "normal",
     "thumbnail": "media/video/2025/spot/spot_2026-07-20_2.webp",
     "full": "",
-    "bio": "Reklama na parfém Jack Saloon od značky Angry Beards. Vytvořeno v rámci kamerových praxí.",
+    "bio": "Reklamní spot na parfém Jack Saloon od značky Angry Beards. Vytvořeno v rámci kamerových praxí.",
     "techniques": [],
     "gear": {
       "camera": [
@@ -157,7 +156,6 @@
       "software": [
         "Davinci Resolve"
       ],
-      "Color": [],
       "drone": [],
       "filter": [
         "ND"
@@ -172,11 +170,11 @@
         "type": "video",
         "src": "media/video/2025/spot/spot_2026-07-20_2.mp4",
         "thumbnail": "media/video/2025/spot/spot_2026-07-20_2.webp",
-        "title": "Reklama",
+        "title": "Spot",
         "caption": ""
       }
     ],
-    "slug": "reklama",
+    "slug": "spot",
     "og_image": "media/video/2025/spot/og-image.png"
   },
   {
@@ -196,7 +194,6 @@
       "lighting": [],
       "audio": [],
       "software": [],
-      "Color": [],
       "drone": [],
       "filter": [],
       "tripod": [],
@@ -256,7 +253,6 @@
       "lighting": [],
       "audio": [],
       "software": [],
-      "Color": [],
       "drone": [],
       "filter": [],
       "tripod": [],
@@ -293,7 +289,6 @@
       "lighting": [],
       "audio": [],
       "software": [],
-      "Color": [],
       "drone": [],
       "filter": [],
       "tripod": [],

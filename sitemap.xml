@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jonlevinsky.github.io/website/</loc>
+    <loc>https://levinskyj.art/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://jonlevinsky.github.io/website/about</loc>
+    <loc>https://levinskyj.art/about.html</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://jonlevinsky.github.io/website/project.html?id=1</loc>
+    <loc>https://levinskyj.art/project.html?id=1</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jonlevinsky.github.io/website/project.html?id=2</loc>
+    <loc>https://levinskyj.art/project.html?id=2</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jonlevinsky.github.io/website/project.html?id=4</loc>
+    <loc>https://levinskyj.art/project.html?id=4</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jonlevinsky.github.io/website/project.html?id=5</loc>
+    <loc>https://levinskyj.art/project.html?id=5</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://jonlevinsky.github.io/website/project.html?id=3</loc>
+    <loc>https://levinskyj.art/project.html?id=3</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

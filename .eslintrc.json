@@ -1,0 +1,27 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": ["eslint:recommended"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-console": "warn",
+    "prefer-const": "error",
+    "no-var": "error",
+    "eqeqeq": ["error", "always"],
+    "curly": ["error", "all"],
+    "semi": ["error", "always"],
+    "quotes": ["error", "single", { "avoidEscape": true }]
+  },
+  "globals": {
+    "gsap": "readonly",
+    "ScrollTrigger": "readonly",
+    "Flip": "readonly",
+    "Motion": "readonly"
+  }
+}

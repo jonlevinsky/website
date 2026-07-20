@@ -75,6 +75,164 @@ header .spacer{flex:1}
 .preview-item img{width:100%;height:120px;object-fit:cover}
 .preview-item .info{padding:8px;font-size:11px;color:var(--muted)}
 
+/* Bento grid preview */
+.bento-preview {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #333;
+}
+.bento-preview h4 {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.bento-tile {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--bg2);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: default;
+  border: 1px solid #444;
+  transition: transform 0.6s cubic-bezier(0.16,1,0.3,1), border-color 0.4s ease;
+  min-height: 160px;
+}
+.bento-tile:hover {
+  transform: translateY(-4px) scale(1.015);
+  border-color: #555;
+}
+.bento-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+.bento-tile .bento-shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0.5;
+  transition: opacity 0.5s ease;
+}
+.bento-tile.photo .bento-shadow {
+  box-shadow: inset 0 60px 40px -30px rgba(0,0,0,0.7), inset 0 -60px 40px -30px rgba(0,0,0,0.7);
+}
+.bento-tile.video .bento-shadow {
+  box-shadow: inset 60px 0 40px -30px rgba(0,0,0,0.7), inset -60px 0 40px -30px rgba(0,0,0,0.7);
+}
+.bento-tile:hover .bento-shadow { opacity: 0.75; }
+.bento-tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  opacity: 0;
+  transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+  z-index: 3;
+}
+.bento-tile:hover::after { opacity: 1; }
+.bento-tile .bento-hover {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  opacity: 0;
+  transition: opacity 0.45s cubic-bezier(0.4,0,0.2,1);
+}
+.bento-tile:hover .bento-hover { opacity: 1; }
+.bento-hover-title {
+  font-family: 'Bricolage Grotesque', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  text-align: center;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.6);
+  max-width: 80%;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s 0.05s cubic-bezier(0.4,0,0.2,1), transform 0.4s 0.05s cubic-bezier(0.16,1,0.3,1);
+}
+.bento-tile:hover .bento-hover-title { opacity: 1; transform: translateY(0); }
+.bento-hover-year {
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.08em;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.35s 0.15s cubic-bezier(0.4,0,0.2,1), transform 0.35s 0.15s cubic-bezier(0.16,1,0.3,1);
+}
+.bento-tile:hover .bento-hover-year { opacity: 1; transform: translateY(0); }
+
+/* Film perforations for preview */
+.bento-perf-h, .bento-perf-v {
+  position: absolute;
+  pointer-events: none;
+  z-index: 4;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.bento-perf-h {
+  left: 3.5%;
+  right: 3.5%;
+  height: 8%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.5%;
+}
+.bento-perf-h.top { top: 2.5%; }
+.bento-perf-h.bottom { bottom: 2.5%; }
+.bento-perf-h .perf-dot {
+  width: 1.2%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--bg);
+  flex-shrink: 0;
+  box-shadow: -1px -1px 2px rgba(255,255,255,0.6), 1px 1px 3px rgba(0,0,0,0.25), inset 2px 2px 4px rgba(0,0,0,0.45), inset -1px -1px 2px rgba(255,255,255,0.15);
+  transition: box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.bento-perf-v {
+  top: 3.5%;
+  bottom: 3.5%;
+  width: 8%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1.5%;
+}
+.bento-perf-v.left { left: 2.5%; }
+.bento-perf-v.right { right: 2.5%; }
+.bento-perf-v .perf-dot {
+  width: 100%;
+  height: 1.2%;
+  border-radius: 999px;
+  background: var(--bg);
+  flex-shrink: 0;
+  box-shadow: -1px -1px 2px rgba(255,255,255,0.6), 1px 1px 3px rgba(0,0,0,0.25), inset 2px 2px 4px rgba(0,0,0,0.45), inset -1px -1px 2px rgba(255,255,255,0.15);
+  transition: box-shadow 0.4s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1);
+}
+.bento-tile:hover .bento-perf-h,
+.bento-tile:hover .bento-perf-v { opacity: 0.9; }
+.bento-tile:hover .perf-dot {
+  box-shadow: -1px -1px 2px rgba(255,255,255,0.7), 1px 1px 4px rgba(0,0,0,0.35), inset 2.5px 2.5px 5px rgba(0,0,0,0.55), inset -1px -1px 2px rgba(255,255,255,0.2);
+}
+
 .diff-panel{
   background:var(--bg2);border:1px solid #333;border-radius:var(--r);
   padding:12px;margin-top:12px;font-size:11px;color:var(--muted);display:none;
@@ -209,8 +367,6 @@ header .spacer{flex:1}
 .tab-content.active{display:block}
 </style>
 <base target="_blank">
-<base target="_blank">
-<base target="_blank">
 </head>
 <body>
 <header>
@@ -229,6 +385,7 @@ header .spacer{flex:1}
   <button class="btn" style="border-color:#5a9e6e;color:#5a9e6e" onclick="fixPaths()" id="fixPathsBtn">&#x1F527; Fix cesty</button>
   <button class="btn" onclick="generateSitemap()">&#x1F5FA; Sitemap</button>
   <button class="btn primary" onclick="deploy()">&#x1F680; Deploy</button>
+  <button class="btn" style="border-color:#5a9e6e;color:#5a9e6e" onclick="generateMainOg()">&#x1F3A8; OG Cover</button>
   <button class="btn primary" onclick="saveNow()">&#x1F4BE; Ulozit</button>
   <span class="status" id="status">Nacitani...</span>
 </header>
@@ -443,11 +600,43 @@ function renderPreview(){
     const thumb = m.thumbnail || m.src || '';
     mediaHtml += `<div class="preview-item"><img src="${esc(thumb)}" alt="" onerror="this.style.display='none'"><div class="info">${esc(m.type||'?')} | ${esc((m.title||'').substring(0,20))}</div></div>`;
   });
+
+  // Bento tile preview
+  const thumbSrc = p.thumbnail || (p.media?.[0]?.thumbnail) || (p.media?.[0]?.src) || '';
+  const isVideo = p.type === 'video';
+  const layout = p.layout || 'normal';
+  const year = p.year || '';
+  const count = Math.max(2, 8);
+  const perfHtml = isVideo
+    ? `<div class="bento-perf-v left">${Array(count).fill('<div class="perf-dot"></div>').join('')}</div><div class="bento-perf-v right">${Array(count).fill('<div class="perf-dot"></div>').join('')}</div>`
+    : `<div class="bento-perf-h top">${Array(count).fill('<div class="perf-dot"></div>').join('')}</div><div class="bento-perf-h bottom">${Array(count).fill('<div class="perf-dot"></div>').join('')}</div>`;
+  const bentoTile = `
+    <div class="bento-tile ${isVideo?'video':'photo'}">
+      ${thumbSrc ? `<img src="${esc(thumbSrc)}" alt="" onerror="this.style.display='none'">` : ''}
+      <div class="bento-shadow"></div>
+      ${perfHtml}
+      <div class="bento-hover">
+        <div class="bento-hover-title">${esc(p.title||'')}</div>
+        ${year ? `<div class="bento-hover-year">${esc(year)}</div>` : ''}
+      </div>
+    </div>`;
+
   document.getElementById('previewContent').innerHTML = `
     <div style="font-size:16px;font-weight:600;margin-bottom:8px">${esc(p.title||'Bez nazvu')}</div>
     <div style="font-size:11px;color:var(--muted);margin-bottom:12px">${p.type||'?'} | ${p.year||'?'} | ${p.media?.length||0} media</div>
     <div style="font-size:12px;line-height:1.5;margin-bottom:12px">${esc((p.bio||'').substring(0,200))}${(p.bio||'').length>200?'...':''}</div>
     <div style="font-size:11px;color:var(--muted)">Techniky: ${esc((p.techniques||[]).join(', '))}</div>
+    <div class="bento-preview">
+      <h4>Bento Grid Preview</h4>
+      ${bentoTile}
+      <div style="display:flex;gap:6px;margin-top:8px;font-size:10px;color:var(--muted)">
+        <span>Layout: ${layout}</span>
+        <span>|</span>
+        <span>Type: ${p.type||'?'}</span>
+        <span>|</span>
+        <span>Perforations: ${isVideo?'vertical (video)':'horizontal (photo)'}</span>
+      </div>
+    </div>
     <div class="preview-grid">${mediaHtml}</div>
   `;
 }
@@ -796,6 +985,16 @@ async function generateLqip(mi){
   }catch(e){ showToast('Chyba site'); }
   setStatus('Pripraveno');
 }
+async function generateMainOg(){
+  setStatus('Generating main OG image...');
+  try{
+    const r = await fetch('/api/generate-main-og');
+    const j = await r.json();
+    if(j.ok){ showToast('Main OG image generated'); setStatus('OG cover ready'); }
+    else { showToast('Error: ' + j.error); setStatus('OG failed'); }
+  }catch(e){ showToast('Network error'); setStatus('Error'); }
+}
+
 async function generateOg(){
   if(activeIdx<0) return;
   setStatus('Generuji OG image...');

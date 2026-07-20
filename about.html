@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Životopis Jana Levínského — cinematography & photography.">
-<meta name="theme-color" content="#c4956a">
+<meta name="theme-color" content="#b8804e">
 
 <meta property="og:title" content="O mně — Jan Levínský">
 <meta property="og:description" content="Cinematography & Photography. Filmař a fotograf z Prahy.">
@@ -15,197 +15,26 @@
 
 <title>Jan Levínský // O mně</title>
 <link rel="canonical" href="https://levinskyj.art/about.html">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
+<link rel="stylesheet" href="style.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-:root {
-  --accent: #c4956a;
-  --text-on-accent: #0c0c0c;
-  --accent-subtle: #c4966b1f;
-  --accent-subtle-2: #c4956a0f;
-  --bg: #faf8f5;
-  --surface: #f0ece6;
-  --bg-raised: #f5f2ee;
-  --surface-raised: #eae6e0;
-  --bg-subtle: #fdfcfa;
-  --border: #d4cfc7;
-  --border-subtle: #e8e4dd;
-  --text: #1c1917;
-  --muted: #6b6560;
-  --serif: 'Bricolage Grotesque', Georgia, serif;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
-  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-html, body { height: 100%; color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
-body { background: var(--bg); }
-button { font-family: inherit; cursor: pointer; border: none; background: none; }
-a { color: inherit; text-decoration: none; }
-img { display: block; max-width: 100%; }
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--r-full); }
-
-a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
-
-.wrap {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 40px;
-  max-width: 1420px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 24px;
-  min-height: 100vh;
-}
-
-.brand {
-  padding: 4px 0 0;
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 24px;
-  height: fit-content;
-}
-
-.kicker {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  margin-bottom: 30px;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.05s var(--ease-out-expo) forwards;
-}
-
-h1 {
-  margin: 0;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 56px;
-  line-height: 0.92;
-  letter-spacing: -0.015em;
-  color: var(--text);
-  opacity: 0;
-  animation: fadeUp 0.8s 0.15s var(--ease-out-expo) forwards;
-}
-
-h1 span { display: block; }
-h1 .last { font-style: italic; color: var(--accent); }
-
-.h1-word { display: block; }
-.h1-char { display: inline-block; will-change: transform; }
-html.lib-anim h1 { animation: none; opacity: 1; }
-html.lib-anim .h1-char { opacity: 0; }
-
 html.lib-anim .cv-section,
 html.lib-anim .timeline-item,
 html.lib-anim .collab-card,
 html.lib-anim .skill-group,
 html.lib-anim .gear-item,
-html.lib-anim .g-footer { content-visibility: auto; contain-intrinsic-size: auto 200px;
-  animation: none !important;
-  opacity: 0;
-}
+html.lib-anim .g-footer { content-visibility: auto; contain-intrinsic-size: auto 200px; animation: none !important; opacity: 0; }
 html.lib-anim .lang-bar-fill { transition: none; }
-
-.px-wrap {
-  position: absolute;
-  left: 0; right: 0; top: 0; bottom: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-.px-wrap img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.divider {
-  width: 28px;
-  height: 1.5px;
-  background: var(--accent);
-  margin: 26px 0;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.25s var(--ease-out-expo) forwards;
-}
-
-.intro {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.75;
-  font-weight: 300;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.3s var(--ease-out-expo) forwards;
-}
-
-.links {
-  margin-top: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.38s var(--ease-out-expo) forwards;
-}
-
-.links a {
-  color: var(--muted);
-  text-decoration: none;
-  font-size: 12.5px;
-  font-weight: 500;
-  letter-spacing: 0.03em;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: color 0.3s ease, gap 0.4s var(--ease-out-expo);
-  width: fit-content;
-  padding: 2px 0;
-}
-
-.links a i {
-  font-size: 14px;
-  opacity: 0.55;
-  transition: opacity 0.3s ease, color 0.3s ease, transform 0.4s var(--ease-out-expo);
-  display: inline-block;
-}
-
-.links a:hover { color: var(--accent); gap: 10px; }
-.links a:hover i { opacity: 1; color: var(--accent); transform: translate(1px, -1px); }
-
-.back-link {
-  margin-top: auto;
-  padding-top: 32px;
-  opacity: 0;
-  animation: fadeUp 0.7s 0.45s var(--ease-out-expo) forwards;
-}
-
-.back-link a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.03em;
-  transition: color 0.3s ease;
-}
-
-.back-link a:hover { color: var(--accent); }
-.back-link a i { font-size: 14px; opacity: 0.55; transition: transform 0.4s var(--ease-out-expo), opacity 0.3s ease; display: inline-block; }
-.back-link a:hover i { opacity: 1; color: var(--accent); transform: translateX(-3px); }
 
 main {
   display: flex;
@@ -783,7 +612,7 @@ main {
           <div class="timeline-dot"></div>
           <div class="timeline-content">
             <div class="period">2022 — 2026</div>
-            <h3>SPŠST PANSKÁ | Filová a televizní tvorba</h3>
+            <h3>SPŠST PANSKÁ | Filmová a televizní tvorba</h3>
             <div class="role-tag">Student</div>
             <p>Studium poskytující pevné technické i řemeslné základy v oblasti audiovize. Intenzivní praxe s kamerovou technikou, osvětlením, střihem a postprodukcí. Studium úspěšně završeno maturitní zkouškou s vyznamenáním a absolventským dokumentárním filmem.</p>
           </div>
@@ -877,7 +706,6 @@ main {
                 <div class="collab-info">
                     <h3>Watch Makers</h3>
                     <div class="collab-type">Postupy práce</div>
-                    <p></p>
                 </div>
                 </div>
                 <div class="collab-card">
@@ -887,7 +715,6 @@ main {
                 <div class="collab-info">
                     <h3>Dent&amp;Life</h3>
                     <div class="collab-type">Postupy práce, Propagační video</div>
-                    <p></p>
                 </div>
                 </div>
             </div>
@@ -994,67 +821,15 @@ main {
   </main>
 </div>
 
+<script src="main.js"></script>
 <script>
-const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const finePointer = window.matchMedia('(pointer: fine)').matches;
-let heroChars = [];
-let gsapReady = false;
-
-function ensureGsap() {
-  if (gsapReady) return typeof gsap !== 'undefined';
-  if (typeof gsap === 'undefined') return false;
-  if (typeof ScrollTrigger !== 'undefined') gsap.registerPlugin(ScrollTrigger);
-  gsapReady = true;
-  return true;
-}
-
-function splitChars(root) {
-  const chars = [];
-  const pushChars = (text, parent) => {
-    for (const ch of text) {
-      const c = document.createElement('span');
-      c.className = 'h1-char';
-      c.textContent = ch === ' ' ? '\u00A0' : ch;
-      c.setAttribute('aria-hidden', 'true');
-      parent.appendChild(c);
-      chars.push(c);
-    }
-  };
-  Array.from(root.childNodes).forEach(node => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (!node.textContent.trim()) return;
-      const wrap = document.createElement('span');
-      wrap.className = 'h1-word';
-      root.insertBefore(wrap, node);
-      pushChars(node.textContent, wrap);
-      root.removeChild(node);
-    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'BR') {
-      root.removeChild(node);
-    } else if (node.nodeType === Node.ELEMENT_NODE && node.tagName !== 'BR') {
-      const text = node.textContent;
-      node.setAttribute('aria-label', text);
-      node.textContent = '';
-      pushChars(text, node);
-    }
-  });
-  return chars;
-}
-
-function prepareHero() {
-  if (prefersReduced) return;
-  const h1 = document.querySelector('h1');
-  if (!h1) return;
-  heroChars = splitChars(h1);
-  if (heroChars.length) document.documentElement.classList.add('lib-anim');
-}
-
 function initHeroAnim() {
   if (!heroChars.length) return true;
   if (!window.Motion) return false;
   Motion.animate(
     heroChars,
     { opacity: [0, 1], y: ['0.6em', '0em'], rotate: [8, 0] },
-    { delay: Motion.stagger(0.03, { start: 0.12 }), duration: 0.75, easing: [0.16, 1, 0.3, 1] }
+    { delay: Motion.stagger(0.03, { start: 0.12 }), duration: 0.75, easing: [0.22, 1, 0.36, 1] }
   );
   return true;
 }
@@ -1065,7 +840,7 @@ function initScrollFX() {
 
   gsap.utils.toArray('.cv-section').forEach(sec => {
     gsap.fromTo(sec, { opacity: 0, y: 18 }, {
-      opacity: 1, y: 0, duration: 0.7, ease: 'expo.out',
+      opacity: 1, y: 0, duration: 0.7, ease: 'power3.out',
       scrollTrigger: { trigger: sec, start: 'top 86%', once: true },
       onComplete: () => gsap.set(sec, { clearProps: 'transform' })
     });
@@ -1075,7 +850,7 @@ function initScrollFX() {
     const items = tl.querySelectorAll('.timeline-item');
     if (items.length) {
       gsap.fromTo(items, { opacity: 0, x: -12 }, {
-        opacity: 1, x: 0, duration: 0.55, ease: 'expo.out', stagger: 0.09,
+        opacity: 1, x: 0, duration: 0.55, ease: 'power3.out', stagger: 0.09,
         scrollTrigger: { trigger: tl, start: 'top 82%', once: true },
         onComplete: () => gsap.set(items, { clearProps: 'transform' })
       });
@@ -1089,7 +864,7 @@ function initScrollFX() {
   const collabGrid = document.querySelector('.collab-grid');
   if (collabGrid) {
     gsap.fromTo(collabGrid.children, { opacity: 0, x: -14 }, {
-      opacity: 1, x: 0, duration: 0.55, ease: 'expo.out', stagger: 0.1,
+      opacity: 1, x: 0, duration: 0.55, ease: 'power3.out', stagger: 0.1,
       scrollTrigger: { trigger: collabGrid, start: 'top 85%', once: true },
       onComplete: () => gsap.set(collabGrid.children, { clearProps: 'transform' })
     });
@@ -1098,7 +873,7 @@ function initScrollFX() {
   const skillsGrid = document.querySelector('.skills-grid');
   if (skillsGrid) {
     gsap.fromTo(skillsGrid.children, { opacity: 0, y: 14 }, {
-      opacity: 1, y: 0, duration: 0.55, ease: 'expo.out', stagger: 0.08,
+      opacity: 1, y: 0, duration: 0.55, ease: 'power3.out', stagger: 0.08,
       scrollTrigger: { trigger: skillsGrid, start: 'top 85%', once: true },
       onComplete: () => gsap.set(skillsGrid.children, { clearProps: 'transform' })
     });
@@ -1107,7 +882,7 @@ function initScrollFX() {
   const gearCompact = document.querySelector('.gear-compact');
   if (gearCompact) {
     gsap.fromTo(gearCompact.children, { opacity: 0, y: 12 }, {
-      opacity: 1, y: 0, duration: 0.5, ease: 'expo.out', stagger: 0.06,
+      opacity: 1, y: 0, duration: 0.5, ease: 'power3.out', stagger: 0.06,
       scrollTrigger: { trigger: gearCompact, start: 'top 88%', once: true },
       onComplete: () => gsap.set(gearCompact.children, { clearProps: 'transform' })
     });
@@ -1119,7 +894,7 @@ function initScrollFX() {
     bars.forEach(b => gsap.set(b, { width: 0 }));
     gsap.to(bars, {
       width: (i, el) => el.dataset.targetW || '100%',
-      duration: 0.9, ease: 'expo.out', stagger: 0.15,
+      duration: 0.9, ease: 'power3.out', stagger: 0.15,
       scrollTrigger: { trigger: langRow, start: 'top 90%', once: true }
     });
   }
@@ -1132,7 +907,7 @@ function initScrollFX() {
       scrollTrigger: { trigger: footer, start: 'top 92%', once: true }
     });
     gsap.fromTo(targets, { opacity: 0, y: 10 }, {
-      opacity: 1, y: 0, duration: 0.55, ease: 'expo.out', stagger: 0.08, delay: 0.1,
+      opacity: 1, y: 0, duration: 0.55, ease: 'power3.out', stagger: 0.08, delay: 0.1,
       scrollTrigger: { trigger: footer, start: 'top 92%', once: true },
       onComplete: () => gsap.set(targets, { clearProps: 'transform' })
     });
