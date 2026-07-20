@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <meta name="description" content="Detail projektu — Jan Levínský, cinematography & photography.">
-<meta name="theme-color" content="#b8804e">
+<meta name="theme-color" content="#2c3e50">
 
 <!-- Dynamic OG meta tags — populated by JS after project load -->
 <meta id="og-type" property="og:type" content="article">
@@ -297,6 +297,7 @@ main {
   z-index: 1;
   opacity: 0.5;
   transition: opacity 0.5s ease;
+  background: linear-gradient(to top, rgba(44, 62, 80, 0.18) 0%, transparent 45%);
 }
 
 .tile:hover .film-shadow { opacity: 0.75; }
@@ -902,7 +903,7 @@ main {
 }
 
 @media (max-width: 1024px) {
-  .wrap { grid-template-columns: 210px 1fr; gap: 28px; }
+  .wrap { grid-template-columns: 310px 1fr; gap: 24px; }
   h1 { font-size: 48px; }
 }
 
@@ -930,7 +931,6 @@ main {
   .tile-inline-player { display: none; }
   .tile-caption { display: none; }
 
-  .film-perf-v { display: none !important; }
   .film-shadow { display: none !important; }
 
   .tile.video-tile {
@@ -1032,6 +1032,7 @@ main {
   .tile.video-tile .ctrl-btn { width: 44px; height: 44px; }
   .tile.video-tile .vol-wrap { display: none; }
   .tile.video-tile .time-wrap { font-size: 12px; }
+  .tile .film-perf-v { opacity: 0.5; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1041,6 +1042,60 @@ main {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+.logo-mark {
+  display: block;
+  width: auto;
+  height: 103px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: logoReveal 0.7s 0.1s var(--ease-out-expo) forwards;
+}
+
+@keyframes logoReveal {
+  0% { opacity: 0; transform: translateY(16px) scale(0.88); }
+  60% { opacity: 1; transform: translateY(-1px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.logo-mark.anim-done {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: transform 0.4s var(--ease-out-expo), opacity 0.4s var(--ease-out-expo);
+}
+
+.logo-mark.anim-done:hover {
+  transform: translateY(-3px) scale(1.04);
+  opacity: 0.9;
+}
+
+.brand-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .logo-mark { height: 88px; }
+}
+
+@media (max-width: 880px) {
+  .logo-mark { height: 80px; }
+}
+
+@media (max-width: 640px) {
+  .logo-mark { height: 66px; }
+}
+
+@media (max-width: 480px) {
+  .logo-mark { height: 59px; }
+}
+
+@media (max-width: 400px) {
+  .logo-mark { height: 52px; }
 }
 
 /* Ambient Lighting */
@@ -1064,6 +1119,61 @@ main {
   opacity: 0 !important;
   transition: opacity 0.6s ease;
 }
+
+@media (max-width: 880px) {
+  .brand-title-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .brand-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    margin-top: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: 8px;
+    transition: background 0.25s ease;
+  }
+  .menu-toggle:hover { background: var(--surface); }
+  .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.35s var(--ease-out-expo), opacity 0.25s ease;
+  }
+  .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-toggle.active span:nth-child(2) { opacity: 0; }
+  .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .brand-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.45s var(--ease-out-expo), opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+  }
+  .brand-panel.open {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 4px;
+  }
+}
+
+@media (min-width: 881px) {
+  .menu-toggle { display: none; }
+}
 </style>
 <base target="_self">
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
@@ -1077,18 +1187,30 @@ main {
 
 <div class="wrap">
   <aside class="brand">
-    <div class="kicker">Portfolio // 2025</div>
-    <h1>
-      <span>Jan</span>
-      <span class="last">Levínský</span>
-    </h1>
-    <div class="divider"></div>
-    <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> Back to portfolio</a>
+    <div class="brand-top">
+      <div>
+        <div class="kicker" data-i18n="kicker">Portfolio // 2025</div>
+        <div class="brand-title-row">
+          <img src="./media/logo.png" alt="LJ" class="logo-mark">
+          <h1>
+            <span>Jan</span>
+            <span class="last">Levínský</span>
+          </h1>
+        </div>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="brand-panel" id="brandPanel" aria-hidden="true">
+      <div class="divider"></div>
+      <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> <span data-i18n="back">Zpět na portfolio</span></a>
+    </div>
   </aside>
   <main id="project-container">
     <div class="loading-state">
       <div class="loading-ring"></div>
-      <div class="loading-label">Loading project...</div>
+      <div class="loading-label" data-i18n="project-loading">Loading project...</div>
     </div>
   </main>
 </div>
@@ -2133,6 +2255,24 @@ modal.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
   if (Math.abs(dx) > 60) dx < 0 ? next() : prev();
 }, { passive: true });
+
+const menuToggle = document.getElementById('menuToggle');
+if (menuToggle) {
+  menuToggle.addEventListener('click', function() {
+    const panel = document.getElementById('brandPanel');
+    const isOpen = panel.classList.toggle('open');
+    this.classList.toggle('active', isOpen);
+    this.setAttribute('aria-expanded', isOpen);
+    panel.setAttribute('aria-hidden', !isOpen);
+  });
+}
+
+const logoEl2 = document.querySelector('.logo-mark');
+if (logoEl2) {
+  logoEl2.addEventListener('animationend', function() {
+    this.classList.add('anim-done');
+  });
+}
 
 loadProject();
 </script>

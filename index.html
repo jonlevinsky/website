@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Portfolio Jana Levínského — cinematography & photography.">
-<meta name="theme-color" content="#b8804e">
+<meta name="theme-color" content="#2c3e50">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://levinskyj.art/">
@@ -332,12 +332,11 @@
 
 @media (max-width: 640px) {
   .bento { contain: layout; grid-template-columns: 1fr; grid-auto-rows: 240px; }
-  .tile.wide, .tile.tall, .tile.large { grid-column: span 1; grid-row: span 1; }
+  .tile.wide { grid-column: span 1; grid-row: span 1; }
+  .tile.tall, .tile.large { grid-column: span 1; grid-row: span 2; }
   .filter-row a { font-size: 11px; padding: 5px 10px; }
-  .tile-hover-title { font-size: 16px; }
-  .film-perf-h, .film-perf-v { display: none !important; }
   .tile-hover {
-    position: absolute; left: 12px; bottom: 12px; right: 12px; padding: 0;
+    position: absolute; left: 12px; right: 12px; bottom: 12px; padding: 0;
     transform: none !important; opacity: 1 !important; pointer-events: none;
     align-items: flex-start; justify-content: flex-end;
   }
@@ -348,6 +347,127 @@
   .tile-hover-year { font-size: 10px; opacity: 1; transform: none; }
   .tile::after { opacity: 0.35; }
   .tile .film-shadow { display: none !important; }
+  .film-perf-h, .film-perf-v { display: none !important; }
+  .film-key-wrap { display: none; }
+  .tile-type-badge {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.55);
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .tile-type-badge i {
+    color: #fff;
+    font-size: 14px;
+    padding-left: 2px;
+  }
+}
+
+.logo-mark {
+  display: block;
+  width: auto;
+  height: 103px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: logoReveal 0.7s 0.1s var(--ease-out-expo) forwards;
+}
+
+@keyframes logoReveal {
+  0% { opacity: 0; transform: translateY(16px) scale(0.88); }
+  60% { opacity: 1; transform: translateY(-1px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.logo-mark.anim-done {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: transform 0.4s var(--ease-out-expo), opacity 0.4s var(--ease-out-expo);
+}
+
+.logo-mark.anim-done:hover {
+  transform: translateY(-3px) scale(1.04);
+  opacity: 0.9;
+}
+
+.brand-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .logo-mark { height: 88px; }
+}
+
+@media (max-width: 880px) {
+  .logo-mark { height: 80px; }
+  .brand-title-row { gap: 12px; }
+  .brand-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    margin-top: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: var(--r-sm);
+    transition: background 0.25s ease;
+  }
+  .menu-toggle:hover { background: var(--surface); }
+  .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.35s var(--ease-out-expo), opacity 0.25s ease;
+  }
+  .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-toggle.active span:nth-child(2) { opacity: 0; }
+  .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .brand-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.45s var(--ease-out-expo), opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+  }
+  .brand-panel.open {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .logo-mark { height: 66px; }
+}
+
+@media (max-width: 480px) {
+  .logo-mark { height: 59px; }
+}
+
+@media (max-width: 400px) {
+  .logo-mark { height: 52px; }
+}
+
+@media (min-width: 881px) {
+  .menu-toggle { display: none; }
 }
 </style>
 <base target="_self">
@@ -363,41 +483,53 @@
 
 <div class="wrap">
   <aside class="brand">
-    <div class="kicker">Portfolio // 2025</div>
-    <h1>
-      <span>Jan</span>
-      <span class="last">Levínský</span>
-    </h1>
-    <div class="divider"></div>
-    <div class="intro">
-      <div class="greeting-row">
-        <span class="emoji">👋</span>
-        <span>Pražský kameraman, fotograf a student filmové tvorby.</span>
-      </div>
-    </div>
-    <nav class="links">
-        <a href="./about.html" target="_self" rel="noopener noreferrer"><i class="ph ph-user"></i>O mně</a>
-        <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
-        <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
-        <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
-    </nav>
-
-    <div class="film-key-wrap">
-      <button class="film-key-toggle" id="filmKeyToggle" aria-label="Co znamenají perforace?" aria-expanded="false">
-        <i class="ph ph-question"></i>
-      </button>
-      <div class="film-key" id="filmKeyPanel" aria-hidden="true">
-        <div class="film-key-row">
-          <div class="film-key-strip film-key-strip-h" aria-hidden="true">
-            <span class="perf"></span><span class="perf"></span><span class="perf"></span>
-          </div>
-          <span>fotografie</span>
+    <div class="brand-top">
+      <div>
+        <div class="kicker">Portfolio // 2025</div>
+        <div class="brand-title-row">
+          <img src="./media/logo.png" alt="LJ" class="logo-mark">
+          <h1>
+            <span>Jan</span>
+            <span class="last">Levínský</span>
+          </h1>
         </div>
-        <div class="film-key-row">
-          <div class="film-key-strip film-key-strip-v" aria-hidden="true">
-            <span class="perf"></span><span class="perf"></span><span class="perf"></span>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="brand-panel" id="brandPanel" aria-hidden="true">
+      <div class="divider"></div>
+      <div class="intro">
+        <div class="greeting-row">
+          <span class="emoji">👋</span>
+          <span>Kameraman, fotograf a student filmové tvorby.</span>
+        </div>
+      </div>
+      <nav class="links">
+          <a href="./about.html" target="_self" rel="noopener noreferrer"><i class="ph ph-user"></i>O mně</a>
+          <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
+          <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
+          <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
+      </nav>
+
+      <div class="film-key-wrap">
+        <button class="film-key-toggle" id="filmKeyToggle" aria-label="Co znamenají perforace?" aria-expanded="false">
+          <i class="ph ph-question"></i>
+        </button>
+        <div class="film-key" id="filmKeyPanel" aria-hidden="true">
+          <div class="film-key-row">
+            <div class="film-key-strip film-key-strip-h" aria-hidden="true">
+              <span class="perf"></span><span class="perf"></span><span class="perf"></span>
+            </div>
+            <span>fotografie</span>
           </div>
-          <span>video</span>
+          <div class="film-key-row">
+            <div class="film-key-strip film-key-strip-v" aria-hidden="true">
+              <span class="perf"></span><span class="perf"></span><span class="perf"></span>
+            </div>
+            <span>video</span>
+          </div>
         </div>
       </div>
     </div>
@@ -523,7 +655,8 @@ async function initPortfolio() {
         : '<div class="film-perf-h top">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>' + 
           '<div class="film-perf-h bottom">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>';
 
-      a.innerHTML = '<div class="film-shadow"></div>' + perfHtml + 
+      const typeBadge = isVideo ? '<span class="tile-type-badge"><i class="ph ph-play"></i></span>' : '';
+      a.innerHTML = '<div class="film-shadow"></div>' + perfHtml + typeBadge +
         '<div class="tile-hover">' + 
           '<div class="tile-hover-title">' + project.title + '</div>' +
           (project.year ? '<div class="tile-hover-year">' + project.year + '</div>' : '') +
@@ -780,6 +913,21 @@ function initScrollAnimations() {
     stagger: 0.08,
     scrollTrigger: { trigger: footer, start: 'top 90%', once: true },
     onComplete: () => gsap.set(targets, { clearProps: 'transform' })
+  });
+}
+
+document.getElementById('menuToggle').addEventListener('click', function() {
+  const panel = document.getElementById('brandPanel');
+  const isOpen = panel.classList.toggle('open');
+  this.classList.toggle('active', isOpen);
+  this.setAttribute('aria-expanded', isOpen);
+  panel.setAttribute('aria-hidden', !isOpen);
+});
+
+const logoEl = document.querySelector('.logo-mark');
+if (logoEl) {
+  logoEl.addEventListener('animationend', function() {
+    this.classList.add('anim-done');
   });
 }
 

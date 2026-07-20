@@ -3,6 +3,78 @@ const finePointer = window.matchMedia('(pointer: fine)').matches;
 let heroChars = [];
 let gsapReady = false;
 
+const i18n = {
+  en: {
+    'kicker': 'Portfolio // 2025',
+    'kicker-about': 'About / CV',
+    'greeting': 'Prague-based cinematographer, photographer and film student.',
+    'greeting-short': 'Prague-based cinematographer, photographer and film student.',
+    'nav-about': 'About',
+    'back-portfolio': 'Back to portfolio',
+    'filter-all': 'All',
+    'filter-photo': 'Photo',
+    'filter-video': 'Video',
+    'film-photo': 'photography',
+    'film-video': 'video',
+    'film-hint': 'What do the perforations mean?',
+    'footer-role': 'Cinematography & Photography',
+    'footer-contact': 'Contact',
+    'about-kicker': 'About / CV',
+    'about-intro': 'Prague-based cinematographer, photographer and film student. I specialize in cinematography and captivating visual storytelling.',
+    'profile-role': 'Cinematographer & Photographer',
+    'edu-title': 'Education',
+    'work-title': 'Filmography & Experience',
+    'collabs-title': 'Collaborations',
+    'skills-title': 'Skills',
+    'gear-title': 'Equipment',
+    'lang-title': 'Languages',
+    'period-1': '2022 — 2026',
+    'period-2': '2026 — present',
+    'school-1': 'SPŠST PANSKÁ | Film and Television Production',
+    'school-2': 'Silesian University in Opava | Multimedia and Popularization',
+    'role-student': 'Student',
+    'role-dir': 'Director / Camera / Edit',
+    'role-cam': 'Camera / Edit',
+    'role-cam-post': 'Camera / Post-production',
+    'role-dir-cam': 'Director / Camera / Edit',
+    'project-loading': 'Loading project...',
+    'project-not-found': 'Project not found.',
+    'project-missing': 'Missing project ID.',
+    'project-failed': 'Failed to load project.',
+    'back': 'Back to portfolio',
+  }
+};
+
+function detectLang() {
+  const lang = (navigator.language || navigator.languages?.[0] || '').toLowerCase();
+  return lang.startsWith('cs') ? 'cs' : 'en';
+}
+
+function translatePage() {
+  const lang = detectLang();
+  if (lang === 'cs') return;
+  const dict = i18n[lang] || i18n.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (dict[key]) {
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = dict[key];
+      } else if (el.dataset.i18nHtml) {
+        el.innerHTML = dict[key];
+      } else {
+        el.textContent = dict[key];
+      }
+    }
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    const key = el.dataset.i18nAria;
+    if (dict[key]) el.setAttribute('aria-label', dict[key]);
+  });
+  document.documentElement.lang = lang;
+}
+
+translatePage();
+
 function ensureGsap() {
   if (gsapReady) return typeof gsap !== 'undefined';
   if (typeof gsap === 'undefined') return false;

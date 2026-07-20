@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Jan Levínský — Cinematography & Photography | Business card">
+<meta name="theme-color" content="#2c3e50">
+<title>Jan Levínský // Cinematography & Photography</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --accent: #2c3e50;
+  --accent-subtle: #2c3e5015;
+  --bg: #faf8f5;
+  --surface: #f7f4ef;
+  --border: #d4cfc7;
+  --text: #1c1917;
+  --muted: #7a7570;
+  --serif: 'Bricolage Grotesque', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --r-sm: 8px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html, body { height: 100%; }
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  font-family: var(--sans);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  padding: 20px;
+}
+
+/* ── Card wrapper (physical card shape) ── */
+.card {
+  position: relative;
+  max-width: 520px;
+  width: 100%;
+  aspect-ratio: 1 / 0.62;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.06),
+    0 8px 32px rgba(0,0,0,0.04);
+  opacity: 0;
+  transform: translateY(16px) scale(0.97);
+  animation: cardIn 0.6s 0.05s var(--ease-out) forwards;
+}
+
+@keyframes cardIn {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.card.ready {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  will-change: transform;
+  transition: transform 0.15s ease-out, box-shadow 0.4s var(--ease-out);
+}
+
+/* ── Film perforations (vertical, academic format) ── */
+.film-perf {
+  position: absolute;
+  top: 5%;
+  bottom: 5%;
+  width: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.film-perf.left { left: 8px; }
+.film-perf.right { right: 8px; }
+
+.perf-dot {
+  display: block;
+  width: 56px;
+  height: 13%;
+  border-radius: 8px;
+  background: #faf8f5;
+  flex-shrink: 0;
+  box-shadow:
+    -0.5px -0.5px 1.5px rgba(255,255,255,0.7),
+    0.5px 0.5px 2px rgba(0,0,0,0.15),
+    inset 1px 1px 3px rgba(0,0,0,0.3),
+    inset -0.5px -0.5px 1px rgba(255,255,255,0.1);
+}
+
+.card::before { top: 8px; }
+.card::after { bottom: 8px; }
+
+/* ── Card inner content area ── */
+.card-inner {
+  position: absolute;
+  inset: 20px 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 8px;
+}
+
+.card-logo {
+  display: block;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  margin-bottom: 14px;
+}
+
+.card-name {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.card-name .last {
+  font-style: italic;
+  color: var(--accent);
+}
+
+.card-role {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-top: 8px;
+}
+
+.card-divider {
+  width: 24px;
+  height: 1.5px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin: 14px auto;
+}
+
+.card-bio {
+  font-size: 11.5px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 340px;
+}
+
+.card-contact {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.card-contact a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: opacity 0.25s ease;
+}
+
+.card-contact a:hover { opacity: 0.7; }
+
+/* ── Bottom link row ── */
+.card-actions {
+  position: absolute;
+  bottom: 30px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.card-actions a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  text-decoration: none;
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+  position: relative;
+}
+
+.card-actions a i {
+  font-size: 18px;
+}
+
+.card-actions a:hover {
+  background: var(--accent-subtle);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Tooltips ── */
+.card-actions a::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--text);
+  color: var(--bg);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 5px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.card-actions a:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Inline email link on desktop ── */
+.card-email-inline {
+  display: none;
+}
+
+@media (min-width: 500px) {
+  .card-contact { display: none; }
+  .card-email-inline {
+    display: inline;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--accent);
+  }
+  .card-email-inline::before { content: ' · '; color: var(--border); }
+}
+
+@media (max-width: 499px) {
+  .card { aspect-ratio: auto; min-height: 420px; }
+  .card-inner { position: static; padding: 32px 20px 70px; }
+  .card-actions { bottom: 16px; }
+  .card::before { top: 6px; }
+  .card::after { bottom: 6px; }
+  .film-perf { width: 40px; }
+  .film-perf.left { left: 6px; }
+  .film-perf.right { right: 6px; }
+  .perf-dot { width: 36px; border-radius: 6px; height: 11%; }
+  .card-inner { inset: 16px 50px; }
+  .card-logo { width: 48px; height: 48px; }
+  .card-name { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="film-perf left">
+    <span class="perf-dot"></span>
+    <span class="perf-dot"></span>
+    <span class="perf-dot"></span>
+    <span class="perf-dot"></span>
+  </div>
+  <div class="film-perf right">
+    <span class="perf-dot"></span>
+    <span class="perf-dot"></span>
+    <span class="perf-dot"></span>
+    <span class="perf-dot"></span>
+  </div>
+  <div class="card-inner">
+    <img src="./media/logo.png" alt="LJ" class="card-logo">
+
+    <div class="card-name">
+      Jan <span class="last">Levínský</span>
+    </div>
+    <div class="card-role">Cinematography & Photography</div>
+    <div class="card-divider"></div>
+    <div class="card-bio">
+      Kameraman, fotograf a student filmové tvorby.
+    </div>
+
+    <div class="card-contact">
+      <a href="mailto:levinskyj.cine@gmail.com">levinskyj.cine@gmail.com</a>
+    </div>
+  </div>
+
+  <div class="card-actions">
+    <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener" data-tooltip="@levinskyj.cine"><i class="ph ph-instagram-logo"></i></a>
+    <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener" data-tooltip="@LevinskyJ"><i class="ph ph-youtube-logo"></i></a>
+    <a href="./index.html" data-tooltip="levinskyj.art"><i class="ph ph-images"></i></a>
+    <a href="./about.html" data-tooltip="levinskyj.art/about"><i class="ph ph-user"></i></a>
+  </div>
+</div>
+
+<script>
+const card = document.querySelector('.card');
+if (card) {
+  card.addEventListener('animationend', function() {
+    this.classList.add('ready');
+  });
+
+  card.addEventListener('mousemove', function(e) {
+    if (!this.classList.contains('ready')) return;
+    const rect = this.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    this.style.transform = 'perspective(900px) rotateX(' + ((y - 0.5) * 3.5) + 'deg) rotateY(' + ((x - 0.5) * -5) + 'deg) scale(1.01)';
+  });
+
+  card.addEventListener('mouseleave', function() {
+    if (!this.classList.contains('ready')) return;
+    this.style.transform = '';
+  });
+}
+</script>
+</body>
+</html>

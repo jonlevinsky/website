@@ -17,22 +17,33 @@ NOVÉ FUNKCE:
 - Sitemap + deploy: generátor + git push
 """
 
+# ═══════════════════════════════════════════════════════════════
+# Imports
+# ═══════════════════════════════════════════════════════════════
+
+import base64
+import datetime
+import io
 import json
 import os
 import re
 import shutil
 import subprocess
-import threading
-import webbrowser
-import base64
 import sys
 import tempfile
+import threading
+import webbrowser
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
-from PIL import Image
-import io
 
-# --- CONFIG ---------------------------------------------------------
+from PIL import Image, ImageDraw, ImageFont
+
+
+# ═══════════════════════════════════════════════════════════════
+# Configuration
+# ═══════════════════════════════════════════════════════════════
+
+# --- Paths & Server ---
 PORT = 8765
 JSON_FILE = Path("projects.json")
 MEDIA_DIR = Path("media")
@@ -42,6 +53,7 @@ OPTIKA_MD = Path("./gear/Optika.md")
 HTML_FILE = Path(__file__).parent / "builder.html"
 SITE_URL = "https://levinskyj.art"
 
+# --- Gear Categories ---
 GEAR_CATEGORIES = [
     "camera", "lenses", "gimbal/stabilization", "lighting",
     "audio", "software", "color", "drone", "filter",
@@ -63,79 +75,34 @@ GEAR_LABELS = {
     "recorder": "Recorder"
 }
 
-# --- AD BLOCKER BUZZWORDS ---------------------------------------------
-# These words in filenames/paths trigger ERR_BLOCKED_BY_CLIENT in browsers
-AD_BLOCKER_BUZZWORDS = [
-    "reklama", "reklamy", "reklamni", "reklamní",
-    "ad", "ads", "advert", "advertisement", "advertising",
-    "banner", "banners",
-    "promo", "promotion", "promotional",
-    "sponsored", "sponsor",
-    "affiliate", "tracking", "tracker",
-    "popunder", "popup", "pop-up",
-    "click", "clickthrough",
-    "conversion", "retargeting",
-    "pixel", "beacon",
-    "analytics", "metric", "metrics",
-    "spy", "spymetrics",
-    "outbrain", "taboola", "revcontent",
-    "doubleclick", "adsense", "adwords",
-    "facebook-pixel", "gtm", "googletag",
-]
-
-AD_BLOCKER_REPLACEMENTS = {
-    "reklama": "spot",
-    "reklamy": "spoty",
-    "reklamni": "spotovy",
-    "reklamní": "spotový",
-    "ad": "promo",
-    "ads": "promos",
-    "advert": "promo",
-    "advertisement": "promo",
-    "advertising": "promo",
-    "banner": "header",
-    "banners": "headers",
-    "promotion": "campaign",
-    "promotional": "campaign",
-    "sponsored": "supported",
-    "sponsor": "partner",
-    "affiliate": "partner",
-    "tracking": "analytics",
-    "tracker": "analytics",
-    "analytics": "stats",
-    "spy": "monitor",
-}
-
-def contains_ad_buzzword(name):
-    """Check if filename/path contains any ad blocker buzzword."""
-    lower = name.lower()
-    for buzz in AD_BLOCKER_BUZZWORDS:
-        if buzz in lower:
-            return buzz
-    return None
-
-def sanitize_ad_buzzwords(name):
-    """Replace ad blocker buzzwords in a filename with safe alternatives."""
-    result = name
-    for buzz, replacement in AD_BLOCKER_REPLACEMENTS.items():
-        result = re.sub(r'(?i)' + re.escape(buzz), replacement, result)
-    return result
-
-# --- WEBP CONVERSION SETTINGS -----------------------------------------
+# --- WebP Conversion ---
 WEBP_QUALITY = 85
 WEBP_THUMB_QUALITY = 80
 MAX_IMAGE_WIDTH = 1920
 MAX_THUMB_WIDTH = 640
 
-# --- PLACEHOLDER SETTINGS ---------------------------------------------
+# --- LQIP / Placeholder ---
 LQIP_WIDTH = 32
 LQIP_BLUR = 10
 LQIP_QUALITY = 30
 
-# --- UNDO/REDO STACK -------------------------------------------------
+# --- OG Image ---
+OG_WIDTH = 1200
+OG_HEIGHT = 630
+OG_BG_COLOR = (12, 12, 12)
+OG_ACCENT_COLOR = (184, 128, 78)
+OG_TEXT_COLOR = (232, 230, 227)
+PERF_COLOR = (250, 248, 245)
+
+# --- Undo / Redo ---
+MAX_UNDO = 50
 undo_stack = []
 redo_stack = []
-MAX_UNDO = 50
+
+
+# ═══════════════════════════════════════════════════════════════
+# Undo / Redo
+# ═══════════════════════════════════════════════════════════════
 
 def push_undo_state():
     global undo_stack, redo_stack
@@ -166,7 +133,11 @@ def redo():
     data["projects"] = json.loads(state)
     return True
 
-# --- PARSE TECH INVENTORY ---------------------------------------------
+
+# ═══════════════════════════════════════════════════════════════
+# Tech Inventory (from Markdown)
+# ═══════════════════════════════════════════════════════════════
+
 def load_tech_inventory():
     inv = {}
     if KAMERA_MD.exists():
@@ -225,7 +196,11 @@ def load_tech_inventory():
         inv[k] = dedup
     return inv
 
-# --- DATA -------------------------------------------------------------
+
+# ═══════════════════════════════════════════════════════════════
+# Data Load / Save
+# ═══════════════════════════════════════════════════════════════
+
 data = {"projects": []}
 tech_inventory = {}
 
@@ -241,36 +216,27 @@ def load_json():
 def save_json():
     BACKUP_DIR.mkdir(exist_ok=True)
     if JSON_FILE.exists():
-        import datetime
         ts = datetime.datetime.now().strftime("%H%M%S")
         shutil.copy(JSON_FILE, BACKUP_DIR / f"projects_{ts}.json")
     MEDIA_DIR.mkdir(exist_ok=True)
-    # Atomic write: write to temp file, then rename
     tmp = JSON_FILE.with_suffix(".json.tmp")
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(data["projects"], f, ensure_ascii=False, indent=2)
     tmp.replace(JSON_FILE)
 
+
+# ═══════════════════════════════════════════════════════════════
+# Utility Functions
+# ═══════════════════════════════════════════════════════════════
+
 def safe_folder_name(s):
     s = re.sub(r'[\\/:*?"<>|]', "", str(s))
     s = s.strip().replace(" ", "-")
-    # Also sanitize ad buzzwords in folder names
-    s = sanitize_ad_buzzwords(s)
     return s or "projekt"
 
 def normalize_filename(filename):
-    """Normalize filename: lowercase, spaces to hyphens, remove special chars, sanitize ad buzzwords."""
     name = Path(filename).stem
     ext = Path(filename).suffix.lower()
-
-    # Check for ad blocker buzzwords BEFORE normalizing
-    buzz = contains_ad_buzzword(name)
-    if buzz:
-        print(f"[AD BLOCKER WARNING] Filename '{filename}' contains buzzword '{buzz}' — will be sanitized")
-
-    # Sanitize ad buzzwords first
-    name = sanitize_ad_buzzwords(name)
-
     name = name.lower()
     name = name.replace(" ", "-")
     name = re.sub(r'[^a-z0-9_-]', '', name)
@@ -293,13 +259,25 @@ def reading_time(text):
     wc = word_count(text)
     return max(1, round(wc / 200))
 
-# --- WEBP CONVERSION HELPERS ------------------------------------------
+
+# ═══════════════════════════════════════════════════════════════
+# File Type Detection
+# ═══════════════════════════════════════════════════════════════
+
 def is_image_ext(path):
     return Path(path).suffix.lower() in (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif")
 
 def is_image_file(path):
     ext = Path(path).suffix.lower()
     return ext in (".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp")
+
+def is_video_ext(path):
+    return Path(path).suffix.lower() in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v")
+
+
+# ═══════════════════════════════════════════════════════════════
+# WebP Conversion
+# ═══════════════════════════════════════════════════════════════
 
 def convert_to_webp(image_bytes, quality=WEBP_QUALITY, max_width=MAX_IMAGE_WIDTH):
     try:
@@ -314,10 +292,7 @@ def convert_to_webp(image_bytes, quality=WEBP_QUALITY, max_width=MAX_IMAGE_WIDTH
             new_height = int(img.height * ratio)
             img = img.resize((max_width, new_height), Image.LANCZOS)
         output = io.BytesIO()
-        if img.mode == 'RGBA':
-            img.save(output, format='WEBP', quality=quality, method=6)
-        else:
-            img.save(output, format='WEBP', quality=quality, method=6)
+        img.save(output, format='WEBP', quality=quality, method=6)
         output.seek(0)
         return output.read(), img.width, img.height
     except Exception as e:
@@ -327,7 +302,11 @@ def convert_to_webp(image_bytes, quality=WEBP_QUALITY, max_width=MAX_IMAGE_WIDTH
 def generate_webp_thumbnail(image_bytes, quality=WEBP_THUMB_QUALITY, max_width=MAX_THUMB_WIDTH):
     return convert_to_webp(image_bytes, quality=quality, max_width=max_width)
 
-# --- LQIP / PLACEHOLDER GENERATION ------------------------------------
+
+# ═══════════════════════════════════════════════════════════════
+# LQIP / Placeholder Generation
+# ═══════════════════════════════════════════════════════════════
+
 def generate_lqip(image_bytes, width=LQIP_WIDTH, quality=LQIP_QUALITY, blur=LQIP_BLUR):
     try:
         img = Image.open(io.BytesIO(image_bytes))
@@ -347,19 +326,39 @@ def generate_lqip(image_bytes, width=LQIP_WIDTH, quality=LQIP_QUALITY, blur=LQIP
         print(f"[LQIP] Error: {e}")
         return None
 
+def generate_lqip_for_file(filepath):
+    try:
+        with open(filepath, "rb") as f:
+            return generate_lqip(f.read())
+    except Exception:
+        return None
 
-# --- OG IMAGE GENERATION ----------------------------------------------
-OG_WIDTH = 1200
-OG_HEIGHT = 630
-OG_BG_COLOR = (12, 12, 12)  # #0c0c0c
-OG_ACCENT_COLOR = (184, 128, 78)  # #b8804e
-OG_TEXT_COLOR = (232, 230, 227)  # #e8e6e3
 
-PERF_COLOR = (250, 248, 245)  # #faf8f5 - light film perforation dots
+# ═══════════════════════════════════════════════════════════════
+# Video Utilities
+# ═══════════════════════════════════════════════════════════════
+
+def generate_video_thumbnail(source_path, thumb_path, seek_time=3.0):
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        return False
+    try:
+        thumb_path.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run([
+            ffmpeg, "-hide_banner", "-loglevel", "error",
+            "-ss", str(seek_time), "-i", str(source_path),
+            "-frames:v", "1", "-q:v", "2", "-y", str(thumb_path)
+        ], check=True)
+        return thumb_path.exists()
+    except Exception:
+        return False
+
+
+# ═══════════════════════════════════════════════════════════════
+# OG Image Generation
+# ═══════════════════════════════════════════════════════════════
 
 def _load_og_fonts():
-    """Load fonts for OG image generation, returns (title_font, subtitle_font, meta_font)."""
-    from PIL import ImageFont
     FONT_CANDIDATES = [
         ("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"),
         ("/System/Library/Fonts/Helvetica.ttc", "/System/Library/Fonts/Helvetica.ttc"),
@@ -372,17 +371,16 @@ def _load_og_fonts():
         try:
             if os.path.exists(bold_path):
                 title = ImageFont.truetype(bold_path, 64)
-                subtitle = ImageFont.truetype(regular_path, 28) if os.path.exists(regular_path) else ImageFont.truetype(bold_path, 28)
+                regular_font = ImageFont.truetype(regular_path, 28) if os.path.exists(regular_path) else ImageFont.truetype(bold_path, 28)
                 meta = ImageFont.truetype(regular_path, 20) if os.path.exists(regular_path) else ImageFont.truetype(bold_path, 20)
                 small = ImageFont.truetype(regular_path, 16) if os.path.exists(regular_path) else ImageFont.truetype(bold_path, 16)
-                return title, subtitle, meta, small
+                return title, regular_font, meta, small
         except Exception:
             continue
     default = ImageFont.load_default()
     return default, default, default, default
 
 def _draw_perforations(draw, x, y, w, h, count=8, horizontal=True, dot_color=PERF_COLOR):
-    """Draw film perforations along an edge."""
     if horizontal:
         dot_w = max(3, w // count // 3)
         dot_h = max(4, h // 8)
@@ -401,7 +399,6 @@ def _draw_perforations(draw, x, y, w, h, count=8, horizontal=True, dot_color=PER
             draw.ellipse([x + w - dot_w, dy, x + w, dy + dot_h], fill=dot_color)
 
 def _load_thumbnail(path):
-    """Load and resize a thumbnail to fit within max_size while preserving aspect ratio."""
     try:
         if not path or not Path(path).exists():
             return None
@@ -410,11 +407,8 @@ def _load_thumbnail(path):
         return None
 
 def _paste_thumb_tile(base, thumb, x, y, tw, th, is_video=False, index=0):
-    """Paste a thumbnail into a tile area with film perforations and shadow overlay."""
-    from PIL import ImageDraw
     if thumb is None:
         return
-    # Resize thumb to fill the tile
     thumb_copy = thumb.copy()
     r = thumb_copy.width / thumb_copy.height
     target_r = tw / th
@@ -425,17 +419,14 @@ def _paste_thumb_tile(base, thumb, x, y, tw, th, is_video=False, index=0):
         new_w = tw
         new_h = int(tw / r)
     thumb_copy = thumb_copy.resize((new_w, new_h), Image.LANCZOS)
-    # Center crop
     left = (new_w - tw) // 2
     top = (new_h - th) // 2
     thumb_copy = thumb_copy.crop((left, top, left + tw, top + th))
-    # Darken
     dark = Image.new('RGB', (tw, th), OG_BG_COLOR)
     thumb_copy = Image.blend(thumb_copy, dark, 0.35)
     base.paste(thumb_copy, (x, y))
 
     draw = ImageDraw.Draw(base)
-    # Film perforations
     if is_video:
         hole_count = max(3, th // 60)
         _draw_perforations(draw, x, y, tw, th, count=hole_count, horizontal=False, dot_color=PERF_COLOR)
@@ -444,15 +435,12 @@ def _paste_thumb_tile(base, thumb, x, y, tw, th, is_video=False, index=0):
         _draw_perforations(draw, x, y, tw, th, count=hole_count, horizontal=True, dot_color=PERF_COLOR)
 
 def _draw_text_with_shadow(draw, xy, text, font, fill, shadow_offset=2):
-    """Draw text with a dark shadow for readability."""
     sx, sy = xy
     draw.text((sx + shadow_offset, sy + shadow_offset), text, font=font, fill=(0, 0, 0))
     draw.text(xy, text, font=font, fill=fill)
 
 def generate_og_image(project, output_path=None):
-    """Generate a 1200x630 OG image for a project with bento-grid style layout."""
     try:
-        from PIL import ImageDraw, ImageFont
         title_font, sub_font, meta_font, small_font = _load_og_fonts()
 
         img = Image.new('RGB', (OG_WIDTH, OG_HEIGHT), OG_BG_COLOR)
@@ -464,7 +452,6 @@ def generate_og_image(project, output_path=None):
         is_video = ptype == "video"
         media_list = project.get("media", [])
 
-        # Gather available thumbnails
         thumbs = []
         if project.get("thumbnail") and Path(project["thumbnail"]).exists():
             thumbs.append(_load_thumbnail(project["thumbnail"]))
@@ -474,7 +461,7 @@ def generate_og_image(project, output_path=None):
                 thumbs.append(_load_thumbnail(src))
         thumbs = [t for t in thumbs if t is not None]
 
-        # --- Layout: bento-style grid of thumbnails ---
+        # Bento-style grid of thumbnails
         if thumbs:
             tiles = thumbs[:4]
             if len(tiles) == 1:
@@ -497,20 +484,19 @@ def generate_og_image(project, output_path=None):
                 _paste_thumb_tile(img, tiles[2], 0, quart, half, quart, is_video, 2)
                 _paste_thumb_tile(img, tiles[3], half, quart, half, quart, is_video, 3)
 
-        # --- Gradient overlay at bottom for text ---
+        # Gradient overlay at bottom for text
         for i in range(180):
             ratio = (1 - i / 180) ** 2
             r = int(OG_BG_COLOR[0] * ratio)
             g = int(OG_BG_COLOR[1] * ratio)
             b = int(OG_BG_COLOR[2] * ratio)
-            draw.rectangle([0, OG_HEIGHT - 180 + i, OG_WIDTH, OG_HEIGHT - 180 + i + 1],
-                          fill=(r, g, b))
+            draw.rectangle([0, OG_HEIGHT - 180 + i, OG_WIDTH, OG_HEIGHT - 180 + i + 1], fill=(r, g, b))
 
-        # --- Accent lines (film frame borders) ---
+        # Accent lines
         draw.rectangle([0, 0, OG_WIDTH, 3], fill=OG_ACCENT_COLOR)
         draw.rectangle([0, OG_HEIGHT - 3, OG_WIDTH, OG_HEIGHT], fill=OG_ACCENT_COLOR)
 
-        # --- Type badge ---
+        # Type badge
         badge_text = f"  {ptype.upper()}  "
         bbox = draw.textbbox((0, 0), badge_text, font=meta_font)
         bw, bh = bbox[2] - bbox[0], bbox[3] - bbox[1]
@@ -518,7 +504,7 @@ def generate_og_image(project, output_path=None):
         draw.rounded_rectangle([bx, by, bx + bw + 16, by + bh + 12], radius=4, fill=OG_ACCENT_COLOR)
         draw.text((bx + 8, by + 6), badge_text, fill=OG_BG_COLOR, font=meta_font)
 
-        # --- Project title ---
+        # Project title wrapping
         y_off = OG_HEIGHT - 150
         max_w = OG_WIDTH - 100
         words = title.split()
@@ -538,13 +524,12 @@ def generate_og_image(project, output_path=None):
             _draw_text_with_shadow(draw, (50, y_off), line, title_font, OG_TEXT_COLOR)
             y_off += 78
 
-        # --- Year + type line ---
+        # Year + type line
         if year:
             meta_text = f"{year}  |  {ptype.upper()}"
             _draw_text_with_shadow(draw, (50, OG_HEIGHT - 58), meta_text, sub_font, OG_ACCENT_COLOR)
-        _draw_text_with_shadow(draw, (50, OG_HEIGHT - 44), "JAN LEVINSKY", small_font, (OG_TEXT_COLOR[0], OG_TEXT_COLOR[1], OG_TEXT_COLOR[2], 180))
+        _draw_text_with_shadow(draw, (50, OG_HEIGHT - 44), "JAN LEVINSKY", small_font, OG_TEXT_COLOR)
 
-        # Save
         if output_path:
             img.save(output_path, "PNG", optimize=True)
             return output_path
@@ -557,15 +542,12 @@ def generate_og_image(project, output_path=None):
         return None
 
 def generate_main_og_image(output_path=None):
-    """Generate the main site OG image (og-cover.webp) using all project thumbnails in a bento grid."""
     try:
-        from PIL import ImageDraw, ImageFont
         title_font, sub_font, _, small_font = _load_og_fonts()
 
         img = Image.new('RGB', (OG_WIDTH, OG_HEIGHT), OG_BG_COLOR)
         draw = ImageDraw.Draw(img)
 
-        # Collect project thumbnails
         all_thumbs = []
         for proj in data["projects"]:
             src = proj.get("thumbnail") or (proj.get("media", [{}])[0].get("thumbnail") if proj.get("media") else None) or (proj.get("media", [{}])[0].get("src") if proj.get("media") else None)
@@ -574,7 +556,6 @@ def generate_main_og_image(output_path=None):
                 if thumb:
                     all_thumbs.append((thumb, proj.get("type", "photo") == "video"))
 
-        # Arrange in a grid (up to 6 tiles)
         tiles_to_show = all_thumbs[:6]
         if tiles_to_show:
             cols = 3 if len(tiles_to_show) >= 3 else len(tiles_to_show)
@@ -594,27 +575,23 @@ def generate_main_og_image(output_path=None):
             b = int(OG_BG_COLOR[2] * ratio)
             draw.rectangle([0, i, OG_WIDTH, i + 1], fill=(r, g, b))
 
-        # Accent lines
         draw.rectangle([0, 0, OG_WIDTH, 3], fill=OG_ACCENT_COLOR)
         draw.rectangle([0, OG_HEIGHT - 3, OG_WIDTH, OG_HEIGHT], fill=OG_ACCENT_COLOR)
 
-        # Title
         name_text = "Jan Levinsky"
         tb = draw.textbbox((0, 0), name_text, font=title_font)
         tx = (OG_WIDTH - (tb[2] - tb[0])) // 2
         _draw_text_with_shadow(draw, (tx, OG_HEIGHT // 2 - 60), name_text, title_font, OG_TEXT_COLOR)
 
-        # Subtitle
         sub_text = "CINEMATOGRAPHY  &  PHOTOGRAPHY"
         tb = draw.textbbox((0, 0), sub_text, font=sub_font)
         sx = (OG_WIDTH - (tb[2] - tb[0])) // 2
         draw.text((sx, OG_HEIGHT // 2 + 20), sub_text, fill=OG_ACCENT_COLOR, font=sub_font)
 
-        # Project count
         count_text = f"{len(data['projects'])} projects"
         tb = draw.textbbox((0, 0), count_text, font=small_font)
         cx2 = (OG_WIDTH - (tb[2] - tb[0])) // 2
-        draw.text((cx2, OG_HEIGHT // 2 + 60), count_text, fill=(OG_TEXT_COLOR[0], OG_TEXT_COLOR[1], OG_TEXT_COLOR[2], 160), font=small_font)
+        draw.text((cx2, OG_HEIGHT // 2 + 60), count_text, fill=OG_TEXT_COLOR, font=small_font)
 
         if output_path:
             Path(output_path).parent.mkdir(parents=True, exist_ok=True)
@@ -629,7 +606,6 @@ def generate_main_og_image(output_path=None):
         return None
 
 def generate_og_for_project(project_idx):
-    """Generate OG image for a project and update its metadata."""
     if project_idx < 0 or project_idx >= len(data["projects"]):
         return False, "Invalid project"
 
@@ -652,16 +628,12 @@ def generate_og_for_project(project_idx):
     else:
         return False, "Generation failed"
 
-def generate_lqip_for_file(filepath):
-    try:
-        with open(filepath, "rb") as f:
-            return generate_lqip(f.read())
-    except Exception:
-        return None
 
-# --- VALIDATION HELPERS -----------------------------------------------
+# ═══════════════════════════════════════════════════════════════
+# Validation
+# ═══════════════════════════════════════════════════════════════
+
 def find_case_insensitive_path(rel_path):
-    """Try to find a case-insensitive match for a relative path."""
     parts = Path(rel_path).parts
     if not parts:
         return None
@@ -731,7 +703,11 @@ def get_json_diff():
         return "Zadne zmeny."
     return f"ZMENENO: {len(current)} vs {len(saved)} znaku"
 
-# ─── FORCE CONVERT HELPERS ─────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════
+# Force WebP Convert
+# ═══════════════════════════════════════════════════════════════
+
 def find_all_image_files():
     image_files = []
     if not MEDIA_DIR.exists():
@@ -802,104 +778,12 @@ def process_force_convert():
         save_json()
     return results
 
-# ─── SITEMAP GENERATOR ─────────────────────────────────────────────────
-def generate_sitemap():
-    urls = []
-    urls.append(f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>")
-    urls.append(f"  <url>\n    <loc>{SITE_URL}/about.html</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>")
-    for project in data["projects"]:
-        slug = slugify(project.get("title", ""))
-        if slug:
-            urls.append(f"  <url>\n    <loc>{SITE_URL}/project.html?id={project.get('id', '')}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>")
-    sitemap = f"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n{'\n'.join(urls)}\n</urlset>"
-    return sitemap
 
-# ─── DEPLOY HELPERS ──────────────────────────────────────────────────
-def git_deploy():
-    try:
-        if not Path(".git").exists():
-            return False, "Git repository neexistuje. Inicializuj ho: git init"
-        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, check=True)
-        if not result.stdout.strip():
-            return True, "Zadne zmeny k deploy."
-        subprocess.run(["git", "add", "."], check=True, capture_output=True)
-        ts = __import__('datetime').datetime.now().strftime("%Y-%m-%d %H:%M")
-        commit_msg = f"Update projects {ts}"
-        subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
-        push_result = subprocess.run(["git", "push"], capture_output=True, text=True)
-        if push_result.returncode == 0:
-            return True, f"Deploy hotov! {commit_msg}"
-        else:
-            return False, f"Push selhal: {push_result.stderr}"
-    except subprocess.CalledProcessError as e:
-        return False, f"Git chyba: {e.stderr if e.stderr else str(e)}"
-    except FileNotFoundError:
-        return False, "Git neni nainstalovan."
-    except Exception as e:
-        return False, f"Chyba: {str(e)}"
+# ═══════════════════════════════════════════════════════════════
+# Normalize Project Filenames
+# ═══════════════════════════════════════════════════════════════
 
-# ─── MULTIPART PARSER ──────────────────────────────────────────────────
-def parse_multipart(body, boundary):
-    boundary = boundary.encode() if isinstance(boundary, str) else boundary
-    parts = body.split(b"--" + boundary)
-    files = []
-    fields = {}
-    for part in parts[1:-1]:
-        part = part.strip(b"\r\n")
-        if not part:
-            continue
-        header_end = part.find(b"\r\n\r\n")
-        if header_end == -1:
-            continue
-        headers = part[:header_end].decode("utf-8", errors="ignore")
-        content = part[header_end + 4:]
-        if content.endswith(b"\r\n"):
-            content = content[:-2]
-        filename = None
-        name = None
-        for line in headers.split("\r\n"):
-            if line.lower().startswith("content-disposition:"):
-                for item in line.split(";"):
-                    item = item.strip()
-                    if item.startswith("filename="):
-                        filename = item[9:].strip('"')
-                    elif item.startswith("name="):
-                        name = item[5:].strip('"')
-        if filename and content:
-            files.append({"name": name, "filename": filename, "content": content})
-        elif name and content:
-            fields[name] = content.decode("utf-8", errors="ignore")
-    return files, fields
-
-def is_video_ext(path):
-    return Path(path).suffix.lower() in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v")
-
-def generate_video_thumbnail(source_path, thumb_path, seek_time=3.0):
-    ffmpeg = shutil.which("ffmpeg")
-    if not ffmpeg:
-        return False
-    try:
-        thumb_path.parent.mkdir(parents=True, exist_ok=True)
-        subprocess.run([
-            ffmpeg, "-hide_banner", "-loglevel", "error",
-            "-ss", str(seek_time), "-i", str(source_path),
-            "-frames:v", "1", "-q:v", "2", "-y", str(thumb_path)
-        ], check=True)
-        return thumb_path.exists()
-    except Exception:
-        return False
-
-# ─── LOAD EDITOR HTML ─────────────────────────────────────────────────
-def load_editor_html():
-    if HTML_FILE.exists():
-        return HTML_FILE.read_text(encoding="utf-8")
-    return "<h1>Chyba: builder.html nenalezen</h1><p>Uloz builder.html vedle builder.py</p>"
-
-EDITOR_HTML = load_editor_html()
-
-# ─── NORMALIZE PROJECT FILENAMES ───────────────────────────────────────
 def find_existing_project_folder(project):
-    """Try to find an existing folder for this project."""
     ptype = project.get("type", "photo")
     pyear = project.get("year", "unknown")
     ptitle = project.get("title", "untitled")
@@ -930,12 +814,6 @@ def find_existing_project_folder(project):
     return None
 
 def normalize_project_filenames():
-    """
-    Rename all files inside each project folder to: [project]_YYYY-MM-DD_[id].[ext]
-    Also renames the folder itself to match the project title.
-    Returns list of all rename operations.
-    """
-    import datetime
     renamed = []
 
     for project in data["projects"]:
@@ -1066,11 +944,129 @@ def normalize_project_filenames():
 
     return renamed
 
-# ─── HTTP SERVER ───────────────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════
+# Sitemap & Deploy
+# ═══════════════════════════════════════════════════════════════
+
+def generate_sitemap():
+    urls = []
+    urls.append(f"  <url>\n    <loc>{SITE_URL}/</loc>\n    <changefreq>weekly</changefreq>\n    <priority>1.0</priority>\n  </url>")
+    urls.append(f"  <url>\n    <loc>{SITE_URL}/about.html</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>")
+    for project in data["projects"]:
+        slug = slugify(project.get("title", ""))
+        if slug:
+            urls.append(f"  <url>\n    <loc>{SITE_URL}/project.html?id={project.get('id', '')}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.8</priority>\n  </url>")
+    sitemap = f"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n{chr(10).join(urls)}\n</urlset>"
+    return sitemap
+
+def git_deploy():
+    try:
+        if not Path(".git").exists():
+            return False, "Git repository neexistuje. Inicializuj ho: git init"
+        result = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True, check=True)
+        if not result.stdout.strip():
+            return True, "Zadne zmeny k deploy."
+        subprocess.run(["git", "add", "."], check=True, capture_output=True)
+        ts = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        commit_msg = f"Update projects {ts}"
+        subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
+        push_result = subprocess.run(["git", "push"], capture_output=True, text=True)
+        if push_result.returncode == 0:
+            return True, f"Deploy hotov! {commit_msg}"
+        else:
+            return False, f"Push selhal: {push_result.stderr}"
+    except subprocess.CalledProcessError as e:
+        return False, f"Git chyba: {e.stderr if e.stderr else str(e)}"
+    except FileNotFoundError:
+        return False, "Git neni nainstalovan."
+    except Exception as e:
+        return False, f"Chyba: {str(e)}"
+
+
+# ═══════════════════════════════════════════════════════════════
+# Multipart Parser
+# ═══════════════════════════════════════════════════════════════
+
+def parse_multipart(body, boundary):
+    boundary = boundary.encode() if isinstance(boundary, str) else boundary
+    parts = body.split(b"--" + boundary)
+    files = []
+    fields = {}
+    for part in parts[1:-1]:
+        part = part.strip(b"\r\n")
+        if not part:
+            continue
+        header_end = part.find(b"\r\n\r\n")
+        if header_end == -1:
+            continue
+        headers = part[:header_end].decode("utf-8", errors="ignore")
+        content = part[header_end + 4:]
+        if content.endswith(b"\r\n"):
+            content = content[:-2]
+        filename = None
+        name = None
+        for line in headers.split("\r\n"):
+            if line.lower().startswith("content-disposition:"):
+                for item in line.split(";"):
+                    item = item.strip()
+                    if item.startswith("filename="):
+                        filename = item[9:].strip('"')
+                    elif item.startswith("name="):
+                        name = item[5:].strip('"')
+        if filename and content:
+            files.append({"name": name, "filename": filename, "content": content})
+        elif name and content:
+            fields[name] = content.decode("utf-8", errors="ignore")
+    return files, fields
+
+
+# ═══════════════════════════════════════════════════════════════
+# Editor HTML
+# ═══════════════════════════════════════════════════════════════
+
+def load_editor_html():
+    if HTML_FILE.exists():
+        return HTML_FILE.read_text(encoding="utf-8")
+    return "<h1>Chyba: builder.html nenalezen</h1><p>Uloz builder.html vedle builder.py</p>"
+
+EDITOR_HTML = load_editor_html()
+
+
+# ═══════════════════════════════════════════════════════════════
+# HTTP Server
+# ═══════════════════════════════════════════════════════════════
+
 class Handler(SimpleHTTPRequestHandler):
+
+    # --- Logging ---
     def log_message(self, format, *args):
         pass
 
+    # --- Response Helpers ---
+    def send_html(self, html):
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(html.encode("utf-8"))
+
+    def send_json(self, obj, code=200):
+        self.send_response(code)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(json.dumps(obj, ensure_ascii=False).encode("utf-8"))
+
+    def send_xml(self, xml, code=200):
+        self.send_response(code)
+        self.send_header("Content-Type", "application/xml; charset=utf-8")
+        self.end_headers()
+        self.wfile.write(xml.encode("utf-8"))
+
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+        super().end_headers()
+
+    # --- GET Handlers ---
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/":
@@ -1090,6 +1086,7 @@ class Handler(SimpleHTTPRequestHandler):
         else:
             super().do_GET()
 
+    # --- POST Handlers ---
     def do_POST(self):
         path = self.path.split("?")[0]
         if path == "/api/save":
@@ -1120,24 +1117,7 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(404)
             self.end_headers()
 
-    def handle_normalize_filenames(self):
-        try:
-            push_undo_state()
-            renamed = normalize_project_filenames()
-            if renamed:
-                save_json()
-            folder_count = sum(1 for r in renamed if r["type"] == "folder")
-            file_count = sum(1 for r in renamed if r["type"] == "file")
-            self.send_json({
-                "ok": True,
-                "message": f"Prejmenovano {folder_count} slozek a {file_count} souboru",
-                "renamed": renamed,
-                "folder_count": folder_count,
-                "file_count": file_count
-            })
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 500)
-
+    # --- POST Handler Implementations ---
     def handle_save(self):
         content_len = int(self.headers.get("Content-Length", 0))
         body = self.rfile.read(content_len).decode("utf-8")
@@ -1149,154 +1129,6 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_json({"ok": True})
         except Exception as e:
             self.send_json({"ok": False, "error": str(e)}, 400)
-
-    def handle_undo(self):
-        if undo():
-            save_json()
-            self.send_json({"ok": True, "message": "Undo provedeno"})
-        else:
-            self.send_json({"ok": False, "error": "Neni co undo"})
-
-    def handle_redo(self):
-        if redo():
-            save_json()
-            self.send_json({"ok": True, "message": "Redo provedeno"})
-        else:
-            self.send_json({"ok": False, "error": "Neni co redo"})
-
-    def handle_bulk_delete(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len).decode("utf-8")
-        try:
-            indices = json.loads(body)
-            push_undo_state()
-            for idx in sorted(indices, reverse=True):
-                if 0 <= idx < len(data["projects"]):
-                    data["projects"].pop(idx)
-            save_json()
-            self.send_json({"ok": True, "deleted": len(indices)})
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 400)
-
-    def handle_bulk_gear(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len).decode("utf-8")
-        try:
-            payload = json.loads(body)
-            indices = payload.get("indices", [])
-            category = payload.get("category", "")
-            item = payload.get("item", "")
-            action = payload.get("action", "add")
-            push_undo_state()
-            for idx in indices:
-                if 0 <= idx < len(data["projects"]):
-                    project = data["projects"][idx]
-                    if not project.get("gear"):
-                        project["gear"] = {}
-                    if category not in project["gear"]:
-                        project["gear"][category] = []
-                    if action == "add" and item not in project["gear"][category]:
-                        project["gear"][category].append(item)
-                    elif action == "remove" and item in project["gear"][category]:
-                        project["gear"][category].remove(item)
-            save_json()
-            self.send_json({"ok": True, "message": f"Gear {action} pro {len(indices)} projektu"})
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 400)
-
-    def handle_bulk_year(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len).decode("utf-8")
-        try:
-            payload = json.loads(body)
-            indices = payload.get("indices", [])
-            new_year = payload.get("year", "")
-            push_undo_state()
-            for idx in indices:
-                if 0 <= idx < len(data["projects"]):
-                    data["projects"][idx]["year"] = new_year
-            save_json()
-            self.send_json({"ok": True, "message": f"Rok zmenen na {new_year} pro {len(indices)} projektu"})
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 400)
-
-    def handle_generate_lqip(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len).decode("utf-8")
-        try:
-            payload = json.loads(body)
-            project_idx = payload.get("project_idx", -1)
-            media_idx = payload.get("media_idx", -1)
-            if project_idx < 0 or project_idx >= len(data["projects"]):
-                self.send_json({"ok": False, "error": "Neplatny projekt"})
-                return
-            project = data["projects"][project_idx]
-            media_list = project.get("media", [])
-            generated = 0
-            if media_idx < 0:
-                for m in media_list:
-                    src = m.get("src")
-                    if src and Path(src).exists() and is_image_file(src):
-                        lqip = generate_lqip_for_file(src)
-                        if lqip:
-                            m["lqip"] = lqip
-                            generated += 1
-            else:
-                if media_idx < len(media_list):
-                    m = media_list[media_idx]
-                    src = m.get("src")
-                    if src and Path(src).exists() and is_image_file(src):
-                        lqip = generate_lqip_for_file(src)
-                        if lqip:
-                            m["lqip"] = lqip
-                            generated = 1
-            save_json()
-            self.send_json({"ok": True, "generated": generated})
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 400)
-
-    def handle_generate_main_og(self):
-        try:
-            output_path = MEDIA_DIR / "og-cover.png"
-            result = generate_main_og_image(output_path)
-            if result:
-                self.send_json({"ok": True, "path": str(output_path)})
-            else:
-                self.send_json({"ok": False, "error": "Generation failed"})
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 500)
-
-    def handle_generate_og(self):
-        content_len = int(self.headers.get("Content-Length", 0))
-        body = self.rfile.read(content_len).decode("utf-8")
-        try:
-            payload = json.loads(body)
-            project_idx = payload.get("project_idx", -1)
-            success, result = generate_og_for_project(project_idx)
-            if success:
-                self.send_json({"ok": True, "path": result})
-            else:
-                self.send_json({"ok": False, "error": result})
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 400)
-
-    def handle_deploy(self):
-        success, message = git_deploy()
-        if success:
-            self.send_json({"ok": True, "message": message})
-        else:
-            self.send_json({"ok": False, "error": message}, 500)
-
-    def handle_force_convert(self):
-        try:
-            results = process_force_convert()
-            self.send_json({
-                "ok": True,
-                "message": f"Konvertovano {len(results['converted'])} souboru, {len(results['failed'])} selhalo, {len(results['skipped'])} preskoceno",
-                "results": results
-            })
-        except Exception as e:
-            self.send_json({"ok": False, "error": str(e)}, 500)
 
     def handle_upload(self):
         content_type = self.headers.get("Content-Type", "")
@@ -1432,11 +1264,6 @@ class Handler(SimpleHTTPRequestHandler):
                 rel = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/{dest.name}"
                 thumb_rel = rel
                 lqip = None
-            # Check for ad blocker buzzwords in the saved filename
-            buzz = contains_ad_buzzword(dest.name)
-            if buzz:
-                print(f"[AD BLOCKER WARNING] Uploaded file '{dest.name}' contains buzzword '{buzz}'!")
-                print(f"  Consider renaming to avoid browser blocking.")
 
             saved.append({
                 "filename": dest.name,
@@ -1447,29 +1274,177 @@ class Handler(SimpleHTTPRequestHandler):
             })
         self.send_json({"ok": True, "files": saved})
 
-    def send_html(self, html):
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(html.encode("utf-8"))
+    def handle_undo(self):
+        if undo():
+            save_json()
+            self.send_json({"ok": True, "message": "Undo provedeno"})
+        else:
+            self.send_json({"ok": False, "error": "Neni co undo"})
 
-    def send_json(self, obj, code=200):
-        self.send_response(code)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(json.dumps(obj, ensure_ascii=False).encode("utf-8"))
+    def handle_redo(self):
+        if redo():
+            save_json()
+            self.send_json({"ok": True, "message": "Redo provedeno"})
+        else:
+            self.send_json({"ok": False, "error": "Neni co redo"})
 
-    def send_xml(self, xml, code=200):
-        self.send_response(code)
-        self.send_header("Content-Type", "application/xml; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(xml.encode("utf-8"))
+    def handle_bulk_delete(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            indices = json.loads(body)
+            push_undo_state()
+            for idx in sorted(indices, reverse=True):
+                if 0 <= idx < len(data["projects"]):
+                    data["projects"].pop(idx)
+            save_json()
+            self.send_json({"ok": True, "deleted": len(indices)})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
 
-    def end_headers(self):
-        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
-        super().end_headers()
+    def handle_bulk_gear(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            indices = payload.get("indices", [])
+            category = payload.get("category", "")
+            item = payload.get("item", "")
+            action = payload.get("action", "add")
+            push_undo_state()
+            for idx in indices:
+                if 0 <= idx < len(data["projects"]):
+                    project = data["projects"][idx]
+                    if not project.get("gear"):
+                        project["gear"] = {}
+                    if category not in project["gear"]:
+                        project["gear"][category] = []
+                    if action == "add" and item not in project["gear"][category]:
+                        project["gear"][category].append(item)
+                    elif action == "remove" and item in project["gear"][category]:
+                        project["gear"][category].remove(item)
+            save_json()
+            self.send_json({"ok": True, "message": f"Gear {action} pro {len(indices)} projektu"})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
 
-# ─── MAIN ──────────────────────────────────────────────────────────────
+    def handle_bulk_year(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            indices = payload.get("indices", [])
+            new_year = payload.get("year", "")
+            push_undo_state()
+            for idx in indices:
+                if 0 <= idx < len(data["projects"]):
+                    data["projects"][idx]["year"] = new_year
+            save_json()
+            self.send_json({"ok": True, "message": f"Rok zmenen na {new_year} pro {len(indices)} projektu"})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_generate_lqip(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            project_idx = payload.get("project_idx", -1)
+            media_idx = payload.get("media_idx", -1)
+            if project_idx < 0 or project_idx >= len(data["projects"]):
+                self.send_json({"ok": False, "error": "Neplatny projekt"})
+                return
+            project = data["projects"][project_idx]
+            media_list = project.get("media", [])
+            generated = 0
+            if media_idx < 0:
+                for m in media_list:
+                    src = m.get("src")
+                    if src and Path(src).exists() and is_image_file(src):
+                        lqip = generate_lqip_for_file(src)
+                        if lqip:
+                            m["lqip"] = lqip
+                            generated += 1
+            else:
+                if media_idx < len(media_list):
+                    m = media_list[media_idx]
+                    src = m.get("src")
+                    if src and Path(src).exists() and is_image_file(src):
+                        lqip = generate_lqip_for_file(src)
+                        if lqip:
+                            m["lqip"] = lqip
+                            generated = 1
+            save_json()
+            self.send_json({"ok": True, "generated": generated})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_generate_og(self):
+        content_len = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_len).decode("utf-8")
+        try:
+            payload = json.loads(body)
+            project_idx = payload.get("project_idx", -1)
+            success, result = generate_og_for_project(project_idx)
+            if success:
+                self.send_json({"ok": True, "path": result})
+            else:
+                self.send_json({"ok": False, "error": result})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_deploy(self):
+        success, message = git_deploy()
+        if success:
+            self.send_json({"ok": True, "message": message})
+        else:
+            self.send_json({"ok": False, "error": message}, 500)
+
+    def handle_force_convert(self):
+        try:
+            results = process_force_convert()
+            self.send_json({
+                "ok": True,
+                "message": f"Konvertovano {len(results['converted'])} souboru, {len(results['failed'])} selhalo, {len(results['skipped'])} preskoceno",
+                "results": results
+            })
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
+
+    def handle_normalize_filenames(self):
+        try:
+            push_undo_state()
+            renamed = normalize_project_filenames()
+            if renamed:
+                save_json()
+            folder_count = sum(1 for r in renamed if r["type"] == "folder")
+            file_count = sum(1 for r in renamed if r["type"] == "file")
+            self.send_json({
+                "ok": True,
+                "message": f"Prejmenovano {folder_count} slozek a {file_count} souboru",
+                "renamed": renamed,
+                "folder_count": folder_count,
+                "file_count": file_count
+            })
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
+
+    def handle_generate_main_og(self):
+        try:
+            output_path = MEDIA_DIR / "og-cover.png"
+            result = generate_main_og_image(output_path)
+            if result:
+                self.send_json({"ok": True, "path": str(output_path)})
+            else:
+                self.send_json({"ok": False, "error": "Generation failed"})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
+
+
+# ═══════════════════════════════════════════════════════════════
+# Main Entry Point
+# ═══════════════════════════════════════════════════════════════
+
 def main():
     global tech_inventory
     load_json()
