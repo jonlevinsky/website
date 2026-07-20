@@ -1,7 +1,6 @@
 <div align="center">
 <br>
-
-<img src="media/logo.png" width="72" height="72" alt="LJ">
+<img src="media/Logo.png" width="72" height="72" alt="LJ">
 
 # levinskyj.art
 
@@ -9,25 +8,17 @@
 
 <br>
 
-[<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'%3E%3C/path%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'%3E%3C/path%3E%3C/svg%3E"> levinskyj.art](https://levinskyj.art) · [<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='2' width='20' height='20' rx='5' ry='5'%3E%3C/rect%3E%3Cpath d='M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z'%3E%3C/path%3E%3Cline x1='17.5' y1='6.5' x2='17.51' y2='6.5'%3E%3C/line%3E%3C/svg%3E"> @levinskyj.cine](https://www.instagram.com/levinskyj.cine/) · [<img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232c3e50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.94 2C5.12 20 12 20 12 20s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z'%3E%3C/path%3E%3Cpolygon points='9.75 15.02 15.5 12 9.75 8.98 9.75 15.02'%3E%3C/polygon%3E%3C/svg%3E"> @LevinskyJ](https://www.youtube.com/@LevinskyJ)
-
-<br>
+[🌐 levinskyj.art](https://levinskyj.art) · [📷 @levinskyj.cine](https://www.instagram.com/levinskyj.cine/) · [▶ @LevinskyJ](https://www.youtube.com/@LevinskyJ)
 
 </div>
 
 ---
 
-<div align="center">
+> Každý snímek nese perforaci.  
+> Každý přechod je jako střih.  
+> Každý projekt je políčko filmu.
 
-```
-┌─────────────────────────────────────────────────────┐
-│  ⚬⚬⚬⚬  každý snímek nese perforaci  ⚬⚬⚬⚬  │
-│  ⚬⚬⚬⚬  každý přechod je jako střih  ⚬⚬⚬⚬  │
-│  ⚬⚬⚬⚬  každý projekt je políčko filmu  ⚬⚬⚬⚬  │
-└─────────────────────────────────────────────────────┘
-```
-
-</div>
+---
 
 ## 🎞️ Co to je
 
@@ -52,26 +43,25 @@ Projekty plují v responzivní mřížce s reálnými poměry stran. Žádné fo
 - Plná podpora `prefers-reduced-motion`
 
 ### 📱 Responzivní design
-Od mobilu po ultra-wide — hamburger menu na mobile, postupně se rozšiřující sidebar na desktopu. Všechny breakpointy dolaďěné ručně.
+Od mobilu po ultra-wide. Hamburger menu na mobilu, sidebar na desktopu. Všechny breakpointy dolaďené ručně. i18n automatický překlad pro návštěvníky mimo ČR.
 
 ### 🎨 Vizuální styl
-Tmavě modrý akcent (`#2c3e50`) na teplém krémovém pozadí (`#faf8f5`). Žádný čistě bílý povrch, žádná ostrá čerň. Písmo kombinuje Bricolage Grotesque (sans) s Interem (pro data a metriky).
+Tmavě modrý akcent (`#2c3e50`) na teplém krémovém pozadí (`#faf8f5`). Žádná čistá bílá, žádná ostrá čerň. Písmo kombinuje Bricolage Grotesque s Interem.
 
 ---
 
 ## 🧱 Struktura projektu
 
 ```
-├── index.html          # Hlavní portfolio stránka
-├── about.html          # Životopis / O mně
-├── project.html        # Detail projektu (dynamický)
-├── card.html           # Digitální vizitka
-├── style.css           # Sdílené styly
-├── main.js             # Sdílené JS (i18n, perforace, animace)
-├── projects.json       # Data všech projektů
-├── builder.py          # Lokální editor projektů
-├── builder.html        # UI pro editor
-└── media/              # Fotky, videa, logo
+├── index.html         # Hlavní portfolio stránka
+├── about.html         # Životopis / O mně
+├── project.html       # Detail projektu (dynamický)
+├── card.html          # Digitální vizitka
+├── style.css          # Sdílené styly
+├── main.js            # Sdílené JS (i18n, perforace, animace)
+├── projects.json      # Data všech projektů
+├── builder.py         # Lokální editor projektů
+└── media/             # Fotky, videa, logo
 ```
 
 ---
@@ -88,10 +78,8 @@ python builder.py
 
 ---
 
-## 📜 Licence
-
 <div align="center">
-<br>
+
 © Jan Levínský · všechna práva vyhrazena
-<br><br>
+
 </div>
