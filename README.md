@@ -18,8 +18,8 @@
 <div align="center">
 <br>
 <pre style="font-family: monospace; font-size: 0.85em; color: #7a7570; line-height: 1.6;">
-⚬⚬⚬⚬  každý snímek nese perforaci  ⚬⚬⚬⚬
-⚬⚬⚬⚬  každý přechod je jako střih  ⚬⚬⚬⚬
+⚬⚬⚬⚬  každý snímek nese perforaci     ⚬⚬⚬⚬
+⚬⚬⚬⚬  každý přechod je jako střih     ⚬⚬⚬⚬
 ⚬⚬⚬⚬  každý projekt je políčko filmu  ⚬⚬⚬⚬
 </pre>
 <br>

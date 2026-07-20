@@ -555,10 +555,10 @@
       if (activeIdx < 0) return;
       setStatus('Generuji OG image...');
       try {
-        const r = await fetch('/api/generate-og', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_idx: activeIdx }) });
+        const r = await fetch('/api/generate-simple-og', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_idx: activeIdx }) });
         const j = await r.json();
-        if (j.ok) { showToast('OG image vygenerovan'); setStatus('OG hotov'); }
-        else { showToast('Chyba OG: ' + j.error); setStatus('OG selhal'); }
+        if (j.ok) { showToast('OG image ulozen'); setStatus('OG hotov'); renderForm(); }
+        else { showToast(j.error || 'Chyba'); setStatus('OG selhal'); }
       } catch (e) { showToast('Chyba site'); setStatus('Chyba site'); }
     }
 
