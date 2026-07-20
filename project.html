@@ -59,6 +59,97 @@ main {
 
 .project-header { margin-bottom: 22px; }
 
+.brand .back-link {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  width: 100%;
+}
+
+/* ── Sidebar: Gear & Crew ── */
+.sidebar-section-title {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.sidebar-gear {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sidebar-gear-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sidebar-gear-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.sidebar-gear-label i {
+  font-size: 12px;
+  color: var(--accent);
+  opacity: 0.7;
+}
+.sidebar-gear-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.sidebar-gear-chip {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--surface);
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+.sidebar-crew {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.sidebar-crew-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-crew-row i {
+  font-size: 16px;
+  color: var(--accent);
+  opacity: 0.6;
+  width: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.sidebar-crew-role {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.3;
+}
+.sidebar-crew-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.3;
+}
+
 .project-title {
   margin: 0 0 6px;
   font-family: var(--serif);
@@ -87,8 +178,34 @@ main {
   line-height: 1.8;
   color: var(--muted);
   font-weight: 300;
+  margin: 0;
+}
+.bio-wrap {
+  position: relative;
   max-width: 680px;
   margin: 0 0 26px;
+  padding-left: 32px;
+}
+.bio-quote-start,
+.bio-quote-end {
+  position: absolute;
+  font-family: var(--serif);
+  font-size: 4em;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.25;
+  user-select: none;
+  pointer-events: none;
+}
+.bio-quote-start {
+  left: -0.05em;
+  top: -0.4em;
+}
+.bio-quote-end {
+  top: 100%;
+  line-height: 0;
+  margin-top: -0.15em;
+  right: -0.05em;
 }
 
 .project-tech { margin-top: 8px; font-size: 13px; color: var(--muted); font-weight: 500; }
@@ -102,49 +219,7 @@ main {
   text-transform: uppercase;
   margin-bottom: 14px;
 }
-.gear-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 28px;
-}
-.gear-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-.gear-group-label {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.gear-group-label i { font-size: 13px; color: var(--accent); opacity: 0.8; }
-.gear-items {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-.gear-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 12px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  font-size: 12.5px;
-  font-weight: 400;
-  color: var(--text);
-  letter-spacing: 0.01em;
-  transition: border-color 0.25s ease, background 0.25s ease;
-}
-.gear-chip:hover {
-  border-color: var(--accent);
-  background: var(--bg-raised);
-}
+.project-tech { margin-top: 8px; font-size: 13px; color: var(--muted); font-weight: 500; }
 
 /* Gallery */
 .gallery {
@@ -927,7 +1002,6 @@ main {
   }
   .tile.landscape { aspect-ratio: 16/9 !important; }
   .tile.portrait { aspect-ratio: 3/4 !important; }
-  .gear-grid { gap: 12px 20px; }
   .tile-inline-player { display: none; }
   .tile-caption { display: none; }
 
@@ -1204,6 +1278,8 @@ main {
     </div>
     <div class="brand-panel" id="brandPanel" aria-hidden="true">
       <div class="divider"></div>
+      <div id="projectCrew"></div>
+      <div id="projectGear"></div>
       <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i> <span data-i18n="back">Zpět na portfolio</span></a>
     </div>
   </aside>
@@ -1447,9 +1523,10 @@ function displayProject(project) {
     techHtml = '<div class="project-tech">' + techniques.trim() + '</div>';
   }
 
-  let gearHtml = '';
+  // --- Sidebar: Gear ---
+  const gearContainer = document.getElementById('projectGear');
   const gear = project.gear;
-  if (gear && typeof gear === 'object' && !Array.isArray(gear)) {
+  if (gearContainer && gear && typeof gear === 'object' && !Array.isArray(gear)) {
     const gearMap = {
       camera:       { label: 'Kamera',        icon: 'ph-camera' },
       lenses:       { label: 'Optika',        icon: 'ph-aperture' },
@@ -1475,17 +1552,41 @@ function displayProject(project) {
     }
 
     if (groups.length) {
-      gearHtml = '<div class="gear-section">' +
-        '<div class="gear-title">Technika</div>' +
-        '<div class="gear-grid">' +
+      gearContainer.innerHTML =
+        '<div class="sidebar-section-title">Technika</div>' +
+        '<div class="sidebar-gear">' +
         groups.map(g =>
-          '<div class="gear-group">' +
-          '<div class="gear-group-label"><i class="ph ' + g.icon + '"></i>' + g.label + '</div>' +
-          '<div class="gear-items">' +
-          g.items.map(item => '<span class="gear-chip">' + item + '</span>').join('') +
+          '<div class="sidebar-gear-group">' +
+          '<div class="sidebar-gear-label"><i class="ph ' + g.icon + '"></i>' + g.label + '</div>' +
+          '<div class="sidebar-gear-items">' +
+          g.items.map(item => '<span class="sidebar-gear-chip">' + item + '</span>').join('') +
           '</div></div>'
         ).join('') +
-        '</div></div>';
+        '</div>';
+    }
+  }
+
+  // --- Sidebar: Crew ---
+  const crewContainer = document.getElementById('projectCrew');
+  const crew = project.crew;
+  const defaultCrewIcons = {
+    'Režie': 'ph-megaphone-simple', 'Kamera': 'ph-camera', 'Střih': 'ph-scissors',
+    'Zvuk': 'ph-microphone', 'Produkce': 'ph-clipboard-text'
+  };
+  const customIcons = project.crewIcons || {};
+  if (crewContainer && crew && typeof crew === 'object') {
+    const entries = Object.entries(crew).filter(([role, name]) => role && name && name.trim());
+    if (entries.length) {
+      crewContainer.innerHTML =
+        '<div class="sidebar-section-title">Štáb</div>' +
+        '<div class="sidebar-crew">' +
+        entries.map(([role, name]) =>
+          '<div class="sidebar-crew-row">' +
+          '<i class="ph ' + (customIcons[role] || defaultCrewIcons[role] || 'ph-user') + '"></i>' +
+          '<div><div class="sidebar-crew-role">' + role + '</div><div class="sidebar-crew-name">' + name + '</div></div>' +
+          '</div>'
+        ).join('') +
+        '</div>';
     }
   }
 
@@ -1541,10 +1642,9 @@ function displayProject(project) {
     '<span>' + typeLabel + '</span><span class="dot"></span><span>' + year + '</span>' +
     '</div>' +
     '<h2 class="project-title">' + project.title + '</h2>' +
-    (project.bio ? '<p class="project-bio">' + project.bio.replace(/\\n\\n/g, '<br><br>').replace(/\\n/g, '<br>') + '</p>' : '') +
+    (project.bio ? '<div class="bio-wrap"><span class="bio-quote-start">„</span><p class="project-bio">' + project.bio.replace(/\\n\\n/g, '<br><br>').replace(/\\n/g, '<br>') + '</p><span class="bio-quote-end">“</span></div>' : '') +
     '</div>' +
     (techHtml ? techHtml : '') +
-    gearHtml +
     '<div class="gallery">' + gallery + '</div>' +
     '<footer class="g-footer">' +
       '<div class="f-name">Jan Levínský</div>' +
@@ -1583,14 +1683,6 @@ function displayProject(project) {
         { opacity: [0, 1], y: [16, 0] },
         { delay: Motion.stagger(0.1, { start: 0.1 }), duration: 0.6, easing: [0.22, 1, 0.36, 1] }
       ).finished.then(() => headerEls.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
-    }
-    const gearGroups = container.querySelectorAll('.gear-group');
-    if (gearGroups.length) {
-      Motion.animate(
-        gearGroups,
-        { opacity: [0, 1], y: [12, 0] },
-        { delay: Motion.stagger(0.08, { start: 0.4 }), duration: 0.5, easing: [0.22, 1, 0.36, 1] }
-      ).finished.then(() => gearGroups.forEach(el => { el.style.opacity = ''; el.style.transform = ''; })).catch(() => {});
     }
     const galleryTiles = container.querySelectorAll('.gallery .tile');
     if (galleryTiles.length) {

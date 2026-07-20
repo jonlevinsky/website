@@ -726,6 +726,14 @@
           <div class="field" style="grid-column:1/-1"><label>Techniques (oddelene carkou)</label><input type="text" value="${esc(Array.isArray(p.techniques) ? p.techniques.join(', ') : (p.techniques || ''))}" onchange="setTech(this.value)"></div>
         </div>
         ${seoHtml}
+        <div class="section-title">Crew (štáb)</div>
+        <div class="crew-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;max-width:900px;margin-bottom:24px" id="crewList"></div>
+        <div style="display:flex;gap:8px;max-width:900px;margin-bottom:24px">
+          <input type="text" id="newCrewRole" placeholder="Nová role" style="background:var(--surface);border:1px solid #444;color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;outline:none;flex:1">
+          <input type="text" id="newCrewIcon" placeholder="ph-icon" value="ph-user" style="background:var(--surface);border:1px solid #444;color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;outline:none;width:100px">
+          <input type="text" id="newCrewName" placeholder="Jméno" style="background:var(--surface);border:1px solid #444;color:var(--text);padding:6px 10px;border-radius:6px;font-size:12px;outline:none;flex:1">
+          <button class="btn" onclick="addCrew()">+ Přidat</button>
+        </div>
         <div class="section-title">Gear</div>
         <div class="gear-grid">${gearHtml}</div>
         <div class="section-title">Media</div>
@@ -754,6 +762,7 @@
       `;
 
       initMediaDrag();
+      renderCrew();
       const dz = document.getElementById('dropZone');
       if (dz) {
         dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('dragover'); });
@@ -1188,6 +1197,152 @@
     function updateGear(cat, idx, val) {
       if (activeIdx < 0) return;
       projects[activeIdx].gear[cat][idx] = val;
+      debounceSave();
+    }
+
+    /* ════════════════════════════════════════════════
+       Crew Management
+       ════════════════════════════════════════════════ */
+
+    const CREW_DEFAULTS = ['Režie', 'Kamera', 'Střih', 'Zvuk', 'Produkce'];
+
+    let dragCrewRole = null;
+
+    function getCrewOrder(p) {
+      if (p.crewOrder && Array.isArray(p.crewOrder)) return p.crewOrder;
+      const all = new Set([...CREW_DEFAULTS, ...Object.keys(p.crew || {})]);
+      return Array.from(all);
+    }
+
+    function renderCrew() {
+      const list = document.getElementById('crewList');
+      if (!list) return;
+      const p = projects[activeIdx];
+      if (!p.crew) p.crew = {};
+      if (!p.crewOrder) p.crewOrder = getCrewOrder(p);
+      if (!p.crewIcons) p.crewIcons = {};
+      const defaultIconMap = {'Režie':'ph-megaphone-simple','Kamera':'ph-camera','Střih':'ph-scissors','Zvuk':'ph-microphone','Produkce':'ph-clipboard-text'};
+      let html = '';
+      p.crewOrder.forEach((role, idx) => {
+        const val = p.crew[role] || '';
+        const icon = p.crewIcons[role] || defaultIconMap[role] || 'ph-user';
+        html += `
+          <div class="crew-item" data-role="${esc(role)}" data-index="${idx}" draggable="true" style="background:var(--surface);border:1px solid #444;border-radius:8px;padding:10px 10px 10px 12px;display:flex;gap:8px;align-items:center;cursor:grab;transition:border-color .15s,opacity .15s;user-select:none">
+            <span style="color:var(--muted);font-size:12px;cursor:grab">⠿</span>
+            <i class="ph ${icon}" style="font-size:16px;color:var(--accent)"></i>
+            <span style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);font-weight:600;min-width:80px">${esc(role)}</span>
+            ${CREW_DEFAULTS.includes(role) ? '' : '<input type="text" value="' + esc(icon) + '" placeholder="ph-icon" style="width:90px;background:var(--bg2);border:1px solid #444;padding:5px 8px;border-radius:6px;color:var(--text);font-size:11px;outline:none" onchange="updateCrewIcon(\'' + esc(role) + '\',this.value)">'}
+            <input type="text" value="${esc(val)}" placeholder="Jméno" style="flex:1;background:var(--bg2);border:1px solid #444;padding:5px 8px;border-radius:6px;color:var(--text);font-size:11px;outline:none" onchange="updateCrew('${esc(role)}',this.value)">
+            ${CREW_DEFAULTS.includes(role) ? '' : '<button class="btn danger small" onclick="removeCrew(\'' + esc(role) + '\')">&#x2715;</button>'}
+          </div>`;
+      });
+      list.innerHTML = html;
+      list.querySelectorAll('.crew-item').forEach(el => {
+        el.addEventListener('dragstart', onCrewDragStart);
+        el.addEventListener('dragover', onCrewDragOver);
+        el.addEventListener('drop', onCrewDrop);
+        el.addEventListener('dragend', onCrewDragEnd);
+        el.addEventListener('dragleave', onCrewDragLeave);
+      });
+    }
+
+    function onCrewDragStart(e) {
+      dragCrewRole = this.getAttribute('data-role');
+      this.style.opacity = '0.4';
+      e.dataTransfer.effectAllowed = 'move';
+    }
+    function onCrewDragOver(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      this.style.borderColor = 'var(--accent)';
+    }
+    function onCrewDragLeave(e) {
+      this.style.borderColor = '#444';
+    }
+    function onCrewDrop(e) {
+      e.preventDefault();
+      this.style.borderColor = '#444';
+      if (!dragCrewRole) return;
+      const p = projects[activeIdx];
+      if (!p.crewOrder) return;
+      const fromRole = dragCrewRole;
+      const toRole = this.getAttribute('data-role');
+      if (fromRole === toRole) return;
+      const fromIdx = p.crewOrder.indexOf(fromRole);
+      const toIdx = p.crewOrder.indexOf(toRole);
+      if (fromIdx === -1 || toIdx === -1) return;
+      p.crewOrder.splice(fromIdx, 1);
+      p.crewOrder.splice(toIdx, 0, fromRole);
+      dragCrewRole = null;
+      renderCrew();
+      debounceSave();
+    }
+    function onCrewDragEnd(e) {
+      this.style.opacity = '';
+      document.querySelectorAll('.crew-item').forEach(el => el.style.borderColor = '#444');
+      dragCrewRole = null;
+    }
+
+    function addCrew() {
+      if (activeIdx < 0) return;
+      const roleInput = document.getElementById('newCrewRole');
+      const iconInput = document.getElementById('newCrewIcon');
+      const nameInput = document.getElementById('newCrewName');
+      const role = (roleInput.value || '').trim();
+      const icon = (iconInput.value || '').trim();
+      const name = (nameInput.value || '').trim();
+      if (!role) return;
+      const p = projects[activeIdx];
+      if (!p.crew) p.crew = {};
+      if (!p.crewOrder) p.crewOrder = getCrewOrder(p);
+      if (!p.crewIcons) p.crewIcons = {};
+      p.crew[role] = name;
+      if (!p.crewOrder.includes(role)) p.crewOrder.push(role);
+      if (icon && icon !== 'ph-user') p.crewIcons[role] = icon;
+      roleInput.value = '';
+      iconInput.value = 'ph-user';
+      nameInput.value = '';
+      renderCrew();
+      debounceSave();
+    }
+
+    function updateCrew(role, val) {
+      if (activeIdx < 0) return;
+      const p = projects[activeIdx];
+      if (!p.crew) p.crew = {};
+      if (val.trim()) {
+        p.crew[role] = val.trim();
+      } else {
+        if (!CREW_DEFAULTS.includes(role)) {
+          delete p.crew[role];
+          if (p.crewIcons) delete p.crewIcons[role];
+          const idx = p.crewOrder ? p.crewOrder.indexOf(role) : -1;
+          if (idx !== -1) p.crewOrder.splice(idx, 1);
+        } else {
+          p.crew[role] = '';
+        }
+      }
+      renderCrew();
+      debounceSave();
+    }
+
+    function updateCrewIcon(role, val) {
+      if (activeIdx < 0) return;
+      const p = projects[activeIdx];
+      if (!p.crewIcons) p.crewIcons = {};
+      if (val.trim()) {
+        p.crewIcons[role] = val.trim();
+      } else {
+        delete p.crewIcons[role];
+      }
+      debounceSave();
+    }
+
+    function removeCrew(role) {
+      if (activeIdx < 0) return;
+      const p = projects[activeIdx];
+      if (p.crew) delete p.crew[role];
+      renderCrew();
       debounceSave();
     }
 
