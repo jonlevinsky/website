@@ -194,7 +194,7 @@
       }
     ],
     "slug": "spot",
-    "og_image": "media/video/2025/spot/og-image.png",
+    "og_image": "media/video/2025/Spot/og-image.png",
     "crew": {
       "Režie": "Jan Levínský",
       "Kamera": "Jan Levínský",
@@ -269,7 +269,7 @@
       }
     ],
     "slug": "spanelsko",
-    "og_image": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4.png",
+    "og_image": "media/photo/2025/Španělsko/og-image.png",
     "crew": {},
     "crewOrder": [
       "Režie",
@@ -316,7 +316,7 @@
       }
     ],
     "slug": "za-okny",
-    "og_image": "media/video/2024/Za-Okny/Za-Okny_2026-07-20_5.png",
+    "og_image": "media/video/2024/Za-Okny/og-image.png",
     "crew": {
       "Režie": "Vávlav Šípek",
       "Kamera": "Jan Levínský"
@@ -437,7 +437,7 @@
       }
     ],
     "slug": "portraits",
-    "og_image": "media/photo/2026/Portraits/Portraits_2026-07-20_3.png",
+    "og_image": "media/photo/2026/Portraits/og-image.png",
     "crew": {},
     "crewOrder": [
       "Režie",

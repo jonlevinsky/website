@@ -363,28 +363,58 @@ FONT_DIR = Path(__file__).parent / "fonts"
 
 def _load_og_fonts():
     brico = _try_font(str(FONT_DIR / "BricolageGrotesque-Regular.ttf"), size=52) or ImageFont.load_default()
+    brico_i = _try_font(
+        str(FONT_DIR / "BricolageGrotesque-Italic.ttf"),
+        str(FONT_DIR / "BricolageGrotesque-RegularItalic.ttf"),
+        str(FONT_DIR / "BricolageGrotesque-MediumItalic.ttf"),
+        size=52
+    ) or brico
+    brico_badge = _try_font(
+        str(FONT_DIR / "BricolageGrotesque-Bold.ttf"),
+        str(FONT_DIR / "BricolageGrotesque-SemiBold.ttf"),
+        str(FONT_DIR / "BricolageGrotesque-ExtraBold.ttf"),
+        str(FONT_DIR / "BricolageGrotesque-Medium.ttf"),
+        size=24
+    ) or brico
     inter_m = _try_font(str(FONT_DIR / "Inter" / "extras" / "ttf" / "Inter-Medium.ttf"), size=22) or ImageFont.load_default()
     inter_r = _try_font(str(FONT_DIR / "Inter" / "extras" / "ttf" / "Inter-Regular.ttf"), size=16) or ImageFont.load_default()
     inter_s = _try_font(str(FONT_DIR / "Inter" / "extras" / "ttf" / "Inter-Regular.ttf"), size=13) or ImageFont.load_default()
-    return brico, inter_m, inter_r, inter_s
+    return brico, brico_i, brico_badge, inter_m, inter_r, inter_s
 
-def _draw_perforations(draw, x, y, w, h, count=8, horizontal=True):
-    if horizontal:
-        dot_w = max(3, w // count // 3)
-        dot_h = max(4, h // 8)
-        gap = (w - dot_w * count) // (count + 1)
+def _draw_perforations(draw, x, y, w, h, is_video=False):
+    """Film perforations matching index page style (real 35mm dimensions)."""
+    # Real 35mm film specs
+    HOLE_W, HOLE_H, PITCH = 2.79, 1.98, 4.75
+    if is_video:
+        FRAME_W, FRAME_H = 24, 18.6
+        pitch_px = (PITCH / FRAME_H) * h
+        dot_w = max(2, int((HOLE_W / FRAME_H) * h))
+        dot_h = max(2, int((HOLE_H / FRAME_H) * h))
+        count = max(2, int(h / pitch_px))
+        gap = max(1, pitch_px - dot_h)
+        total_h = count * dot_h + (count - 1) * gap
+        start_y = y + (h - total_h) // 2
+        dx_left = x + max(2, int(w * 0.025))
+        dx_right = x + w - max(2, int(w * 0.025)) - dot_w
         for i in range(count):
-            dx = x + gap + i * (dot_w + gap)
-            draw.ellipse([dx, y, dx + dot_w, y + dot_h], fill=PERF_COLOR)
-            draw.ellipse([dx, y + h - dot_h, dx + dot_w, y + h], fill=PERF_COLOR)
+            dy = start_y + i * (dot_h + gap)
+            draw.ellipse([dx_left, dy, dx_left + dot_w, dy + dot_h], fill=PERF_COLOR)
+            draw.ellipse([dx_right, dy, dx_right + dot_w, dy + dot_h], fill=PERF_COLOR)
     else:
-        dot_w = max(4, w // 8)
-        dot_h = max(3, h // count // 3)
-        gap = (h - dot_h * count) // (count + 1)
+        FRAME_W, FRAME_H = 36, 24
+        pitch_px = (PITCH / FRAME_W) * w
+        dot_w = max(2, int((HOLE_W / FRAME_W) * w))
+        dot_h = max(2, int((HOLE_H / FRAME_H) * h))
+        count = max(2, int(w / pitch_px))
+        gap = max(1, pitch_px - dot_w)
+        total_w = count * dot_w + (count - 1) * gap
+        start_x = x + (w - total_w) // 2
+        dy_top = y + max(2, int(h * 0.025))
+        dy_bot = y + h - max(2, int(h * 0.025)) - dot_h
         for i in range(count):
-            dy = y + gap + i * (dot_h + gap)
-            draw.ellipse([x, dy, x + dot_w, dy + dot_h], fill=PERF_COLOR)
-            draw.ellipse([x + w - dot_w, dy, x + w - dot_w, dy + dot_h], fill=PERF_COLOR)
+            dx = start_x + i * (dot_w + gap)
+            draw.ellipse([dx, dy_top, dx + dot_w, dy_top + dot_h], fill=PERF_COLOR)
+            draw.ellipse([dx, dy_bot, dx + dot_w, dy_bot + dot_h], fill=PERF_COLOR)
 
 def _load_thumbnail(path):
     try:
@@ -394,33 +424,33 @@ def _load_thumbnail(path):
     except Exception:
         return None
 
-def _paste_thumb_tile(base, thumb, x, y, tw, th, is_video=False, index=0):
+def _paste_thumb_tile(base, thumb, x, y, tw, th, is_video=False, index=0, gap=5, radius=10):
     if thumb is None:
+        return
+    g = gap
+    iw, ih = tw - g * 2, th - g * 2
+    if iw <= 0 or ih <= 0:
         return
     thumb_copy = thumb.copy()
     r = thumb_copy.width / thumb_copy.height
-    target_r = tw / th
+    target_r = iw / ih
     if r > target_r:
-        new_h = th
-        new_w = int(th * r)
+        new_h = ih
+        new_w = int(ih * r)
     else:
-        new_w = tw
-        new_h = int(tw / r)
+        new_w = iw
+        new_h = int(iw / r)
     thumb_copy = thumb_copy.resize((new_w, new_h), Image.LANCZOS)
-    left = (new_w - tw) // 2
-    top = (new_h - th) // 2
-    thumb_copy = thumb_copy.crop((left, top, left + tw, top + th))
-    dark = Image.new('RGB', (tw, th), (0, 0, 0))
+    left = (new_w - iw) // 2
+    top = (new_h - ih) // 2
+    thumb_copy = thumb_copy.crop((left, top, left + iw, top + ih))
+    dark = Image.new('RGB', (iw, ih), (0, 0, 0))
     thumb_copy = Image.blend(thumb_copy, dark, 0.15)
-    base.paste(thumb_copy, (x, y))
-
-    draw = ImageDraw.Draw(base)
-    if is_video:
-        hole_count = max(3, th // 60)
-        _draw_perforations(draw, x, y, tw, th, count=hole_count, horizontal=False)
-    else:
-        hole_count = max(3, tw // 60)
-        _draw_perforations(draw, x, y, tw, th, count=hole_count, horizontal=True)
+    # Rounded corners mask
+    mask = Image.new('L', (iw, ih), 0)
+    md = ImageDraw.Draw(mask)
+    md.rounded_rectangle([0, 0, iw - 1, ih - 1], radius=radius, fill=255)
+    base.paste(thumb_copy, (x + g, y + g), mask)
 
 def _try_font(*paths, size=28):
     for p in paths:
@@ -433,64 +463,123 @@ def _try_font(*paths, size=28):
 
 def generate_simple_og_image(project, output_path=None):
     """OG image — style.css light theme, single project image as full background."""
-    from PIL import ImageDraw
+    from PIL import ImageDraw, ImageFilter
 
-    brico, inter_m, inter_r, inter_s = _load_og_fonts()
+    brico, brico_i, brico_badge, inter_m, inter_r, inter_s = _load_og_fonts()
     W, H = 1200, 630
 
-    src = project.get("thumbnail")
-    if not src or not Path(src).exists():
-        for m in (project.get("media") or []):
-            src = m.get("thumbnail") or m.get("src")
-            if src and Path(src).exists():
-                break
-            src = None
-
     img = Image.new('RGB', (W, H), OG_BG)
-    draw = ImageDraw.Draw(img)
 
+    def _corner_gradient(color, max_alpha, corner, extent):
+        """45° gradient from corner, opaque at corner → fade out."""
+        overlay = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        od = ImageDraw.Draw(overlay)
+        max_t = int((W + H) * extent)
+        step = max(1, max_t // 300)
+        if corner == "bl":
+            for t in range(0, max_t + 1, step):
+                a = int(max_alpha * (1 - t / max_t) ** 1.0)
+                x0 = max(0, t - H)
+                y0 = H - (t - x0)
+                x1 = min(W, t)
+                y1 = H - (t - x1)
+                od.line([(x0, y0), (x1, y1)], fill=(*color, a), width=step + 1)
+        elif corner == "tr":
+            for t in range(0, max_t + 1, step):
+                a = int(max_alpha * (1 - t / max_t) ** 1.0)
+                x0 = max(0, W - t)
+                y0 = t - (W - x0)
+                x1 = min(W, W - t + H)
+                y1 = t - (W - x1)
+                od.line([(x0, y0), (x1, y1)], fill=(*color, a), width=step + 1)
+        return overlay
+
+    # Single first image as background
+    src = None
+    for m in (project.get("media") or []):
+        src = m.get("thumbnail") or m.get("src")
+        if src and Path(src).exists():
+            break
+        src = None
     if src:
         thumb = _load_thumbnail(src)
         if thumb:
             r = thumb.width / thumb.height
             target_r = W / H
             if r > target_r:
-                new_w = W
-                new_h = int(W / r)
-            else:
                 new_h = H
                 new_w = int(H * r)
+            else:
+                new_w = W
+                new_h = int(W / r)
             thumb = thumb.resize((new_w, new_h), Image.LANCZOS)
             left = (new_w - W) // 2
             top = (new_h - H) // 2
-            thumb = thumb.crop((left, top, left + W, top + H)).convert('RGBA')
-            overlay = Image.new('RGBA', (W, H), (0, 0, 0, 0))
-            od = ImageDraw.Draw(overlay)
-            gh = int(H * 0.55)
-            for i in range(gh):
-                a = int(46 * (1 - i / gh))
-                od.rectangle([0, H - gh + i, W, H - gh + i + 1], fill=(44, 62, 80, a))
-            img = Image.alpha_composite(thumb, overlay).convert('RGB')
+            thumb = thumb.crop((left, top, left + W, top + H))
+            img = thumb
+    img_rgba = img.convert('RGBA')
+    overlay = _corner_gradient((0, 0, 0), 200, "bl", 0.5)
+    img_rgba = Image.alpha_composite(img_rgba, overlay)
+    top_overlay = _corner_gradient((255, 255, 255), 100, "tr", 0.3)
+    img_rgba = Image.alpha_composite(img_rgba, top_overlay)
+    img = img_rgba.convert('RGB')
 
-    # Accent lines (style.css top/bottom border)
-    draw.rectangle([0, 0, W, 3], fill=OG_ACCENT)
-    draw.rectangle([0, H - 3, W, H], fill=OG_ACCENT)
+    draw = ImageDraw.Draw(img)
 
-    # Badge top-right (style.css accent bg)
+    # Accent lines (top/bottom)
+    draw.rectangle([0, 0, W, 10], fill=OG_ACCENT)
+    draw.rectangle([0, H - 10, W, H], fill=OG_ACCENT)
+
+    def _soft_shadow(elem_fn, off=3, radius=6):
+        """Render element on temp layer, blur it, paste as shadow."""
+        layer = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        ld = ImageDraw.Draw(layer)
+        elem_fn(ld)
+        blurred = layer.filter(ImageFilter.GaussianBlur(radius=radius))
+        # Shift shadow by offset
+        offset_layer = Image.new('RGBA', (W, H), (0, 0, 0, 0))
+        offset_layer.paste(blurred, (off, off), blurred)
+        img.paste(offset_layer, (0, 0), offset_layer)
+
+    def _shadow_text(pos, text, font, fill):
+        def draw_shadow(d):
+            d.text(pos, text, font=font, fill=(0, 0, 0, 200))
+        _soft_shadow(draw_shadow, off=3, radius=5)
+        draw.text(pos, text, font=font, fill=fill)
+
+    # Badge top-right
     badge = project.get("type", "photo").upper()
     try:
-        bb = draw.textbbox((0, 0), " " + badge + " ", font=inter_s)
+        bb = draw.textbbox((0, 0), " " + badge + " ", font=brico_badge)
         bw, bh = bb[2] - bb[0], bb[3] - bb[1]
     except Exception:
-        bw, bh = 80, 18
-    bx, by = W - bw - 32, 16
-    draw.rounded_rectangle([bx, by, bx + bw + 14, by + bh + 10], radius=4, fill=OG_ACCENT)
-    draw.text((bx + 7, by + 5), " " + badge + " ", fill=OG_BG, font=inter_s)
+        bw, bh = 120, 28
+    pad_h, pad_v = 20, 14
+    badge_w = bw + pad_h * 2
+    bx = W - 16 - badge_w
+    by = 28
+    def draw_badge(d):
+        d.rounded_rectangle([bx, by, bx + bw + pad_h * 2, by + bh + pad_v * 2], radius=8, fill=(0, 0, 0, 200))
+    _soft_shadow(draw_badge, off=3, radius=6)
+    draw.rounded_rectangle([bx, by, bx + bw + pad_h * 2, by + bh + pad_v * 2], radius=8, fill=OG_ACCENT)
+    ty = by + pad_v - bb[1]
+    draw.text((bx + pad_h, ty), " " + badge + " ", fill=(255, 255, 255), font=brico_badge)
 
-    # Title bottom-left (style.css serif, dark text)
+    # Smaller brico for brand
+    brico_small = _try_font(str(FONT_DIR / "BricolageGrotesque-Regular.ttf"), size=32) or brico
+    brico_small_i = _try_font(
+        str(FONT_DIR / "BricolageGrotesque-Italic.ttf"),
+        str(FONT_DIR / "BricolageGrotesque-RegularItalic.ttf"),
+        str(FONT_DIR / "BricolageGrotesque-MediumItalic.ttf"),
+        size=32
+    ) or brico_small
+
+    # Title bottom-left
+    WHITE = (255, 255, 255)
     title = project.get("title", "Untitled")
     year = project.get("year", "")
-    yp = H - 120
+    yp = H - 130
+    last_y = yp
     try:
         words = title.split()
         lines, cur = [], ""
@@ -504,28 +593,36 @@ def generate_simple_og_image(project, output_path=None):
                 cur = w
         if cur: lines.append(cur)
         for line in lines[:2]:
-            draw.text((32, yp), line, fill=OG_TEXT, font=brico)
-            yp += 64
+            _shadow_text((32, yp), line, brico, WHITE)
+            last_y = yp
+            yp += 66
     except Exception:
-        draw.text((32, yp), title[:50], fill=OG_TEXT, font=brico)
-        yp += 64
+        _shadow_text((32, yp), title[:50], brico, WHITE)
+        last_y = yp
+        yp += 66
     if year:
-        draw.text((32, yp + 4), str(year), fill=OG_ACCENT, font=inter_m)
+        _shadow_text((32, last_y + 70), str(year), inter_m, WHITE)
 
-    # Logo top-left
+    # Brand top-left (smaller, like index page: logo + stacked name)
     lp = Path("media/logo.png")
+    logo_right = 32
+    brico_small_size = brico_small.size if hasattr(brico_small, 'size') else 32
+    text_top_y = 24
+    line_gap = int(brico_small_size * 0.25)
+    logo_h = int(brico_small_size * 2 + line_gap)
     if lp.exists():
         try:
             logo = Image.open(lp)
+            logo.thumbnail((logo_h, logo_h), Image.LANCZOS)
             if logo.mode == 'RGBA':
-                logo.thumbnail((40, 40), Image.LANCZOS)
-                img.paste(logo, (32, 20), logo)
+                img.paste(logo, (32, text_top_y), logo)
             else:
-                logo.thumbnail((40, 40), Image.LANCZOS)
-                img.paste(logo, (32, 20))
+                img.paste(logo, (32, text_top_y))
+            logo_right = 32 + logo.width + 10
         except Exception:
             pass
-    draw.text((80, 28), "Jan Levínský", fill=OG_TEXT, font=inter_s)
+    _shadow_text((logo_right, text_top_y), "Jan", brico_small, WHITE)
+    _shadow_text((logo_right, text_top_y + brico_small_size + int(line_gap * 0.5)), "Levínský", brico_small_i, OG_ACCENT)
 
     if output_path:
         try:
@@ -1087,6 +1184,8 @@ class Handler(SimpleHTTPRequestHandler):
             self.handle_generate_lqip()
         elif path == "/api/generate-simple-og":
             self.handle_generate_simple_og()
+        elif path == "/api/generate-all-og":
+            self.handle_generate_all_og()
         elif path == "/api/deploy":
             self.handle_deploy()
         elif path == "/api/normalize-filenames":
@@ -1095,6 +1194,28 @@ class Handler(SimpleHTTPRequestHandler):
             self.send_response(404)
             self.end_headers()
 
+    def _generate_project_og(self, project):
+        """Generate OG image for a single project, update its og_image field."""
+        # Only generate if project has a valid media file on disk
+        has_media = any(
+            Path(m.get("thumbnail") or m.get("src", "")).exists()
+            for m in (project.get("media") or [])
+            if m.get("thumbnail") or m.get("src")
+        )
+        if not has_media:
+            return False
+        ptype = project.get("type", "photo")
+        pyear = project.get("year", "unknown")
+        ptitle = project.get("title", "untitled")
+        sub_dir = MEDIA_DIR / ptype / pyear / safe_folder_name(ptitle)
+        sub_dir.mkdir(parents=True, exist_ok=True)
+        output_path = sub_dir / "og-image.png"
+        result = generate_simple_og_image(project, output_path)
+        if result:
+            project["og_image"] = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/og-image.png"
+            return True
+        return False
+
     # --- POST Handler Implementations ---
     def handle_save(self):
         content_len = int(self.headers.get("Content-Length", 0))
@@ -1102,6 +1223,12 @@ class Handler(SimpleHTTPRequestHandler):
         try:
             new_data = json.loads(body)
             push_undo_state()
+            # Preserve og_image from existing projects (builder UI doesn't send it)
+            old_by_idx = {p.get("id"): p.get("og_image") for p in data["projects"]}
+            for project in new_data:
+                pid = project.get("id")
+                if pid in old_by_idx and old_by_idx[pid] and not project.get("og_image"):
+                    project["og_image"] = old_by_idx[pid]
             data["projects"] = new_data
             save_json()
             self.send_json({"ok": True})
@@ -1367,22 +1494,26 @@ class Handler(SimpleHTTPRequestHandler):
                 self.send_json({"ok": False, "error": "Neplatny projekt"})
                 return
             project = data["projects"][project_idx]
-            ptype = project.get("type", "photo")
-            pyear = project.get("year", "unknown")
-            ptitle = project.get("title", "untitled")
-            sub_dir = MEDIA_DIR / ptype / pyear / safe_folder_name(ptitle)
-            sub_dir.mkdir(parents=True, exist_ok=True)
-            output_path = sub_dir / "og-image.png"
-            result = generate_simple_og_image(project, output_path)
-            if result:
-                rel_path = f"media/{ptype}/{pyear}/{safe_folder_name(ptitle)}/og-image.png"
-                project["og_image"] = rel_path
+            ok = self._generate_project_og(project)
+            if ok:
                 save_json()
-                self.send_json({"ok": True, "path": rel_path})
+                self.send_json({"ok": True, "path": project.get("og_image")})
             else:
                 self.send_json({"ok": False, "error": "Generation failed"})
         except Exception as e:
             self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_generate_all_og(self):
+        """Generate OG images for all projects at once."""
+        try:
+            count = 0
+            for project in data["projects"]:
+                if self._generate_project_og(project):
+                    count += 1
+            save_json()
+            self.send_json({"ok": True, "message": f"Vygenerovano {count} OG obrazku"})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
 
     def handle_deploy(self):
         success, message = git_deploy()

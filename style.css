@@ -387,3 +387,106 @@ img.loaded + .lqip-bg,
     scroll-behavior: auto !important;
   }
 }
+
+/* ── Shared: Logo ── */
+.logo-mark {
+  display: block;
+  width: auto;
+  height: 103px;
+  object-fit: contain;
+  flex-shrink: 0;
+  opacity: 0;
+  animation: logoReveal 0.7s 0.1s var(--ease-out-expo) forwards;
+}
+
+@keyframes logoReveal {
+  0% { opacity: 0; transform: translateY(16px) scale(0.88); }
+  60% { opacity: 1; transform: translateY(-1px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.logo-mark.anim-done {
+  animation: none;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: transform 0.4s var(--ease-out-expo), opacity 0.4s var(--ease-out-expo);
+}
+
+.logo-mark.anim-done:hover {
+  transform: translateY(-3px) scale(1.04);
+  opacity: 0.9;
+}
+
+.brand-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.brand-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+@media (max-width: 1024px) {
+  .logo-mark { height: 88px; }
+}
+
+@media (max-width: 880px) {
+  .logo-mark { height: 80px; }
+  .menu-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    margin-top: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-radius: var(--r-sm);
+    transition: background 0.25s ease;
+  }
+  .menu-toggle:hover { background: var(--surface); }
+  .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+    transition: transform 0.35s var(--ease-out-expo), opacity 0.25s ease;
+  }
+  .menu-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .menu-toggle.active span:nth-child(2) { opacity: 0; }
+  .menu-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+  .brand-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.45s var(--ease-out-expo), opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+  }
+  .brand-panel.open {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 4px;
+  }
+}
+
+@media (max-width: 640px) {
+  .logo-mark { height: 66px; }
+}
+
+@media (max-width: 480px) {
+  .logo-mark { height: 59px; }
+}
+
+@media (max-width: 400px) {
+  .logo-mark { height: 52px; }
+}
+
+@media (min-width: 881px) {
+  .menu-toggle { display: none; }
+}
