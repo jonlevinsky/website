@@ -148,11 +148,56 @@ html.lib-anim .h1-char { opacity: 0; }
 .links a:hover { color: var(--accent); gap: 10px; }
 .links a:hover i { opacity: 1; color: var(--accent); transform: translate(1px, -1px); }
 
+.cta-wrap {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.42s var(--ease-out-expo) forwards;
+}
+.cta-text {
+  font-size: 11.5px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+.cta-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  transition: gap 0.3s var(--ease-out-expo), color 0.3s ease;
+}
+.cta-link i {
+  font-size: 13px;
+  transition: transform 0.3s var(--ease-out-expo);
+}
+.cta-link:hover {
+  gap: 10px;
+  color: var(--accent);
+}
+.cta-link:hover i {
+  transform: translateX(2px);
+}
+
 main {
   display: flex;
   flex-direction: column;
+  min-height: 0;
   opacity: 0;
   animation: fadeIn 0.9s 0.2s var(--ease-out-expo) forwards;
+}
+
+#grid {
+  flex: 1;
+  min-height: 0;
+  padding-bottom: 60px;
 }
 
 .back-link {
@@ -285,7 +330,7 @@ img.loaded + .lqip-bg,
   align-items: center;
   text-align: center;
   position: relative;
-  margin-top: 40px;
+  margin-top: auto;
 }
 
 .g-footer::before {

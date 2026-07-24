@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kontakt — Jan Levínský, cinematography & photography.">
+<meta name="theme-color" content="#2c3e50">
+
+<meta property="og:title" content="Kontakt — Jan Levínský">
+<meta property="og:description" content="Cinematography & Photography. Napište mi.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://levinskyj.art/contact.html">
+<meta property="og:image" content="https://levinskyj.art/og-cover.webp">
+<meta name="twitter:card" content="summary_large_image">
+
+<title>Jan Levínský // Kontakt</title>
+<link rel="canonical" href="https://levinskyj.art/contact.html">
+<link rel="icon" type="image/png" href="./media/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/motion@12/dist/motion.js" defer></script>
+<link rel="stylesheet" href="style.css">
+<style>
+
+main {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  opacity: 0;
+  animation: fadeIn 0.9s 0.2s var(--ease-out-expo) forwards;
+}
+
+.contact-section {
+  opacity: 0;
+  animation: fadeUp 0.7s 0.3s var(--ease-out-expo) forwards;
+}
+
+.contact-section h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 11px;
+  line-height: 1;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.contact-intro {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.75;
+  font-weight: 300;
+  margin-bottom: 32px;
+  max-width: 440px;
+  text-wrap: pretty;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 500px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.form-group input,
+.form-group textarea {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.submit-btn {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-on-accent);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--r-md);
+  padding: 11px 24px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  transition: opacity 0.3s ease, transform 0.3s var(--ease-out-expo);
+  margin-top: 4px;
+}
+
+.submit-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+.submit-btn i {
+  font-size: 14px;
+}
+
+.submit-btn.loading {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.form-status {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+  min-height: 20px;
+}
+
+.form-status.success {
+  color: var(--accent);
+}
+
+.form-status.error {
+  color: #b91c1c;
+}
+
+</style>
+<base target="_self">
+  <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+  <link rel="dns-prefetch" href="//unpkg.com">
+  <style>
+    @font-face { font-family: 'Bricolage Grotesque'; font-display: swap; }
+    @font-face { font-family: 'Inter'; font-display: swap; }
+  </style>
+</head>
+<body>
+
+<div class="wrap">
+  <aside class="brand">
+    <div class="brand-top">
+      <div>
+        <div class="kicker">Kontakt</div>
+        <div class="brand-title-row">
+          <img src="./media/logo.png" alt="LJ" class="logo-mark">
+          <h1>
+            <span>Jan</span>
+            <span class="last">Levínský</span>
+          </h1>
+        </div>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="brand-panel" id="brandPanel" aria-hidden="true">
+      <div class="divider"></div>
+      <div class="intro">
+        Kameraman, fotograf a student filmové tvorby.
+      </div>
+      <nav class="links">
+          <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
+          <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
+          <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
+      </nav>
+      <div class="back-link">
+        <a href="index.html"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
+      </div>
+    </div>
+  </aside>
+
+  <main>
+    <section class="contact-section">
+      <h2>Napište mi</h2>
+      <div class="contact-intro">
+        Máte zajímavý projekt, nápad nebo otázku? Pošlete zprávu přes formulář níže a ozvu se zpátky.
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <div class="form-group">
+          <label for="formName">Jméno</label>
+          <input type="text" id="formName" name="name" required placeholder="Jak vás mám oslovit?">
+        </div>
+        <div class="form-group">
+          <label for="formEmail">E-mail</label>
+          <input type="email" id="formEmail" name="_replyto" required placeholder="vaš@email.cz">
+        </div>
+        <div class="form-group">
+          <label for="formMessage">Zpráva</label>
+          <textarea id="formMessage" name="message" required placeholder="Co byste chtěli řešit?"></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="formSubmit">
+          Odeslat <i class="ph ph-paper-plane-right"></i>
+        </button>
+        <div class="form-status" id="formStatus"></div>
+      </form>
+    </section>
+
+    <footer class="g-footer">
+      <div class="f-name">Jan Levínský</div>
+      <div class="f-role">Cinematography & Photography</div>
+      <a class="f-contact" href="mailto:levinskyj.cine@gmail.com">
+        <i class="ph ph-envelope" style="font-size: 14px;"></i>
+        levinskyj.cine@gmail.com
+      </a>
+    </footer>
+  </main>
+</div>
+
+<script src="main.js"></script>
+<script>
+prepareHero();
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.Motion && !prefersReduced) {
+    const heroChars = document.querySelectorAll('.brand-title-row h1 span');
+    if (heroChars.length) {
+      Motion.animate(
+        heroChars,
+        { opacity: [0, 1], y: ['0.6em', '0em'], rotate: [8, 0] },
+        { delay: Motion.stagger(0.04, { start: 0.12 }), duration: 0.75, easing: [0.22, 1, 0.36, 1] }
+      );
+    }
+  }
+  initScrollFX();
+});
+
+function initScrollFX() {
+  if (prefersReduced) return;
+  if (!ensureGsap() || typeof ScrollTrigger === 'undefined') return;
+  const footer = document.querySelector('.g-footer');
+  if (footer) {
+    const targets = footer.querySelectorAll('.f-name, .f-role, .f-contact');
+    gsap.fromTo(footer, { opacity: 0 }, {
+      opacity: 1, duration: 0.5, ease: 'power2.out',
+      scrollTrigger: { trigger: footer, start: 'top 92%', once: true }
+    });
+    gsap.fromTo(targets, { opacity: 0, y: 10 }, {
+      opacity: 1, y: 0, duration: 0.55, ease: 'power3.out', stagger: 0.08, delay: 0.1,
+      scrollTrigger: { trigger: footer, start: 'top 92%', once: true },
+      onComplete: () => gsap.set(targets, { clearProps: 'transform' })
+    });
+  }
+}
+
+/* FORMSPREE — nahraď endpoint za svůj z formspree.io */
+const FORM_ENDPOINT = 'https://formspree.io/f/xleabppd';
+
+const form = document.getElementById('contactForm');
+const status = document.getElementById('formStatus');
+const submitBtn = document.getElementById('formSubmit');
+
+form.addEventListener('submit', async e => {
+  e.preventDefault();
+  submitBtn.classList.add('loading');
+  status.textContent = '';
+  status.className = 'form-status';
+
+  try {
+    const res = await fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      status.textContent = 'Zpráva odeslána! Ozvu se co nejdříve.';
+      status.className = 'form-status success';
+      form.reset();
+    } else {
+      const data = await res.json();
+      throw new Error(data?.error || 'Chyba při odesílání');
+    }
+  } catch (err) {
+    status.textContent = 'Něco se pokazilo. Zkus to prosím znova nebo napiš přímo na levinskyj.cine@gmail.com';
+    status.className = 'form-status error';
+  }
+
+  submitBtn.classList.remove('loading');
+});
+
+document.getElementById('menuToggle').addEventListener('click', function() {
+  const panel = document.getElementById('brandPanel');
+  const isOpen = panel.classList.toggle('open');
+  this.classList.toggle('active', isOpen);
+  this.setAttribute('aria-expanded', isOpen);
+  panel.setAttribute('aria-hidden', !isOpen);
+});
+
+const logoEl = document.querySelector('.logo-mark');
+if (logoEl) {
+  logoEl.addEventListener('animationend', function() {
+    this.classList.add('anim-done');
+  });
+}
+</script>
+</body>
+</html>
