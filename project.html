@@ -841,7 +841,7 @@ main {
   transition: opacity 0.25s;
 }
 
-.modal-close, .modal-shortcuts-btn, .modal-ambient-btn {
+.modal-close, .modal-shortcuts-btn {
   width: 40px; height: 40px;
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
@@ -853,16 +853,13 @@ main {
   flex-shrink: 0;
 }
 
-.modal-close:hover, .modal-shortcuts-btn:hover, .modal-ambient-btn:hover {
+.modal-close:hover, .modal-shortcuts-btn:hover {
   background: rgba(255,255,255,0.15);
   color: #fff;
   border-color: rgba(255,255,255,0.25);
 }
 
-.modal-close:active, .modal-shortcuts-btn:active, .modal-ambient-btn:active { transform: scale(0.9); }
-
-.modal-ambient-btn.off i { color: rgba(255,255,255,0.2); }
-.modal-ambient-btn i { transition: color 0.3s ease; }
+.modal-close:active, .modal-shortcuts-btn:active { transform: scale(0.9); }
 
 .modal-nav {
   position: absolute;
@@ -1108,6 +1105,37 @@ main {
   .tile.video-tile .vol-wrap { display: none; }
   .tile.video-tile .time-wrap { font-size: 12px; }
   .tile .film-perf-v { opacity: 0.5; }
+
+  .tile.video-tile .tile-thumb .player .settings-panel {
+    position: absolute;
+    bottom: 60px;
+    right: 4px;
+    min-width: 190px;
+    max-width: calc(100vw - 32px);
+    font-size: 12px;
+  }
+  .tile.video-tile .tile-thumb .player .settings-item { padding: 7px 12px; font-size: 12px; }
+  .tile.video-tile .tile-thumb .player .settings-opt-row { padding: 7px 12px 7px 18px; font-size: 12px; }
+  .tile.video-tile .tile-thumb .player .settings-sub-header { font-size: 12px; padding: 2px 4px 6px 0; }
+  .tile.video-tile .tile-thumb .player .sub-overlay {
+    bottom: 72px;
+    padding: 0 16px;
+  }
+  .tile.video-tile .tile-thumb .player .sub-overlay span {
+    font-size: 13px;
+    padding: 4px 10px;
+    max-width: 90%;
+  }
+  .tile.video-tile .tile-thumb .player .time-wrap {
+    font-size: 11px;
+    height: 28px;
+    line-height: 28px;
+    padding: 0 6px;
+  }
+  .tile.video-tile .tile-thumb .player .controls-row { gap: 0; }
+  .tile.video-tile .tile-thumb .player .player-loading { width: 28px; height: 28px; }
+  .tile.video-tile .tile-thumb .player .controls { bottom: 4px; padding: 10px 8px; }
+  .tile.video-tile .tile-thumb .player .yt-progress { height: 20px; }
 }
 
 /* Ambient Lighting */
@@ -1131,6 +1159,229 @@ main {
   opacity: 0 !important;
   transition: opacity 0.6s ease;
 }
+
+/* ─── SETTINGS PANEL (YouTube-style) ────────────────── */
+.settings-btn { position: relative; }
+.settings-panel {
+  position: absolute;
+  bottom: 70px;
+  right: 12px;
+  background: rgba(33,33,33,0.98);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  min-width: 224px;
+  max-width: 260px;
+  z-index: 20;
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  pointer-events: none;
+  transition: opacity 0.18s var(--ease-out-expo), transform 0.18s var(--ease-out-expo);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.7);
+  overflow: hidden;
+}
+.settings-panel.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.settings-menu, .settings-sub {
+  padding: 8px 0;
+}
+.settings-sub { display: none; }
+.settings-menu.show, .settings-sub.show { display: block; }
+
+.settings-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 16px;
+  cursor: pointer;
+  color: #eee;
+  font-size: 13px;
+  font-weight: 400;
+  transition: background 0.1s ease;
+  user-select: none;
+}
+.settings-item:hover { background: rgba(255,255,255,0.08); }
+.settings-item i { font-size: 16px; margin-right: 6px; color: rgba(255,255,255,0.5); }
+
+.settings-item-value {
+  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.settings-item-value .chevron {
+  width: 5px; height: 5px;
+  border-right: 1.5px solid rgba(255,255,255,0.3);
+  border-top: 1.5px solid rgba(255,255,255,0.3);
+  transform: rotate(45deg);
+}
+
+.settings-sub-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 6px 8px 2px;
+  color: #eee;
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin: 0 0 4px;
+}
+.settings-back {
+  width: 34px; height: 34px;
+  border: none; border-radius: 50%;
+  background: transparent;
+  color: #eee;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s ease;
+  flex-shrink: 0;
+}
+.settings-back:hover { background: rgba(255,255,255,0.1); }
+.settings-back i { font-size: 20px; }
+.settings-sub-title { flex: 1; margin-left: 4px; }
+
+.settings-opt-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px 8px 24px;
+  cursor: pointer;
+  color: #ccc;
+  font-size: 13px;
+  transition: background 0.1s ease;
+  user-select: none;
+}
+.settings-opt-row:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.settings-opt-row.active { color: #fff; }
+.settings-opt-row .check {
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.settings-opt-row.active .check { opacity: 1; }
+.settings-opt-row .check::after {
+  content: '✓';
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.settings-opt-row i { font-size: 15px; margin-right: 6px; color: rgba(255,255,255,0.35); }
+.settings-opt-row:hover i { color: var(--accent); }
+.settings-opt-row.active i { color: var(--accent); }
+.settings-opt-row .sub-load-icon {
+  font-size: 15px;
+  color: rgba(255,255,255,0.35);
+  transition: color 0.15s ease;
+  margin-right: 6px;
+}
+.settings-opt-row:hover .sub-load-icon { color: var(--accent); }
+
+.settings-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 4px 0;
+}
+
+/* ─── SUBTITLE OVERLAY ─────────────────────────────── */
+.sub-overlay {
+  position: absolute;
+  left: 0; right: 0; bottom: 80px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 4;
+  padding: 0 40px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.sub-overlay.show { opacity: 1; }
+.sub-overlay span {
+  display: inline-block;
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 6px 14px;
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  max-width: 80%;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* ─── PLAYER VISUAL IMPROVEMENTS ───────────────────── */
+.controls {
+  padding: 48px 14px 10px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 40%, transparent 100%);
+}
+.controls-row { gap: 2px; }
+.time-wrap {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  background: rgba(255,255,255,0.06);
+  padding: 0 10px;
+  border-radius: 6px;
+  height: 32px;
+  line-height: 32px;
+}
+.time-cur { color: #fff; }
+.time-sep { color: rgba(255,255,255,0.3); margin: 0 3px; }
+.time-dur { color: rgba(255,255,255,0.4); }
+
+.yt-progress { height: 24px; margin-bottom: 2px; }
+.yt-track {
+  height: 4px;
+  border-radius: 3px;
+  background: rgba(255,255,255,0.15);
+}
+.yt-progress:hover .yt-track { height: 5px; background: rgba(255,255,255,0.2); }
+.yt-buf { background: rgba(255,255,255,0.25); border-radius: 3px; }
+.yt-fill { background: var(--accent); border-radius: 3px; }
+.yt-thumb {
+  width: 16px; height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0,0,0,0.5);
+  border: 2px solid var(--accent);
+}
+.yt-progress:hover .yt-thumb { background: #fff; }
+
+.ctrl-btn {
+  width: 40px; height: 40px;
+  border-radius: 8px;
+}
+.ctrl-btn:hover { background: rgba(255,255,255,0.08); }
+.ctrl-btn:active { transform: scale(0.9); }
+
+.vol-slider-wrap { width: 0; }
+.vol-wrap:hover .vol-slider-wrap,
+.vol-wrap:focus-within .vol-slider-wrap { width: 72px; }
+.vol-slider { width: 52px; height: 3px; margin: 0 8px; }
+.vol-slider::-webkit-slider-thumb { width: 14px; height: 14px; }
+.vol-slider::-moz-range-thumb { width: 14px; height: 14px; }
+
+.seek-tooltip {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.85);
+  bottom: calc(100% + 8px);
+}
+
+/* ─── PLAYER BORDER / GLOW ──────────────────────────── */
+.player {
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 8px 32px rgba(0,0,0,0.4);
+}
+.player.is-fs { box-shadow: none; }
 
 </style>
 <base target="_self">
@@ -1184,9 +1435,6 @@ main {
         <i class="ph ph-x" style="font-size:18px;"></i>
       </div>
       <div class="modal-counter" id="modal-counter"></div>
-      <div class="modal-ambient-btn" id="ambient-btn" title="Ambient light (A)" role="button" tabindex="0" aria-label="Toggle ambient light">
-        <i class="ph ph-lightbulb" style="font-size:18px;"></i>
-      </div>
       <div class="modal-shortcuts-btn" id="shortcuts-btn" title="Keyboard shortcuts (?)" role="button" tabindex="0" aria-label="Keyboard shortcuts">
         <i class="ph ph-keyboard" style="font-size:18px;"></i>
       </div>
@@ -1201,6 +1449,7 @@ main {
       <div class="sc-row"><span class="sc-label">Mute</span><div class="sc-keys"><span class="key">M</span></div></div>
       <div class="sc-row"><span class="sc-label">Fullscreen</span><div class="sc-keys"><span class="key">F</span></div></div>
       <div class="sc-row"><span class="sc-label">Prev / Next</span><div class="sc-keys"><span class="key">Shift &larr;</span><span class="key">Shift &rarr;</span></div></div>
+      <div class="sc-row"><span class="sc-label">Speed +/−</span><div class="sc-keys"><span class="key">&gt;</span><span class="key">&lt;</span></div></div>
       <div class="sc-row"><span class="sc-label">Ambient light</span><div class="sc-keys"><span class="key">A</span></div></div>
       <div class="sc-row"><span class="sc-label">Close</span><div class="sc-keys"><span class="key">Esc</span></div></div>
     </div>
@@ -1663,10 +1912,13 @@ let ambientFrameCount = 0;
 
 function toggleAmbient() {
   ambientEnabled = !ambientEnabled;
-  const btn = document.getElementById('ambient-btn');
   const canvas = document.getElementById('ambient-canvas');
-  if (btn) btn.classList.toggle('off', !ambientEnabled);
   if (canvas) canvas.classList.toggle('off', !ambientEnabled);
+  document.querySelectorAll('#ambient-on, #ambient-off').forEach(el => {
+    el.classList.toggle('active', (ambientEnabled && el.id === 'ambient-on') || (!ambientEnabled && el.id === 'ambient-off'));
+  });
+  const val = document.getElementById('ambient-val');
+  if (val) val.textContent = ambientEnabled ? 'On' : 'Off';
   if (ambientEnabled && modal.classList.contains('open')) {
     startAmbient();
   } else {
@@ -1869,7 +2121,7 @@ function renderMedia() {
         }
       }
     } else {
-      modalContent.innerHTML = buildPlayer(m.src);
+      modalContent.innerHTML = buildPlayer(m.src, m.sources);
       currentPhotoImg = null;
       ambientFrameCount = 0;
       setTimeout(() => { vp = initPlayer(); startAmbient(); }, 60);
@@ -1887,10 +2139,14 @@ function renderMedia() {
 function prev() { idx = (idx - 1 + media.length) % media.length; renderMedia(); }
 function next() { idx = (idx + 1) % media.length; renderMedia(); }
 
-function buildPlayer(src) {
+function buildPlayer(src, sources) {
   const s = src ? encodeURI(src) : src;
+  const qOpts = sources && sources.length > 1
+    ? sources.map((q, i) => '<div class="settings-opt-row' + (i === 0 ? ' active' : '') + '" data-quality="' + i + '" data-src="' + encodeURI(q.src) + '"><span>' + q.label + '</span><span class="check"></span></div>').join('')
+    : '';
   return '<div class="player paused" id="player">' +
     '<video id="vid" crossorigin="anonymous" src="' + s + '" playsinline preload="metadata" controlsList="nodownload"></video>' +
+    '<div class="sub-overlay" id="sub-overlay"><span id="sub-text"></span></div>' +
     '<div class="player-loading" id="player-loading"></div>' +
     '<div class="yt-big-play" id="yt-big-play">' +
     '<i class="ph ph-play"></i>' +
@@ -1927,12 +2183,48 @@ function buildPlayer(src) {
     '<span class="time-dur" id="dur-time">0:00</span>' +
     '</div>' +
     '<div class="controls-right">' +
+    '<button class="ctrl-btn settings-btn" id="settings-btn" title="Settings" aria-label="Settings">' +
+    '<i class="ph ph-gear" style="font-size:18px;"></i>' +
+    '</button>' +
     '<button class="ctrl-btn" id="fs-btn" title="Fullscreen (F)" aria-label="Fullscreen">' +
     '<i class="ph ph-corners-out" id="fs-icon" style="font-size:20px;"></i>' +
     '</button>' +
     '</div>' +
     '</div>' +
     '</div>' +
+    '<div class="settings-panel" id="settings-panel">' +
+    '<div class="settings-menu" id="settings-menu">' +
+    '<div class="settings-item" data-menu="speed"><span><i class="ph ph-clock"></i> Speed</span><span class="settings-item-value"><span id="speed-val">Normal</span><span class="chevron"></span></span></div>' +
+    '<div class="settings-item" data-menu="quality" id="quality-menu-item" style="' + (!qOpts ? 'display:none' : '') + '"><span><i class="ph ph-monitor"></i> Quality</span><span class="settings-item-value"><span id="quality-val">Auto</span><span class="chevron"></span></span></div>' +
+    '<div class="settings-item" data-menu="subtitles"><span><i class="ph ph-closed-captioning"></i> Subtitles</span><span class="settings-item-value"><span id="subs-val">Off</span><span class="chevron"></span></span></div>' +
+    '<div class="settings-item" data-menu="ambient"><span><i class="ph ph-lightbulb"></i> Ambient</span><span class="settings-item-value"><span id="ambient-val">On</span><span class="chevron"></span></span></div>' +
+    '</div>' +
+    '<div class="settings-sub" id="sub-speed">' +
+    '<div class="settings-sub-header"><button class="settings-back" data-back="speed"><i class="ph ph-caret-left"></i></button><span class="settings-sub-title">Speed</span></div>' +
+    '<div class="settings-opt-row" data-speed="0.25"><span>0.25×</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row" data-speed="0.5"><span>0.5×</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row" data-speed="0.75"><span>0.75×</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row active" data-speed="1"><span>Normal</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row" data-speed="1.25"><span>1.25×</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row" data-speed="1.5"><span>1.5×</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row" data-speed="2"><span>2×</span><span class="check"></span></div>' +
+    '</div>' +
+    '<div class="settings-sub" id="sub-subtitles">' +
+    '<div class="settings-sub-header"><button class="settings-back" data-back="subtitles"><i class="ph ph-caret-left"></i></button><span class="settings-sub-title">Subtitles</span></div>' +
+    '<div class="settings-opt-row active" data-sub="off"><span><i class="ph ph-closed-captioning"></i> Off</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row" id="sub-load-row"><span><i class="ph ph-file-plus sub-load-icon"></i> Load subtitles…</span></div>' +
+    '</div>' +
+    '<div class="settings-sub" id="sub-quality">' +
+    '<div class="settings-sub-header"><button class="settings-back" data-back="quality"><i class="ph ph-caret-left"></i></button><span class="settings-sub-title">Quality</span></div>' +
+    qOpts +
+    '</div>' +
+    '<div class="settings-sub" id="sub-ambient">' +
+    '<div class="settings-sub-header"><button class="settings-back" data-back="ambient"><i class="ph ph-caret-left"></i></button><span class="settings-sub-title">Ambient</span></div>' +
+    '<div class="settings-opt-row active" id="ambient-on"><span>On</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row" id="ambient-off"><span>Off</span><span class="check"></span></div>' +
+    '</div>' +
+    '</div>' +
+    '<input type="file" id="sub-file-input" accept=".vtt,.srt,.ass" style="display:none">' +
     '</div>';
 }
 
@@ -1940,6 +2232,7 @@ function initPlayer() { return initPlayerIn(document); }
 
 function initPlayerIn(root) {
   const $ = id => root.getElementById ? root.getElementById(id) : root.querySelector('#'+id);
+
   const player   = $('player');
   const vid      = $('vid');
   const controls = $('controls');
@@ -1963,7 +2256,16 @@ function initPlayerIn(root) {
   const loading  = $('player-loading');
   if (!vid) return null;
 
+  const settingsBtn = $('settings-btn');
+  const settingsPnl = $('settings-panel');
+  const settingsMenu= $('settings-menu');
+  const subFileInp  = $('sub-file-input');
+  const subOverlay  = $('sub-overlay');
+  const subText     = $('sub-text');
+
   let hideTimer, isFs = false;
+  let cues = [], subActive = false, curSpeed = 1;
+  let subRaf = null;
 
   function fmt(s){
     if (isNaN(s) || !isFinite(s)) return '0:00';
@@ -1984,9 +2286,7 @@ function initPlayerIn(root) {
   }
 
   function updatePlayIcon() {
-    if (playIcon) {
-      playIcon.className = vid.paused ? 'ph ph-play' : 'ph ph-pause';
-    }
+    if (playIcon) playIcon.className = vid.paused ? 'ph ph-play' : 'ph ph-pause';
     if (player) player.classList.toggle('paused', vid.paused);
   }
 
@@ -2034,9 +2334,169 @@ function initPlayerIn(root) {
     else document.exitFullscreen?.().catch(()=>{});
   }
 
+  function showMenu(id) {
+    if (!settingsPnl) return;
+    settingsPnl.querySelectorAll('.settings-menu, .settings-sub').forEach(el => el.classList.remove('show'));
+    const target = settingsPnl.querySelector(id);
+    if (target) target.classList.add('show');
+  }
+
+  function closeSettings(e) {
+    if (settingsPnl && !settingsPnl.contains(e.target) && e.target !== settingsBtn) {
+      settingsPnl.classList.remove('show');
+    }
+  }
+
+  function toggleSettings(e) {
+    e.stopPropagation();
+    if (!settingsPnl) return;
+    const wasOpen = settingsPnl.classList.contains('show');
+    settingsPnl.classList.toggle('show');
+    if (!wasOpen) {
+      showMenu('#settings-menu');
+      setTimeout(() => document.addEventListener('click', closeSettings, { once: true }), 0);
+    }
+  }
+
+  function setSpeed(speed) {
+    curSpeed = speed;
+    vid.playbackRate = speed;
+    const sub = settingsPnl?.querySelector('#sub-speed');
+    if (sub) {
+      sub.querySelectorAll('.settings-opt-row').forEach(el => {
+        el.classList.toggle('active', parseFloat(el.dataset.speed) === speed);
+      });
+    }
+    const val = document.getElementById('speed-val');
+    if (val) val.textContent = speed === 1 ? 'Normal' : speed + '×';
+    showMenu('#settings-menu');
+  }
+
+  function loadSubtitleFile(file) {
+    const ext = file.name.split('.').pop().toLowerCase();
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const text = e.target.result;
+      if (ext === 'vtt') cues = parseVTT(text);
+      else if (ext === 'srt') cues = parseSRT(text);
+      else if (ext === 'ass') cues = parseASS(text);
+      else return;
+
+      const sub = settingsPnl?.querySelector('#sub-subtitles');
+      if (cues.length && sub) {
+        const existing = sub.querySelectorAll('[data-sub]:not([data-sub="off"])');
+        existing.forEach(el => el.remove());
+        cues.forEach((c, i) => {
+          const row = document.createElement('div');
+          row.className = 'settings-opt-row' + (i === 0 ? '' : '');
+          row.dataset.sub = i;
+          row.innerHTML = '<span><i class="ph ph-closed-captioning"></i> ' + (c.label || 'Track ' + (i + 1)) + '</span><span class="check"></span>';
+          row.addEventListener('click', e => { e.stopPropagation(); selectSubTrack(i); });
+          sub.insertBefore(row, sub.querySelector('#sub-load-row'));
+        });
+        selectSubTrack(0);
+      }
+      let subLabel = file.name.length > 20 ? file.name.slice(0, 18) + '…' : file.name;
+      document.getElementById('subs-val').textContent = subLabel;
+    };
+    reader.readAsText(file);
+  }
+
+  function selectSubTrack(idx) {
+    subActive = idx >= 0 && idx < cues.length;
+    const sub = settingsPnl?.querySelector('#sub-subtitles');
+    if (sub) {
+      sub.querySelectorAll('.settings-opt-row[data-sub]').forEach(el => {
+        const val = el.dataset.sub;
+        el.classList.toggle('active', (subActive && parseInt(val) === idx) || (!subActive && val === 'off'));
+      });
+    }
+    if (!subActive) {
+      if (subOverlay) subOverlay.classList.remove('show');
+      if (subText) subText.textContent = '';
+      if (subRaf) { cancelAnimationFrame(subRaf); subRaf = null; }
+      document.getElementById('subs-val').textContent = 'Off';
+    } else {
+      updateSubtitle();
+      document.getElementById('subs-val').textContent = cues[idx].label || 'Track ' + (idx + 1);
+    }
+    showMenu('#settings-menu');
+  }
+
+  function updateSubtitle() {
+    if (!subActive || !cues.length || !subOverlay || !subText) { subRaf = null; return; }
+    const ct = vid.currentTime;
+    let found = false;
+    for (const cue of cues) {
+      if (ct >= cue.start - 0.05 && ct <= cue.end + 0.05) {
+        if (subText.innerHTML !== cue.text) subText.innerHTML = cue.text;
+        subOverlay.classList.add('show');
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      subOverlay.classList.remove('show');
+      subText.textContent = '';
+    }
+    subRaf = requestAnimationFrame(updateSubtitle);
+  }
+
   if (playBtn) playBtn.addEventListener('click', e => { e.stopPropagation(); togglePlay(); });
   if (muteBtn) muteBtn.addEventListener('click', e => { e.stopPropagation(); toggleMute(); });
   if (fsBtn) fsBtn.addEventListener('click', e => { e.stopPropagation(); toggleFs(); });
+  if (settingsBtn) settingsBtn.addEventListener('click', toggleSettings);
+
+  if (settingsMenu) settingsMenu.addEventListener('click', e => {
+    const item = e.target.closest('.settings-item');
+    if (item && item.dataset.menu) {
+      e.stopPropagation();
+      showMenu('#sub-' + item.dataset.menu);
+    }
+  });
+
+  if (settingsPnl) settingsPnl.addEventListener('click', e => {
+    const back = e.target.closest('.settings-back');
+    if (back) { e.stopPropagation(); showMenu('#settings-menu'); }
+    const row = e.target.closest('.settings-opt-row');
+    if (!row) return;
+
+    if (row.dataset.speed !== undefined) {
+      e.stopPropagation();
+      setSpeed(parseFloat(row.dataset.speed));
+    } else if (row.dataset.quality !== undefined) {
+      e.stopPropagation();
+      const parent = row.closest('.settings-sub');
+      if (parent) parent.querySelectorAll('.settings-opt-row').forEach(r => r.classList.remove('active'));
+      row.classList.add('active');
+      const newSrc = row.dataset.src;
+      const oldSrc = vid.src.split('/').pop();
+      const newFile = newSrc.split('/').pop();
+      if (newSrc && oldSrc !== newFile) {
+        const ct = vid.currentTime, playing = !vid.paused;
+        vid.src = newSrc;
+        vid.currentTime = ct;
+        if (playing) vid.play().catch(()=>{});
+      }
+      const label = row.querySelector('span')?.textContent || 'Auto';
+      document.getElementById('quality-val').textContent = label;
+      showMenu('#settings-menu');
+    } else if (row.dataset.sub !== undefined) {
+      e.stopPropagation();
+      selectSubTrack(parseInt(row.dataset.sub));
+    } else if (row.id === 'sub-load-row') {
+      e.stopPropagation();
+      if (subFileInp) subFileInp.click();
+    } else if (row.id === 'ambient-on' || row.id === 'ambient-off') {
+      e.stopPropagation();
+      toggleAmbient();
+    }
+  });
+
+  if (subFileInp) subFileInp.addEventListener('change', e => {
+    if (e.target.files && e.target.files[0]) loadSubtitleFile(e.target.files[0]);
+  });
+
   if (player) {
     vid.addEventListener('click', togglePlay);
     player.addEventListener('mousemove', showControls);
@@ -2044,12 +2504,13 @@ function initPlayerIn(root) {
     player.addEventListener('dblclick', e => { e.stopPropagation(); toggleFs(); });
   }
 
-  vid.addEventListener('play', () => { updatePlayIcon(); showControls(); });
+  vid.addEventListener('play', () => { updatePlayIcon(); showControls(); if (subActive) updateSubtitle(); });
   vid.addEventListener('pause', () => { updatePlayIcon(); controls?.classList.add('active'); clearTimeout(hideTimer); });
   vid.addEventListener('ended', () => { updatePlayIcon(); controls?.classList.add('active'); });
   vid.addEventListener('waiting', () => { if (loading) loading.classList.add('show'); });
   vid.addEventListener('playing', () => { if (loading) loading.classList.remove('show'); });
   vid.addEventListener('canplay', () => { if (loading) loading.classList.remove('show'); });
+  vid.addEventListener('seeked', () => { if (subActive) updateSubtitle(); });
 
   vid.addEventListener('timeupdate', () => {
     const pct = vid.duration ? vid.currentTime / vid.duration : 0;
@@ -2105,7 +2566,100 @@ function initPlayerIn(root) {
   });
 
   updatePlayIcon(); updateVolIcon(); updateFsIcon(); showControls();
-  return { togglePlay, toggleMute, toggleFs, seekBy, setVolume };
+  return { togglePlay, toggleMute, toggleFs, seekBy, setVolume, setSpeed, selectSubTrack, loadSubtitleFile };
+}
+
+function parseVTT(text) {
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const cues = [];
+  let i = 0;
+  while (i < lines.length && !lines[i].trim().startsWith('WEBVTT') && !lines[i].trim().match(/^\d+:\d+/)) i++;
+  const timeRe = /(\d{1,2}:?\d{2}:\d{2}\.\d{3}|\d{1,2}:\d{2}\.\d{3})\s*-->\s*(\d{1,2}:?\d{2}:\d{2}\.\d{3}|\d{1,2}:\d{2}\.\d{3})/;
+  for (; i < lines.length; i++) {
+    const m = lines[i].match(timeRe);
+    if (m) {
+      const start = parseVTTTime(m[1]);
+      const end = parseVTTTime(m[2]);
+      const textLines = [];
+      i++;
+      while (i < lines.length && lines[i].trim() !== '' && !lines[i].match(timeRe)) {
+        textLines.push(lines[i].replace(/<[^>]+>/g, ''));
+        i++;
+      }
+      if (textLines.length) cues.push({ start, end, text: textLines.join('<br>').trim() });
+    }
+  }
+  return cues;
+}
+
+function parseVTTTime(str) {
+  const parts = str.split(':');
+  if (parts.length === 3) {
+    return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2].replace(',', '.'));
+  }
+  return parseFloat(parts[0]) * 60 + parseFloat(parts[parts.length - 1].replace(',', '.'));
+}
+
+function parseSRT(text) {
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const cues = [];
+  const timeRe = /(\d{2}:\d{2}:\d{2}[.,]\d{3})\s*-->\s*(\d{2}:\d{2}:\d{2}[.,]\d{3})/;
+  let i = 0;
+  while (i < lines.length) {
+    if (lines[i].trim() === '' || /^\d+$/.test(lines[i].trim())) {
+      i++;
+      const m = lines[i] ? lines[i].match(timeRe) : null;
+      if (m) {
+        const start = parseSRTTime(m[1]);
+        const end = parseSRTTime(m[2]);
+        i++;
+        const textLines = [];
+        while (i < lines.length && lines[i].trim() !== '') {
+          textLines.push(lines[i]);
+          i++;
+        }
+        if (textLines.length) cues.push({ start, end, text: textLines.join('<br>').trim() });
+      }
+    } else { i++; }
+  }
+  return cues;
+}
+
+function parseSRTTime(str) {
+  const parts = str.replace(',', '.').split(':');
+  return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]);
+}
+
+function parseASS(text) {
+  const lines = text.replace(/\r\n/g, '\n').split('\n');
+  const cues = [];
+  let inEvents = false;
+  let fmtParts = [];
+  for (const line of lines) {
+    if (line.startsWith('Format:') || line.startsWith('format:')) {
+      fmtParts = line.split(':')[1].split(',').map(s => s.trim().toLowerCase());
+    }
+    if (line.startsWith('Dialogue:') || line.startsWith('dialogue:')) {
+      const parts = line.split(',');
+      if (parts.length >= 10) {
+        const start = parseASSTime(parts[1].trim());
+        const end = parseASSTime(parts[2].trim());
+        const textIdx = fmtParts.length ? fmtParts.indexOf('text') : -1;
+        let text = textIdx >= 0 ? parts.slice(textIdx).join(',').trim() : parts.slice(9).join(',').trim();
+        text = text.replace(/\{[^}]+\}/g, '').replace(/\\N/g, '<br>');
+        if (text) cues.push({ start, end, text });
+      }
+    }
+  }
+  return cues;
+}
+
+function parseASSTime(str) {
+  const parts = str.replace(',', '.').split(':');
+  if (parts.length === 4) {
+    return parseFloat(parts[0]) * 3600 + parseFloat(parts[1]) * 60 + parseFloat(parts[2]) + parseFloat(parts[3]);
+  }
+  return parseFloat(parts[0]) * 60 + parseFloat(parts[1]);
 }
 
 function getModalVideo() {
@@ -2126,7 +2680,7 @@ function onKey(e) {
   if (!modal.classList.contains('open')) return;
 
   const hasVideo = !!vp;
-  const videoKeys = [' ','k','K','j','J','l','L','m','M','f','F','ArrowUp','ArrowDown'];
+  const videoKeys = [' ','k','K','j','J','l','L','m','M','f','F','ArrowUp','ArrowDown','>','.','<',','];
   if (hasVideo && videoKeys.includes(e.key) && !e.shiftKey) e.preventDefault();
   if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') e.preventDefault();
 
@@ -2182,6 +2736,24 @@ function onKey(e) {
         showFeedback(document.fullscreenElement ? 'ph-corners-in' : 'ph-corners-out');
       }
       break;
+    case '>': case '.':
+      if (hasVideo && vp.setSpeed) {
+        const rates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
+        const cur = getModalVideo()?.playbackRate || 1;
+        const next = rates.find(r => r > cur) || rates[rates.length - 1];
+        vp.setSpeed(next);
+        showFeedback('ph-speedometer');
+      }
+      break;
+    case '<': case ',':
+      if (hasVideo && vp.setSpeed) {
+        const rates = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2];
+        const cur = getModalVideo()?.playbackRate || 1;
+        const prev = [...rates].reverse().find(r => r < cur) || rates[0];
+        vp.setSpeed(prev);
+        showFeedback('ph-speedometer');
+      }
+      break;
     case '?':
       document.getElementById('shortcuts-panel').classList.toggle('show');
       break;
@@ -2205,8 +2777,6 @@ window.addEventListener('resize', () => {
 document.getElementById('modal-close').addEventListener('click', closeModal);
 document.getElementById('modal-prev').addEventListener('click', prev);
 document.getElementById('modal-next').addEventListener('click', next);
-
-document.getElementById('ambient-btn').addEventListener('click', toggleAmbient);
 
 document.getElementById('shortcuts-btn').addEventListener('click', () => {
   const panel = document.getElementById('shortcuts-panel');
