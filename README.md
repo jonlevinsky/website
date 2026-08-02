@@ -55,6 +55,23 @@ Tmavě modrý akcent (<code style="background: #f0ece6; padding: 1px 5px; border
 
 ---
 
+## 📸 Screenshoty
+
+| | |
+| --- | --- |
+| **Homepage** | **Homepage — načtení filtru/videa** |
+| ![Homepage](screenshots/homepage.png) | ![Homepage s filtrem](screenshots/homepage-filter-video.png) |
+| **Homepage — plné rozlišení** | **Homepage — mobil** |
+| ![Homepage plná](screenshots/homepage-full.png) | ![Homepage mobil](screenshots/homepage-mobile.png) |
+| **Bento galerie** | **Detail projektu** |
+| ![Bento galerie](screenshots/bento-gallery.png) | ![Detail projektu](screenshots/project-detail.png) |
+| **O mně** | **Kontakt** |
+| ![O mně](screenshots/about.png) | ![Kontakt](screenshots/contact.png) |
+| **Digitální vizita** |  |
+| ![Digitálka](screenshots/card.png) |  |
+
+---
+
 ## 🧱 Struktura projektu
 
 <pre style="background: #f7f4ef; border: 1px solid #e2ddd6; border-radius: 8px; padding: 16px; font-size: 0.85em; line-height: 1.7; overflow-x: auto;">
