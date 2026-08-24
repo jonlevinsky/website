@@ -118,13 +118,6 @@
 <script src="main.js"></script>
 <script>
 document.querySelector('.brand-title-row .logo-mark')?.addEventListener('animationend', function() { this.classList.add('anim-done'); });
-document.getElementById('menuToggle').addEventListener('click', function() {
-  const panel = document.getElementById('brandPanel');
-  const isOpen = panel.classList.toggle('open');
-  this.classList.toggle('active', isOpen);
-  this.setAttribute('aria-expanded', isOpen);
-  panel.setAttribute('aria-hidden', !isOpen);
-});
 </script>
 </body>
 </html>

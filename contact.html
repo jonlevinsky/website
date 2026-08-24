@@ -197,13 +197,12 @@ main {
         Kameraman, fotograf a student filmové tvorby.
       </div>
       <nav class="links">
+          <a href="./about.html" target="_self" rel="noopener noreferrer"><i class="ph ph-user"></i>O mně</a>
           <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
           <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
           <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
       </nav>
-      <div class="back-link">
-        <a href="index.html"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
-      </div>
+      <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
     </div>
   </aside>
 
@@ -313,14 +312,6 @@ form.addEventListener('submit', async e => {
   }
 
   submitBtn.classList.remove('loading');
-});
-
-document.getElementById('menuToggle').addEventListener('click', function() {
-  const panel = document.getElementById('brandPanel');
-  const isOpen = panel.classList.toggle('open');
-  this.classList.toggle('active', isOpen);
-  this.setAttribute('aria-expanded', isOpen);
-  panel.setAttribute('aria-hidden', !isOpen);
 });
 
 const logoEl = document.querySelector('.logo-mark');

@@ -321,71 +321,7 @@ main {
 
 .tile:hover::after { opacity: 1; }
 
-/* Film Perforations */
-.film-perf-v {
-  position: absolute;
-  pointer-events: none;
-  z-index: 3;
-  opacity: 1;
-  transition: opacity 0.3s ease;
-  top: 3.5%;
-  bottom: 3.5%;
-  width: calc(var(--perf-dot-width, 11%) + 2%);
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  gap: 1.5%;
-}
-
-.film-perf-v.left { left: 2.5%; }
-.film-perf-v.right { right: 2.5%; }
-
-.film-perf-v .perf-dot {
-  width: var(--perf-dot-width, 11%);
-  height: var(--perf-dot-height, 1.2%);
-  border-radius: 999px;
-  background: var(--bg);
-  flex-shrink: 0;
-  box-shadow:
-    -1px -1px 2px rgba(255,255,255,0.6),
-    1px 1px 3px rgba(0,0,0,0.25),
-    inset 2px 2px 4px rgba(0,0,0,0.45),
-    inset -1px -1px 2px rgba(255,255,255,0.15);
-  transition: box-shadow 0.4s ease, transform 0.4s var(--ease-out-expo);
-}
-
-.tile:hover .film-perf-v { opacity: 0.9; }
-
-.tile:hover .perf-dot {
-  box-shadow:
-    -1px -1px 2px rgba(255,255,255,0.7),
-    1px 1px 4px rgba(0,0,0,0.35),
-    inset 2.5px 2.5px 5px rgba(0,0,0,0.55),
-    inset -1px -1px 2px rgba(255,255,255,0.2);
-}
-
-.film-shadow {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--r-lg);
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0.5;
-  transition: opacity 0.5s ease;
-  background: linear-gradient(to top, rgba(44, 62, 80, 0.18) 0%, transparent 45%);
-}
-
-.tile:hover .film-shadow { opacity: 0.75; }
-
-.tile.video-tile .film-shadow {
-  box-shadow:
-    inset 60px 0 40px -30px rgba(0, 0, 0, 0.7),
-    inset -60px 0 40px -30px rgba(0, 0, 0, 0.7);
-}
-
-.tile.video-tile::after { opacity: 0; }
-.tile.video-tile:hover::after { opacity: 0; }
+/* Film Perforations -> Removed */
 
 .flyout {
   position: absolute;
@@ -1003,8 +939,6 @@ main {
   .tile-inline-player { display: none; }
   .tile-caption { display: none; }
 
-  .film-shadow { display: none !important; }
-
   .tile.video-tile {
     aspect-ratio: unset !important;
     height: auto;
@@ -1104,7 +1038,6 @@ main {
   .tile.video-tile .ctrl-btn { width: 44px; height: 44px; }
   .tile.video-tile .vol-wrap { display: none; }
   .tile.video-tile .time-wrap { font-size: 12px; }
-  .tile .film-perf-v { opacity: 0.5; }
 
   .tile.video-tile .tile-thumb .player .settings-panel {
     position: absolute;
@@ -1383,6 +1316,40 @@ main {
 }
 .player.is-fs { box-shadow: none; }
 
+/* Video Badge */
+.video-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+  pointer-events: none;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+.video-badge i {
+  color: #fff;
+  font-size: 14px;
+  margin-left: 2px;
+  transition: transform 0.3s ease;
+}
+.tile:hover .video-badge {
+  background: rgba(0, 0, 0, 0.7);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+.tile:hover .video-badge i {
+  transform: scale(1.1);
+}
+
 </style>
 <base target="_self">
   <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
@@ -1532,7 +1499,6 @@ function setOrientation(tile, w, h) {
     tile.classList.add('portrait');
     tile.classList.remove('landscape');
   }
-  requestAnimationFrame(() => recalcPerforations());
 }
 
 function detectOrientations() {
@@ -1732,7 +1698,7 @@ function displayProject(project) {
     if (m.type === 'photo') {
       const photoSrc = m.thumbnail || m.src;
       const lqipAttr = m.lqip ? ' style="background-image:url(' + m.lqip + ')"' : '';
-      gallery += '<div class="tile" data-index="' + i + '" data-type="photo">' +
+      gallery += '<div class="tile photo-tile" data-index="' + i + '" data-type="photo">' +
         '<div class="px-wrap">' +
         (m.lqip ? '<div class="lqip-bg" style="background-image:url(' + m.lqip + ')"></div>' : '') +
         '<img src="' + (photoSrc ? encodeURI(photoSrc) : photoSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity 0.4s ease" onload="this.style.opacity=\'1\';this.classList.add(\'loaded\')" onerror="imgErrorFallback(this)">' +
@@ -1742,19 +1708,7 @@ function displayProject(project) {
       const thumbSrc = m.thumbnail || m.poster || '';
       const thumbImg = thumbSrc ? '<div class="px-wrap"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async"></div>' : '';
 
-      const filmSizes = {
-        video: { normal: { width: 24, height: 18.6 }, wide: { width: 24, height: 14 }, tall: { width: 24, height: 44.2 } }
-      };
-      const hole = { width: 2.79, height: 1.98, pitch: 4.75 };
-      const layout = 'normal';
-      const frame = filmSizes.video[layout] || filmSizes.video.normal;
-      const edgeLength = frame.height;
-      const count = Math.max(2, Math.round(edgeLength / hole.pitch));
-
-      const perfHtml = '<div class="film-perf-v left">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>' +
-        '<div class="film-perf-v right">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>';
-
-      gallery += '<div class="tile video-tile" data-index="' + i + '" data-type="video" data-src="' + encodeURI(m.src) + '" data-perf-type="video" data-perf-frame-width="' + frame.width + '" data-perf-frame-height="' + frame.height + '" data-perf-hole-width="' + hole.width + '" data-perf-hole-height="' + hole.height + '" data-perf-count="' + count + '">' +
+      gallery += '<div class="tile video-tile" data-index="' + i + '" data-type="video" data-src="' + encodeURI(m.src) + '">' +
         '<div class="tile-thumb" id="thumb-' + i + '">' +
         '<div class="video-overlay"></div>' +
         thumbImg +
@@ -1762,9 +1716,8 @@ function displayProject(project) {
         (cap ? '<div class="video-info-title">' + cap + '</div>' : '') +
         '<div class="video-info-play"><i class="ph ph-play-circle"></i><span>Watch</span></div>' +
         '</div>' +
+        '<div class="video-badge"><i class="ph ph-play"></i></div>' +
         '</div>' +
-        '<div class="film-shadow"></div>' +
-        perfHtml +
         '<div class="tile-caption">' + cap + '</div>' +
         '</div>';
     }
@@ -1800,8 +1753,6 @@ function displayProject(project) {
   }
 
   detectOrientations();
-  setTimeout(recalcPerforations, 300);
-  setTimeout(recalcPerforations, 800);
 
   if (ensureGsap() && typeof ScrollTrigger !== 'undefined') {
     setTimeout(() => ScrollTrigger.refresh(), 900);
@@ -2770,7 +2721,6 @@ function onKey(e) {
 }
 
 window.addEventListener('resize', () => {
-  requestAnimationFrame(recalcPerforations);
   resizeAmbient();
 });
 
@@ -2801,17 +2751,6 @@ modal.addEventListener('touchend', e => {
   const dx = e.changedTouches[0].clientX - touchStartX;
   if (Math.abs(dx) > 60) dx < 0 ? next() : prev();
 }, { passive: true });
-
-const menuToggle = document.getElementById('menuToggle');
-if (menuToggle) {
-  menuToggle.addEventListener('click', function() {
-    const panel = document.getElementById('brandPanel');
-    const isOpen = panel.classList.toggle('open');
-    this.classList.toggle('active', isOpen);
-    this.setAttribute('aria-expanded', isOpen);
-    panel.setAttribute('aria-hidden', !isOpen);
-  });
-}
 
 const logoEl2 = document.querySelector('.logo-mark');
 if (logoEl2) {

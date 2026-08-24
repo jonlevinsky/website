@@ -342,7 +342,7 @@
   }
   .tile-hover-title {
     font-size: 16px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;
-    text-align: left; opacity: 1; transform: none;
+    text-align: left; opacity: 1; transform: none; max-width: 100%;
   }
   .tile-hover-year { font-size: 10px; opacity: 1; transform: none; }
   .tile::after { opacity: 0.35; }
@@ -366,6 +366,10 @@
       font-size: 14px;
       padding-left: 2px;
     }
+  }
+
+  @media (max-width: 400px) {
+    .bento { grid-auto-rows: 200px; }
   }
 
   /* CENÍK MODAL */
@@ -971,14 +975,6 @@ function initScrollAnimations() {
     onComplete: () => gsap.set(targets, { clearProps: 'transform' })
   });
 }
-
-document.getElementById('menuToggle').addEventListener('click', function() {
-  const panel = document.getElementById('brandPanel');
-  const isOpen = panel.classList.toggle('open');
-  this.classList.toggle('active', isOpen);
-  this.setAttribute('aria-expanded', isOpen);
-  panel.setAttribute('aria-hidden', !isOpen);
-});
 
 const logoEl = document.querySelector('.logo-mark');
 if (logoEl) {

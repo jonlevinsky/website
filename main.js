@@ -134,65 +134,126 @@ function initHeroAnim() {
   );
 }
 
+let perfObserver;
+function recalcSingleTile(a) {
+  const type = a.dataset.perfType;
+  if (!type) return;
+  const frameW = parseFloat(a.dataset.perfFrameWidth);
+  const frameH = parseFloat(a.dataset.perfFrameHeight);
+  const holeW = parseFloat(a.dataset.perfHoleWidth);
+  const holeH = parseFloat(a.dataset.perfHoleHeight);
+  const count = parseInt(a.dataset.perfCount, 10) || 2;
+  const rect = a.getBoundingClientRect();
+  if (rect.width === 0 || rect.height === 0) return;
+  const isVideo = type === 'video';
+  const pitchPx = isVideo ? (4.75 / frameH) * rect.height : (4.75 / frameW) * rect.width;
+  const dotWidthPx = (holeW / frameW) * rect.width;
+  const dotHeightPx = (holeH / frameH) * rect.height;
+  const gapForH = Math.max(1, pitchPx - dotWidthPx);
+  const gapForV = Math.max(1, pitchPx - dotHeightPx);
+  a.style.setProperty('--perf-dot-width', Math.round(dotWidthPx) + 'px');
+  a.style.setProperty('--perf-dot-height', Math.round(dotHeightPx) + 'px');
+
+  const perfHTop = a.querySelector('.film-perf-h.top');
+  const perfHBottom = a.querySelector('.film-perf-h.bottom');
+  const perfVLeft = a.querySelector('.film-perf-v.left');
+  const perfVRight = a.querySelector('.film-perf-v.right');
+
+  if (perfHTop || perfHBottom) {
+    const containerW = (count * dotWidthPx) + ((count - 1) * gapForH);
+    [perfHTop, perfHBottom].forEach(el => {
+      if (!el) return;
+      el.style.width = Math.round(containerW) + 'px';
+      el.style.left = '50%';
+      el.style.transform = 'translateX(-50%)';
+      el.style.justifyContent = 'flex-start';
+      el.style.gap = Math.round(gapForH) + 'px';
+      el.querySelectorAll('.perf-dot').forEach(d => {
+        d.style.width = Math.round(dotWidthPx) + 'px';
+        d.style.height = Math.round(dotHeightPx) + 'px';
+        d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
+      });
+    });
+  }
+
+  if (perfVLeft || perfVRight) {
+    const containerH = (count * dotHeightPx) + ((count - 1) * gapForV);
+    [perfVLeft, perfVRight].forEach(el => {
+      if (!el) return;
+      el.style.height = Math.round(containerH) + 'px';
+      el.style.top = '50%';
+      el.style.transform = 'translateY(-50%)';
+      el.style.justifyContent = 'flex-start';
+      el.style.gap = Math.round(gapForV) + 'px';
+      el.querySelectorAll('.perf-dot').forEach(d => {
+        d.style.width = Math.round(dotWidthPx) + 'px';
+        d.style.height = Math.round(dotHeightPx) + 'px';
+        d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
+      });
+    });
+  }
+}
+
 function recalcPerforations() {
   const tiles = Array.from(document.querySelectorAll('.tile'));
-  tiles.forEach(a => {
-    const type = a.dataset.perfType;
-    if (!type) return;
-    const frameW = parseFloat(a.dataset.perfFrameWidth);
-    const frameH = parseFloat(a.dataset.perfFrameHeight);
-    const holeW = parseFloat(a.dataset.perfHoleWidth);
-    const holeH = parseFloat(a.dataset.perfHoleHeight);
-    const count = parseInt(a.dataset.perfCount, 10) || 2;
-    const rect = a.getBoundingClientRect();
-    const isVideo = type === 'video';
-    const pitchPx = isVideo ? (4.75 / frameH) * rect.height : (4.75 / frameW) * rect.width;
-    const dotWidthPx = (holeW / frameW) * rect.width;
-    const dotHeightPx = (holeH / frameH) * rect.height;
-    const gapForH = Math.max(1, pitchPx - dotWidthPx);
-    const gapForV = Math.max(1, pitchPx - dotHeightPx);
-    a.style.setProperty('--perf-dot-width', Math.round(dotWidthPx) + 'px');
-    a.style.setProperty('--perf-dot-height', Math.round(dotHeightPx) + 'px');
-
-    const perfHTop = a.querySelector('.film-perf-h.top');
-    const perfHBottom = a.querySelector('.film-perf-h.bottom');
-    const perfVLeft = a.querySelector('.film-perf-v.left');
-    const perfVRight = a.querySelector('.film-perf-v.right');
-
-    if (perfHTop || perfHBottom) {
-      const containerW = (count * dotWidthPx) + ((count - 1) * gapForH);
-      [perfHTop, perfHBottom].forEach(el => {
-        if (!el) return;
-        el.style.width = Math.round(containerW) + 'px';
-        el.style.left = '50%';
-        el.style.transform = 'translateX(-50%)';
-        el.style.justifyContent = 'flex-start';
-        el.style.gap = Math.round(gapForH) + 'px';
-        el.querySelectorAll('.perf-dot').forEach(d => {
-          d.style.width = Math.round(dotWidthPx) + 'px';
-          d.style.height = Math.round(dotHeightPx) + 'px';
-          d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
+  if (window.ResizeObserver) {
+    if (!perfObserver) {
+      perfObserver = new ResizeObserver(entries => {
+        entries.forEach(entry => {
+          recalcSingleTile(entry.target);
         });
       });
     }
+    tiles.forEach(tile => {
+      perfObserver.observe(tile);
+    });
+  } else {
+    tiles.forEach(recalcSingleTile);
+  }
+}
 
-    if (perfVLeft || perfVRight) {
-      const containerH = (count * dotHeightPx) + ((count - 1) * gapForV);
-      [perfVLeft, perfVRight].forEach(el => {
-        if (!el) return;
-        el.style.height = Math.round(containerH) + 'px';
-        el.style.top = '50%';
-        el.style.transform = 'translateY(-50%)';
-        el.style.justifyContent = 'flex-start';
-        el.style.gap = Math.round(gapForV) + 'px';
-        el.querySelectorAll('.perf-dot').forEach(d => {
-          d.style.width = Math.round(dotWidthPx) + 'px';
-          d.style.height = Math.round(dotHeightPx) + 'px';
-          d.style.borderRadius = Math.max(2, Math.round(Math.min(dotWidthPx, dotHeightPx) / 4)) + 'px';
-        });
-      });
+function updateAriaAttributes() {
+  const panel = document.getElementById('brandPanel');
+  const toggle = document.getElementById('menuToggle');
+  if (!panel) return;
+  const isMobile = window.matchMedia('(max-width: 880px)').matches;
+  if (!isMobile) {
+    panel.setAttribute('aria-hidden', 'false');
+    if (toggle) toggle.setAttribute('aria-expanded', 'true');
+  } else {
+    const isOpen = panel.classList.contains('open');
+    panel.setAttribute('aria-hidden', String(!isOpen));
+    if (toggle) {
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      toggle.classList.toggle('active', isOpen);
     }
+  }
+}
+
+function initGlobalNavigation() {
+  const menuToggle = document.getElementById('menuToggle');
+  const brandPanel = document.getElementById('brandPanel');
+  if (menuToggle && brandPanel) {
+    menuToggle.addEventListener('click', function() {
+      const isOpen = brandPanel.classList.toggle('open');
+      this.classList.toggle('active', isOpen);
+      this.setAttribute('aria-expanded', String(isOpen));
+      brandPanel.setAttribute('aria-hidden', String(!isOpen));
+    });
+  }
+  updateAriaAttributes();
+  window.addEventListener('resize', updateAriaAttributes);
+}
+
+// Call on startup
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initGlobalNavigation();
+    recalcPerforations();
   });
+} else {
+  initGlobalNavigation();
+  recalcPerforations();
 }
 
 function imgErrorFallback(img) {
