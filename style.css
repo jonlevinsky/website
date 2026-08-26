@@ -15,7 +15,7 @@
   --text: #1c1917;
   --muted: #6b6560;
   --serif: 'Bricolage Grotesque', Georgia, serif;
-  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --sans: 'Outfit', system-ui, -apple-system, sans-serif;
   --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-xl: 28px; --r-full: 999px;
   --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
@@ -32,7 +32,7 @@ img { display: block; max-width: 100%; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--r-full); }
 
-a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
+a:focus-visible, button:focus-visible, .tile:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: var(--r-sm); }
 
 .wrap {
   display: grid;

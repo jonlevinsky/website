@@ -32,8 +32,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap"></noscript>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" defer></script>
@@ -283,13 +283,14 @@ main {
   pointer-events: none;
 }
 
-.tile:hover {
-  transform: translateY(-4px) scale(1.015);
+.tile:hover, .tile:focus-visible {
+  transform: translateY(-4px);
   border-color: var(--border-subtle);
   z-index: 2;
 }
 
-.tile:hover img, .tile:hover video { transform: scale(1.03); }
+.tile:hover img, .tile:hover video,
+.tile:focus-visible img, .tile:focus-visible video { transform: scale(1.03); }
 
 /* LQIP placeholder — blur-up technique */
 .tile .lqip-bg {
@@ -1356,7 +1357,7 @@ main {
   <link rel="dns-prefetch" href="//unpkg.com">
   <style>
     @font-face { font-family: 'Bricolage Grotesque'; font-display: swap; }
-    @font-face { font-family: 'Inter'; font-display: swap; }
+    @font-face { font-family: 'Outfit'; font-display: swap; }
   </style>
 </head>
 <body>
@@ -1698,7 +1699,7 @@ function displayProject(project) {
     if (m.type === 'photo') {
       const photoSrc = m.thumbnail || m.src;
       const lqipAttr = m.lqip ? ' style="background-image:url(' + m.lqip + ')"' : '';
-      gallery += '<div class="tile photo-tile" data-index="' + i + '" data-type="photo">' +
+      gallery += '<div class="tile photo-tile" data-index="' + i + '" data-type="photo" tabindex="0" role="button" aria-label="Fotografie: ' + (m.title || 'bez popisku') + ' – zvětšit obrázek">' +
         '<div class="px-wrap">' +
         (m.lqip ? '<div class="lqip-bg" style="background-image:url(' + m.lqip + ')"></div>' : '') +
         '<img src="' + (photoSrc ? encodeURI(photoSrc) : photoSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity 0.4s ease" onload="this.style.opacity=\'1\';this.classList.add(\'loaded\')" onerror="imgErrorFallback(this)">' +
@@ -1708,7 +1709,7 @@ function displayProject(project) {
       const thumbSrc = m.thumbnail || m.poster || '';
       const thumbImg = thumbSrc ? '<div class="px-wrap"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async"></div>' : '';
 
-      gallery += '<div class="tile video-tile" data-index="' + i + '" data-type="video" data-src="' + encodeURI(m.src) + '">' +
+      gallery += '<div class="tile video-tile" data-index="' + i + '" data-type="video" data-src="' + encodeURI(m.src) + '" tabindex="0" role="button" aria-label="Video: ' + (m.title || 'bez popisku') + ' – spustit video">' +
         '<div class="tile-thumb" id="thumb-' + i + '">' +
         '<div class="video-overlay"></div>' +
         thumbImg +
@@ -1781,6 +1782,13 @@ function displayProject(project) {
   }
 
   document.querySelectorAll('.tile').forEach(tile => {
+    tile.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        tile.click();
+      }
+    });
+
     tile.addEventListener('click', e => {
       const i = parseInt(tile.dataset.index);
       const type = tile.dataset.type;
@@ -1901,25 +1909,30 @@ function drawAmbient() {
   const c = getAmbientCanvas();
   if (!c || !ambientCtx) return;
 
-  const now = performance.now();
-  const throttle = ambientFrameCount < 5 ? 16 : 33;
-  if (now - lastAmbientTime < throttle) {
-    ambientRaf = requestAnimationFrame(drawAmbient);
-    return;
+  const vid = document.querySelector('#vid');
+  const isVideo = !!(vid && vid.readyState >= 2);
+
+  if (isVideo) {
+    const now = performance.now();
+    const throttle = ambientFrameCount < 5 ? 16 : 33;
+    if (now - lastAmbientTime < throttle) {
+      ambientRaf = requestAnimationFrame(drawAmbient);
+      return;
+    }
+    lastAmbientTime = now;
   }
-  lastAmbientTime = now;
-  ambientFrameCount++;
 
   let source = null;
-  const vid = document.querySelector('#vid');
-  if (vid && vid.readyState >= 2) {
+  if (isVideo) {
     source = vid;
   } else if (currentPhotoImg && currentPhotoImg.complete && currentPhotoImg.naturalWidth) {
     source = currentPhotoImg;
   }
 
   if (!source) {
-    ambientRaf = requestAnimationFrame(drawAmbient);
+    if (isVideo) {
+      ambientRaf = requestAnimationFrame(drawAmbient);
+    }
     return;
   }
 
@@ -1929,7 +1942,26 @@ function drawAmbient() {
     ambientCtx.drawImage(source, 0, 0, c.width, c.height);
   } catch(e) {}
 
-  ambientRaf = requestAnimationFrame(drawAmbient);
+  if (isVideo) {
+    ambientFrameCount++;
+    ambientRaf = requestAnimationFrame(drawAmbient);
+  } else {
+    ambientRaf = null;
+  }
+}
+
+function repaintAmbient() {
+  const c = getAmbientCanvas();
+  if (!c || !ambientCtx || !ambientEnabled) return;
+  const vid = document.querySelector('#vid');
+  const hasVideo = vid && vid.readyState >= 2;
+  if (!hasVideo && currentPhotoImg && currentPhotoImg.complete && currentPhotoImg.naturalWidth) {
+    try {
+      ambientCtx.imageSmoothingEnabled = true;
+      ambientCtx.imageSmoothingQuality = 'low';
+      ambientCtx.drawImage(currentPhotoImg, 0, 0, c.width, c.height);
+    } catch(e) {}
+  }
 }
 
 function startAmbient() {
@@ -2724,6 +2756,7 @@ function onKey(e) {
 
 window.addEventListener('resize', () => {
   resizeAmbient();
+  repaintAmbient();
 });
 
 document.getElementById('modal-close').addEventListener('click', closeModal);

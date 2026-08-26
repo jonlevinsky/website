@@ -30,8 +30,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap"></noscript>
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap"></noscript>
 <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" defer></script>
@@ -109,21 +109,27 @@
 .tile.tall { grid-row: span 2; min-height: auto; }
 .tile.large { grid-column: span 2; grid-row: span 2; min-height: auto; }
 
-.tile:hover {
-  transform: translateY(-4px) scale(1.015);
+.tile:hover, .tile:focus-visible {
+  transform: translateY(-4px);
   border-color: var(--border-subtle);
   z-index: 2;
 }
 
-.tile img {
+.tile img, .tile video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: filter 0.8s var(--ease-out-expo), opacity 0.6s var(--ease-out-expo);
+  transition: transform 0.8s var(--ease-out-expo), filter 0.8s var(--ease-out-expo), opacity 0.6s var(--ease-out-expo);
+}
+.tile img {
   opacity: 0;
 }
 
-.tile:hover img { filter: brightness(0.92); }
+.tile:hover img, .tile:focus-visible img,
+.tile:hover video, .tile:focus-visible video {
+  transform: scale(1.03);
+}
+.tile:hover img, .tile:focus-visible img { filter: brightness(0.92); }
 .tile img.loaded { opacity: 1; }
 
 @keyframes shimmer {
@@ -144,7 +150,7 @@
 }
 
 .tile.skeleton::before { opacity: 1; }
-.tile img { position: relative; z-index: 1; }
+.tile img, .tile video { position: relative; z-index: 1; }
 
 /* Hover info */
 .tile-hover {
@@ -529,7 +535,7 @@
   <link rel="dns-prefetch" href="//unpkg.com">
   <style>
     @font-face { font-family: 'Bricolage Grotesque'; font-display: swap; }
-    @font-face { font-family: 'Inter'; font-display: swap; }
+    @font-face { font-family: 'Outfit'; font-display: swap; }
   </style>
   <link rel="preload" href="./projects.json" as="fetch" crossorigin>
 </head>
@@ -683,8 +689,15 @@ async function initPortfolio() {
       a.className = 'tile ' + (project.layout || 'normal') + ' ' + (project.type === 'video' ? 'video-tile' : 'photo-tile');
       a.dataset.type = project.type;
       a.dataset.id = project.id;
-      a.setAttribute('role', 'listitem');
-      a.setAttribute('aria-label', project.title + (project.year ? ' (' + project.year + ')' : ''));
+      a.setAttribute('role', 'button');
+      a.setAttribute('tabindex', '0');
+      a.setAttribute('aria-label', 'Prohlédnout projekt ' + project.title);
+      a.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          a.click();
+        }
+      });
 
       const isVideo = project.type === 'video';
       const layout = project.layout || 'normal';

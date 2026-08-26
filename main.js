@@ -643,3 +643,17 @@ function imgErrorFallback(img) {
     img.removeAttribute('onerror');
   }
 }
+
+// Keyboard accessibility support for bento / gallery tiles
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    const tile = e.target.closest('.tile');
+    if (tile) {
+      const isLink = tile.tagName === 'A';
+      if (e.key === ' ' || !isLink) {
+        e.preventDefault();
+        tile.click();
+      }
+    }
+  }
+});
