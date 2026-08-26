@@ -153,6 +153,86 @@
     ]
   },
   {
+    "id": 6,
+    "title": "Zatmění Slunce",
+    "type": "photo",
+    "year": "2026",
+    "layout": "tall",
+    "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0451-1_1.webp",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [
+        "Lightroom"
+      ],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Zatmění-Slunce/img_0448_1.webp",
+        "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0448_thumb_1.webp",
+        "title": "img_0448_1",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAAUBAwYCBP/EACUQAAEEAQMCBwAAAAAAAAAAAAEAAgMRBBIhMQVBEyIjUWGB4f/EABYBAQEBAAAAAAAAAAAAAAAAAAADAv/EABsRAAMAAwEBAAAAAAAAAAAAAAABAgMRITFB/9oADAMBAAIRAxEAPwDP9uV2yNxApW40AkFkA/FpnBglwHlBU6tSVjG30VGB9XS4MbhyE8mww0bMI+0vmjolZnJs1WLRViSBhoNBPJT3pszciPUIARZpZgEjgkL1Y+S+AANe5u3bsEyRvwRfxj3qTPSPhx6HUaWea57gNQJrk+6nJyHTAXI473RKrLjWzv1IhyuiqTZWptQhWIAgnZChAf/Z"
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Zatmění-Slunce/img_0451-1_1.webp",
+        "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0451-1_thumb_1.webp",
+        "title": "img_0451-1_1",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAgQAAQUDBv/EACQQAQACAgEDAwUAAAAAAAAAAAEAAgMRBAUhMRJRgRMiMkFh/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAIDAQT/xAAbEQACAgMBAAAAAAAAAAAAAAAAAQIRAxIhMf/aAAwDAQACEQMRAD8AwSq+CVbZ5J3xYVDs/EPNxMy1ceK1jX6Iuyspo6sVdnk1Bjmfg5ceH6zUoB3rt2RMFdHmamn4LKLT6PYMlRN+qbXDvjsBu4/yefpka99hHuN1HPjPtsHxIZIN+HRCXKHOuNacJK3u+pDvMHD+S+xHep87NyaUpksNR32IlSyU0e8fGqiTk7kBDLu+3ic5JUlYV7epkHRBlQCz/9k="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Zatmění-Slunce/img_0466_1.webp",
+        "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0466_thumb_1.webp",
+        "title": "img_0466_1",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAQCAwUB/8QAKBAAAgEEAAQFBQAAAAAAAAAAAAECAwQREiEiMZEyQUJhgRRRcXKh/8QAGAEAAwEBAAAAAAAAAAAAAAAAAQIEAAP/xAAaEQADAQADAAAAAAAAAAAAAAAAAQIRAxJB/9oADAMBAAIRAxEAPwDKjl+ROMfchBJ9ZNDEKUX62zi3hQlpBr8dyqal5YHXQSX3KJQS9IFSGcsKX0+ebh8j9KVilzSX9Zj04NvhjualjHWL3x3yJyJL0aNfhZVuLGMeVpv9WZ9W4g/DHPwalxRt50svVS9jHrwpxb1eQcfVhrskLqTRdCtKPRi2x3Ypc6TK8Gp3NSS8RRKTfVkNg2ApwNW2RAAHOQAAGMf/2Q=="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Zatmění-Slunce/img_0478_1.webp",
+        "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0478_thumb_1.webp",
+        "title": "img_0478_1",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAAECAwQFBv/EACAQAAICAgEFAQAAAAAAAAAAAAABAgMEESEFEhMxQVH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAgH/xAAYEQEBAQEBAAAAAAAAAAAAAAABABECIf/aAAwDAQACEQMRAD8A88MQISYvoxCQ1onVX3/pBnR6RX5JSSpla/mpaJ6cNq5NcscqZRXPoqS2dDqO6pOEqvG9em+TAhy6bb0A4SNGLlWY/NcnEzgam+NIo6V+TkTvn3Tk5N/WUAADIu+3/9k="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2026/Zatmění-Slunce/img_0485_1.webp",
+        "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0485_thumb_1.webp",
+        "title": "img_0485_1",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAECAwUG/8QAIBAAAwEAAQMFAAAAAAAAAAAAAAECEQQDElEhMUFCgf/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABkRAQEBAQEBAAAAAAAAAAAAAAABEQIhMf/aAAwDAQACEQMRAD8A87gANIBAW4pe6E5xPQuJRr05dViz9M0b9Ht+z9PBKvM2ippLceefgxp6zpcvnq+JHHiZyTmMnO36veTyEmVr8kgaYPRMAA//2Q=="
+      }
+    ],
+    "slug": "zatmeni-slunce",
+    "crew": {},
+    "crewOrder": [
+      "Režie",
+      "Kamera",
+      "Střih",
+      "Zvuk",
+      "Produkce"
+    ],
+    "crewIcons": {},
+    "og_image": "media/photo/2026/Zatmění-Slunce/og-image.png"
+  },
+  {
     "id": 2,
     "title": "Spot",
     "type": "video",
@@ -447,5 +527,119 @@
       "Produkce"
     ],
     "crewIcons": {}
+  },
+  {
+    "id": 7,
+    "title": "Adršpach",
+    "type": "photo",
+    "year": "2025",
+    "layout": "wide",
+    "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0363.webp",
+    "full": "",
+    "bio": "",
+    "techniques": [],
+    "gear": {
+      "camera": [],
+      "lenses": [
+        "Helios - 44M"
+      ],
+      "gimbal/stabilization": [],
+      "lighting": [],
+      "audio": [],
+      "software": [],
+      "color": [
+        "Lightroom"
+      ],
+      "drone": [],
+      "filter": [],
+      "tripod": [],
+      "monitor": [],
+      "recorder": []
+    },
+    "media": [
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0267.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0267_thumb.webp",
+        "title": "img_0267",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAwAEBf/EACMQAAEDAwMFAQAAAAAAAAAAAAEAAgMEEUESITETMjNRcYH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDmxPcHtLGguGSrV1qg2FtbuEMcliQ3I5ymptqgkZaTdENUGOFul13HB9fFyiOSSlqJNbztb3uhKkIWPub+rVF52fCpSqscvkcjUpB//9k="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0279.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0279_thumb.webp",
+        "title": "img_0279",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAECAwQF/8QAIhAAAgEDBAIDAAAAAAAAAAAAAQIAAxExBBIhYSJxQ4Gh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAL/xAAXEQEAAwAAAAAAAAAAAAAAAAAAAREx/9oADAMBAAIRAxEAPwDwHXxDDB/IlFwLzRCXpsvUlQWvxiBdOnuNhc+uZDU2Xmx24BtOqgELUlJAJuD1FqlYaenuXawvcdRZTChmNMiEIGvyD1K1uPoQhJnVRj//2Q=="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0311.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0311_thumb.webp",
+        "title": "img_0311",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAwACBAEG/8QAIxAAAgICAgICAwEAAAAAAAAAAQIAEQMhEjFBYSJRBEORof/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A8+CR1NANoNdCZh6MfGAykbuEbcOVVXJQUH9d9j7h5nypbOSWNUT2NeJXGoybrQUkmUZjlWmY2PuBkX3HUjjqEBfoxVFa0T6gbOIVFQE/LZEpkxhGyarQncTkhVJvrU5+Q9s1Ar8QO78wMS+4yA1Sn+wQf9j4kZtAWO4CCkYXsld1DZwzb8yOxHfYXjULkFFHZgHcdMvFKA34N9SSQOO5YbJlOXYqSSFf/9k="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0318.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0318_thumb.webp",
+        "title": "img_0318",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAEFAgQD/8QAIBAAAgICAwEAAwAAAAAAAAAAAAECEQMhBBJBMRNCkf/EABcBAQEBAQAAAAAAAAAAAAAAAAABAgP/xAAZEQEBAAMBAAAAAAAAAAAAAAAAAQIDEUH/2gAMAwEAAhEDEQA/AJeKS6xTpeWdEYt6J0H8Vv8ApS4knlUk/wBaNSuOePolB1smTa7S7Nt34WckGoS3WiJNPu09sU1lF7KXG5CwwbTVuvpMR0XeOKXhl1s6oZeTklCVqLh7Sok5JOUm36ezyP8AG0n5Rzv6Ek4DSboyO6CnJ60YY2IKY0AAGhAAR//Z"
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0328.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0328_thumb.webp",
+        "title": "img_0328",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAMEAgEF/8QAJxAAAgICAQIFBQEAAAAAAAAAAQIAEQMhMRJRMkFhkbFDU3GSweH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDwa2R3Go4tSdQPl/kWVtgRGGlxsPaAokuNm/5MaHrOhqTXJMzs8wHrYPzBx4gSdDUMd97qUBVbKFug1CzAi0x4oTQCj1lGbAqZekFfPj8xT4+k+KBjG/eVIgcFqNdpJjQkjy9ZejhUCgivmSrEuZSOliNA1XaYN3syp2Bsa3EuuPVKRAMZUDxge8cHUfUX9jCEDLOv3V9zF5CpTkGjyAYQgf/Z"
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0363.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0363_thumb.webp",
+        "title": "img_0363",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAQCAwX/xAAiEAACAgIABgMAAAAAAAAAAAABAgADBBESITJBUWExcZH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAWEQEBAQAAAAAAAAAAAAAAAAAAEQH/2gAMAwEAAhEDEQA/AEasihQNt+CNjKxgdF+fnXKYlLujbA32IjFLkggKvuGY0jmYpOg+vfDFrsqnegxP0JRbYzVhOD47gRMnzBE06jJ4/U8IQq+zpiLQhBj/2Q=="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0373.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0373_thumb.webp",
+        "title": "img_0373",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAMEAgUB/8QAJxAAAgIBAwIFBQAAAAAAAAAAAQIAEQMEEiETMRQiQVFxMlKBobH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAVEQEBAAAAAAAAAAAAAAAAAAAAEf/aAAwDAQACEQMRAD8ARjWyKlK4x7SZG2nyx6O5HYQwHxkjtEdK2qhHuzH0kWfO2DKwqwa4hAuowKBbX8R/jNOgB3MxPNCcvGFOJie9947DjSjZ3cd/aG4tbX4PtaczU5zlykiwI9seM2fp/klzV1TVfiCHrgbbSsCD6TY0zqPKQbHNGLxPQ238R6vAwdPkJuv3J8iHcdw5lnUMnyjcxoQEKTcpVrWEIUFp5vqEIR//2Q=="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0385.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0385_thumb.webp",
+        "title": "img_0385",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAQIDAAQG/8QAIhAAAwEAAQQBBQAAAAAAAAAAAAECESEDEjFBEzJRYXGB/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APPIdICRWZ+4E2jYUqRGA/TmUtt/xclVjTxY34OeNfjS7ldOe7d/IErpqsYEnTxLRlLqtb0NSnwm0As96+mc/Qdp+dBNt+yqx+mwJY0/IW/ZfOPAtQ6XOIATM+sG3FnBjAHuxA+TgxgP/9k="
+      },
+      {
+        "type": "photo",
+        "src": "media/photo/2025/adršpašsko-teplické-skály/img_0395.webp",
+        "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0395_thumb.webp",
+        "title": "img_0395",
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAEDBAIG/8QAIBAAAgIBAwUAAAAAAAAAAAAAAAECEQMSMTIhQVFxkf/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDz/QfYEl4L4cMckXf29gJQdHTjaspLDGCu9SRKcnbAa2Row8WAAKfB+zJk5gAH/9k="
+      }
+    ],
+    "slug": "novy-projekt",
+    "crew": {},
+    "crewOrder": [
+      "Režie",
+      "Kamera",
+      "Střih",
+      "Zvuk",
+      "Produkce"
+    ],
+    "crewIcons": {},
+    "og_image": "media/photo/2025/adršpašsko-teplické-skály/og-image.png"
   }
 ]
