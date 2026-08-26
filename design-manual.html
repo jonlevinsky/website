@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Designový manuál — Jan Levínský</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --accent: #2c3e50;
+      --accent-hover: #1a252f;
+      --bg: #faf8f5;
+      --surface: #f0ece6;
+      --bg-raised: #f5f2ee;
+      --border: #d4cfc7;
+      --border-subtle: #e8e4dd;
+      --text: #1c1917;
+      --muted: #6b6560;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 20px;
+      --radius-pill: 999px;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.02);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+      --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(250, 248, 245, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      height: 70px;
+      display: flex;
+      align-items: center;
+    }
+
+    .header-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--text);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .logo-link img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    .nav-menu {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    @media (max-width: 768px) {
+      .nav-menu {
+        display: none;
+      }
+    }
+
+    .nav-menu a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-menu a:hover {
+      color: var(--accent);
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-pill);
+      transition: all 0.2s;
+      background: transparent;
+    }
+
+    .back-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--bg);
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 120px auto 100px;
+      padding: 0 1.5rem;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      border: 1px solid rgba(44, 62, 80, 0.2);
+      background: rgba(44, 62, 80, 0.04);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    .hero h1 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      line-height: 1.1;
+      font-weight: 400;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 strong {
+      font-weight: 700;
+      color: var(--accent);
+      font-style: italic;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    section {
+      margin-bottom: 6rem;
+      scroll-margin-top: 100px;
+    }
+
+    .section-header {
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    .section-header h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      font-size: 0.9375rem;
+    }
+
+    .grid-logos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+      justify-content: center;
+    }
+
+    .logo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 380px;
+      transition: all 0.3s;
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .logo-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    .logo-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 180px;
+      padding: 2rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+      position: relative;
+      border: 1px solid var(--border);
+      cursor: zoom-in;
+    }
+
+    .logo-container.light-mode {
+      background: #faf8f5;
+      border-color: var(--border);
+    }
+
+    .logo-container.dark-mode {
+      background: #1c1917;
+      border-color: #383530;
+    }
+
+    .logo-container img {
+      max-width: 100px;
+      height: auto;
+      object-fit: contain;
+      transition: transform 0.3s ease;
+    }
+
+    .logo-container:hover img {
+      transform: scale(1.08);
+    }
+
+    .logo-card h3 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .logo-meta {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .logo-actions {
+      display: flex;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 0.625rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      text-decoration: none;
+      text-align: center;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      cursor: pointer;
+    }
+
+    .action-btn.primary {
+      background: var(--accent);
+      color: var(--bg);
+      border: 1px solid var(--accent);
+    }
+
+    .action-btn.primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .action-btn.outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .action-btn.outline:hover {
+      background: var(--bg-raised);
+      border-color: var(--muted);
+    }
+
+    .logo-toggle-bar {
+      display: flex;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 2rem;
+    }
+
+    .toggle-trigger {
+      padding: 0.5rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+
+    .toggle-trigger.active {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .grid-colors {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .color-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s;
+    }
+
+    .color-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .color-swatch {
+      height: 140px;
+      width: 100%;
+      position: relative;
+    }
+
+    .color-info {
+      padding: 1.5rem;
+    }
+
+    .color-name {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .color-desc {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+      min-height: 48px;
+    }
+
+    .color-value-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+
+    .color-label {
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .color-value {
+      font-family: monospace;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.125rem 0.375rem;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s;
+    }
+
+    .color-value:hover {
+      background: var(--bg-raised);
+      color: var(--accent);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--accent);
+      color: var(--bg);
+      padding: 0.75rem 1.5rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.875rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      z-index: 200;
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .grid-typography {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 3rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-typography {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+    }
+
+    .font-info-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+    }
+
+    .font-specimen {
+      font-size: 4rem;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .font-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .font-desc {
+      color: var(--muted);
+      font-size: 0.9375rem;
+      margin-bottom: 2rem;
+    }
+
+    .font-weights {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .weight-row {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .type-scale {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .scale-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .scale-tag {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .scale-preview {
+      border-left: 3px solid var(--accent);
+      padding-left: 1rem;
+    }
+
+    .scale-info {
+      font-size: 0.8125rem;
+      color: var(--muted);
+    }
+
+    .grid-print {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+
+    .print-sub-header {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--accent);
+      padding-left: 0.75rem;
+    }
+
+    .business-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      justify-content: center;
+    }
+
+    .card-preview-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s;
+      max-width: 520px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .card-preview-box:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-image-wrap {
+      width: 100%;
+      aspect-ratio: 1/0.62;
+      background: #faf8f5;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      cursor: zoom-in;
+      padding: 1rem;
+    }
+
+    .card-image-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.5s;
+    }
+
+    .card-image-wrap:hover img {
+      transform: scale(1.03);
+    }
+
+    .card-name {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-meta {
+      font-size: 0.8125rem;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Modal Viewer */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(28, 25, 23, 0.95);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 2rem;
+    }
+
+    .modal.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      max-width: 90%;
+      max-height: 85%;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      border-radius: var(--radius-sm);
+    }
+
+    .modal.open .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 3rem;
+      height: 3rem;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      transition: background 0.2s;
+    }
+
+    .modal-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .modal-caption {
+      position: absolute;
+      bottom: 2rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: center;
+      font-family: 'Bricolage Grotesque', sans-serif;
+    }
+
+    footer {
+      background: var(--text);
+      color: var(--bg);
+      padding: 4rem 0 3rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+      text-align: center;
+    }
+
+    .footer-logos {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    .footer-logos img {
+      height: 32px;
+      width: auto;
+    }
+
+    .footer-tagline {
+      font-size: 0.875rem;
+      color: rgba(250, 248, 245, 0.4);
+    }
+
+    /* Perforations section styling */
+    .perf-rules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2.5rem;
+      margin-top: 2rem;
+    }
+    .perf-frame-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.3s;
+    }
+    .perf-frame-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    /* Mock live tiles styling */
+    .mock-bento-tile-wrap {
+      width: 100%;
+      height: 200px;
+      margin-bottom: 1.5rem;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+    }
+    .tile {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: block;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .tile img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .tile:hover img {
+      transform: scale(1.05);
+    }
+    .tile-hover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 60%, rgba(0,0,0,0) 100%);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 5;
+      color: #fff;
+      text-align: left;
+    }
+    .tile:hover .tile-hover {
+      opacity: 1;
+    }
+    .tile-hover-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.125rem;
+      font-weight: 600;
+      transform: translateY(8px);
+      transition: transform 0.4s ease;
+      color: #fff;
+    }
+    .tile:hover .tile-hover-title {
+      transform: translateY(0);
+    }
+    .tile-hover-year {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      margin-top: 0.25rem;
+    }
+    .tile-type-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(28, 25, 23, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.2);
+      font-size: 0.875rem;
+      transition: background 0.3s, border-color 0.3s;
+    }
+    .tile:hover .tile-type-badge {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    
+    /* Film perforations inside mock tiles */
+    .film-perf-h {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      display: flex;
+      justify-content: space-between;
+      height: 10px;
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      opacity: 0.65;
+    }
+    .film-perf-h.top { top: 12px; }
+    .film-perf-h.bottom { bottom: 12px; }
+    .film-perf-h .perf-dot {
+      width: 12px;
+      height: 8px;
+      background: #faf8f5;
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .film-perf-v {
+      position: absolute;
+      top: 10%;
+      bottom: 10%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 10px;
+      z-index: 4;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      opacity: 0.65;
+    }
+    .film-perf-v.left { left: 12px; }
+    .film-perf-v.right { right: 12px; }
+    .film-perf-v .perf-dot {
+      width: 8px;
+      height: 12px;
+      background: #faf8f5;
+      border-radius: 2px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.8);
+    }
+    .tile:hover .film-perf-h, .tile:hover .film-perf-v {
+      opacity: 0.95;
+    }
+    .perf-visual-sample {
+      position: relative;
+      background: #1c1917;
+      border-radius: var(--radius-sm);
+      width: 100%;
+      height: 180px;
+      margin-bottom: 1.5rem;
+      border: 1px solid #383530;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .sample-perf-h {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .sample-perf-h.top { top: 12px; }
+    .sample-perf-h.bottom { bottom: 12px; }
+    .sample-perf-h .dot {
+      width: 14px;
+      height: 9px;
+      background: #dfdad5;
+      border-radius: 2px;
+      opacity: 0.15;
+    }
+    .sample-perf-v {
+      position: absolute;
+      top: 12px;
+      bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .sample-perf-v.left { left: 12px; }
+    .sample-perf-v.right { right: 12px; }
+    .sample-perf-v .dot {
+      width: 9px;
+      height: 14px;
+      background: #dfdad5;
+      border-radius: 2px;
+      opacity: 0.15;
+    }
+    .sample-content {
+      color: rgba(250, 248, 245, 0.25);
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .sample-content i {
+      font-size: 1.5rem;
+    }
+    .perf-frame-card h3 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    .perf-frame-card p {
+      font-size: 0.875rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+    .perf-table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 3rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+    .perf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+      min-width: 600px;
+    }
+    .perf-table th {
+      border-bottom: 2px solid var(--border);
+      padding: 1rem;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-weight: 600;
+      color: var(--text);
+      background: rgba(44, 62, 80, 0.05);
+    }
+    .perf-table td {
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 1rem;
+      color: var(--muted);
+      vertical-align: middle;
+    }
+    .perf-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .perf-table tbody tr:hover td {
+      color: var(--text);
+      background: var(--bg-raised);
+    }
+    .table-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.625rem;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .table-tag.photo {
+      background: rgba(44, 62, 80, 0.1);
+      color: var(--accent);
+    }
+    .table-tag.video {
+      background: rgba(28, 25, 23, 0.1);
+      color: var(--text);
+    }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo-link">
+        <img src="media/logo.png" alt="Jan Levínský Logo">
+        <span>Design</span>
+      </a>
+      <ul class="nav-menu">
+        <li><a href="#loga">Logo</a></li>
+        <li><a href="#perforace">Perforace</a></li>
+        <li><a href="#barvy">Barvy</a></li>
+        <li><a href="#typografie">Typografie</a></li>
+        <li><a href="#vizitka">Vizitka</a></li>
+      </ul>
+      <a href="index.html" class="back-btn">&#8592; Zpět na web</a>
+    </div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <span class="hero-badge">Brand Guidelines</span>
+      <h1>Designový manuál <strong>Jan Levínský</strong></h1>
+      <p>Specifikace vizuálního stylu a doprovodných grafických prvků pro cinematography & photography portfolio.</p>
+    </div>
+
+    <!-- LOGA SECTION -->
+    <section id="loga">
+      <div class="section-header">
+        <h2>Logo značky</h2>
+        <p>Prezentace hlavního symbolu (LJ marku) na různých površích.</p>
+      </div>
+
+      <div class="logo-toggle-bar">
+        <button class="toggle-trigger active" onclick="setLogoTheme('light')">Světlé pozadí</button>
+        <button class="toggle-trigger" onclick="setLogoTheme('dark')">Tmavé pozadí</button>
+      </div>
+
+      <div class="grid-logos">
+        <div class="logo-card light-mode js-logo-card">
+          <div class="logo-container light-mode js-logo-container">
+            <img src="media/logo.png" alt="Logo Jan Levínský" onclick="viewImage(this.src, 'Logo Jan Levínský (LJ symbol)')">
+          </div>
+          <h3>Hlavní symbol (LJ)</h3>
+          <p class="logo-meta">Raster PNG (278x276 px) s průhledným pozadím</p>
+          <div class="logo-actions">
+            <a href="media/logo.png" class="action-btn primary" download>Stáhnout PNG</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PERFORACE SECTION -->
+    <section id="perforace">
+      <div class="section-header">
+        <h2>Filmové perforace</h2>
+        <p>Specifická pravidla simulace 35mm kinofilmu v bento gridu.</p>
+      </div>
+
+      <p style="color: var(--muted); max-width: 800px; margin-bottom: 2rem;">
+        Koncept webu vychází z myšlenky filmového pásu. Každá dlaždice v galerii děl nese filmové perforace, jejichž typ a orientace se liší na základě formátu díla (Fotografie vs. Video).
+      </p>
+
+      <div class="perf-rules-grid">
+        <!-- Photo Layout -->
+        <div class="perf-frame-card">
+          <div class="mock-bento-tile-wrap">
+            <div class="tile" style="background: #1c1917; border-color: #383530; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; cursor: default;">
+              <!-- Perforace -->
+              <div class="film-perf-h top">
+                <div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div>
+              </div>
+              <i class="ph ph-camera" style="font-size: 2rem; color: var(--accent);"></i>
+              <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; color: #fff; font-size: 1.125rem;">Toto je foto políčko</span>
+              <div class="film-perf-h bottom">
+                <div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div>
+              </div>
+            </div>
+          </div>
+          <h3>Horizontální perforace</h3>
+          <p>
+            Dlaždice typu <strong>Fotografie</strong> reprezentují horizontální posun kinofilmu. Perforace jsou umístěny na horním a dolním okraji políčka.
+          </p>
+        </div>
+
+        <!-- Video Layout -->
+        <div class="perf-frame-card">
+          <div class="mock-bento-tile-wrap">
+            <div class="tile" style="background: #1c1917; border-color: #383530; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.5rem; cursor: default;">
+              <!-- Perforace -->
+              <div class="film-perf-v left">
+                <div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div>
+              </div>
+              <i class="ph ph-video-camera" style="font-size: 2rem; color: var(--accent);"></i>
+              <span style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600; color: #fff; font-size: 1.125rem;">Toto je video políčko</span>
+              <div class="film-perf-v right">
+                <div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div><div class="perf-dot"></div>
+              </div>
+            </div>
+          </div>
+          <h3>Vertikální perforace</h3>
+          <p>
+            Dlaždice typu <strong>Video</strong> simulují vertikální pohyb filmového pásu v promítačce / kameře. Perforace jsou na levém a pravém okraji.
+          </p>
+        </div>
+      </div>
+
+      <div class="perf-table-container">
+        <table class="perf-table">
+          <thead>
+            <tr>
+              <th>Typ obsahu</th>
+              <th>Název rozložení</th>
+              <th>Rozměry kinofilmu</th>
+              <th>Reálná předloha (Formát)</th>
+              <th>Směr perforací</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="table-tag photo">Foto</span></td>
+              <td><strong>Normal</strong></td>
+              <td>36 &times; 24 mm</td>
+              <td>Klasický kinofilm (3:2)</td>
+              <td>Vodorovný (nahoře &amp; dole)</td>
+            </tr>
+            <tr>
+              <td><span class="table-tag photo">Foto</span></td>
+              <td><strong>Wide</strong></td>
+              <td>42.7 &times; 24 mm</td>
+              <td>Panorama (Hasselblad XPan)</td>
+              <td>Vodorovný (nahoře &amp; dole)</td>
+            </tr>
+            <tr>
+              <td><span class="table-tag photo">Foto</span></td>
+              <td><strong>Tall</strong></td>
+              <td>13.5 &times; 24 mm</td>
+              <td>Poloviční formát (Olympus Pen F)</td>
+              <td>Vodorovný (nahoře &amp; dole)</td>
+            </tr>
+            <tr>
+              <td><span class="table-tag video">Video</span></td>
+              <td><strong>Normal</strong></td>
+              <td>24 &times; 18.6 mm</td>
+              <td>Silent Standard film (4:3)</td>
+              <td>Svislý (vlevo &amp; vpravo)</td>
+            </tr>
+            <tr>
+              <td><span class="table-tag video">Video</span></td>
+              <td><strong>Wide</strong></td>
+              <td>24 &times; 14 mm</td>
+              <td>Super 35 / Širokoúhlý kinofilm</td>
+              <td>Svislý (vlevo &amp; vpravo)</td>
+            </tr>
+            <tr>
+              <td><span class="table-tag video">Video</span></td>
+              <td><strong>Tall</strong></td>
+              <td>24 &times; 44.2 mm</td>
+              <td>Moderní vertikální video (9:16)</td>
+              <td>Svislý (vlevo &amp; vpravo)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(44, 62, 80, 0.04); border: 1px dashed var(--border); border-radius: var(--radius-md);">
+        <h4 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--accent);">Dynamický výpočet a proporce</h4>
+        <p style="font-size: 0.875rem; color: var(--muted); line-height: 1.6;">
+          Počet perforací se vypočítává automaticky na základě fyzického poměru stran políčka za použití základního rozměru otvoru (šířka <strong>2.79 mm</strong>, výška <strong>1.98 mm</strong>) a konstantní rozteče (pitch = <strong>4.75 mm</strong>) podle standardní filmové specifikace KS-1870. Rozměry perforací na webu se za běhu přizpůsobují rozlišení obrazovky pomocí <code>ResizeObserver</code> v JS, což zaručuje matematicky věrné zobrazení bez ohledu na velikost dlaždice.
+        </p>
+      </div>
+
+      <!-- IKONY A DOPLŇKY SECTION -->
+      <div style="margin-top: 3rem;">
+        <h3 class="print-sub-header">🏷️ Typové odznaky &amp; Ikony</h3>
+        <p style="color: var(--muted); max-width: 800px; margin-bottom: 2rem;">
+          Doprovodné grafické prvky a ikony pomáhají uživateli se snadnou orientací a ovládáním na celém portfoliu.
+        </p>
+        
+        <div class="perf-rules-grid">
+          <div class="perf-frame-card" style="align-items: flex-start;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; position: relative;">
+              <div class="tile-type-badge" style="position: static; background: var(--accent); color: #fff;">
+                <i class="ph ph-play"></i>
+              </div>
+              <h4 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.15rem; font-weight: 600; margin: 0;">Video indikační odznak</h4>
+            </div>
+            <p style="text-align: left; font-size: 0.875rem; color: var(--muted); line-height: 1.5;">
+              Tento kruhový odznak s ikonou přehrávání (<code>ph-play</code>) se zobrazuje <strong>výhradně na mobilních zařízeních a menších obrazovkách</strong> (pod 640 px), kde jsou filmové perforace z důvodu nedostatku místa skryty. Slouží k okamžitému odlišení pohyblivého obsahu od statických fotografií. Na desktopové verzi (kde má video políčko vertikální perforace) se tento odznak nezobrazuje, neboť samotný směr perforací spolehlivě identifikuje typ obsahu.
+            </p>
+          </div>
+
+          <div class="perf-frame-card" style="align-items: flex-start;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; position: relative;">
+              <div class="tile-type-badge" style="position: static; background: var(--surface); color: var(--text); border-color: var(--border);">
+                <i class="ph ph-instagram-logo"></i>
+              </div>
+              <h4 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.15rem; font-weight: 600; margin: 0;">Knihovna Phosphor Icons</h4>
+            </div>
+            <p style="text-align: left; font-size: 0.875rem; color: var(--muted); line-height: 1.5;">
+              Veškeré ikony na webu pocházejí z rodiny <strong>Phosphor Icons</strong> (lineární varianta Regular, 14px/16px). Jsou použity v postranním panelu (např. Instagram, YouTube, O mně), v kontaktních odkazech v zápatí a v hlavních tlačítkách. Zajišťují konzistentní vizuální jazyk napříč všemi stránkami.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BARVY SECTION -->
+    <section id="barvy">
+      <div class="section-header">
+        <h2>Barevná paleta</h2>
+        <p>Kliknutím na kód jej zkopírujete do schránky.</p>
+      </div>
+
+      <div class="grid-colors">
+        <div class="color-card">
+          <div class="color-swatch" style="background: #2c3e50;"></div>
+          <div class="color-info">
+            <h3 class="color-name">Deep Slate Blue</h3>
+            <p class="color-desc">Primární kontrastní barva pro akcenty, odkazy a vybrané textové prvky.</p>
+            <div class="color-value-row">
+              <span class="color-label">HEX</span>
+              <span class="color-value" onclick="copyColor('#2c3e50')">#2c3e50</span>
+            </div>
+            <div class="color-value-row">
+              <span class="color-label">RGB</span>
+              <span class="color-value" onclick="copyColor('rgb(44, 62, 80)')">44, 62, 80</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background: #faf8f5; border-bottom: 1px solid var(--border);"></div>
+          <div class="color-info">
+            <h3 class="color-name">Warm Cream</h3>
+            <p class="color-desc">Hlavní teplé světlé pozadí celého filmového a fotografického portfolia.</p>
+            <div class="color-value-row">
+              <span class="color-label">HEX</span>
+              <span class="color-value" onclick="copyColor('#faf8f5')">#faf8f5</span>
+            </div>
+            <div class="color-value-row">
+              <span class="color-label">RGB</span>
+              <span class="color-value" onclick="copyColor('rgb(250, 248, 245)')">250, 248, 245</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background: #f0ece6; border-bottom: 1px solid var(--border);"></div>
+          <div class="color-info">
+            <h3 class="color-name">Warm Stone</h3>
+            <p class="color-desc">Výplň pro bento dlaždice a pomocné karty (Surface).</p>
+            <div class="color-value-row">
+              <span class="color-label">HEX</span>
+              <span class="color-value" onclick="copyColor('#f0ece6')">#f0ece6</span>
+            </div>
+            <div class="color-value-row">
+              <span class="color-label">RGB</span>
+              <span class="color-value" onclick="copyColor('rgb(240, 236, 230)')">240, 236, 230</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background: #1c1917;"></div>
+          <div class="color-info">
+            <h3 class="color-name">Charcoal Text</h3>
+            <p class="color-desc">Téměř černý, měkký odstín na hlavní nadpisy a kontrastní kopírování.</p>
+            <div class="color-value-row">
+              <span class="color-label">HEX</span>
+              <span class="color-value" onclick="copyColor('#1c1917')">#1c1917</span>
+            </div>
+            <div class="color-value-row">
+              <span class="color-label">RGB</span>
+              <span class="color-value" onclick="copyColor('rgb(28, 25, 23)')">28, 25, 23</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch" style="background: #6b6560;"></div>
+          <div class="color-info">
+            <h3 class="color-name">Slate Muted</h3>
+            <p class="color-desc">Třída pro doprovodný text, rok realizace a popisné popisky (Muted).</p>
+            <div class="color-value-row">
+              <span class="color-label">HEX</span>
+              <span class="color-value" onclick="copyColor('#6b6560')">#6b6560</span>
+            </div>
+            <div class="color-value-row">
+              <span class="color-label">RGB</span>
+              <span class="color-value" onclick="copyColor('rgb(107, 101, 96)')">107, 101, 96</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TYPOGRAFIE SECTION -->
+    <section id="typografie">
+      <div class="section-header">
+        <h2>Typografie</h2>
+        <p>Použitá písma a typographic scale</p>
+      </div>
+
+      <div class="grid-typography">
+        <div class="font-info-card">
+          <div class="font-specimen" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400;">Aa</div>
+          <h3 class="font-title">Bricolage Grotesque</h3>
+          <p class="font-desc">Hlavní nadpisový a umělecký font. Zobrazuje jméno v záhlaví a vybrané texty s organickou strukturou.</p>
+          <div class="font-weights">
+            <div class="weight-row" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 300;"><span>Light</span><span>300</span></div>
+            <div class="weight-row" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 400;"><span>Regular</span><span>400</span></div>
+            <div class="weight-row" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 600;"><span>Semi-Bold</span><span>600</span></div>
+            <div class="weight-row" style="font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700;"><span>Bold</span><span>700</span></div>
+          </div>
+        </div>
+
+        <div class="font-info-card">
+          <div class="font-specimen" style="font-family: 'Inter', sans-serif; font-weight: 400;">Aa</div>
+          <h3 class="font-title">Inter</h3>
+          <p class="font-desc">Používá se pro všechny doplňkové popisy, popisky děl, rok, filtry a zápatí.</p>
+          <div class="font-weights">
+            <div class="weight-row" style="font-family: 'Inter', sans-serif; font-weight: 300;"><span>Light</span><span>300</span></div>
+            <div class="weight-row" style="font-family: 'Inter', sans-serif; font-weight: 400;"><span>Regular</span><span>400</span></div>
+            <div class="weight-row" style="font-family: 'Inter', sans-serif; font-weight: 500;"><span>Medium</span><span>500</span></div>
+            <div class="weight-row" style="font-family: 'Inter', sans-serif; font-weight: 600;"><span>Semi-Bold</span><span>600</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top: 4rem;">
+        <h3 class="print-sub-header">Ukázka měřítka (Typographic Scale)</h3>
+        <div class="type-scale">
+          <div class="scale-row">
+            <span class="scale-tag">Velký nadpis (Heading 1)</span>
+            <div class="scale-preview" style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 3.5rem; font-weight: 400; line-height: 0.95; letter-spacing: -0.015em;">Jan <span style="font-style: italic; color: var(--accent);">Levínský</span></div>
+            <span class="scale-info">font-family: Bricolage Grotesque; font-size: 3.5rem (56px); font-weight: 400;</span>
+          </div>
+
+          <div class="scale-row">
+            <span class="scale-tag">Karta detailu (Hover title)</span>
+            <div class="scale-preview" style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--accent);">Za Okny (2024)</div>
+            <span class="scale-info">font-family: Bricolage Grotesque; font-size: 1.25rem (20px); font-weight: 600;</span>
+          </div>
+
+          <div class="scale-row">
+            <span class="scale-tag">Značka (Kicker / Tag)</span>
+            <div class="scale-preview" style="font-family: 'Inter', sans-serif; font-size: 0.625rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);">Cinematography & Photography</div>
+            <span class="scale-info">font-family: Inter; font-size: 10px; font-weight: 500; letter-spacing: 0.18em;</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRINT SECTION (VIZITKA) -->
+    <section id="vizitka">
+      <div class="section-header">
+        <h2>Fyzická vizitka</h2>
+        <p>Kliknutím na náhled jej zvětšíte.</p>
+      </div>
+
+      <div class="business-cards-grid">
+        <div class="card-preview-box">
+          <div class="card-image-wrap" onclick="viewImage('screenshots/card.png', 'Vzorník vizitky (LJ)')">
+            <img src="screenshots/card.png" alt="Vizitka Jan Levínský">
+          </div>
+          <h3>Interaktivní digitální vizitka</h3>
+          <p class="card-meta">Aplikovaný filmový okraj s perforací (academic aspect ratio 1:0.62)</p>
+          <div class="logo-actions">
+            <a href="card.html" class="action-btn outline">Zobrazit card.html</a>
+            <a href="screenshots/card.png" class="action-btn primary" download>Stáhnout náhled</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-logos">
+        <img src="media/logo.png" alt="Jan Levínský Logo">
+        <span>Jan Levínský</span>
+      </div>
+      <p class="footer-tagline">&copy; 2026 Jan Levínský — Všechna práva vyhrazena.</p>
+    </div>
+  </footer>
+
+  <!-- Modal and Toast HTML elements -->
+  <div id="imageModal" class="modal" onclick="closeModal()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <img class="modal-content" id="imgModalTarget" alt="Zvětšený náhled">
+    <div class="modal-caption" id="modalCaptionTarget"></div>
+  </div>
+
+  <div id="copyToast" class="toast">Kód byl zkopírován do schránky!</div>
+
+  <script>
+    function setLogoTheme(theme) {
+      const cards = document.querySelectorAll('.js-logo-card');
+      const containers = document.querySelectorAll('.js-logo-container');
+      const buttons = document.querySelectorAll('.toggle-trigger');
+      
+      buttons.forEach(btn => btn.classList.remove('active'));
+      const activeBtn = Array.from(buttons).find(btn => btn.innerText.toLowerCase().includes(theme === 'light' ? 'světlé' : 'tmavé'));
+      if (activeBtn) activeBtn.classList.add('active');
+
+      cards.forEach(card => {
+        if (theme === 'light') {
+          card.classList.remove('dark-mode');
+          card.classList.add('light-mode');
+        } else {
+          card.classList.remove('light-mode');
+          card.classList.add('dark-mode');
+        }
+      });
+
+      containers.forEach(container => {
+        if (theme === 'light') {
+          container.classList.remove('dark-mode');
+          container.classList.add('light-mode');
+        } else {
+          container.classList.remove('light-mode');
+          container.classList.add('dark-mode');
+        }
+      });
+    }
+
+    function copyColor(value) {
+      navigator.clipboard.writeText(value).then(() => {
+        const toast = document.getElementById('copyToast');
+        toast.innerText = 'Zkopírováno: ' + value;
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2000);
+      }).catch(err => {
+        console.error('Došlo k chybě při kopírování barevného kódu', err);
+      });
+    }
+
+    function viewImage(src, caption) {
+      const modal = document.getElementById('imageModal');
+      const modalImg = document.getElementById('imgModalTarget');
+      const captionText = document.getElementById('modalCaptionTarget');
+      
+      modal.classList.add('open');
+      modalImg.src = src;
+      captionText.innerText = caption;
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('imageModal');
+      modal.classList.remove('open');
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>

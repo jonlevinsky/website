@@ -91,6 +91,8 @@
   width: 100%;
 }
 
+.tile-type-badge { display: none; }
+
 .tile {
   position: relative;
   background: var(--surface);
@@ -607,10 +609,16 @@
     <footer class="g-footer">
       <div class="f-name">Jan Levínský</div>
       <div class="f-role">Cinematography & Photography</div>
-      <a class="f-contact" href="mailto:levinskyj.cine@gmail.com">
-        <i class="ph ph-envelope" style="font-size: 14px;"></i>
-        Kontakt
-      </a>
+      <div style="display: flex; gap: 16px; margin-top: 20px; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <a class="f-contact" href="mailto:levinskyj.cine@gmail.com" style="margin: 0;">
+          <i class="ph ph-envelope" style="font-size: 14px;"></i>
+          Kontakt
+        </a>
+        <a class="f-contact" href="design-manual.html" style="margin: 0;">
+          <i class="ph ph-palette" style="font-size: 14px;"></i>
+          Designový manuál
+        </a>
+      </div>
     </footer>
   </main>
 </div>
