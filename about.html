@@ -820,6 +820,16 @@ main {
     <footer class="g-footer" id="footer">
       <div class="f-name">Jan Levínský</div>
       <div class="f-role">Cinematography &amp; Photography</div>
+      
+      <div class="footer-newsletter">
+        <label for="about-newsletter-email">Newsletter</label>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" id="about-newsletter-email" placeholder="Tvůj e-mail..." required>
+          <button type="submit" aria-label="Odebírat"><i class="ph ph-paper-plane-tilt"></i></button>
+        </form>
+        <div class="newsletter-status"></div>
+      </div>
+
       <div style="display: flex; gap: 16px; margin-top: 20px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <a class="f-contact" href="mailto:levinskyj.cine@gmail.com" style="margin: 0;">
           <i class="ph ph-envelope" style="font-size: 14px;"></i>
@@ -830,6 +840,7 @@ main {
   </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="main.js"></script>
 <script>
 function initHeroAnim() {

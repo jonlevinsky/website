@@ -308,6 +308,7 @@
     <button class="btn" onclick="toggleValidation()" id="valBtn">&#x2713; Validace</button>
     <button class="btn" style="border-color:#c4956a;color:#c4956a" onclick="forceConvert()" id="forceConvertBtn">&#x1F504; Force WebP</button>
     <button class="btn" style="border-color:#5a9e6e;color:#5a9e6e" onclick="normalizeFilenames()" id="normalizeBtn">&#x1F4C1; Normalizuj nazvy</button>
+    <button class="btn" style="border-color:#e05b5b;color:#e05b5b" onclick="generateAllProjectsLqip()">⚡ Mass LQIP</button>
     <button class="btn" style="border-color:#5a9e6e;color:#5a9e6e" onclick="fixPaths()" id="fixPathsBtn">&#x1F527; Fix cesty</button>
     <button class="btn" onclick="generateSitemap()">&#x1F5FA; Sitemap</button>
     <button class="btn primary" onclick="deploy()">&#x1F680; Deploy</button>
@@ -550,6 +551,25 @@
       finally { btn.disabled = false; btn.textContent = '\uD83D\uDCC1 Normalizuj nazvy'; }
     }
 
+    async function generateAllProjectsLqip() {
+      if (!confirm("Opravdu chcete přegenerovat LQIP pro všechna média ve všech projektech?")) return;
+      setStatus("Generuji LQIP pro všechna média ve všech projektech...");
+      try {
+        const r = await fetch('/api/generate-all-lqip', { method: 'POST' });
+        const j = await r.json();
+        if (j.ok) {
+          showToast('LQIP vygenerován pro ' + j.generated + ' médií');
+          await load();
+          renderForm();
+        } else {
+          showToast('Chyba při hromadném generování LQIP');
+        }
+      } catch (e) {
+        showToast('Chyba sítě');
+      }
+      setStatus('Pripraveno');
+    }
+
     // --- OG Image ---
     async function generateOg() {
       if (activeIdx < 0) return;
@@ -579,7 +599,12 @@
       try {
         const r = await fetch('/api/generate-lqip', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_idx: activeIdx, media_idx: mi }) });
         const j = await r.json();
-        if (j.ok) { showToast('LQIP vygenerovan'); renderForm(); debounceSave(); }
+        if (j.ok) {
+          showToast('LQIP / aspect ratio vygenerován');
+          const currentIdx = activeIdx;
+          await load();
+          if (currentIdx >= 0 && currentIdx < projects.length) select(currentIdx);
+        }
         else { showToast('Chyba LQIP'); }
       } catch (e) { showToast('Chyba site'); }
       setStatus('Pripraveno');
@@ -587,11 +612,16 @@
 
     async function generateAllLqip() {
       if (activeIdx < 0) return;
-      setStatus('Generuji LQIP pro vsechna media...');
+      setStatus('Generuji LQIP a aspect ratio...');
       try {
         const r = await fetch('/api/generate-lqip', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ project_idx: activeIdx, media_idx: -1 }) });
         const j = await r.json();
-        if (j.ok) { showToast('LQIP vygenerovan pro ' + j.generated + ' medii'); renderForm(); debounceSave(); }
+        if (j.ok) {
+          showToast('LQIP a aspect ratio vygenerovány pro ' + j.generated + ' médií');
+          const currentIdx = activeIdx;
+          await load();
+          if (currentIdx >= 0 && currentIdx < projects.length) select(currentIdx);
+        }
         else { showToast('Chyba LQIP'); }
       } catch (e) { showToast('Chyba site'); }
       setStatus('Pripraveno');
@@ -1064,7 +1094,15 @@
           fill.style.width = '100%';
           if (!projects[activeIdx].media) projects[activeIdx].media = [];
           for (const f of result.files) {
-            projects[activeIdx].media.push({ type: f.type, src: f.rel_path, thumbnail: f.thumbnail || f.rel_path, title: f.filename.replace(/\.[^.]+$/, ''), caption: '', lqip: f.lqip || null });
+            projects[activeIdx].media.push({
+              type: f.type,
+              src: f.rel_path,
+              thumbnail: f.thumbnail || f.rel_path,
+              title: f.filename.replace(/\.[^.]+$/, ''),
+              caption: '',
+              lqip: f.lqip || null,
+              aspect_ratio: f.aspect_ratio || null
+            });
           }
           renderForm(); debounceSave(); showToast('Nahrano ' + result.files.length + ' souboru');
         } else { throw new Error(result.error || 'Chyba'); }

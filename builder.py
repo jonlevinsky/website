@@ -82,9 +82,9 @@ MAX_IMAGE_WIDTH = 1920
 MAX_THUMB_WIDTH = 640
 
 # --- LQIP / Placeholder ---
-LQIP_WIDTH = 32
+LQIP_WIDTH = 12
 LQIP_BLUR = 10
-LQIP_QUALITY = 30
+LQIP_QUALITY = 15
 
 # --- OG Image (style.css light theme) ---
 OG_WIDTH = 1200
@@ -274,6 +274,51 @@ def is_image_file(path):
 
 def is_video_ext(path):
     return Path(path).suffix.lower() in (".mp4", ".mov", ".webm", ".avi", ".mkv", ".m4v")
+
+def get_video_dimensions(filepath):
+    ffprobe = shutil.which("ffprobe")
+    if not ffprobe:
+        ffmpeg = shutil.which("ffmpeg")
+        if not ffmpeg:
+            return None, None
+        try:
+            result = subprocess.run([ffmpeg, "-i", str(filepath)], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            match = re.search(r"Video:.*?\s(\d{2,})x(\d{2,})", result.stderr)
+            if match:
+                return int(match.group(1)), int(match.group(2))
+        except Exception:
+            pass
+        return None, None
+    try:
+        cmd = [
+            ffprobe, "-v", "error",
+            "-select_streams", "v:0",
+            "-show_entries", "stream=width,height",
+            "-of", "csv=s=x:p=0",
+            str(filepath)
+        ]
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=True)
+        out = result.stdout.strip()
+        if 'x' in out:
+            w_str, h_str = out.split('x')
+            return int(w_str), int(h_str)
+    except Exception as e:
+        print(f"[Video Dimensions] Error probing {filepath}: {e}")
+    return None, None
+
+def get_media_dimensions(filepath):
+    filepath = Path(filepath)
+    if not filepath.exists():
+        return None, None
+    if is_image_file(filepath):
+        try:
+            with Image.open(filepath) as img:
+                return img.width, img.height
+        except Exception as e:
+            print(f"[Dimensions] Image open error {filepath}: {e}")
+    elif is_video_ext(filepath.name):
+        return get_video_dimensions(filepath)
+    return None, None
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -1048,6 +1093,16 @@ def git_deploy():
         subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
         push_result = subprocess.run(["git", "push"], capture_output=True, text=True)
         if push_result.returncode == 0:
+            # Trigger newsletter sending asynchronously in the background
+            try:
+                script_path = Path(__file__).parent / "newsletter.py"
+                if script_path.exists():
+                    subprocess.Popen([sys.executable, str(script_path)],
+                                     stdout=subprocess.DEVNULL,
+                                     stderr=subprocess.DEVNULL,
+                                     close_fds=True)
+            except Exception as e:
+                print(f"[Deploy] Chyba při spouštění newsletteru: {e}")
             return True, f"Deploy hotov! {commit_msg}"
         else:
             return False, f"Push selhal: {push_result.stderr}"
@@ -1182,6 +1237,8 @@ class Handler(SimpleHTTPRequestHandler):
             self.handle_bulk_year()
         elif path == "/api/generate-lqip":
             self.handle_generate_lqip()
+        elif path == "/api/generate-all-lqip":
+            self.handle_generate_all_lqip()
         elif path == "/api/generate-simple-og":
             self.handle_generate_simple_og()
         elif path == "/api/generate-all-og":
@@ -1370,12 +1427,18 @@ class Handler(SimpleHTTPRequestHandler):
                 thumb_rel = rel
                 lqip = None
 
+            aspect_ratio = None
+            w, h = get_media_dimensions(dest)
+            if w and h and h > 0:
+                aspect_ratio = round(w / h, 4)
+
             saved.append({
                 "filename": dest.name,
                 "rel_path": rel,
                 "type": ftype,
                 "thumbnail": thumb_rel,
-                "lqip": lqip
+                "lqip": lqip,
+                "aspect_ratio": aspect_ratio
             })
         self.send_json({"ok": True, "files": saved})
 
@@ -1465,24 +1528,55 @@ class Handler(SimpleHTTPRequestHandler):
             if media_idx < 0:
                 for m in media_list:
                     src = m.get("src")
-                    if src and Path(src).exists() and is_image_file(src):
-                        lqip = generate_lqip_for_file(src)
-                        if lqip:
-                            m["lqip"] = lqip
-                            generated += 1
+                    if src and Path(src).exists():
+                        w, h = get_media_dimensions(src)
+                        if w and h and h > 0:
+                            m["aspect_ratio"] = round(w / h, 4)
+                        if is_image_file(src):
+                            lqip = generate_lqip_for_file(src)
+                            if lqip:
+                                m["lqip"] = lqip
+                                generated += 1
             else:
                 if media_idx < len(media_list):
                     m = media_list[media_idx]
                     src = m.get("src")
-                    if src and Path(src).exists() and is_image_file(src):
-                        lqip = generate_lqip_for_file(src)
-                        if lqip:
-                            m["lqip"] = lqip
-                            generated = 1
+                    if src and Path(src).exists():
+                        w, h = get_media_dimensions(src)
+                        if w and h and h > 0:
+                            m["aspect_ratio"] = round(w / h, 4)
+                        if is_image_file(src):
+                            lqip = generate_lqip_for_file(src)
+                            if lqip:
+                                m["lqip"] = lqip
+                                generated = 1
             save_json()
             self.send_json({"ok": True, "generated": generated})
         except Exception as e:
             self.send_json({"ok": False, "error": str(e)}, 400)
+
+    def handle_generate_all_lqip(self):
+        try:
+            generated = 0
+            push_undo_state()
+            for project in data["projects"]:
+                media_list = project.get("media", [])
+                for m in media_list:
+                    src = m.get("src")
+                    if src and Path(src).exists():
+                        w, h = get_media_dimensions(src)
+                        if w and h and h > 0:
+                            m["aspect_ratio"] = round(w / h, 4)
+                        if is_image_file(src):
+                            lqip = generate_lqip_for_file(src)
+                            if lqip:
+                                m["lqip"] = lqip
+                                generated += 1
+            # Save always because we updated aspect ratios for all assets (even if no new LQIP generated)
+            save_json()
+            self.send_json({"ok": True, "generated": generated})
+        except Exception as e:
+            self.send_json({"ok": False, "error": str(e)}, 500)
 
     def handle_generate_simple_og(self):
         content_len = int(self.headers.get("Content-Length", 0))

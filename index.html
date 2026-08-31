@@ -91,15 +91,13 @@
   width: 100%;
 }
 
-.tile-type-badge { display: none; }
-
 .tile {
   position: relative;
   background: var(--surface);
   overflow: hidden;
   border-radius: var(--r-lg);
   cursor: pointer;
-  transition: transform 0.6s var(--ease-out-expo), border-color 0.4s ease;
+  transition: transform 0.6s var(--ease-out-expo), border-color 0.5s var(--ease-out-expo), box-shadow 0.6s var(--ease-out-expo);
   will-change: transform;
   border: 1px solid var(--border);
   min-height: 220px;
@@ -110,16 +108,30 @@
 .tile.large { grid-column: span 2; grid-row: span 2; min-height: auto; }
 
 .tile:hover, .tile:focus-visible {
-  transform: translateY(-4px);
-  border-color: var(--border-subtle);
+  transform: translateY(-8px);
+  border-color: var(--accent);
+  box-shadow: 0 20px 38px rgba(28, 25, 23, 0.15), 0 8px 16px rgba(28, 25, 23, 0.08);
   z-index: 2;
+}
+
+.tile .px-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
 }
 
 .tile img, .tile video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s var(--ease-out-expo), filter 0.8s var(--ease-out-expo), opacity 0.6s var(--ease-out-expo);
+  transition: transform 0.8s var(--ease-out-expo), opacity 0.5s var(--ease-out-expo);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
 }
 .tile img {
   opacity: 0;
@@ -127,9 +139,8 @@
 
 .tile:hover img, .tile:focus-visible img,
 .tile:hover video, .tile:focus-visible video {
-  transform: scale(1.03);
+  transform: scale(1.05) translateZ(0);
 }
-.tile:hover img, .tile:focus-visible img { filter: brightness(0.92); }
 .tile img.loaded { opacity: 1; }
 
 @keyframes shimmer {
@@ -152,6 +163,26 @@
 .tile.skeleton::before { opacity: 1; }
 .tile img, .tile video { position: relative; z-index: 1; }
 
+/* Cinematic dark overlay */
+.tile::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out-expo);
+  pointer-events: none;
+  z-index: 2;
+}
+.tile:hover::after, .tile:focus-visible::after {
+  opacity: 1;
+}
+
 /* Hover info */
 .tile-hover {
   position: absolute;
@@ -162,40 +193,41 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   opacity: 0;
-  transition: opacity 0.45s var(--ease-in-out);
+  transition: opacity 0.5s var(--ease-out-expo);
 }
 
 .tile:hover .tile-hover { opacity: 1; }
 
 .tile-hover-title {
   font-family: var(--serif);
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 500;
   color: #fff;
   line-height: 1.25;
   text-align: center;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.6);
-  letter-spacing: 0.01em;
-  max-width: 75%;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  letter-spacing: -0.01em;
+  max-width: 80%;
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.4s 0.05s var(--ease-in-out), transform 0.4s 0.05s var(--ease-out-expo);
+  transform: translateY(12px);
+  transition: opacity 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
 }
 
 .tile:hover .tile-hover-title { opacity: 1; transform: translateY(0); }
 
 .tile-hover-year {
   font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 500;
-  color: rgba(255,255,255,0.85);
-  letter-spacing: 0.08em;
-  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
   opacity: 0;
-  transform: translateY(6px);
-  transition: opacity 0.35s 0.15s var(--ease-in-out), transform 0.35s 0.15s var(--ease-out-expo);
+  transform: translateY(8px);
+  transition: opacity 0.5s 0.08s var(--ease-out-expo), transform 0.5s 0.08s var(--ease-out-expo);
 }
 
 .tile:hover .tile-hover-year { opacity: 1; transform: translateY(0); }
@@ -206,7 +238,7 @@
   pointer-events: none;
   z-index: 3;
   opacity: 1;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s var(--ease-out-expo);
   left: 3.5%;
   right: 3.5%;
   height: calc(var(--perf-dot-height, 8%) + 2%);
@@ -230,10 +262,17 @@
     1px 1px 3px rgba(0,0,0,0.25),
     inset 2px 2px 4px rgba(0,0,0,0.45),
     inset -1px -1px 2px rgba(255,255,255,0.15);
-  transition: box-shadow 0.4s ease, transform 0.4s var(--ease-out-expo);
+  transition: transform 0.5s var(--ease-out-expo), box-shadow 0.5s var(--ease-out-expo);
 }
 
-.tile:hover .film-perf-h { opacity: 0.9; }
+.tile:hover .film-perf-h { opacity: 1; }
+.tile:hover .perf-dot {
+  box-shadow:
+    -0.5px -0.5px 1px rgba(255,255,255,0.7),
+    0.5px 0.5px 2px rgba(0,0,0,0.3),
+    inset 3.5px 3.5px 6px rgba(0,0,0,0.6),
+    inset -1px -1px 2px rgba(255,255,255,0.25);
+}
 
 /* Film key legend */
 .film-key-wrap {
@@ -357,23 +396,6 @@
   .tile .film-shadow { display: none !important; }
   .film-perf-h, .film-perf-v { display: none !important; }
   .film-key-wrap { display: none; }
-  .tile-type-badge {
-    position: absolute;
-    top: 10px; right: 10px;
-    width: 34px; height: 34px;
-    border-radius: 50%;
-    background: rgba(0,0,0,0.55);
-    z-index: 6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    pointer-events: none;
-  }
-  .tile-type-badge i {
-      color: #fff;
-      font-size: 14px;
-      padding-left: 2px;
-    }
   }
 
   @media (max-width: 400px) {
@@ -615,6 +637,16 @@
     <footer class="g-footer">
       <div class="f-name">Jan Levínský</div>
       <div class="f-role">Cinematography & Photography</div>
+      
+      <div class="footer-newsletter">
+        <label for="index-newsletter-email">Newsletter</label>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" id="index-newsletter-email" placeholder="Tvůj e-mail..." required>
+          <button type="submit" aria-label="Odebírat"><i class="ph ph-paper-plane-tilt"></i></button>
+        </form>
+        <div class="newsletter-status"></div>
+      </div>
+
       <div style="display: flex; gap: 16px; margin-top: 20px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <a class="f-contact" href="mailto:levinskyj.cine@gmail.com" style="margin: 0;">
           <i class="ph ph-envelope" style="font-size: 14px;"></i>
@@ -625,6 +657,7 @@
   </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="main.js"></script>
 
 <script>
@@ -684,6 +717,16 @@ async function initPortfolio() {
       // Prefer project-level thumbnail LQIP if available
       if (project.lqip) lqipSrc = project.lqip;
 
+      let projectAspect = null;
+      if (project.media) {
+        const matchingMedia = project.media.find(m => (m.thumbnail || m.src) === thumbnailSrc);
+        if (matchingMedia && matchingMedia.aspect_ratio) {
+          projectAspect = matchingMedia.aspect_ratio;
+        } else if (project.media[0] && project.media[0].aspect_ratio) {
+          projectAspect = project.media[0].aspect_ratio;
+        }
+      }
+
       const a = document.createElement('a');
       a.href = 'project.html?id=' + project.id;
       a.className = 'tile ' + (project.layout || 'normal') + ' ' + (project.type === 'video' ? 'video-tile' : 'photo-tile');
@@ -732,8 +775,7 @@ async function initPortfolio() {
         : '<div class="film-perf-h top">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>' + 
           '<div class="film-perf-h bottom">' + Array(count).fill('<div class="perf-dot"></div>').join('') + '</div>';
 
-      const typeBadge = isVideo ? '<span class="tile-type-badge"><i class="ph ph-play"></i></span>' : '';
-      a.innerHTML = '<div class="film-shadow"></div>' + perfHtml + typeBadge +
+      a.innerHTML = '<div class="film-shadow"></div>' + perfHtml +
         '<div class="tile-hover">' + 
           '<div class="tile-hover-title">' + project.title + '</div>' +
           (project.year ? '<div class="tile-hover-year">' + project.year + '</div>' : '') +
@@ -813,11 +855,15 @@ async function initPortfolio() {
         img.alt = project.title || '';
         img.loading = idx < 3 ? 'eager' : 'lazy';
         img.decoding = 'async';
-        const tileRect = a.getBoundingClientRect();
-        if (tileRect.width && tileRect.height) {
-          img.width = Math.round(tileRect.width);
-          img.height = Math.round(tileRect.height);
-          img.style.aspectRatio = tileRect.width / tileRect.height;
+        if (projectAspect) {
+          img.style.aspectRatio = projectAspect;
+        } else {
+          const tileRect = a.getBoundingClientRect();
+          if (tileRect.width && tileRect.height) {
+            img.width = Math.round(tileRect.width);
+            img.height = Math.round(tileRect.height);
+            img.style.aspectRatio = tileRect.width / tileRect.height;
+          }
         }
         img.style.width = '100%';
         img.style.height = '100%';

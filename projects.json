@@ -43,91 +43,114 @@
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1.mp4",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1.webp",
         "title": "Trailer",
-        "caption": ""
+        "caption": "",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "video",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_1.mp4",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_3.webp",
         "title": "Hodinář",
-        "caption": ""
+        "caption": "",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "video",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_2.mp4",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_4.webp",
         "title": "Zubní Technik",
-        "caption": ""
+        "caption": "",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_1.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_1.webp",
         "title": "Plakát Hodinář",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAARAAwDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAIBAwT/xAAeEAACAgICAwAAAAAAAAAAAAAAAQIhETIDEjFxof/EABYBAQEBAAAAAAAAAAAAAAAAAAEAAv/EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDPF8LVwafsWTjldVWBdXfwdSWLJmq57ErwACa//9k=",
+        "aspect_ratio": 0.7025
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_2.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_2.webp",
         "title": "Plakát Zubní technik",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAARAAwDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAIBA//EABsQAAMBAAMBAAAAAAAAAAAAAAABAhEhQZEx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAVEQEBAAAAAAAAAAAAAAAAAAAAAf/aAAwDAQACEQMRAD8A5KZqVwvSKWPox7L++Dd7LiCyUABf/9k=",
+        "aspect_ratio": 0.7019
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_5.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_5.webp",
         "title": "Still (1)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAGxAAAgIDAQAAAAAAAAAAAAAAAQIAAxEiMXH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwCTUq5DV6+zNY5DkYHYiFr/2Q==",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_8.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_8.webp",
         "title": "still (3)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEC/8QAGRABAQEAAwAAAAAAAAAAAAAAAQARITFx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAVEQEBAAAAAAAAAAAAAAAAAAABAP/aAAwDAQACEQMRAD8AyY96eUR3hkjQb//Z",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_12.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_12.webp",
         "title": "still (4)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAED/8QAGxAAAgIDAQAAAAAAAAAAAAAAAAEREgIiMlH/xAAUAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8Al665SzJ2fDheACH/2Q==",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_10.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_10.webp",
         "title": "still (5)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAED/8QAGBABAQEBAQAAAAAAAAAAAAAAAQACETH/xAAVAQEBAAAAAAAAAAAAAAAAAAABAv/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDLOFHRwor32SU1/9k=",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_6.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_6.webp",
         "title": "still (7)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAGRAAAgMBAAAAAAAAAAAAAAAAAQIAAxEx/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJMyVowC8G5MjWFjvIiB/9k=",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_9.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_9.webp",
         "title": "still (8)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAID/8QAGRABAAMBAQAAAAAAAAAAAAAAAQACIQMR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDE7JYPMclWBdBiII//2Q==",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_11.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_11.webp",
         "title": "still (9)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAFxABAQEBAAAAAAAAAAAAAAAAAQARIf/EABQBAQAAAAAAAAAAAAAAAAAAAAH/xAAVEQEBAAAAAAAAAAAAAAAAAAAAAf/aAAwDAQACEQMRAD8AwgA72nJENf/Z",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_13.webp",
         "thumbnail": "media/video/2026/Postupy-práce/Postupy-práce_2026-07-20_1_13.webp",
         "title": "still (10)",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAED/8QAGhABAQACAwAAAAAAAAAAAAAAAQAREjFRkf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8AiHaWTrnh9kiP/9k=",
+        "aspect_ratio": 1.7778
       }
     ],
     "slug": "postupy-prace",
@@ -185,7 +208,8 @@
         "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0448_thumb_1.webp",
         "title": "img_0448_1",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAAUBAwYCBP/EACUQAAEEAQMCBwAAAAAAAAAAAAEAAgMRBBIhMQVBEyIjUWGB4f/EABYBAQEBAAAAAAAAAAAAAAAAAAADAv/EABsRAAMAAwEBAAAAAAAAAAAAAAABAgMRITFB/9oADAMBAAIRAxEAPwDP9uV2yNxApW40AkFkA/FpnBglwHlBU6tSVjG30VGB9XS4MbhyE8mww0bMI+0vmjolZnJs1WLRViSBhoNBPJT3pszciPUIARZpZgEjgkL1Y+S+AANe5u3bsEyRvwRfxj3qTPSPhx6HUaWea57gNQJrk+6nJyHTAXI473RKrLjWzv1IhyuiqTZWptQhWIAgnZChAf/Z"
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAIBAwT/xAAcEAACAgIDAAAAAAAAAAAAAAAAAQIRAxIEE1H/xAAUAQEAAAAAAAAAAAAAAAAAAAAC/8QAFhEBAQEAAAAAAAAAAAAAAAAAABEB/9oADAMBAAIRAxEAPwDPg43ZG7K5Rim0nYsMs8aerasXZ+hm0riAABC//9k=",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
@@ -193,7 +217,8 @@
         "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0451-1_thumb_1.webp",
         "title": "img_0451-1_1",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAgQAAQUDBv/EACQQAQACAgEDAwUAAAAAAAAAAAEAAgMRBAUhMRJRgRMiMkFh/8QAGAEAAwEBAAAAAAAAAAAAAAAAAAIDAQT/xAAbEQACAgMBAAAAAAAAAAAAAAAAAQIRAxIhMf/aAAwDAQACEQMRAD8AwSq+CVbZ5J3xYVDs/EPNxMy1ceK1jX6Iuyspo6sVdnk1Bjmfg5ceH6zUoB3rt2RMFdHmamn4LKLT6PYMlRN+qbXDvjsBu4/yefpka99hHuN1HPjPtsHxIZIN+HRCXKHOuNacJK3u+pDvMHD+S+xHep87NyaUpksNR32IlSyU0e8fGqiTk7kBDLu+3ic5JUlYV7epkHRBlQCz/9k="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAMCBP/EABwQAAIDAAMBAAAAAAAAAAAAAAABAgMRBBIxYf/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwDlhx52LY59JdW/Cld8q01F5pNSxBNVcZAApf/Z",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
@@ -201,7 +226,8 @@
         "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0466_thumb_1.webp",
         "title": "img_0466_1",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAgMBAAAAAAAAAAAAAAAAAAQCAwUB/8QAKBAAAgEEAAQFBQAAAAAAAAAAAAECAwQREiEiMZEyQUJhgRRRcXKh/8QAGAEAAwEBAAAAAAAAAAAAAAAAAQIEAAP/xAAaEQADAQADAAAAAAAAAAAAAAAAAQIRAxJB/9oADAMBAAIRAxEAPwDKjl+ROMfchBJ9ZNDEKUX62zi3hQlpBr8dyqal5YHXQSX3KJQS9IFSGcsKX0+ebh8j9KVilzSX9Zj04NvhjualjHWL3x3yJyJL0aNfhZVuLGMeVpv9WZ9W4g/DHPwalxRt50svVS9jHrwpxb1eQcfVhrskLqTRdCtKPRi2x3Ypc6TK8Gp3NSS8RRKTfVkNg2ApwNW2RAAHOQAAGMf/2Q=="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIDAf/EABwQAAMAAgMBAAAAAAAAAAAAAAABAgMREjGBkf/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAFhEBAQEAAAAAAAAAAAAAAAAAABEh/9oADAMBAAIRAxEAPwCOPFVLp/BajT0zMWWZT5LfolUnTaWkDapkTAAGm//Z",
+        "aspect_ratio": 0.5626
       },
       {
         "type": "photo",
@@ -209,7 +235,8 @@
         "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0478_thumb_1.webp",
         "title": "img_0478_1",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGgAAAgMBAQAAAAAAAAAAAAAAAAECAwQFBv/EACAQAAICAgEFAQAAAAAAAAAAAAABAgMEESEFEhMxQVH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAgH/xAAYEQEBAQEBAAAAAAAAAAAAAAABABECIf/aAAwDAQACEQMRAD8A88MQISYvoxCQ1onVX3/pBnR6RX5JSSpla/mpaJ6cNq5NcscqZRXPoqS2dDqO6pOEqvG9em+TAhy6bb0A4SNGLlWY/NcnEzgam+NIo6V+TkTvn3Tk5N/WUAADIu+3/9k="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAECAwX/xAAbEAEAAgIDAAAAAAAAAAAAAAAAAQIDEhEhMf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A5w0xWrXbaPY6U5FQAI//2Q==",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
@@ -217,7 +244,8 @@
         "thumbnail": "media/photo/2026/Zatmění-Slunce/img_0485_thumb_1.webp",
         "title": "img_0485_1",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAAwACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAECAwUG/8QAIBAAAwEAAQMFAAAAAAAAAAAAAAECEQQDElEhMUFCgf/EABYBAQEBAAAAAAAAAAAAAAAAAAABAv/EABkRAQEBAQEBAAAAAAAAAAAAAAABEQIhMf/aAAwDAQACEQMRAD8A87gANIBAW4pe6E5xPQuJRr05dViz9M0b9Ht+z9PBKvM2ippLceefgxp6zpcvnq+JHHiZyTmMnO36veTyEmVr8kgaYPRMAA//2Q=="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAIBBf/EABoQAAMBAAMAAAAAAAAAAAAAAAABEQISMXH/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A5yVEKxvg7E/SX2AMAA//2Q==",
+        "aspect_ratio": 0.6667
       }
     ],
     "slug": "zatmeni-slunce",
@@ -270,7 +298,8 @@
         "src": "media/video/2025/spot/spot_2026-07-20_2.mp4",
         "thumbnail": "media/video/2025/spot/spot_2026-07-20_2.webp",
         "title": "Spot",
-        "caption": ""
+        "caption": "",
+        "aspect_ratio": 1.7778
       }
     ],
     "slug": "spot",
@@ -324,28 +353,36 @@
         "src": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4_2.webp",
         "thumbnail": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4_2.webp",
         "title": "Španělsko",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAABAAD/8QAHRAAAgIDAAMAAAAAAAAAAAAAAREAAgMTIRIxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAEC/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQAxAv/aAAwDAQACEQMRAD8A3ugOwOfIdnChE5gwTsv6fEoCxHkekynpgCXksSh9qYeuKtgy5SkuyZf/2Q==",
+        "aspect_ratio": 0.5626
       },
       {
         "type": "photo",
         "src": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4_3.webp",
         "thumbnail": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4_3.webp",
         "title": "Španělsko",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAL/xAAbEAACAgMBAAAAAAAAAAAAAAABEQACAyJhcf/EABQBAQAAAAAAAAAAAAAAAAAAAAP/xAAVEQEBAAAAAAAAAAAAAAAAAAAAQf/aAAwDAQACEQMRAD8AgXqlbGPQVIJD1a7ERQR//9k=",
+        "aspect_ratio": 1.7778
       },
       {
         "type": "photo",
         "src": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4_1.webp",
         "thumbnail": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4_1.webp",
         "title": "Španělsko",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAQBAgP/xAAcEAABBQEBAQAAAAAAAAAAAAABAAIREiExA0H/xAAWAQEBAQAAAAAAAAAAAAAAAAABAAL/xAAVEQEBAAAAAAAAAAAAAAAAAAAAAf/aAAwDAQACEQMRAD8AUqaWjOKMgSdTDQ30aQW8+jqwLaGruqK/m8jU1YQJaDiELNMf/9k=",
+        "aspect_ratio": 0.5627
       },
       {
         "type": "photo",
         "src": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4.webp",
         "thumbnail": "media/photo/2025/Španělsko/Španělsko_2026-07-20_4.webp",
         "title": "Španělsko",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAP/xAAcEAACAgIDAAAAAAAAAAAAAAAAAQIDESEEEzH/xAAUAQEAAAAAAAAAAAAAAAAAAAAB/8QAFREBAQAAAAAAAAAAAAAAAAAAAQD/2gAMAwEAAhEDEQA/AFl3XrHqIS5M86SQArBf/9k=",
+        "aspect_ratio": 1.7778
       }
     ],
     "slug": "spanelsko",
@@ -392,7 +429,8 @@
         "src": "media/video/2024/Za-Okny/Za-Okny_2026-07-20_5.mp4",
         "thumbnail": "media/video/2024/Za-Okny/Za-Okny_2026-07-20_5.webp",
         "title": "Za Okny",
-        "caption": ""
+        "caption": "",
+        "aspect_ratio": 1.7778
       }
     ],
     "slug": "za-okny",
@@ -450,70 +488,90 @@
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3.webp",
         "title": "Portraits 1",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAECBP/EABsQAQACAwEBAAAAAAAAAAAAAAEAEQIDIRIx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAL/xAAVEQEBAAAAAAAAAAAAAAAAAAAAAf/aAAwDAQACEQMRAD8Ax68V+FsSF8j17DH1ailSDLkVaIEIQh//2Q==",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_7.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_7.webp",
         "title": "Portraits 8",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAIAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAIE/8QAHRAAAgIBBQAAAAAAAAAAAAAAAQIAAxIREyEiQf/EABUBAQEAAAAAAAAAAAAAAAAAAAED/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAEx/9oADAMBAAIRAxEAPwDFShZssdVU8y7ChsbbHXyIlJhf/9k=",
+        "aspect_ratio": 1.5
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_9.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_9.webp",
         "title": "Portraits 10",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAEEAgP/xAAcEAACAwEAAwAAAAAAAAAAAAABAwACETESQbH/xAAVAQEBAAAAAAAAAAAAAAAAAAABAv/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AJULDXCtjg6TOzUKrfB9k67CjBYjQPUTWFt/K2cwZBTMUIRD/9k=",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_1.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_1.webp",
         "title": "Portraits 2",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIDAf/EACAQAAIBBAEFAAAAAAAAAAAAAAABAwIREjETISIyQXH/xAAWAQEBAQAAAAAAAAAAAAAAAAADAQL/xAAYEQEAAwEAAAAAAAAAAAAAAAAAAQJBMf/aAAwDAQACEQMRAD8Ag6dU5Wv7QtpV07X9YtMmc6elpISWR8jMnm0dTNr82AF0WP/Z",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_5.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_5.webp",
         "title": "Portraits 6",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAARAAwDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAMEAf/EAB4QAAICAgMBAQAAAAAAAAAAAAECABEDBBIxcTNR/8QAFgEBAQEAAAAAAAAAAAAAAAAAAgAB/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAER/9oADAMBAAIRAxEAPwBeDXXJptSnmej+yVsXA09gy/BsVjFA+CJyuGK8hbBQDUqeJ0+LTT0vkITRr//Z",
+        "aspect_ratio": 0.6669
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_2.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_2.webp",
         "title": "Portraits 3",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAwAE/8QAIhAAAgEBCAMAAAAAAAAAAAAAAQIAEgMREyExQVFxIjNC/8QAFwEAAwEAAAAAAAAAAAAAAAAAAAIDBP/EABcRAQADAAAAAAAAAAAAAAAAAAABAhH/2gAMAwEAAhEDEQA/ABahHCfW/AiYQOY0glFZa7zVwc5rsPUtWslacadkCb9R0PgOpSiXD//Z",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_3.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_3.webp",
         "title": "Portraits 4",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAQBAgP/xAAgEAACAQQBBQAAAAAAAAAAAAABAgADERIhEyIxQnGh/8QAFgEBAQEAAAAAAAAAAAAAAAAAAQAC/8QAFhEBAQEAAAAAAAAAAAAAAAAAABEh/9oADAMBAAIRAxEAPwBMKt8b9V7STTAJE0akM2y0fkONvI79xjV0yigqNDUo4GXYQhIv/9k=",
+        "aspect_ratio": 0.6667
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_4.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_4.webp",
         "title": "Portraits 5",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAIAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAID/8QAGRABAQEAAwAAAAAAAAAAAAAAAQACA0KB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAgT/xAAXEQADAQAAAAAAAAAAAAAAAAAAASEx/9oADAMBAAIRAxEAPwDDgRTL7U5w9SSL0oVP/9k=",
+        "aspect_ratio": 1.5
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_6.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_6.webp",
         "title": "Portraits 7",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAIAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAGxAAAgIDAQAAAAAAAAAAAAAAAQIAAxEhQdH/xAAVAQEBAAAAAAAAAAAAAAAAAAACA//EABgRAAMBAQAAAAAAAAAAAAAAAAABIQIi/9oADAMBAAIRAxEAPwDPXYoIR0A5n2TurVbCFOuYiImqUz0qf//Z",
+        "aspect_ratio": 1.5
       },
       {
         "type": "photo",
         "src": "media/photo/2026/Portraits/Portraits_2026-07-20_3_8.webp",
         "thumbnail": "media/photo/2026/Portraits/Portraits_2026-07-20_3_8.webp",
         "title": "Portraits 9",
-        "caption": ""
+        "caption": "",
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAASAAwDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAABAACA//EACAQAAIBAgcBAAAAAAAAAAAAAAABAgNBBBESEyFhcSL/xAAWAQEBAQAAAAAAAAAAAAAAAAABAAL/xAAWEQEBAQAAAAAAAAAAAAAAAAAAARH/2gAMAwEAAhEDEQA/ABJa5qK49EPD0lx9S7VzhRcY1E5LNdjN6FmkvQrUwC6NMiIP/9k=",
+        "aspect_ratio": 0.6667
       }
     ],
     "slug": "portraits",
@@ -563,7 +621,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0267_thumb.webp",
         "title": "img_0267",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAwAEBf/EACMQAAEDAwMFAQAAAAAAAAAAAAEAAgMEEUESITETMjNRcYH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDmxPcHtLGguGSrV1qg2FtbuEMcliQ3I5ymptqgkZaTdENUGOFul13HB9fFyiOSSlqJNbztb3uhKkIWPub+rVF52fCpSqscvkcjUpB//9k="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAGRABAQEAAwAAAAAAAAAAAAAAAQARAiFR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AMhz6XworrskH//Z",
+        "aspect_ratio": 1.7794
       },
       {
         "type": "photo",
@@ -571,7 +630,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0279_thumb.webp",
         "title": "img_0279",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAECAwQF/8QAIhAAAgEDBAIDAAAAAAAAAAAAAQIAAxExBBIhYSJxQ4Gh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAL/xAAXEQEAAwAAAAAAAAAAAAAAAAAAAREx/9oADAMBAAIRAxEAPwDwHXxDDB/IlFwLzRCXpsvUlQWvxiBdOnuNhc+uZDU2Xmx24BtOqgELUlJAJuD1FqlYaenuXawvcdRZTChmNMiEIGvyD1K1uPoQhJnVRj//2Q=="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEE/8QAGhAAAgIDAAAAAAAAAAAAAAAAAAECIQMSUf/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDAlZckdZVwAD//2Q==",
+        "aspect_ratio": 1.7794
       },
       {
         "type": "photo",
@@ -579,7 +639,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0311_thumb.webp",
         "title": "img_0311",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAwACBAEG/8QAIxAAAgICAgICAwEAAAAAAAAAAQIAEQMhEjFBYSJRBEORof/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A8+CR1NANoNdCZh6MfGAykbuEbcOVVXJQUH9d9j7h5nypbOSWNUT2NeJXGoybrQUkmUZjlWmY2PuBkX3HUjjqEBfoxVFa0T6gbOIVFQE/LZEpkxhGyarQncTkhVJvrU5+Q9s1Ar8QO78wMS+4yA1Sn+wQf9j4kZtAWO4CCkYXsld1DZwzb8yOxHfYXjULkFFHZgHcdMvFKA34N9SSQOO5YbJlOXYqSSFf/9k="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAgABBP/EABsQAAIDAQEBAAAAAAAAAAAAAAABAhEhAxIx/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDi53eDl6b+0DnjtClK3gQIypPDLIgr/9k=",
+        "aspect_ratio": 0.5626
       },
       {
         "type": "photo",
@@ -587,7 +648,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0318_thumb.webp",
         "title": "img_0318",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAEFAgQD/8QAIBAAAgICAwEAAwAAAAAAAAAAAAECEQMhBBJBMRNCkf/EABcBAQEBAQAAAAAAAAAAAAAAAAABAgP/xAAZEQEBAAMBAAAAAAAAAAAAAAAAAQIDEUH/2gAMAwEAAhEDEQA/AJeKS6xTpeWdEYt6J0H8Vv8ApS4knlUk/wBaNSuOePolB1smTa7S7Nt34WckGoS3WiJNPu09sU1lF7KXG5CwwbTVuvpMR0XeOKXhl1s6oZeTklCVqLh7Sok5JOUm36ezyP8AG0n5Rzv6Ek4DSboyO6CnJ60YY2IKY0AAGhAAR//Z"
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAECAwT/xAAcEAACAgIDAAAAAAAAAAAAAAAAAQIRAzESITL/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABURAQEAAAAAAAAAAAAAAAAAAAAR/9oADAMBAAIRAxEAPwDnwPknddGE/ctbEZUVbthIEABX/9k=",
+        "aspect_ratio": 0.5626
       },
       {
         "type": "photo",
@@ -595,7 +657,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0328_thumb.webp",
         "title": "img_0328",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAMEAgEF/8QAJxAAAgICAQIFBQEAAAAAAAAAAQIAEQMhMRJRMkFhkbFDU3GSweH/xAAVAQEBAAAAAAAAAAAAAAAAAAAAAf/EABURAQEAAAAAAAAAAAAAAAAAAAAB/9oADAMBAAIRAxEAPwDwa2R3Go4tSdQPl/kWVtgRGGlxsPaAokuNm/5MaHrOhqTXJMzs8wHrYPzBx4gSdDUMd97qUBVbKFug1CzAi0x4oTQCj1lGbAqZekFfPj8xT4+k+KBjG/eVIgcFqNdpJjQkjy9ZejhUCgivmSrEuZSOliNA1XaYN3syp2Bsa3EuuPVKRAMZUDxge8cHUfUX9jCEDLOv3V9zF5CpTkGjyAYQgf/Z"
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAgADBP/EABsQAAIDAAMAAAAAAAAAAAAAAAACAREhEjFR/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AOHpQ1JosclnLDNeANcXAtOkQH//2Q==",
+        "aspect_ratio": 0.5626
       },
       {
         "type": "photo",
@@ -603,7 +666,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0363_thumb.webp",
         "title": "img_0363",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAGAAAAgMAAAAAAAAAAAAAAAAAAAQCAwX/xAAiEAACAgIABgMAAAAAAAAAAAABAgADBBESITJBUWExcZH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAWEQEBAQAAAAAAAAAAAAAAAAAAEQH/2gAMAwEAAhEDEQA/AEasihQNt+CNjKxgdF+fnXKYlLujbA32IjFLkggKvuGY0jmYpOg+vfDFrsqnegxP0JRbYzVhOD47gRMnzBE06jJ4/U8IQq+zpiLQhBj/2Q=="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAME/8QAGhAAAgIDAAAAAAAAAAAAAAAAAAIDEQESIf/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDNHM9VZNpX2z0AD//Z",
+        "aspect_ratio": 1.7794
       },
       {
         "type": "photo",
@@ -611,7 +675,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0373_thumb.webp",
         "title": "img_0373",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAMEAgUB/8QAJxAAAgIBAwIFBQAAAAAAAAAAAQIAEQMEEiETMRQiQVFxMlKBobH/xAAWAQEBAQAAAAAAAAAAAAAAAAAAAQL/xAAVEQEBAAAAAAAAAAAAAAAAAAAAEf/aAAwDAQACEQMRAD8ARjWyKlK4x7SZG2nyx6O5HYQwHxkjtEdK2qhHuzH0kWfO2DKwqwa4hAuowKBbX8R/jNOgB3MxPNCcvGFOJie9947DjSjZ3cd/aG4tbX4PtaczU5zlykiwI9seM2fp/klzV1TVfiCHrgbbSsCD6TY0zqPKQbHNGLxPQ238R6vAwdPkJuv3J8iHcdw5lnUMnyjcxoQEKTcpVrWEIUFp5vqEIR//2Q=="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAAIDAf/EAB4QAAMAAgEFAAAAAAAAAAAAAAABAhExAxIhMkGB/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAH/xAAVEQEBAAAAAAAAAAAAAAAAAAAAEf/aAAwDAQACEQMRAD8AyPHRG+WYtpzkSZeNZ+k6l9T9BIaKeAb76AAr/9k=",
+        "aspect_ratio": 0.5626
       },
       {
         "type": "photo",
@@ -619,7 +684,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0385_thumb.webp",
         "title": "img_0385",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAA4ACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAQIDAAQG/8QAIhAAAwEAAQQBBQAAAAAAAAAAAAECESEDEjFBEzJRYXGB/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/APPIdICRWZ+4E2jYUqRGA/TmUtt/xclVjTxY34OeNfjS7ldOe7d/IErpqsYEnTxLRlLqtb0NSnwm0As96+mc/Qdp+dBNt+yqx+mwJY0/IW/ZfOPAtQ6XOIATM+sG3FnBjAHuxA+TgxgP/9k="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAVAAwDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAIBBP/EABsQAAICAwEAAAAAAAAAAAAAAAABESECMUFh/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AOFY1LMK5FjQFKkJ8AA//9k=",
+        "aspect_ratio": 0.5626
       },
       {
         "type": "photo",
@@ -627,7 +693,8 @@
         "thumbnail": "media/photo/2025/adršpašsko-teplické-skály/img_0395_thumb.webp",
         "title": "img_0395",
         "caption": "",
-        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABsSFBcUERsXFhceHBsgKEIrKCUlKFE6PTBCYFVlZF9VXVtqeJmBanGQc1tdhbWGkJ6jq62rZ4C8ybqmx5moq6T/2wBDARweHigjKE4rK06kbl1upKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKT/wAARCAARACADASIAAhEBAxEB/8QAGQAAAwEBAQAAAAAAAAAAAAAAAAEDBAIG/8QAIBAAAgIBAwUAAAAAAAAAAAAAAAECEQMSMTIhQVFxkf/EABQBAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwDz/QfYEl4L4cMckXf29gJQdHTjaspLDGCu9SRKcnbAa2Row8WAAKfB+zJk5gAH/9k="
+        "lqip": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDADUlKC8oITUvKy88OTU/UIVXUElJUKN1e2GFwarLyL6qurfV8P//1eL/5re6////////////zv//////////////2wBDATk8PFBGUJ1XV53/3Lrc////////////////////////////////////////////////////////////////////wAARCAAGAAwDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAEE/8QAGRAAAgMBAAAAAAAAAAAAAAAAAAECESES/8QAFAEBAAAAAAAAAAAAAAAAAAAAAP/EABQRAQAAAAAAAAAAAAAAAAAAAAD/2gAMAwEAAhEDEQA/AMMYdXpG9AA//9k=",
+        "aspect_ratio": 1.7794
       }
     ],
     "slug": "novy-projekt",

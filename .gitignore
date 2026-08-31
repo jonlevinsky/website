@@ -7,3 +7,6 @@ package-lock.json
 package.json
 .eslintrc.json
 fonts
+newsletter_config.json
+newsletter.log
+last_sent_project_id.txt

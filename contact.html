@@ -236,6 +236,16 @@ main {
     <footer class="g-footer">
       <div class="f-name">Jan Levínský</div>
       <div class="f-role">Cinematography & Photography</div>
+      
+      <div class="footer-newsletter">
+        <label for="contact-newsletter-email">Newsletter</label>
+        <form class="newsletter-form" onsubmit="return false;">
+          <input type="email" id="contact-newsletter-email" placeholder="Tvůj e-mail..." required>
+          <button type="submit" aria-label="Odebírat"><i class="ph ph-paper-plane-tilt"></i></button>
+        </form>
+        <div class="newsletter-status"></div>
+      </div>
+
       <div style="display: flex; gap: 16px; margin-top: 20px; align-items: center; justify-content: center; flex-wrap: wrap;">
         <a class="f-contact" href="mailto:levinskyj.cine@gmail.com" style="margin: 0;">
           <i class="ph ph-envelope" style="font-size: 14px;"></i>
@@ -246,6 +256,7 @@ main {
   </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="main.js"></script>
 <script>
 prepareHero();
@@ -281,9 +292,6 @@ function initScrollFX() {
   }
 }
 
-/* FORMSPREE — nahraď endpoint za svůj z formspree.io */
-const FORM_ENDPOINT = 'https://formspree.io/f/xleabppd';
-
 const form = document.getElementById('contactForm');
 const status = document.getElementById('formStatus');
 const submitBtn = document.getElementById('formSubmit');
@@ -294,26 +302,35 @@ form.addEventListener('submit', async e => {
   status.textContent = '';
   status.className = 'form-status';
 
-  try {
-    const res = await fetch(FORM_ENDPOINT, {
-      method: 'POST',
-      body: new FormData(form),
-      headers: { 'Accept': 'application/json' }
-    });
-    if (res.ok) {
-      status.textContent = 'Zpráva odeslána! Ozvu se co nejdříve.';
-      status.className = 'form-status success';
-      form.reset();
-    } else {
-      const data = await res.json();
-      throw new Error(data?.error || 'Chyba při odesílání');
-    }
-  } catch (err) {
-    status.textContent = 'Něco se pokazilo. Zkus to prosím znova nebo napiš přímo na levinskyj.cine@gmail.com';
-    status.className = 'form-status error';
-  }
+  const nameVal = document.getElementById('formName').value.trim();
+  const emailVal = document.getElementById('formEmail').value.trim();
+  const messageVal = document.getElementById('formMessage').value.trim();
 
-  submitBtn.classList.remove('loading');
+  try {
+    if (typeof supabaseClient === 'undefined') {
+      throw new Error('Supabase client is not initialized.');
+    }
+    const { error } = await supabaseClient
+      .from('contact_messages')
+      .insert({
+        name: nameVal,
+        email: emailVal,
+        message: messageVal,
+        resolved: false
+      });
+      
+    if (error) throw error;
+    
+    status.textContent = 'Zpráva odeslána! Ozvu se co nejdříve.';
+    status.className = 'form-status success';
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    status.textContent = 'Něco se pokazilo. Zkuste to prosím znovu nebo napište přímo na levinskyj.cine@gmail.com';
+    status.className = 'form-status error';
+  } finally {
+    submitBtn.classList.remove('loading');
+  }
 });
 
 const logoEl = document.querySelector('.logo-mark');

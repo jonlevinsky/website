@@ -1,3 +1,10 @@
+const supabaseUrl = 'https://jmxpqcsywnlbmfrylnhw.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpteHBxY3N5d25sYm1mcnlsbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODkwNjcsImV4cCI6MjEwMzc2NTA2N30.pFgifOtNk2tLGJLEYeughUByfT6um85kfO2r7OopEtA';
+let supabaseClient;
+if (typeof supabase !== 'undefined') {
+  supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+}
+
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const finePointer = window.matchMedia('(pointer: fine)').matches;
 let heroChars = [];
@@ -389,7 +396,7 @@ function initCuteAssistant() {
   const orbRings = orbWrapper?.querySelector('.orb-rings');
   
   document.addEventListener('mouseenter', (e) => {
-    const tile = e.target.closest('.tile');
+    const tile = e.target && typeof e.target.closest === 'function' ? e.target.closest('.tile') : null;
     if (tile && orbWrapper) {
       orbWrapper.classList.add('orb-excited');
       if (orbCore) {
@@ -404,7 +411,7 @@ function initCuteAssistant() {
   }, true);
   
   document.addEventListener('mouseleave', (e) => {
-    const tile = e.target.closest('.tile');
+    const tile = e.target && typeof e.target.closest === 'function' ? e.target.closest('.tile') : null;
     if (tile && orbWrapper) {
       orbWrapper.classList.remove('orb-excited');
       if (orbCore) {
@@ -618,17 +625,186 @@ function initCuteAssistant() {
   }
 }
 
+// Dynamic settings, tracking & newsletter integrations
+async function applySiteSettings() {
+  try {
+    if (typeof supabaseClient === 'undefined') return;
+    const { data, error } = await supabaseClient.from('site_settings').select('key, value');
+    if (error || !data) return;
+    
+    const settings = {};
+    data.forEach(item => {
+      settings[item.key] = item.value;
+    });
+    
+    // Apply home_intro
+    if (settings.home_intro) {
+      const homeIntroEl = document.querySelector('.intro .greeting-row span:not(.emoji)');
+      if (homeIntroEl) homeIntroEl.textContent = settings.home_intro;
+    }
+    
+    // Apply about_sidebar_intro
+    if (settings.about_sidebar_intro) {
+      const aboutIntroEl = document.querySelector('.brand-panel .intro[data-i18n="about-intro"]');
+      if (aboutIntroEl) aboutIntroEl.textContent = settings.about_sidebar_intro;
+    }
+    
+    // Apply about_bio
+    if (settings.about_bio) {
+      const bioEl = document.querySelector('.profile-block .profile-text');
+      if (bioEl) {
+        const paras = bioEl.querySelectorAll('p');
+        if (paras.length > 0) {
+          paras[0].innerHTML = settings.about_bio.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+          for (let i = 1; i < paras.length; i++) paras[i].remove();
+        }
+      }
+    }
+    
+    // Apply contact_email
+    if (settings.contact_email) {
+      document.querySelectorAll('a[href^="mailto:"]').forEach(el => {
+        el.href = `mailto:${settings.contact_email}`;
+        el.childNodes.forEach(child => {
+          if (child.nodeType === Node.TEXT_NODE) {
+            const txt = child.textContent.trim();
+            if (txt === 'levinskyj.cine@gmail.com' || txt.includes('@')) {
+              child.textContent = settings.contact_email;
+            }
+          }
+        });
+      });
+    }
+    
+    // Apply instagram_link
+    if (settings.instagram_link) {
+      document.querySelectorAll('a[href*="instagram.com"]').forEach(el => {
+        el.href = settings.instagram_link;
+      });
+    }
+    
+    // Apply youtube_link
+    if (settings.youtube_link) {
+      document.querySelectorAll('a[href*="youtube.com"]').forEach(el => {
+        el.href = settings.youtube_link;
+      });
+    }
+  } catch (err) {
+    console.error('Error applying site settings:', err);
+  }
+}
+
+async function initTracker() {
+  try {
+    if (typeof supabaseClient === 'undefined') return;
+    
+    const pagePath = window.location.pathname;
+    let projectId = null;
+    if (pagePath.includes('project.html')) {
+      const params = new URLSearchParams(window.location.search);
+      const idVal = params.get('id');
+      if (idVal) {
+        projectId = parseInt(idVal) || null;
+      }
+    }
+    
+    const trackKey = (projectId ? `project_${projectId}` : 'page') + '_' + pagePath;
+    const today = new Date().toISOString().split('T')[0];
+    
+    let localViews = {};
+    try {
+      localViews = JSON.parse(localStorage.getItem('last_page_views')) || {};
+    } catch(e) {}
+    
+    if (localViews[trackKey] === today) {
+      return;
+    }
+    
+    const referrerVal = document.referrer || '';
+    const { error } = await supabaseClient
+      .from('page_views')
+      .insert({
+        project_id: projectId,
+        page_path: pagePath,
+        referrer: referrerVal
+      });
+      
+    if (!error) {
+      localViews[trackKey] = today;
+      localStorage.setItem('last_page_views', JSON.stringify(localViews));
+    }
+  } catch (err) {
+    console.error('Error tracking page view:', err);
+  }
+}
+
+function initNewsletter() {
+  document.addEventListener('submit', async (e) => {
+    const form = e.target.closest('.newsletter-form');
+    if (!form) return;
+    
+    e.preventDefault();
+    const emailInput = form.querySelector('input[type="email"]');
+    const statusDiv = form.parentNode.querySelector('.newsletter-status');
+    const submitBtn = form.querySelector('button');
+    
+    if (!emailInput || !statusDiv) return;
+    
+    const email = emailInput.value.trim();
+    if (!email) return;
+
+    if (submitBtn) submitBtn.disabled = true;
+    statusDiv.textContent = 'Přihlašuji...';
+    statusDiv.className = 'newsletter-status';
+
+    try {
+      if (typeof supabaseClient === 'undefined') {
+        throw new Error('Supabase client is not initialized.');
+      }
+      
+      const { error } = await supabaseClient
+        .from('subscribers')
+        .insert({ email });
+        
+      if (error) {
+        if (error.code === '23505') {
+          throw new Error('Tento e-mail už byl přihlášen k odběru.');
+        }
+        throw error;
+      }
+      
+      statusDiv.textContent = 'Díky za odběr!';
+      statusDiv.className = 'newsletter-status success';
+      emailInput.value = '';
+    } catch (err) {
+      console.error(err);
+      statusDiv.textContent = err.message || 'Něco se pokazilo. Zkuste to prosím znovu.';
+      statusDiv.className = 'newsletter-status error';
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+}
+
+function initSupabaseFeatures() {
+  applySiteSettings();
+  initTracker();
+  initNewsletter();
+}
+
 // Call on startup
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     initGlobalNavigation();
     recalcPerforations();
     initCuteAssistant();
+    initSupabaseFeatures();
   });
 } else {
   initGlobalNavigation();
   recalcPerforations();
   initCuteAssistant();
+  initSupabaseFeatures();
 }
 
 function imgErrorFallback(img) {
@@ -647,7 +823,7 @@ function imgErrorFallback(img) {
 // Keyboard accessibility support for bento / gallery tiles
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' || e.key === ' ') {
-    const tile = e.target.closest('.tile');
+    const tile = e.target && typeof e.target.closest === 'function' ? e.target.closest('.tile') : null;
     if (tile) {
       const isLink = tile.tagName === 'A';
       if (e.key === ' ' || !isLink) {

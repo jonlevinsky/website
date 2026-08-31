@@ -1,0 +1,1531 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Administrace komentářů — Jan Levínský.">
+<meta name="theme-color" content="#2c3e50">
+
+<title>Jan Levínský // Administrace komentářů</title>
+<link rel="icon" type="image/png" href="./media/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap"></noscript>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="style.css">
+<style>
+/* Additional Admin styling matching the theme */
+main {
+  display: flex;
+  flex-direction: column;
+  padding-top: 8px;
+  opacity: 0;
+  animation: fadeIn 0.9s 0.2s var(--ease-out-expo) forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.admin-section h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 28px;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.admin-kicker {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logout-btn-link {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: #c45a5a;
+  cursor: pointer;
+  background: none;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s ease;
+}
+.logout-btn-link:hover {
+  opacity: 0.8;
+}
+
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  margin: 60px auto;
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  padding: 32px;
+  border-radius: var(--r-lg);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.03);
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeUpCard 0.6s var(--ease-out-expo) forwards;
+}
+
+@keyframes fadeUpCard {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.login-card h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.login-card p {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 24px;
+}
+
+.admin-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .admin-columns {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.column-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  margin-bottom: 16px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.column-count {
+  font-family: var(--sans);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+}
+
+.comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-comment-item {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.25s ease;
+}
+
+.admin-comment-item:hover {
+  border-color: var(--border);
+}
+
+.admin-comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.admin-comment-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-comment-author {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.admin-comment-project {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-comment-date {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.admin-comment-body {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.admin-comment-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.action-btn {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.action-btn.approve {
+  background: rgba(90, 158, 110, 0.1);
+  color: #3b7a4c;
+  border: 1px solid rgba(90, 158, 110, 0.2);
+}
+
+.action-btn.approve:hover {
+  background: rgba(90, 158, 110, 0.2);
+  transform: translateY(-1px);
+}
+
+.action-btn.delete {
+  background: rgba(196, 90, 90, 0.1);
+  color: #ac4747;
+  border: 1px solid rgba(196, 90, 90, 0.2);
+}
+
+.action-btn.delete:hover {
+  background: rgba(196, 90, 90, 0.2);
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.alert-message {
+  padding: 10px 14px;
+  border-radius: var(--r-sm);
+  font-size: 12.5px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.alert-message.error {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-md);
+}
+
+/* Form Styles */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.form-group input {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.submit-btn {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-on-accent);
+  background: var(--accent);
+  border: none;
+  border-radius: var(--r-md);
+  padding: 11px 24px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  transition: opacity 0.3s ease, transform 0.3s var(--ease-out-expo);
+}
+
+.submit-btn:hover {
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.submit-btn:active {
+  transform: translateY(0);
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <aside class="brand">
+    <div class="brand-top">
+      <div>
+        <div class="kicker">Administrace</div>
+        <div class="brand-title-row">
+          <img src="./media/logo.png" alt="LJ" class="logo-mark">
+          <h1>
+            <span>Jan</span>
+            <span class="last">Levínský</span>
+          </h1>
+        </div>
+      </div>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="brand-panel" id="brandPanel" aria-hidden="true">
+      <div class="divider"></div>
+      <div class="intro">
+        Správa a moderování komentářů u projektů portfolio webu.
+      </div>
+      <nav class="links">
+          <a href="./about.html" target="_self" rel="noopener noreferrer"><i class="ph ph-user"></i>O mně</a>
+          <a href="https://www.instagram.com/levinskyj.cine/" target="_blank" rel="noopener noreferrer"><i class="ph ph-instagram-logo"></i>Instagram</a>
+          <a href="https://www.youtube.com/@LevinskyJ" target="_blank" rel="noopener noreferrer"><i class="ph ph-youtube-logo"></i>YouTube</a>
+          <a href="mailto:levinskyj.cine@gmail.com"><i class="ph ph-envelope"></i>Email</a>
+      </nav>
+      <a href="index.html" class="back-link"><i class="ph ph-arrow-left"></i>Zpět na portfolio</a>
+    </div>
+  </aside>
+
+  <main>
+    <!-- LOGIN INTERFACE -->
+    <div id="login-container" class="login-card" style="display: none;">
+      <h3>Přihlášení do správy</h3>
+      <p>Pro zobrazení a moderování komentářů zadejte administrátorské heslo.</p>
+      
+      <div id="login-error" class="alert-message error"></div>
+      
+      <form id="login-form">
+        <div class="form-group">
+          <label for="admin-pass-input">Heslo</label>
+          <input type="password" id="admin-pass-input" autocomplete="current-password" required placeholder="••••••••">
+        </div>
+        <button type="submit" class="submit-btn" id="login-submit-btn">
+          Vstoupit <i class="ph ph-sign-in"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <section id="dashboard-container" class="admin-section" style="display: none;">
+      <div class="admin-kicker">
+        <span id="admin-panel-kicker-text">Správa komentářů</span>
+        <button id="logout-btn" class="logout-btn-link">
+          Odhlásit <i class="ph ph-sign-out"></i>
+        </button>
+      </div>
+      
+      <h2>Administrační panel</h2>
+
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" id="tab-comments-btn" onclick="switchTab('comments')">
+          <i class="ph ph-chat-centered-text"></i> Komentáře
+        </button>
+        <button class="admin-tab-btn" id="tab-likes-btn" onclick="switchTab('likes')">
+          <i class="ph ph-heart"></i> Statistiky lajků
+        </button>
+        <button class="admin-tab-btn" id="tab-messages-btn" onclick="switchTab('messages')">
+          <i class="ph ph-envelope-simple"></i> Zprávy
+        </button>
+        <button class="admin-tab-btn" id="tab-views-btn" onclick="switchTab('views')">
+          <i class="ph ph-chart-bar"></i> Návštěvnost
+        </button>
+        <button class="admin-tab-btn" id="tab-settings-btn" onclick="switchTab('settings')">
+          <i class="ph ph-sliders"></i> Obsah webu
+        </button>
+        <button class="admin-tab-btn" id="tab-subscribers-btn" onclick="switchTab('subscribers')">
+          <i class="ph ph-users"></i> Odběratelé
+        </button>
+      </div>
+      
+      <!-- TAB 1: COMMENTS -->
+      <div id="comments-tab-content" class="admin-tab-content active">
+        <div class="admin-columns">
+          <!-- COMENTS AWAITING APPROVAL -->
+          <div>
+            <h3 class="column-title">
+              Ke schválení
+              <span id="unapproved-count" class="column-count">0</span>
+            </h3>
+            <div id="unapproved-list" class="comment-list">
+              <!-- Dynamic comments -->
+            </div>
+          </div>
+          
+          <!-- APPROVED COMMENTS -->
+          <div>
+            <h3 class="column-title">
+              Schválené
+              <span id="approved-count" class="column-count">0</span>
+            </h3>
+            <div id="approved-list" class="comment-list">
+              <!-- Dynamic comments -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LIKES -->
+      <div id="likes-tab-content" class="admin-tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px;">
+          <h3 class="column-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+            Nejoblíbenější média
+          </h3>
+          <span class="column-count" style="font-size: 12px; font-weight: 500;">Celkem lajků: <strong id="total-likes-count">0</strong></span>
+        </div>
+        <div id="likes-list-container">
+          <!-- Dynamic likes table/cards -->
+        </div>
+      </div>
+
+      <!-- TAB 3: MESSAGES -->
+      <div id="messages-tab-content" class="admin-tab-content">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px;">
+          <h3 class="column-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+            Inbox zpráv z formuláře
+          </h3>
+          <span class="column-count" style="font-size: 12px; font-weight: 500;">Celkem zpráv: <strong id="total-messages-count">0</strong></span>
+        </div>
+        <div id="messages-list" class="message-list">
+          <!-- Dynamic messages -->
+        </div>
+      </div>
+
+      <!-- TAB 4: PAGE VIEWS -->
+      <div id="views-tab-content" class="admin-tab-content">
+        <div class="views-summary-grid">
+          <div class="views-card">
+            <div class="views-card-label">Celková návštěvnost</div>
+            <div class="views-card-value" id="views-total-count">0</div>
+          </div>
+          <div class="views-card">
+            <div class="views-card-label">Unikátní stránky</div>
+            <div class="views-card-value" id="views-pages-count">0</div>
+          </div>
+        </div>
+        <h3 class="column-title" style="margin-top: 24px; margin-bottom: 12px;">Zobrazení stránek a projektů</h3>
+        <div id="views-chart-container" class="views-chart-list">
+          <!-- Dynamic bar chart list -->
+        </div>
+      </div>
+
+      <!-- TAB 5: SETTINGS (CMS LIGHT) -->
+      <div id="settings-tab-content" class="admin-tab-content">
+        <h3 class="column-title" style="margin-bottom: 16px;">Obsah a nastavení webu</h3>
+        <form class="settings-form" id="settings-admin-form" onsubmit="return false;">
+          <div class="settings-group">
+            <label for="setting-home-intro">Úvodní text (Home portfolio)</label>
+            <input type="text" id="setting-home-intro" placeholder="Kameraman, fotograf a student filmové tvorby.">
+            <div class="field-help">Krátké intro zobrazené na úvodní stránce index.html</div>
+          </div>
+          <div class="settings-group">
+            <label for="setting-about-sidebar-intro">Bio v sidebaru (About / O mně)</label>
+            <textarea id="setting-about-sidebar-intro" placeholder="Kameraman, fotograf a student filmové tvorby..."></textarea>
+            <div class="field-help">Krátké věty pod jménem v panelu stránky o mně (about.html).</div>
+          </div>
+          <div class="settings-group">
+            <label for="setting-about-bio">Hlavní bio profilu (About / O mně)</label>
+            <textarea id="setting-about-bio" style="min-height: 120px;" placeholder="Studuji filmovou tvorbu a mou největší vášní je..."></textarea>
+            <div class="field-help">Hlavní dlouhý text o vás na stránce about.html (můžete použít dva prázdné řádky pro nový odstavec).</div>
+          </div>
+          <div class="settings-group">
+            <label for="setting-contact-email">Kontaktní e-mail</label>
+            <input type="email" id="setting-contact-email" placeholder="levinskyj.cine@gmail.com">
+            <div class="field-help">Globální e-mailová adresa používaná v mailto odkazech a popiscích.</div>
+          </div>
+          <div class="settings-group">
+            <label for="setting-instagram-link">Instagram odkaz</label>
+            <input type="url" id="setting-instagram-link" placeholder="https://www.instagram.com/levinskyj.cine/">
+            <div class="field-help">Odkaz na váš profil na Instagramu.</div>
+          </div>
+          <div class="settings-group">
+            <label for="setting-youtube-link">YouTube odkaz</label>
+            <input type="url" id="setting-youtube-link" placeholder="https://www.youtube.com/@LevinskyJ">
+            <div class="field-help">Odkaz na váš kanál na YouTube.</div>
+          </div>
+          
+          <div class="settings-submit-row">
+            <span class="settings-status-message" id="settings-status-msg">Změny byly úspěšně uloženy.</span>
+            <button type="submit" class="btn-secondary" id="settings-save-btn" onclick="saveSiteSettings()">
+              <i class="ph ph-floppy-disk"></i> Uložit nastavení
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- TAB 6: SUBSCRIBERS -->
+      <div id="subscribers-tab-content" class="admin-tab-content">
+        <div class="subscribers-controls">
+          <h3 class="column-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
+            Odběratelé newsletteru
+            <span id="subscribers-count" class="column-count">0</span>
+          </h3>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button class="btn-secondary" onclick="copySubscribersEmails()">
+              <i class="ph ph-copy"></i> Kopírovat e-maily
+            </button>
+            <div id="copy-toast-area" class="copy-toast-container"></div>
+          </div>
+        </div>
+        <div class="likes-table-container">
+          <table class="likes-table">
+            <thead>
+              <tr>
+                <th>E-mail</th>
+                <th>Datum přihlášení</th>
+                <th style="width: 80px; text-align: center;">Akce</th>
+              </tr>
+            </thead>
+            <tbody id="subscribers-list-body">
+              <!-- Dynamic subscribers -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="g-footer">
+      <div class="f-name">Jan Levínský</div>
+      <div class="f-role">Cinematography & Photography</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+// Mobile menu toggle responsiveness matching index/about
+const menuToggle = document.getElementById('menuToggle');
+const brandPanel = document.getElementById('brandPanel');
+if (menuToggle && brandPanel) {
+  menuToggle.addEventListener('click', () => {
+    const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+    menuToggle.setAttribute('aria-expanded', !isExpanded);
+    brandPanel.setAttribute('aria-hidden', isExpanded);
+    menuToggle.classList.toggle('expanded');
+    brandPanel.classList.toggle('open');
+  });
+}
+
+// Supabase Init
+const supabaseUrl = 'https://jmxpqcsywnlbmfrylnhw.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpteHBxY3N5d25sYm1mcnlsbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODkwNjcsImV4cCI6MjEwMzc2NTA2N30.pFgifOtNk2tLGJLEYeughUByfT6um85kfO2r7OopEtA';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+// State variables
+let currentPassword = localStorage.getItem('admin_password') || '';
+let loadedProjects = {};
+let allComments = [];
+let allLikes = [];
+let allMessages = [];
+let allViews = [];
+let allSubscribers = [];
+let commentsChannel = null;
+let likesChannel = null;
+let messagesChannel = null;
+let subscribersChannel = null;
+let activeTab = 'comments';
+
+// DOM Elements
+const loginContainer = document.getElementById('login-container');
+const dashboardContainer = document.getElementById('dashboard-container');
+const loginForm = document.getElementById('login-form');
+const loginError = document.getElementById('login-error');
+const adminPassInput = document.getElementById('admin-pass-input');
+const logoutBtn = document.getElementById('logout-btn');
+
+const unapprovedList = document.getElementById('unapproved-list');
+const approvedList = document.getElementById('approved-list');
+const unapprovedCount = document.getElementById('unapproved-count');
+const approvedCount = document.getElementById('approved-count');
+
+// Helper to escape HTML tags to prevent XSS
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+
+// Format date relative or static
+function formatCommentDate(dateString) {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffMs = now - date;
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHr = Math.floor(diffMin / 60);
+
+  if (diffSec < 60) {
+    return 'před chvílí';
+  } else if (diffMin < 60) {
+    if (diffMin === 1) return 'před minutou';
+    return `před ${diffMin} min`;
+  } else if (diffHr < 24) {
+    if (diffHr === 1) return 'před hodinou';
+    return `před ${diffHr} h`;
+  } else {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+    return `${day}. ${month}. ${year}`;
+  }
+}
+
+// Fetch project mappings from projects.json
+async function loadProjectsJSON() {
+  try {
+    const r = await fetch('projects.json');
+    if (r.ok) {
+      const data = await r.json();
+      data.forEach(p => {
+        loadedProjects[p.id] = p;
+        loadedProjects[String(p.id)] = p;
+      });
+    }
+  } catch (e) {
+    console.error('Failed to load projects.json:', e);
+  }
+}
+
+// Fetch Comments from DB
+async function fetchCommentsFromDB() {
+  if (!currentPassword) return false;
+  
+  try {
+    const { data, error } = await supabaseClient.rpc('get_all_comments_admin', { 
+      admin_password: currentPassword 
+    });
+    
+    if (error) {
+      console.error('RPC get_all_comments_admin error:', error);
+      return false;
+    }
+    
+    allComments = data || [];
+    return true;
+  } catch (err) {
+    console.error('Error fetching comments:', err);
+    return false;
+  }
+}
+
+// Render dynamic elements
+function renderComments() {
+  const unapproved = allComments.filter(c => !c.approved);
+  const approved = allComments.filter(c => c.approved);
+
+  unapprovedCount.textContent = unapproved.length;
+  approvedCount.textContent = approved.length;
+
+  // Render unapproved
+  if (unapproved.length === 0) {
+    unapprovedList.innerHTML = '<div class="empty-state">Žádné komentáře ke schválení.</div>';
+  } else {
+    unapprovedList.innerHTML = unapproved.map(c => `
+      <div class="admin-comment-item" id="comment-${c.id}">
+        <div class="admin-comment-header">
+          <div class="admin-comment-meta">
+            <span class="admin-comment-author">${escapeHTML(c.name)}</span>
+            <span class="admin-comment-project">
+              <i class="ph ph-folder"></i> ${escapeHTML(loadedProjects[c.project_id]?.title || ('Projekt ID: ' + c.project_id))}
+            </span>
+          </div>
+          <span class="admin-comment-date">${formatCommentDate(c.created_at)}</span>
+        </div>
+        <div class="admin-comment-body">${escapeHTML(c.body).replace(/\n/g, '<br>')}</div>
+        <div class="admin-comment-actions">
+          <button class="action-btn delete" onclick="moderateComment('${c.id}', 'delete')">
+            <i class="ph ph-trash"></i> Smazat
+          </button>
+          <button class="action-btn approve" onclick="moderateComment('${c.id}', 'approve')">
+            <i class="ph ph-check"></i> Schválit
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Render approved
+  if (approved.length === 0) {
+    approvedList.innerHTML = '<div class="empty-state">Žádné schválené komentáře.</div>';
+  } else {
+    approvedList.innerHTML = approved.map(c => `
+      <div class="admin-comment-item" id="comment-${c.id}">
+        <div class="admin-comment-header">
+          <div class="admin-comment-meta">
+            <span class="admin-comment-author">${escapeHTML(c.name)}</span>
+            <span class="admin-comment-project">
+              <i class="ph ph-folder"></i> ${escapeHTML(loadedProjects[c.project_id]?.title || ('Projekt ID: ' + c.project_id))}
+            </span>
+          </div>
+          <span class="admin-comment-date">${formatCommentDate(c.created_at)}</span>
+        </div>
+        <div class="admin-comment-body">${escapeHTML(c.body).replace(/\n/g, '<br>')}</div>
+        <div class="admin-comment-actions">
+          <button class="action-btn delete" onclick="moderateComment('${c.id}', 'delete')">
+            <i class="ph ph-trash"></i> Smazat
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+// Perform moderation action
+async function moderateComment(commentId, action) {
+  const commentEl = document.getElementById(`comment-${commentId}`);
+  if (commentEl) commentEl.style.opacity = '0.5';
+
+  try {
+    const { error } = await supabaseClient.rpc('moderate_comment', {
+      comment_id: commentId,
+      action_type: action,
+      admin_password: currentPassword
+    });
+
+    if (error) {
+      alert(`Nepodařilo se provést akci: ${error.message}`);
+      if (commentEl) commentEl.style.opacity = '1';
+    } else {
+      // Realtime subscription will handle reload, but we can also do fetch + local update just in case
+      await updateData();
+    }
+  } catch (err) {
+    console.error('Error moderating comment:', err);
+    alert('Chyba při komunikaci se serverem.');
+    if (commentEl) commentEl.style.opacity = '1';
+  }
+}
+
+// Tab Switching
+function switchTab(tabId) {
+  activeTab = tabId;
+  const tabs = ['comments', 'likes', 'messages', 'views', 'settings', 'subscribers'];
+  const kickers = {
+    'comments': 'Správa komentářů',
+    'likes': 'Statistiky lajků',
+    'messages': 'Inbox zpráv',
+    'views': 'Návštěvnost webu',
+    'settings': 'Obsah webu',
+    'subscribers': 'Odběratelé newsletteru'
+  };
+
+  const kickerText = document.getElementById('admin-panel-kicker-text');
+  if (kickerText && kickers[tabId]) {
+    kickerText.textContent = kickers[tabId];
+  }
+
+  tabs.forEach(t => {
+    const btn = document.getElementById(`tab-${t}-btn`);
+    const content = document.getElementById(`${t}-tab-content`);
+    if (t === tabId) {
+      if (btn) btn.classList.add('active');
+      if (content) content.classList.add('active');
+    } else {
+      if (btn) btn.classList.remove('active');
+      if (content) content.classList.remove('active');
+    }
+  });
+
+  if (tabId === 'likes') {
+    updateLikesData();
+  } else if (tabId === 'messages') {
+    updateMessagesData();
+  } else if (tabId === 'views') {
+    updateViewsData();
+  } else if (tabId === 'settings') {
+    loadSiteSettings();
+  } else if (tabId === 'subscribers') {
+    updateSubscribersData();
+  }
+}
+
+// Search project media to get poster, title, etc.
+function findMediaDetails(mediaSrc, projectId) {
+  let decSrc = mediaSrc;
+  try {
+    decSrc = decodeURIComponent(mediaSrc);
+  } catch(e) {}
+
+  const clean = (s) => String(s || '').trim().toLowerCase();
+  const target = clean(decSrc);
+
+  // Search under current project first
+  if (projectId) {
+    const p = loadedProjects[projectId];
+    if (p && p.media) {
+      const found = p.media.find(m => clean(m.src) === target || clean(m.thumbnail) === target);
+      if (found) return { project: p, media: found };
+    }
+  }
+
+  // Fallback to searching all projects
+  for (const pid in loadedProjects) {
+    const p = loadedProjects[pid];
+    if (p && p.media) {
+      const found = p.media.find(m => clean(m.src) === target || clean(m.thumbnail) === target);
+      if (found) return { project: p, media: found };
+    }
+  }
+
+  return null;
+}
+
+// Fetch Likes from DB
+async function fetchLikesFromDB() {
+  if (!currentPassword) return false;
+  
+  try {
+    const { data: likes, error } = await supabaseClient
+      .from('likes')
+      .select('project_id, media_src');
+      
+    if (error) {
+      console.error('Error fetching likes:', error);
+      return false;
+    }
+    
+    allLikes = likes || [];
+    return true;
+  } catch (err) {
+    console.error('Error fetching likes:', err);
+    return false;
+  }
+}
+
+// Render Likes
+function renderLikes() {
+  const container = document.getElementById('likes-list-container');
+  const countBadge = document.getElementById('total-likes-count');
+  if (!container) return;
+
+  if (countBadge) {
+    countBadge.textContent = allLikes.length;
+  }
+
+  if (allLikes.length === 0) {
+    container.innerHTML = '<div class="empty-state">Žádné lajky.</div>';
+    return;
+  }
+
+  // Group likes by media_src
+  const groups = {};
+  allLikes.forEach(l => {
+    if (!l.media_src) return;
+    if (!groups[l.media_src]) {
+      groups[l.media_src] = {
+        media_src: l.media_src,
+        project_id: l.project_id,
+        count: 0
+      };
+    }
+    groups[l.media_src].count++;
+  });
+
+  // Sort descending
+  const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+
+  let html = `
+    <div class="likes-table-container">
+      <table class="likes-table">
+        <thead>
+          <tr>
+            <th style="width: 80px;">Náhled</th>
+            <th>Projekt</th>
+            <th>Média / Cesta</th>
+            <th style="width: 100px; text-align: right;">Lajky</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  sorted.forEach(item => {
+    const details = findMediaDetails(item.media_src, item.project_id);
+    const projectName = details ? details.project.title : (loadedProjects[item.project_id]?.title || ('Projekt ID: ' + item.project_id));
+    
+    let fileName = item.media_src;
+    try {
+      const parts = item.media_src.split('/');
+      fileName = parts[parts.length - 1];
+    } catch(e){}
+
+    const mediaLabel = details && details.media.title ? details.media.title : 'Bez názvu';
+    
+    // Preview rendering
+    let previewHtml = '';
+    const resolvedPath = item.media_src;
+    const isVideo = details ? details.media.type === 'video' : (item.media_src.endsWith('.mp4') || item.media_src.endsWith('.webm'));
+    
+    const previewImg = details ? (details.media.thumbnail || details.media.poster || (details.media.type === 'photo' ? details.media.src : '')) : '';
+
+    if (previewImg) {
+      previewHtml = `<img src="${encodeURI(previewImg)}" alt="${escapeHTML(mediaLabel)}" loading="lazy">`;
+      if (isVideo) {
+        previewHtml += `<div class="likes-media-preview-icon"><i class="ph-fill ph-play"></i></div>`;
+      }
+    } else if (isVideo) {
+      previewHtml = `<div class="likes-media-preview-icon"><i class="ph-fill ph-play"></i></div>`;
+    } else {
+      previewHtml = `<div class="likes-media-preview-icon"><i class="ph ph-image"></i></div>`;
+    }
+
+    html += `
+      <tr>
+        <td>
+          <a href="${encodeURI(resolvedPath)}" target="_blank" class="likes-media-preview" title="Otevřít v novém okně">
+            ${previewHtml}
+          </a>
+        </td>
+        <td>
+          <div class="likes-project-name">${escapeHTML(projectName)}</div>
+        </td>
+        <td>
+          <div style="font-weight: 500; font-size: 13px; color: var(--text);">${escapeHTML(mediaLabel)}</div>
+          <div class="likes-file-path" title="${escapeHTML(item.media_src)}">${escapeHTML(fileName)}</div>
+        </td>
+        <td style="text-align: right;">
+          <span class="likes-count-badge">
+            <i class="ph-fill ph-heart"></i> ${item.count}
+          </span>
+        </td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  container.innerHTML = html;
+}
+
+async function updateLikesData() {
+  const success = await fetchLikesFromDB();
+  if (success) {
+    renderLikes();
+  }
+}
+
+// --- Messages ---
+async function fetchMessagesFromDB() {
+  try {
+    const { data, error } = await supabaseClient.rpc('get_contact_messages_admin', {
+      admin_password: currentPassword
+    });
+    if (error) throw error;
+    allMessages = data || [];
+    return true;
+  } catch (e) {
+    console.error('Error fetching messages:', e);
+    return false;
+  }
+}
+
+function renderMessages() {
+  const listContainer = document.getElementById('messages-list');
+  const totalCountEl = document.getElementById('total-messages-count');
+  if (!listContainer) return;
+  
+  if (totalCountEl) totalCountEl.textContent = allMessages.length;
+  
+  if (allMessages.length === 0) {
+    listContainer.innerHTML = '<div style="color:var(--muted); font-size:13px; padding:12px 0;">Žádné zprávy.</div>';
+    return;
+  }
+  
+  const sorted = [...allMessages].sort((a, b) => {
+    if (a.resolved !== b.resolved) return a.resolved ? 1 : -1;
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
+  
+  listContainer.innerHTML = sorted.map(msg => {
+    const isResolved = msg.resolved;
+    const dateStr = formatCommentDate(msg.created_at);
+    
+    return `
+      <div class="message-card ${isResolved ? 'resolved' : ''}" id="msg-card-${msg.id}">
+        <div class="message-header">
+          <div class="message-meta">
+            <span class="message-author">${escapeHTML(msg.name)}</span>
+            <a href="mailto:${escapeHTML(msg.email)}" class="message-email">${escapeHTML(msg.email)}</a>
+            <span class="message-date">${dateStr}</span>
+          </div>
+          <div class="message-actions">
+            <button class="btn-icon btn-resolve ${isResolved ? 'active' : ''}" 
+                    title="${isResolved ? 'Označit jako nevyřešené' : 'Označit jako vyřešené'}" 
+                    onclick="toggleMessageResolved(${msg.id}, ${isResolved})">
+              <i class="ph ${isResolved ? 'ph-check-square' : 'ph-square'}"></i>
+            </button>
+            <button class="btn-icon btn-delete" title="Smazat zprávu" onclick="deleteMessage(${msg.id})">
+              <i class="ph ph-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="message-text">${escapeHTML(msg.message)}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function updateMessagesData() {
+  const success = await fetchMessagesFromDB();
+  if (success) {
+    renderMessages();
+  }
+}
+
+async function toggleMessageResolved(messageId, currentStatus) {
+  const card = document.getElementById(`msg-card-${messageId}`);
+  if (card) card.style.opacity = '0.5';
+  
+  try {
+    const { error } = await supabaseClient.rpc('resolve_contact_message_admin', {
+      admin_password: currentPassword,
+      message_id: messageId,
+      resolved_status: !currentStatus
+    });
+    if (error) throw error;
+    await updateMessagesData();
+  } catch (err) {
+    console.error('Error toggling message resolution:', err);
+    alert('Chyba při změně stavu zprávy.');
+    if (card) card.style.opacity = '';
+  }
+}
+
+async function deleteMessage(messageId) {
+  if (!confirm('Opravdu chcete tuto zprávu trvale smazat?')) return;
+  const card = document.getElementById(`msg-card-${messageId}`);
+  if (card) card.style.opacity = '0.5';
+  
+  try {
+    const { error } = await supabaseClient.rpc('delete_contact_message_admin', {
+      admin_password: currentPassword,
+      message_id: messageId
+    });
+    if (error) throw error;
+    await updateMessagesData();
+  } catch (err) {
+    console.error('Error deleting message:', err);
+    alert('Chyba při mazání zprávy.');
+    if (card) card.style.opacity = '';
+  }
+}
+
+// --- Page Views ---
+async function fetchViewsFromDB() {
+  try {
+    const { data, error } = await supabaseClient.rpc('get_page_views_admin', {
+      admin_password: currentPassword
+    });
+    if (error) throw error;
+    allViews = data || [];
+    return true;
+  } catch (e) {
+    console.error('Error fetching page views:', e);
+    return false;
+  }
+}
+
+function renderViews() {
+  const totalCountEl = document.getElementById('views-total-count');
+  const uniquePagesEl = document.getElementById('views-pages-count');
+  const chartContainer = document.getElementById('views-chart-container');
+  if (!chartContainer) return;
+  
+  if (totalCountEl) totalCountEl.textContent = allViews.length;
+  
+  if (allViews.length === 0) {
+    if (uniquePagesEl) uniquePagesEl.textContent = '0';
+    chartContainer.innerHTML = '<div style="color:var(--muted); font-size:13px;">Žádná zobrazení nezaznamenána.</div>';
+    return;
+  }
+  
+  const groups = {};
+  allViews.forEach(row => {
+    let key = '';
+    let title = '';
+    let sub = '';
+    const path = row.page_path || '';
+    
+    if (row.project_id) {
+      key = `project_${row.project_id}`;
+      const p = loadedProjects[row.project_id];
+      title = p ? `Projekt: ${p.title}` : `Projekt ID: ${row.project_id}`;
+      sub = `project.html?id=${row.project_id}`;
+    } else {
+      key = `path_${path}`;
+      const lowerPath = path.toLowerCase();
+      if (lowerPath.endsWith('about.html')) {
+        title = 'O mně (about.html)';
+      } else if (lowerPath.endsWith('contact.html')) {
+        title = 'Kontakt (contact.html)';
+      } else if (lowerPath.endsWith('admin.html')) {
+        title = 'Administrace (admin.html)';
+      } else if (lowerPath.endsWith('index.html') || path === '/' || path === '') {
+        title = 'Úvodní stránka (index.html)';
+      } else {
+        const filename = path.split('/').pop() || path;
+        title = `${filename || 'Hlavní stránka'}`;
+      }
+      sub = path;
+    }
+    
+    if (!groups[key]) {
+      groups[key] = { title, sub, count: 0 };
+    }
+    groups[key].count++;
+  });
+  
+  const sortedGroups = Object.values(groups).sort((a, b) => b.count - a.count);
+  if (uniquePagesEl) uniquePagesEl.textContent = sortedGroups.length;
+  
+  const maxCount = sortedGroups[0]?.count || 1;
+  
+  chartContainer.innerHTML = sortedGroups.map(grp => {
+    const pct = (grp.count / maxCount) * 100;
+    return `
+      <div class="views-chart-item">
+        <div class="views-chart-item-header">
+          <span class="views-chart-page-title">${escapeHTML(grp.title)} <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">${escapeHTML(grp.sub)}</span></span>
+          <span class="views-chart-page-count">${grp.count}x</span>
+        </div>
+        <div class="views-chart-bar-container">
+          <div class="views-chart-bar" style="width: ${pct}%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function updateViewsData() {
+  const success = await fetchViewsFromDB();
+  if (success) {
+    renderViews();
+  }
+}
+
+// --- CMS Settings ---
+async function loadSiteSettings() {
+  try {
+    const { data, error } = await supabaseClient.from('site_settings').select('key, value');
+    if (error) throw error;
+    
+    const settings = {};
+    (data || []).forEach(item => {
+      settings[item.key] = item.value;
+    });
+    
+    document.getElementById('setting-home-intro').value = settings.home_intro || '';
+    document.getElementById('setting-about-sidebar-intro').value = settings.about_sidebar_intro || '';
+    document.getElementById('setting-about-bio').value = settings.about_bio || '';
+    document.getElementById('setting-contact-email').value = settings.contact_email || '';
+    document.getElementById('setting-instagram-link').value = settings.instagram_link || '';
+    document.getElementById('setting-youtube-link').value = settings.youtube_link || '';
+  } catch (e) {
+    console.error('Error loading settings:', e);
+    alert('Chyba při načítání obsahu.');
+  }
+}
+
+async function saveSiteSettings() {
+  const saveBtn = document.getElementById('settings-save-btn');
+  const statusMsg = document.getElementById('settings-status-msg');
+  
+  if (saveBtn) saveBtn.disabled = true;
+  if (statusMsg) statusMsg.classList.remove('show');
+  
+  const settingsToSave = [
+    { key: 'home_intro', value: document.getElementById('setting-home-intro').value.trim() },
+    { key: 'about_sidebar_intro', value: document.getElementById('setting-about-sidebar-intro').value.trim() },
+    { key: 'about_bio', value: document.getElementById('setting-about-bio').value.trim() },
+    { key: 'contact_email', value: document.getElementById('setting-contact-email').value.trim() },
+    { key: 'instagram_link', value: document.getElementById('setting-instagram-link').value.trim() },
+    { key: 'youtube_link', value: document.getElementById('setting-youtube-link').value.trim() }
+  ];
+  
+  try {
+    for (const setting of settingsToSave) {
+      const { error } = await supabaseClient.rpc('set_site_setting_admin', {
+        admin_password: currentPassword,
+        key: setting.key,
+        value: setting.value
+      });
+      if (error) throw error;
+    }
+    
+    if (statusMsg) {
+      statusMsg.classList.add('show');
+      setTimeout(() => {
+        statusMsg.classList.remove('show');
+      }, 3000);
+    }
+  } catch (err) {
+    console.error('Error saving settings:', err);
+    alert('Chyba při ukládání nastavení: ' + err.message);
+  } finally {
+    if (saveBtn) saveBtn.disabled = false;
+  }
+}
+
+// --- Subscribers ---
+async function fetchSubscribersFromDB() {
+  try {
+    const { data, error } = await supabaseClient.rpc('get_subscribers_admin', {
+      admin_password: currentPassword
+    });
+    if (error) throw error;
+    allSubscribers = data || [];
+    return true;
+  } catch (e) {
+    console.error('Error fetching subscribers:', e);
+    return false;
+  }
+}
+
+function renderSubscribers() {
+  const listBody = document.getElementById('subscribers-list-body');
+  const totalCountEl = document.getElementById('subscribers-count');
+  if (!listBody) return;
+  
+  if (totalCountEl) totalCountEl.textContent = allSubscribers.length;
+  
+  if (allSubscribers.length === 0) {
+    listBody.innerHTML = '<tr><td colspan="3" class="empty-state" style="text-align:center;padding:24px;color:var(--muted);">Žádní odběratelé.</td></tr>';
+    return;
+  }
+  
+  const sorted = [...allSubscribers].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  
+  listBody.innerHTML = sorted.map(sub => {
+    const date = new Date(sub.created_at);
+    const formattedDate = `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    
+    return `
+      <tr class="subscriber-row" id="sub-row-${sub.id}">
+        <td><span style="font-weight: 500;">${escapeHTML(sub.email)}</span></td>
+        <td><span style="color: var(--muted);">${formattedDate}</span></td>
+        <td style="text-align: center;">
+          <button class="btn-delete" title="Smazat odběratele" onclick="deleteSubscriber(${sub.id})">
+            <i class="ph ph-trash"></i>
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+async function updateSubscribersData() {
+  const success = await fetchSubscribersFromDB();
+  if (success) {
+    renderSubscribers();
+  }
+}
+
+async function deleteSubscriber(subId) {
+  if (!confirm('Opravdu chcete tohoto odběratele smazat?')) return;
+  const row = document.getElementById(`sub-row-${subId}`);
+  if (row) row.style.opacity = '0.5';
+  
+  try {
+    const { error } = await supabaseClient.rpc('delete_subscriber_admin', {
+      admin_password: currentPassword,
+      sub_id: subId
+    });
+    if (error) throw error;
+    await updateSubscribersData();
+  } catch (err) {
+    console.error('Error deleting subscriber:', err);
+    alert('Chyba při mazání odběratele.');
+    if (row) row.style.opacity = '';
+  }
+}
+
+function copySubscribersEmails() {
+  if (allSubscribers.length === 0) return;
+  const emails = allSubscribers.map(sub => sub.email).join(', ');
+  
+  navigator.clipboard.writeText(emails).then(() => {
+    const toastArea = document.getElementById('copy-toast-area');
+    if (toastArea) {
+      toastArea.innerHTML = '<span class="copy-toast">Zkopírováno!</span>';
+      setTimeout(() => {
+        toastArea.innerHTML = '';
+      }, 2000);
+    }
+  }).catch(err => {
+    console.error('Could not copy emails: ', err);
+  });
+}
+
+// Setup Realtime subscriptions
+function initRealtime() {
+  if (commentsChannel) supabaseClient.removeChannel(commentsChannel);
+  if (likesChannel) supabaseClient.removeChannel(likesChannel);
+  if (messagesChannel) supabaseClient.removeChannel(messagesChannel);
+  if (subscribersChannel) supabaseClient.removeChannel(subscribersChannel);
+  
+  commentsChannel = supabaseClient
+    .channel('admin-comments-changes')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'comments'
+    }, () => {
+      fetchCommentsFromDB().then(success => {
+        if (success) renderComments();
+      });
+    })
+    .subscribe();
+
+  likesChannel = supabaseClient
+    .channel('admin-likes-changes')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'likes'
+    }, () => {
+      fetchLikesFromDB().then(success => {
+        if (success) renderLikes();
+      });
+    })
+    .subscribe();
+
+  messagesChannel = supabaseClient
+    .channel('admin-messages-changes')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'contact_messages'
+    }, () => {
+      fetchMessagesFromDB().then(success => {
+        if (success) renderMessages();
+      });
+    })
+    .subscribe();
+
+  subscribersChannel = supabaseClient
+    .channel('admin-subscribers-changes')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'subscribers'
+    }, () => {
+      fetchSubscribersFromDB().then(success => {
+        if (success) renderSubscribers();
+      });
+    })
+    .subscribe();
+}
+
+async function updateData() {
+  const [successComments, successLikes, successMessages, successViews, successSubscribers] = await Promise.all([
+    fetchCommentsFromDB(),
+    fetchLikesFromDB(),
+    fetchMessagesFromDB(),
+    fetchViewsFromDB(),
+    fetchSubscribersFromDB()
+  ]);
+  
+  if (successComments) renderComments();
+  if (successLikes) renderLikes();
+  if (successMessages) renderMessages();
+  if (successViews) renderViews();
+  if (successSubscribers) renderSubscribers();
+  
+  return successComments;
+}
+
+// Bootstrapping
+async function initPage() {
+  await loadProjectsJSON();
+  
+  if (currentPassword) {
+    const success = await updateData();
+    if (success) {
+      dashboardContainer.style.display = 'block';
+      initRealtime();
+    } else {
+      // Password invalid
+      localStorage.removeItem('admin_password');
+      currentPassword = '';
+      loginContainer.style.display = 'block';
+      loginError.textContent = 'Uložené administrátorské heslo je neplatné.';
+      loginError.style.display = 'block';
+    }
+  } else {
+    loginContainer.style.display = 'block';
+  }
+}
+
+// Login form submission
+if (loginForm) {
+  loginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    loginError.style.display = 'none';
+    
+    const submitBtn = document.getElementById('login-submit-btn');
+    if (submitBtn) submitBtn.disabled = true;
+    
+    const inputPass = adminPassInput.value;
+    
+    try {
+      const { data, error } = await supabaseClient.rpc('get_all_comments_admin', { 
+        admin_password: inputPass 
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Succeeded! Save password
+      currentPassword = inputPass;
+      localStorage.setItem('admin_password', currentPassword);
+      
+      await updateData();
+      
+      // Transition UI
+      loginContainer.style.display = 'none';
+      dashboardContainer.style.display = 'block';
+      
+      initRealtime();
+      
+    } catch (err) {
+      console.error('Login failed:', err);
+      // Give feedback
+      loginError.textContent = 'Nesprávné heslo. Zkuste to prosím znovu.';
+      loginError.style.display = 'block';
+      adminPassInput.value = '';
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
+  });
+}
+
+// Logout button
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('admin_password');
+    currentPassword = '';
+    if (commentsChannel) {
+      supabaseClient.removeChannel(commentsChannel);
+      commentsChannel = null;
+    }
+    if (likesChannel) {
+      supabaseClient.removeChannel(likesChannel);
+      likesChannel = null;
+    }
+    if (messagesChannel) {
+      supabaseClient.removeChannel(messagesChannel);
+      messagesChannel = null;
+    }
+    if (subscribersChannel) {
+      supabaseClient.removeChannel(subscribersChannel);
+      subscribersChannel = null;
+    }
+    dashboardContainer.style.display = 'none';
+    loginContainer.style.display = 'block';
+    adminPassInput.value = '';
+  });
+}
+
+// Run page initialization
+initPage();
+</script>
+</body>
+</html>
