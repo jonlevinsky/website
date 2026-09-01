@@ -1324,14 +1324,14 @@ function playAsmrSound(type) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(850, now);
-      osc.frequency.exponentialRampToValueAtTime(120, now + 0.04);
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.frequency.setValueAtTime(950, now);
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.05);
+      gain.gain.setValueAtTime(0.55, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.04);
+      osc.stop(now + 0.05);
 
       // Secondary metallic mechanical click
       setTimeout(() => {
@@ -1339,14 +1339,14 @@ function playAsmrSound(type) {
         const osc2 = ctx.createOscillator();
         const gain2 = ctx.createGain();
         osc2.type = 'triangle';
-        osc2.frequency.setValueAtTime(1200, ctx.currentTime);
-        osc2.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.025);
-        gain2.gain.setValueAtTime(0.12, ctx.currentTime);
-        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.025);
+        osc2.frequency.setValueAtTime(1300, ctx.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.03);
+        gain2.gain.setValueAtTime(0.45, ctx.currentTime);
+        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
         osc2.connect(gain2);
         gain2.connect(ctx.destination);
         osc2.start();
-        osc2.stop(ctx.currentTime + 0.025);
+        osc2.stop(ctx.currentTime + 0.03);
       }, 25);
 
     } else if (type === 'dial' || type === 'filter') {
@@ -1354,32 +1354,32 @@ function playAsmrSound(type) {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'triangle';
-      osc.frequency.setValueAtTime(1400, now);
-      osc.frequency.exponentialRampToValueAtTime(300, now + 0.015);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+      osc.frequency.setValueAtTime(1500, now);
+      osc.frequency.exponentialRampToValueAtTime(350, now + 0.02);
+      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.015);
+      osc.stop(now + 0.02);
 
     } else if (type === 'pop' || type === 'modal') {
       // Soft lens aperture pop / modal open
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
-      osc.frequency.setValueAtTime(320, now);
-      osc.frequency.exponentialRampToValueAtTime(880, now + 0.03);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      osc.frequency.setValueAtTime(350, now);
+      osc.frequency.exponentialRampToValueAtTime(950, now + 0.04);
+      gain.gain.setValueAtTime(0.45, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
-      osc.stop(now + 0.03);
+      osc.stop(now + 0.04);
 
     } else if (type === 'whoosh' || type === 'newsletter') {
       // Paper / envelope slide whoosh (filtered noise)
-      const bufferSize = ctx.sampleRate * 0.08;
+      const bufferSize = ctx.sampleRate * 0.1;
       const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
       const output = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
@@ -1390,40 +1390,28 @@ function playAsmrSound(type) {
 
       const filter = ctx.createBiquadFilter();
       filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(600, now);
-      filter.frequency.exponentialRampToValueAtTime(1800, now + 0.08);
-      filter.Q.value = 3;
+      filter.frequency.setValueAtTime(700, now);
+      filter.frequency.exponentialRampToValueAtTime(2200, now + 0.1);
+      filter.Q.value = 2.5;
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
 
       whiteNoise.connect(filter);
       filter.connect(gain);
       gain.connect(ctx.destination);
       whiteNoise.start(now);
-      whiteNoise.stop(now + 0.08);
+      whiteNoise.stop(now + 0.1);
     }
   } catch (e) {}
 }
 
 // ── Attach sound triggers to user UI actions ──
-document.addEventListener('click', (e) => {
-  // Unlock AudioContext on first user click
-  getAudioContext();
-
-  // Filter category pills click
-  if (e.target.closest('.filter-row a')) {
-    playAsmrSound('dial');
-  }
-  // Like button click
-  else if (e.target.closest('.tile-like-btn')) {
-    playAsmrSound('shutter');
-  }
-  // Newsletter modal trigger
-  else if (e.target.closest('.newsletter-trigger')) {
-    playAsmrSound('whoosh');
-  }
+['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => {
+  document.addEventListener(evt, () => {
+    getAudioContext();
+  }, { passive: true, once: false });
 });
 
 // Call on startup
