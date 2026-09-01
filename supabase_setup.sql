@@ -38,6 +38,7 @@ CREATE POLICY "Zamezit přímému přístupu ke zprávám" ON public.contact_mes
   FOR ALL USING (false);
 
 -- RPC: Načtení zpráv pro administrátora
+DROP FUNCTION IF EXISTS get_contact_messages_admin(text);
 CREATE OR REPLACE FUNCTION get_contact_messages_admin(admin_password text)
 RETURNS TABLE (
   id uuid,
@@ -118,6 +119,7 @@ CREATE POLICY "Zamezit přímému přístupu k zobrazením" ON public.page_views
   FOR SELECT USING (false);
 
 -- RPC: Načtení všech zobrazení pro statistiky administrátora
+DROP FUNCTION IF EXISTS get_page_views_admin(text);
 CREATE OR REPLACE FUNCTION get_page_views_admin(admin_password text)
 RETURNS TABLE (
   id uuid,
@@ -214,6 +216,7 @@ CREATE POLICY "Zamezit přímému přístupu k odběratelům" ON public.subscrib
   FOR SELECT USING (false);
 
 -- RPC: Získání seznamu odběratelů
+DROP FUNCTION IF EXISTS get_subscribers_admin(text);
 CREATE OR REPLACE FUNCTION get_subscribers_admin(admin_password text)
 RETURNS TABLE (
   id uuid,
@@ -252,6 +255,7 @@ END;
 $$;
 
 -- RPC: Veřejné odhlášení z newsletteru pomocí tokenu
+DROP FUNCTION IF EXISTS unsubscribe_by_token(text);
 CREATE OR REPLACE FUNCTION unsubscribe_by_token(token text)
 RETURNS TABLE (
   success boolean,
@@ -409,6 +413,7 @@ END;
 $$;
 
 -- RPC: Admin funkce pro získání všech liků
+DROP FUNCTION IF EXISTS get_all_likes_admin(text);
 CREATE OR REPLACE FUNCTION get_all_likes_admin(admin_password text)
 RETURNS TABLE (
   id uuid,
