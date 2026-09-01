@@ -636,6 +636,18 @@ async function applySiteSettings() {
     data.forEach(item => {
       settings[item.key] = item.value;
     });
+
+    // Check Maintenance Mode
+    if (settings.maintenance_mode === 'true') {
+      const isPathAdmin = window.location.pathname.endsWith('admin.html');
+      const isAdminLoggedIn = !!localStorage.getItem('admin_password');
+      const isBypass = new URLSearchParams(window.location.search).has('bypass');
+
+      if (!isPathAdmin && !isAdminLoggedIn && !isBypass) {
+        showMaintenanceOverlay(settings.maintenance_message);
+        return;
+      }
+    }
     
     // Apply home_intro
     if (settings.home_intro) {
@@ -692,6 +704,55 @@ async function applySiteSettings() {
   } catch (err) {
     console.error('Error applying site settings:', err);
   }
+}
+
+function showMaintenanceOverlay(customMessage) {
+  const msg = customMessage || 'Na webu právě probíhají plánované úpravy a aktualizace. Vracíme se již brzy!';
+  
+  const maintenanceHtml = `
+    <div id="maintenance-overlay" style="
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: #faf8f5;
+      color: #1c1917;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 24px;
+      text-align: center;
+      font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+    ">
+      <div style="max-width: 520px; width: 100%; background: #ffffff; border: 1px solid #e8e4dd; border-radius: 20px; padding: 48px 36px; box-shadow: 0 12px 32px rgba(0,0,0,0.06);">
+        <div style="width: 56px; height: 56px; margin: 0 auto 24px; background: rgba(44, 62, 80, 0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; color: #2c3e50;">
+          <i class="ph ph-wrench"></i>
+        </div>
+        <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.16em; color: #6b6560; margin-bottom: 8px;">
+          Režim údržby
+        </div>
+        <h1 style="font-family: 'Bricolage Grotesque', Georgia, serif; font-size: 32px; font-weight: 600; color: #1c1917; margin: 0 0 16px 0; line-height: 1.25; letter-spacing: -0.02em;">
+          Jan Levínský
+        </h1>
+        <p style="font-size: 15px; color: #6b6560; line-height: 1.6; margin: 0 0 32px 0;">
+          ${msg}
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a href="mailto:levinskyj.cine@gmail.com" style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: #2c3e50; color: #faf8f5; border-radius: 999px; text-decoration: none; font-size: 14px; font-weight: 500; transition: opacity 0.2s;">
+            <i class="ph ph-envelope"></i> Napsat e-mail
+          </a>
+          <a href="admin.html" style="display: inline-flex; align-items: center; gap: 6px; padding: 12px 20px; background: #f0ece6; color: #1c1917; border-radius: 999px; text-decoration: none; font-size: 13px; font-weight: 500;">
+            <i class="ph ph-lock-key"></i> Administrace
+          </a>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.style.overflow = 'hidden';
+  const existing = document.getElementById('maintenance-overlay');
+  if (existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', maintenanceHtml);
 }
 
 async function initTracker() {

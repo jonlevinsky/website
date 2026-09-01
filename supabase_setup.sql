@@ -181,6 +181,8 @@ $$;
 
 -- Vložení výchozích textů (pokud ještě neexistují)
 INSERT INTO public.site_settings (key, value) VALUES
+  ('maintenance_mode', 'false'),
+  ('maintenance_message', 'Na webu právě probíhají plánované úpravy a aktualizace. Vracíme se již brzy!'),
   ('home_intro', 'Kameraman, fotograf a student filmové tvorby.'),
   ('about_sidebar_intro', 'Kameraman, fotograf a student filmové tvorby. Ve své práci se úzce specializuji na cinematografii a poutavý vizuální storytelling.'),
   ('about_bio', 'Studium na Slezské univerzitě v Opavě – Multimédia a popularizace.\n\nVysokoškolské studium propojující audiovizuální praxi s širším teoretickým přesahem. Zaměření na tvorbu komplexních multimediálních projektů, vizuální komunikaci a efektivní předávání příběhů.'),

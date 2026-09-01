@@ -926,6 +926,21 @@ main {
             </div>
           </div>
           <form class="settings-form" id="settings-admin-form" onsubmit="return false;">
+            <div class="settings-group" style="padding: 16px; background: rgba(44, 62, 80, 0.04); border: 1px solid var(--border); border-radius: var(--r-md); margin-bottom: 24px;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+                <label for="setting-maintenance-mode" style="font-weight: 600; color: var(--text); font-size: 14px; margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <i class="ph ph-wrench" style="color: var(--accent); font-size: 18px;"></i> Režim údržby (Maintenance Mode)
+                </label>
+                <select id="setting-maintenance-mode" style="width: auto; padding: 6px 12px; font-weight: 600; border-radius: var(--r-sm); background: var(--bg); color: var(--text); border: 1px solid var(--border);">
+                  <option value="false">🟢 Vypnuto (Web je aktivní)</option>
+                  <option value="true">🟠 Zapnuto (Zobrazit údržbu)</option>
+                </select>
+              </div>
+              <label for="setting-maintenance-message" style="margin-top: 10px; display: block; font-size: 11px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em;">Zpráva pro návštěvníky při údržbě</label>
+              <textarea id="setting-maintenance-message" placeholder="Na webu právě probíhají plánované úpravy. Vracíme se již brzy!" style="min-height: 70px; margin-top: 4px;"></textarea>
+              <div class="field-help">Při zapnutém režimu údržby uvidí všichni běžní návštěvníci tuto zprávu. Administrátoři mohou web nadále procházet.</div>
+            </div>
+            
             <div class="settings-group">
               <label for="setting-home-intro">Úvodní text (Home portfolio)</label>
               <input type="text" id="setting-home-intro" placeholder="Kameraman, fotograf a student filmové tvorby.">
@@ -1489,6 +1504,8 @@ async function loadSiteSettings() {
       settings[item.key] = item.value;
     });
     
+    document.getElementById('setting-maintenance-mode').value = settings.maintenance_mode || 'false';
+    document.getElementById('setting-maintenance-message').value = settings.maintenance_message || '';
     document.getElementById('setting-home-intro').value = settings.home_intro || '';
     document.getElementById('setting-about-sidebar-intro').value = settings.about_sidebar_intro || '';
     document.getElementById('setting-about-bio').value = settings.about_bio || '';
@@ -1509,6 +1526,8 @@ async function saveSiteSettings() {
   if (statusMsg) statusMsg.classList.remove('show');
   
   const settingsToSave = [
+    { key: 'maintenance_mode', value: document.getElementById('setting-maintenance-mode').value },
+    { key: 'maintenance_message', value: document.getElementById('setting-maintenance-message').value.trim() },
     { key: 'home_intro', value: document.getElementById('setting-home-intro').value.trim() },
     { key: 'about_sidebar_intro', value: document.getElementById('setting-about-sidebar-intro').value.trim() },
     { key: 'about_bio', value: document.getElementById('setting-about-bio').value.trim() },
@@ -1521,8 +1540,8 @@ async function saveSiteSettings() {
     for (const setting of settingsToSave) {
       const { error } = await supabaseClient.rpc('set_site_setting_admin', {
         admin_password: currentPassword,
-        key: setting.key,
-        value: setting.value
+        setting_key: setting.key,
+        setting_value: setting.value
       });
       if (error) throw error;
     }
