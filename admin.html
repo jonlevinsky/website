@@ -1217,7 +1217,56 @@ async function fetchLikesFromDB() {
   }
 }
 
-// Render Likes
+// Helper to resolve media metadata from loadedProjects
+function findMediaMetadata(projectId, rawMediaSrc) {
+  let normSrc = rawMediaSrc || '';
+  try { normSrc = decodeURIComponent(rawMediaSrc); } catch (e) {}
+
+  const project = loadedProjects[projectId] || loadedProjects[String(projectId)];
+  
+  if (project && Array.isArray(project.media)) {
+    for (const m of project.media) {
+      let mNormSrc = m.src || '';
+      try { mNormSrc = decodeURIComponent(m.src); } catch (e) {}
+      if (mNormSrc === normSrc || m.src === rawMediaSrc || m.thumbnail === rawMediaSrc) {
+        return {
+          projectTitle: project.title,
+          mediaTitle: m.title || m.caption || 'Fotografie/Video',
+          thumbnail: m.thumbnail || m.poster || m.src,
+          type: m.type || 'photo'
+        };
+      }
+    }
+  }
+
+  // Global fallback across all projects
+  for (const pid in loadedProjects) {
+    const p = loadedProjects[pid];
+    if (p && Array.isArray(p.media)) {
+      for (const m of p.media) {
+        let mNormSrc = m.src || '';
+        try { mNormSrc = decodeURIComponent(m.src); } catch (e) {}
+        if (mNormSrc === normSrc || m.src === rawMediaSrc) {
+          return {
+            projectTitle: p.title,
+            mediaTitle: m.title || m.caption || 'Fotografie/Video',
+            thumbnail: m.thumbnail || m.poster || m.src,
+            type: m.type || 'photo'
+          };
+        }
+      }
+    }
+  }
+
+  return {
+    projectTitle: project ? project.title : (projectId ? `Projekt ID: ${projectId}` : 'Neznámý projekt'),
+    mediaTitle: normSrc.split('/').pop() || 'Médium',
+    thumbnail: rawMediaSrc,
+    type: 'photo'
+  };
+}
+
+// Render Likes (Per-Media Breakdown)
 function renderLikes() {
   const container = document.getElementById('likes-list-container');
   const countBadge = document.getElementById('total-likes-count');
@@ -1228,51 +1277,73 @@ function renderLikes() {
   }
 
   if (allLikes.length === 0) {
-    container.innerHTML = '<div class="empty-state">Žádné lajky.</div>';
+    container.innerHTML = '<div class="empty-state" style="padding: 24px;">Žádné lajky.</div>';
     return;
   }
 
-  // Group likes by project_id
-  const groups = {};
+  // Group likes by media_src
+  const mediaGroups = {};
   allLikes.forEach(l => {
-    if (!l.project_id) return;
-    if (!groups[l.project_id]) {
-      groups[l.project_id] = {
+    const key = l.media_src || `project_${l.project_id}`;
+    let normKey = key;
+    try { normKey = decodeURIComponent(key); } catch (e) {}
+
+    if (!mediaGroups[normKey]) {
+      mediaGroups[normKey] = {
+        raw_src: l.media_src,
         project_id: l.project_id,
-        count: 0
+        count: 0,
+        latest_date: l.created_at
       };
     }
-    groups[l.project_id].count++;
+    mediaGroups[normKey].count++;
+    if (new Date(l.created_at) > new Date(mediaGroups[normKey].latest_date)) {
+      mediaGroups[normKey].latest_date = l.created_at;
+    }
   });
 
   // Sort descending by count
-  const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
+  const sorted = Object.values(mediaGroups).sort((a, b) => b.count - a.count);
 
   let html = `
     <div class="likes-table-container">
       <table class="likes-table admin-table">
         <thead>
           <tr>
-            <th>Projekt</th>
-            <th style="width: 120px; text-align: right;">Celkem lajků</th>
+            <th style="width: 56px;">Náhled</th>
+            <th>Projekt a médium</th>
+            <th style="width: 140px; text-align: right;">Lajky</th>
+            <th style="width: 150px; text-align: right;">Poslední lajk</th>
           </tr>
         </thead>
         <tbody>
   `;
 
   sorted.forEach(item => {
-    const project = loadedProjects[item.project_id];
-    const projectName = project ? project.title : `Projekt ID: ${item.project_id}`;
+    const meta = findMediaMetadata(item.project_id, item.raw_src);
+    const dateFormatted = formatCommentDate(item.latest_date);
+    const thumbSrc = meta.thumbnail ? encodeURI(meta.thumbnail) : '';
 
     html += `
       <tr>
+        <td style="width: 56px;">
+          <div style="width: 44px; height: 44px; border-radius: var(--r-md); overflow: hidden; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;">
+            ${thumbSrc 
+              ? `<img src="${thumbSrc}" alt="" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'">` 
+              : `<i class="ph ph-image" style="font-size: 20px; color: var(--muted);"></i>`}
+          </div>
+        </td>
         <td>
-          <div class="likes-project-name">${escapeHTML(projectName)}</div>
+          <div style="font-weight: 600; font-size: 14px; color: var(--text); line-height: 1.3;">${escapeHTML(meta.projectTitle)}</div>
+          <div style="font-size: 12px; color: var(--muted); margin-top: 2px;">${escapeHTML(meta.mediaTitle)}</div>
         </td>
         <td style="text-align: right;">
-          <span class="likes-count-badge">
-            <i class="ph-fill ph-heart"></i> ${item.count}
+          <span class="likes-count-badge" style="display: inline-flex; align-items: center; gap: 4px; font-weight: 600; color: var(--accent); background: rgba(44, 62, 80, 0.08); padding: 4px 10px; border-radius: var(--r-full); font-size: 13px;">
+            <i class="ph-fill ph-heart" style="color: var(--accent);"></i> ${item.count}
           </span>
+        </td>
+        <td style="text-align: right; font-size: 12.5px; color: var(--muted);">
+          ${dateFormatted}
         </td>
       </tr>
     `;
