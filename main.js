@@ -1311,13 +1311,80 @@ function getAudioContext() {
   return audioCtx;
 }
 
+// Audio preloader cache for custom MP3 files
+const audioCache = {};
+
+function playMp3Sound(filename) {
+  const path = `media/audio/${filename}`;
+  if (!audioCache[path]) {
+    const audio = new Audio(path);
+    audio.volume = 0.65;
+    audioCache[path] = audio;
+  }
+  const audio = audioCache[path];
+  if (audio) {
+    audio.currentTime = 0;
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // MP3 file not found or blocked, fallback to Web Audio synthesis
+        return false;
+      });
+      return true;
+    }
+  }
+  return false;
+}
+
 function playAsmrSound(type) {
   if (localStorage.getItem('site_sound_muted') === 'true') return;
+
+  const keyMap = {
+    'shutter': 'shutter.mp3',
+    'like': 'shutter.mp3',
+    'dial': 'dial.mp3',
+    'filter': 'dial.mp3',
+    'pop': 'pop.mp3',
+    'modal': 'pop.mp3',
+    'tile': 'pop.mp3',
+    'whoosh': 'whoosh.mp3',
+    'newsletter': 'whoosh.mp3'
+  };
+
+  const mp3File = keyMap[type];
+  if (mp3File) {
+    // Attempt MP3 playback first
+    const path = `media/audio/${mp3File}`;
+    if (!audioCache[path]) {
+      const audio = new Audio(path);
+      audio.volume = 0.7;
+      audioCache[path] = audio;
+    }
+    const audio = audioCache[path];
+    if (audio) {
+      audio.currentTime = 0;
+      const promise = audio.play();
+      if (promise !== undefined) {
+        promise.then(() => {
+          console.log('[ASMR MP3 Audio]', mp3File);
+        }).catch(() => {
+          // MP3 file missing in media/audio/, fallback to Web Audio API synthesis
+          synthAsmrSound(type);
+        });
+        return;
+      }
+    }
+  }
+
+  synthAsmrSound(type);
+}
+
+function synthAsmrSound(type) {
   const ctx = getAudioContext();
   if (!ctx) return;
 
   const now = ctx.currentTime;
-  console.log('[ASMR Audio]', type, 'AudioContext state:', ctx.state);
+  console.log('[ASMR Synth Audio]', type, 'AudioContext state:', ctx.state);
 
   try {
     if (type === 'shutter' || type === 'like') {
@@ -1406,7 +1473,7 @@ function playAsmrSound(type) {
       whiteNoise.stop(now + 0.1);
     }
   } catch (e) {
-    console.error('[ASMR Audio Error]', e);
+    console.error('[ASMR Synth Error]', e);
   }
 }
 
