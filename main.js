@@ -1317,6 +1317,7 @@ function playAsmrSound(type) {
   if (!ctx) return;
 
   const now = ctx.currentTime;
+  console.log('[ASMR Audio]', type, 'AudioContext state:', ctx.state);
 
   try {
     if (type === 'shutter' || type === 'like') {
@@ -1326,7 +1327,7 @@ function playAsmrSound(type) {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(950, now);
       osc.frequency.exponentialRampToValueAtTime(140, now + 0.05);
-      gain.gain.setValueAtTime(0.55, now);
+      gain.gain.setValueAtTime(0.65, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -1341,7 +1342,7 @@ function playAsmrSound(type) {
         osc2.type = 'triangle';
         osc2.frequency.setValueAtTime(1300, ctx.currentTime);
         osc2.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.03);
-        gain2.gain.setValueAtTime(0.45, ctx.currentTime);
+        gain2.gain.setValueAtTime(0.5, ctx.currentTime);
         gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
         osc2.connect(gain2);
         gain2.connect(ctx.destination);
@@ -1356,21 +1357,21 @@ function playAsmrSound(type) {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(1500, now);
       osc.frequency.exponentialRampToValueAtTime(350, now + 0.02);
-      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.setValueAtTime(0.55, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
       osc.connect(gain);
       gain.connect(ctx.destination);
       osc.start(now);
       osc.stop(now + 0.02);
 
-    } else if (type === 'pop' || type === 'modal') {
+    } else if (type === 'pop' || type === 'modal' || type === 'tile') {
       // Soft lens aperture pop / modal open
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.type = 'sine';
       osc.frequency.setValueAtTime(350, now);
       osc.frequency.exponentialRampToValueAtTime(950, now + 0.04);
-      gain.gain.setValueAtTime(0.45, now);
+      gain.gain.setValueAtTime(0.5, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -1395,7 +1396,7 @@ function playAsmrSound(type) {
       filter.Q.value = 2.5;
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.35, now);
+      gain.gain.setValueAtTime(0.4, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
 
       whiteNoise.connect(filter);
@@ -1404,14 +1405,35 @@ function playAsmrSound(type) {
       whiteNoise.start(now);
       whiteNoise.stop(now + 0.1);
     }
-  } catch (e) {}
+  } catch (e) {
+    console.error('[ASMR Audio Error]', e);
+  }
 }
 
-// ── Attach sound triggers to user UI actions ──
-['pointerdown', 'touchstart', 'click', 'keydown'].forEach(evt => {
-  document.addEventListener(evt, () => {
+// Global debug test helper accessible from DevTools console
+window.testAsmrSound = function(type) {
+  const ctx = getAudioContext();
+  if (ctx && ctx.state === 'suspended') ctx.resume();
+  playAsmrSound(type || 'shutter');
+};
+
+// ── Attach sound triggers to user UI actions in CAPTURE phase ──
+['pointerdown', 'touchstart', 'click'].forEach(evtType => {
+  document.addEventListener(evtType, (e) => {
     getAudioContext();
-  }, { passive: true, once: false });
+
+    if (evtType === 'click') {
+      if (e.target.closest('.tile-like-btn')) {
+        playAsmrSound('shutter');
+      } else if (e.target.closest('.filter-row a')) {
+        playAsmrSound('dial');
+      } else if (e.target.closest('.newsletter-trigger')) {
+        playAsmrSound('whoosh');
+      } else if (e.target.closest('.tile')) {
+        playAsmrSound('pop');
+      }
+    }
+  }, true); // Use capture phase so stopPropagation doesn't block audio triggers
 });
 
 // Call on startup
