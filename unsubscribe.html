@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="description" content="Odhlášení z newsletteru — Jan Levínský">
+<meta name="theme-color" content="#2c3e50">
+<meta name="robots" content="noindex, nofollow">
+
+<title>Odhlášení z newsletteru — Jan Levínský</title>
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+:root {
+  --bg: #0a0a0a;
+  --surface: #1a1a1a;
+  --text: #f5f5f7;
+  --text-muted: #98989d;
+  --accent: #007aff;
+  --error: #ff3b30;
+  --success: #34c759;
+  --r-md: 12px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 500px;
+  width: 100%;
+  background: var(--surface);
+  border-radius: var(--r-md);
+  padding: 48px 32px;
+  text-align: center;
+}
+
+.icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 24px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+
+h1 {
+  font-family: 'Bricolage Grotesque', sans-serif;
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+p {
+  color: var(--text-muted);
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.status {
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  font-size: 15px;
+  font-weight: 500;
+  display: none;
+}
+
+.status.loading {
+  display: block;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-muted);
+}
+
+.status.success {
+  display: block;
+  background: rgba(52, 199, 89, 0.15);
+  color: var(--success);
+}
+
+.status.error {
+  display: block;
+  background: rgba(255, 59, 48, 0.15);
+  color: var(--error);
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 32px;
+  background: var(--accent);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  cursor: pointer;
+  border: none;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  opacity: 0.9;
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn.secondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  border-top-color: var(--text);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+#content {
+  display: none;
+}
+
+#content.visible {
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="icon">📧</div>
+  
+  <div id="content">
+    <h1 id="title">Odhlášení z newsletteru</h1>
+    <p id="description">Opravdu se chceš odhlásit? Už nedostaneš aktualizace o nových projektech a obsahu.</p>
+    
+    <div id="status" class="status"></div>
+    
+    <div id="actions">
+      <button id="unsubscribe-btn" class="btn">Odhlásit se</button>
+      <br><br>
+      <a href="index.html" class="btn secondary">Zpět na portfolio</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const supabaseUrl = 'https://jmxpqcsywnlbmfrylnhw.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpteHBxY3N5d25sYm1mcnlsbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODkwNjcsImV4cCI6MjEwMzc2NTA2N30.pFgifOtNk2tLGJLEYeughUByfT6um85kfO2r7OopEtA';
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+const content = document.getElementById('content');
+const title = document.getElementById('title');
+const description = document.getElementById('description');
+const status = document.getElementById('status');
+const actions = document.getElementById('actions');
+const unsubscribeBtn = document.getElementById('unsubscribe-btn');
+
+// Get token from URL
+const params = new URLSearchParams(window.location.search);
+const token = params.get('token');
+
+if (!token) {
+  content.classList.add('visible');
+  title.textContent = 'Chybný odkaz';
+  description.textContent = 'Tento odkaz není platný. Zkontroluj, že jsi použil kompletní URL z emailu.';
+  actions.innerHTML = '<a href="index.html" class="btn">Zpět na portfolio</a>';
+} else {
+  content.classList.add('visible');
+  
+  unsubscribeBtn.addEventListener('click', async () => {
+    unsubscribeBtn.disabled = true;
+    status.className = 'status loading';
+    status.innerHTML = '<span class="spinner"></span>Odhlašuji...';
+    
+    try {
+      const { data, error } = await supabaseClient
+        .rpc('unsubscribe_by_token', { token });
+      
+      if (error) throw error;
+      
+      const result = data[0];
+      
+      if (result.success) {
+        title.textContent = 'Odhlášení proběhlo úspěšně';
+        description.textContent = 'Už nedostaneš žádné další newslettery. Pokud to bylo omylem, můžeš se znovu přihlásit na homepage.';
+        status.className = 'status success';
+        status.textContent = '✓ ' + result.message;
+        actions.innerHTML = '<a href="index.html" class="btn">Zpět na portfolio</a>';
+      } else {
+        throw new Error(result.message);
+      }
+    } catch (err) {
+      console.error('Unsubscribe error:', err);
+      status.className = 'status error';
+      status.textContent = '✗ ' + (err.message || 'Něco se pokazilo. Zkus to prosím znovu.');
+      unsubscribeBtn.disabled = false;
+    }
+  });
+}
+</script>
+
+</body>
+</html>

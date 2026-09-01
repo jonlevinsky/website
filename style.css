@@ -353,8 +353,9 @@ main {
   transform: scale(1.08);
   transition: opacity 0.4s ease;
 }
-img.loaded + .lqip-bg,
-.lqip-bg.hidden { opacity: 0; }
+img.loaded ~ .lqip-bg,
+.tile:has(img.loaded) .lqip-bg,
+.lqip-bg.hidden { opacity: 0 !important; pointer-events: none; }
 
 /* Footer */
 .g-footer { content-visibility: auto; contain-intrinsic-size: auto 200px;
@@ -435,7 +436,7 @@ img.loaded + .lqip-bg,
 }
 
 @media (max-width: 880px) {
-  .wrap { grid-template-columns: 1fr; gap: 24px; padding: 16px; }
+  .wrap { grid-template-columns: 1fr; gap: 24px; padding: 16px; width: 100%; max-width: 100%; }
   .brand { position: static; }
   h1 { font-size: 44px; }
 }
@@ -515,12 +516,16 @@ img.loaded + .lqip-bg,
 }
 
 @media (max-width: 880px) {
-  .logo-mark { height: 80px; }
+  .logo-mark { height: 78px; }
   .menu-toggle {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
     gap: 5px;
-    padding: 10px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
     margin-top: 2px;
     background: none;
     border: none;
@@ -549,22 +554,30 @@ img.loaded + .lqip-bg,
     margin-top: 0;
   }
   .brand-panel.open {
-    max-height: 500px;
+    max-height: 600px;
     opacity: 1;
-    margin-top: 4px;
+    margin-top: 10px;
+    padding-bottom: 8px;
+  }
+  .links a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 0;
+    font-size: 13.5px;
   }
 }
 
 @media (max-width: 640px) {
-  .logo-mark { height: 66px; }
+  .logo-mark { height: 64px; }
 }
 
 @media (max-width: 480px) {
-  .logo-mark { height: 59px; }
+  .logo-mark { height: 56px; }
 }
 
 @media (max-width: 400px) {
-  .logo-mark { height: 52px; }
+  .logo-mark { height: 48px; }
 }
 
 @media (min-width: 881px) {

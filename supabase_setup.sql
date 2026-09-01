@@ -9,7 +9,7 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 AS $$
 BEGIN
-  RETURN admin_password = 'TvojeHesloAdmin';
+  RETURN admin_password = 'nigga123';
 END;
 $$;
 
@@ -28,10 +28,12 @@ CREATE TABLE IF NOT EXISTS public.contact_messages (
 ALTER TABLE public.contact_messages ENABLE ROW LEVEL SECURITY;
 
 -- Kdokoliv může poslat zprávu přes kontaktní formulář
+DROP POLICY IF EXISTS "Umožnit odesílání kontaktů komukoliv" ON public.contact_messages;
 CREATE POLICY "Umožnit odesílání kontaktů komukoliv" ON public.contact_messages 
   FOR INSERT WITH CHECK (true);
 
 -- Čtení a úpravy zpráv jsou zakázány zvenčí (řídí se zabezpečeným RPC na pozadí)
+DROP POLICY IF EXISTS "Zamezit přímému přístupu ke zprávám" ON public.contact_messages;
 CREATE POLICY "Zamezit přímému přístupu ke zprávám" ON public.contact_messages 
   FOR ALL USING (false);
 
@@ -106,10 +108,12 @@ CREATE TABLE IF NOT EXISTS public.page_views (
 ALTER TABLE public.page_views ENABLE ROW LEVEL SECURITY;
 
 -- Kdokoli může zaslat event zobrazení stránky
+DROP POLICY IF EXISTS "Umožnit logování zobrazení všem" ON public.page_views;
 CREATE POLICY "Umožnit logování zobrazení všem" ON public.page_views 
   FOR INSERT WITH CHECK (true);
 
 -- Čtení zvenčí zakázáno
+DROP POLICY IF EXISTS "Zamezit přímému přístupu k zobrazením" ON public.page_views;
 CREATE POLICY "Zamezit přímému přístupu k zobrazením" ON public.page_views 
   FOR SELECT USING (false);
 
@@ -148,10 +152,12 @@ CREATE TABLE IF NOT EXISTS public.site_settings (
 ALTER TABLE public.site_settings ENABLE ROW LEVEL SECURITY;
 
 -- Čtení je veřejné (web si musí načíst texty při startu)
+DROP POLICY IF EXISTS "Veřejné čtení obsahu" ON public.site_settings;
 CREATE POLICY "Veřejné čtení obsahu" ON public.site_settings 
   FOR SELECT USING (true);
 
 -- Přímé zápisy zvenčí zakázány
+DROP POLICY IF EXISTS "Zamezit přímému zápisu obsahu" ON public.site_settings;
 CREATE POLICY "Zamezit přímému zápisu obsahu" ON public.site_settings 
   FOR ALL USING (false);
 
@@ -189,16 +195,19 @@ ON CONFLICT (key) DO NOTHING;
 CREATE TABLE IF NOT EXISTS public.subscribers (
   id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
   email text UNIQUE NOT NULL CHECK (char_length(email) <= 150),
+  unsubscribe_token text UNIQUE NOT NULL DEFAULT encode(gen_random_bytes(32), 'hex'),
   created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
 );
 
 ALTER TABLE public.subscribers ENABLE ROW LEVEL SECURITY;
 
 -- Kdokoli se může přihlásit k newsletteru
+DROP POLICY IF EXISTS "Veřejné přihlášení k odběru" ON public.subscribers;
 CREATE POLICY "Veřejné přihlášení k odběru" ON public.subscribers 
   FOR INSERT WITH CHECK (true);
 
 -- Čtení zvenčí zakázáno
+DROP POLICY IF EXISTS "Zamezit přímému přístupu k odběratelům" ON public.subscribers;
 CREATE POLICY "Zamezit přímému přístupu k odběratelům" ON public.subscribers 
   FOR SELECT USING (false);
 
@@ -207,6 +216,7 @@ CREATE OR REPLACE FUNCTION get_subscribers_admin(admin_password text)
 RETURNS TABLE (
   id uuid,
   email text,
+  unsubscribe_token text,
   created_at timestamp with time zone
 )
 LANGUAGE plpgsql
@@ -217,7 +227,7 @@ BEGIN
     RAISE EXCEPTION 'Neplatné heslo.';
   END IF;
 
-  RETURN QUERY SELECT s.id, s.email, s.created_at 
+  RETURN QUERY SELECT s.id, s.email, s.unsubscribe_token, s.created_at 
                FROM public.subscribers s 
                ORDER BY s.created_at DESC;
 END;
@@ -236,5 +246,202 @@ BEGIN
 
   DELETE FROM public.subscribers 
   WHERE public.subscribers.id = subscriber_id;
+END;
+$$;
+
+-- RPC: Veřejné odhlášení z newsletteru pomocí tokenu
+CREATE OR REPLACE FUNCTION unsubscribe_by_token(token text)
+RETURNS TABLE (
+  success boolean,
+  message text
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  found_count integer;
+BEGIN
+  DELETE FROM public.subscribers 
+  WHERE unsubscribe_token = token;
+  
+  GET DIAGNOSTICS found_count = ROW_COUNT;
+  
+  IF found_count > 0 THEN
+    RETURN QUERY SELECT true, 'Byl jsi úspěšně odhlášen z newsletteru.'::text;
+  ELSE
+    RETURN QUERY SELECT false, 'Neplatný nebo expirovaný odkaz.'::text;
+  END IF;
+END;
+$$;
+
+-- RPC: Získání unsubscribe tokenu pro email (pro generování odkazů v emailech)
+CREATE OR REPLACE FUNCTION get_subscriber_token_admin(admin_password text, subscriber_email text)
+RETURNS text
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  token text;
+BEGIN
+  IF NOT verify_admin_password(admin_password) THEN
+    RAISE EXCEPTION 'Neplatné heslo.';
+  END IF;
+
+  SELECT unsubscribe_token INTO token
+  FROM public.subscribers 
+  WHERE email = subscriber_email;
+  
+  RETURN token;
+END;
+$$;
+
+-- =====================================================================
+-- 6. FUNKCE 5: LIKES PRO JEDNOTLIVÁ MÉDIA (FOTKY/VIDEA)
+-- =====================================================================
+CREATE TABLE IF NOT EXISTS public.project_likes (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  project_id text NOT NULL CHECK (char_length(project_id) <= 100),
+  media_src text NOT NULL CHECK (char_length(media_src) <= 500),
+  user_fingerprint text NOT NULL CHECK (char_length(user_fingerprint) <= 200),
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+  UNIQUE(project_id, media_src, user_fingerprint)
+);
+
+CREATE INDEX IF NOT EXISTS idx_project_likes_project_id ON public.project_likes(project_id);
+CREATE INDEX IF NOT EXISTS idx_project_likes_media_src ON public.project_likes(media_src);
+CREATE INDEX IF NOT EXISTS idx_project_likes_fingerprint ON public.project_likes(user_fingerprint);
+
+ALTER TABLE public.project_likes ENABLE ROW LEVEL SECURITY;
+
+-- Kdokoli může číst počty liků
+DROP POLICY IF EXISTS "Veřejné čtení liků" ON public.project_likes;
+CREATE POLICY "Veřejné čtení liků" ON public.project_likes 
+  FOR SELECT USING (true);
+
+-- Kdokoli může přidat lajk (INSERT)
+DROP POLICY IF EXISTS "Veřejné přidání lajku" ON public.project_likes;
+CREATE POLICY "Veřejné přidání lajku" ON public.project_likes 
+  FOR INSERT WITH CHECK (true);
+
+-- Kdokoli může odstranit svůj vlastní lajk (DELETE)
+DROP POLICY IF EXISTS "Veřejné odstranění vlastního lajku" ON public.project_likes;
+CREATE POLICY "Veřejné odstranění vlastního lajku" ON public.project_likes 
+  FOR DELETE USING (true);
+
+-- RPC: Získat počet liků pro konkrétní médium
+CREATE OR REPLACE FUNCTION get_media_likes_count(p_project_id text, p_media_src text)
+RETURNS bigint
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  like_count bigint;
+BEGIN
+  SELECT COUNT(*) INTO like_count
+  FROM public.project_likes
+  WHERE project_id = p_project_id AND media_src = p_media_src;
+  
+  RETURN like_count;
+END;
+$$;
+
+-- RPC: Zjistit, zda uživatel dal médiu lajk
+CREATE OR REPLACE FUNCTION check_user_liked_media(p_project_id text, p_media_src text, p_user_fingerprint text)
+RETURNS boolean
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  liked boolean;
+BEGIN
+  SELECT EXISTS(
+    SELECT 1 FROM public.project_likes
+    WHERE project_id = p_project_id 
+      AND media_src = p_media_src 
+      AND user_fingerprint = p_user_fingerprint
+  ) INTO liked;
+  
+  RETURN liked;
+END;
+$$;
+
+-- RPC: Přepnout stav lajku pro médium (toggle like)
+CREATE OR REPLACE FUNCTION toggle_media_like(p_project_id text, p_media_src text, p_user_fingerprint text)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  existing_like uuid;
+  new_count bigint;
+  is_liked boolean;
+BEGIN
+  -- Zjistit, zda lajk existuje
+  SELECT id INTO existing_like
+  FROM public.project_likes
+  WHERE project_id = p_project_id 
+    AND media_src = p_media_src 
+    AND user_fingerprint = p_user_fingerprint;
+  
+  IF existing_like IS NOT NULL THEN
+    -- Lajk existuje, odstraníme ho
+    DELETE FROM public.project_likes WHERE id = existing_like;
+    is_liked := false;
+  ELSE
+    -- Lajk neexistuje, přidáme ho
+    INSERT INTO public.project_likes (project_id, media_src, user_fingerprint)
+    VALUES (p_project_id, p_media_src, p_user_fingerprint);
+    is_liked := true;
+  END IF;
+  
+  -- Spočítat nový počet liků pro toto médium
+  SELECT COUNT(*) INTO new_count
+  FROM public.project_likes
+  WHERE project_id = p_project_id AND media_src = p_media_src;
+  
+  RETURN jsonb_build_object(
+    'liked', is_liked,
+    'count', new_count
+  );
+END;
+$$;
+
+-- RPC: Admin funkce pro získání všech liků
+CREATE OR REPLACE FUNCTION get_all_likes_admin(admin_password text)
+RETURNS TABLE (
+  id uuid,
+  project_id text,
+  media_src text,
+  user_fingerprint text,
+  created_at timestamp with time zone
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  IF NOT verify_admin_password(admin_password) THEN
+    RAISE EXCEPTION 'Neplatné heslo.';
+  END IF;
+
+  RETURN QUERY 
+  SELECT l.id, l.project_id, l.media_src, l.user_fingerprint, l.created_at 
+  FROM public.project_likes l 
+  ORDER BY l.created_at DESC;
+END;
+$$;
+
+-- RPC: Admin funkce pro smazání konkrétního lajku
+CREATE OR REPLACE FUNCTION delete_like_admin(admin_password text, like_id uuid)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  IF NOT verify_admin_password(admin_password) THEN
+    RAISE EXCEPTION 'Neplatné heslo.';
+  END IF;
+
+  DELETE FROM public.project_likes 
+  WHERE public.project_likes.id = like_id;
 END;
 $$;

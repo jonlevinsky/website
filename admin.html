@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Administrace komentářů — Jan Levínský.">
+<meta name="description" content="Administrace webu — Jan Levínský.">
 <meta name="theme-color" content="#2c3e50">
 
-<title>Jan Levínský // Administrace komentářů</title>
+<title>Jan Levínský // Administrace</title>
 <link rel="icon" type="image/png" href="./media/logo.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,7 +18,9 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="style.css">
 <style>
-/* Additional Admin styling matching the theme */
+/* ───────────────────────────────────────────────
+   · Admin styling — consistent with the site theme ·
+   ─────────────────────────────────────────────── */
 main {
   display: flex;
   flex-direction: column;
@@ -27,15 +29,18 @@ main {
   animation: fadeIn 0.9s 0.2s var(--ease-out-expo) forwards;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeUpCard { to { opacity: 1; transform: translateY(0); } }
+@keyframes adminPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.2); }
 }
 
+/* ── Dashboard chrome ──────────────────────────── */
 .admin-section {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
 }
 
 .admin-section h2 {
@@ -76,10 +81,581 @@ main {
   gap: 4px;
   transition: opacity 0.2s ease;
 }
-.logout-btn-link:hover {
-  opacity: 0.8;
+.logout-btn-link:hover { opacity: 0.8; }
+
+/* ── Category tabs ─────────────────────────────── */
+.admin-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
+/* Shared panel visibility — only the active tab is shown */
+.admin-tab-content {
+  display: none;
+}
+.admin-tab-content.active {
+  display: block;
+  animation: fadeIn 0.35s var(--ease-out-expo) forwards;
+}
+
+.admin-tab-btn {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-full);
+  padding: 7px 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.3s var(--ease-out-expo);
+}
+.admin-tab-btn i { font-size: 13px; }
+.admin-tab-btn:hover {
+  color: var(--text);
+  border-color: var(--border);
+  background: var(--surface);
+  transform: translateY(-1px);
+}
+.admin-tab-btn.active {
+  color: var(--text-on-accent);
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2);
+}
+.admin-tab-btn.active i { opacity: 0.9; }
+
+/* ── Shared cards / panels ─────────────────────── */
+.admin-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.admin-card:hover { border-color: var(--border); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05); }
+
+.admin-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.admin-card-header i {
+  font-size: 16px;
+  color: var(--accent);
+  background: var(--surface-raised);
+  border-radius: var(--r-md);
+  padding: 7px;
+}
+.admin-card-header .column-count { margin-left: auto; }
+.admin-card-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text);
+}
+.admin-card-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ── Tables ────────────────────────────────────── */
+.likes-table-container {
+  overflow-x: auto;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.admin-table thead th {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  text-align: left;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--border);
+  background: var(--surface);
+}
+.admin-table tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+.admin-table tbody tr:hover { background: var(--surface); }
+
+.likes-project-name {
+  font-family: var(--serif);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+}
+.likes-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+.likes-count-badge i { color: var(--accent); }
+.likes-count-badge:hover {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  transform: translateY(-1px);
+  transition: all 0.25s var(--ease-out-expo);
+}
+
+.subscriber-row { transition: opacity 0.3s ease; }
+.subscriber-row td:nth-child(2) { color: var(--muted); }
+.subscriber-row td:nth-child(3),
+.subscriber-row td:nth-child(4) { text-align: center; }
+.subscriber-row td:first-child { font-weight: 500; }
+
+/* ── Messages ──────────────────────────────────── */
+.message-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.message-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.25s ease, opacity 0.3s ease;
+}
+.message-card:hover { border-color: var(--accent-subtle); }
+.message-card.resolved { opacity: 0.6; }
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.message-meta { display: flex; flex-direction: column; gap: 2px; }
+.message-author { font-weight: 600; font-size: 13px; }
+.message-email {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.message-date { font-size: 11px; color: var(--muted); white-space: nowrap; }
+.message-text {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.message-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ── Page views ────────────────────────────────── */
+.views-summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 21px;
+}
+.views-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 22px 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+.views-card-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.views-card-value {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 400;
+  color: var(--text);
+  margin-top: 8px;
+}
+
+.views-chart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.views-chart-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.views-chart-page-title { font-size: 13px; font-weight: 500; color: var(--text); }
+.views-chart-page-sub {
+  display: inline;
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 6px;
+}
+.views-chart-page-count { font-size: 12px; font-weight: 600; color: var(--accent); }
+.views-chart-bar-container {
+  height: 10px;
+  background: var(--surface-raised);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.views-chart-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #49627e);
+  border-radius: var(--r-full);
+  transition: width 0.5s var(--ease-out-expo);
+}
+
+/* ── Settings / CMS ────────────────────────────── */
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.settings-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.settings-group > label {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.settings-group input,
+.settings-group textarea {
+  font-family: var(--sans);
+  font-size: 13.5px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 10px 14px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.settings-group textarea { resize: vertical; min-height: 72px; }
+.settings-group input:focus,
+.settings-group textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+.field-help {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.settings-submit-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+.settings-status-message {
+  font-size: 12px;
+  font-weight: 500;
+  color: #3b7a4c;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s ease, transform 0.3s var(--ease-out-expo);
+}
+.settings-status-message.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Subscribers control row ───────────────────── */
+.subscribers-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.subscribers-controls h3 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+}
+.subscribers-controls .controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Column title / count (shared helpers) ──────── */
+.column-title {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.column-count {
+  font-family: var(--sans);
+  background: var(--surface-raised);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+}
+
+/* ── Buttons ───────────────────────────────────── */
+.admin-btn {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: var(--r-md);
+  padding: 9px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.3s var(--ease-out-expo), opacity 0.2s ease;
+}
+.admin-btn--primary,
+.admin-btn--secondary,
+.admin-btn--ghost,
+.admin-btn--danger,
+.admin-btn--success,
+.admin-btn--icon { display: inline-flex; }
+.admin-btn i { font-size: 13px; }
+.admin-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.admin-btn:active { transform: translateY(0); }
+
+.admin-btn--primary {
+  color: var(--text-on-accent);
+  background: var(--accent);
+}
+.admin-btn--primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.admin-btn--secondary {
+  color: var(--text);
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+}
+.admin-btn--secondary:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.admin-btn--ghost {
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+}
+.admin-btn--ghost:hover {
+  border-color: var(--border);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.admin-btn--danger {
+  color: #ac4747;
+  background: rgba(196, 90, 90, 0.1);
+  border: 1px solid rgba(196, 90, 90, 0.2);
+}
+.admin-btn--danger:hover {
+  background: rgba(196, 90, 90, 0.2);
+  transform: translateY(-1px);
+}
+
+.admin-btn--success {
+  color: #3b7a4c;
+  background: rgba(90, 158, 110, 0.1);
+  border: 1px solid rgba(90, 158, 110, 0.2);
+}
+.admin-btn--success:hover {
+  background: rgba(90, 158, 110, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Icon-only button */
+.admin-btn--icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.admin-btn--icon i { font-size: 14px; }
+
+/* Copy success @badge / toast */
+.copy-success-badge {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--r-md);
+  background: rgba(90, 158, 110, 0.15);
+  color: #2f6b3d;
+  border: 1px solid rgba(90, 158, 110, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+}
+.copy-success-badge i { font-size: 13px; }
+.copy-success-badge:hover {
+  background: var(--accent);
+  color: var(--text-on-accent);
+  transform: translateY(-1px);
+}
+.copy-success-badge:active { transform: translateY(0); animation: adminPulse 0.3s ease; }
+
+.copy-toast {
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: #2f6b3d;
+  background: rgba(90, 158, 110, 0.12);
+  border: 1px solid rgba(90, 158, 110, 0.25);
+  padding: 6px 12px;
+  border-radius: var(--r-md);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  animation: fadeIn 0.2s ease;
+}
+.copy-toast i { font-size: 13px; }
+
+.copy-toast-container { display: flex; align-items: center; }
+
+/* ── Legacy button aliases ─────────────────────── */
+/* Map old class names onto the unified set so JS-generated markup stays styled. */
+.btn-secondary,
+.btn-icon,
+.btn-delete,
+.btn-copy-unsubscribe,
+.action-btn {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: var(--r-md);
+  padding: 9px 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid transparent;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.3s var(--ease-out-expo), opacity 0.2s ease;
+}
+.btn-secondary i, .btn-icon i, .btn-delete i, .btn-copy-unsubscribe i, .action-btn i { font-size: 13px; }
+
+.btn-secondary,
+.action-btn { background: var(--bg-raised); border: 1px solid var(--border); color: var(--text); }
+.btn-secondary:hover,
+.action-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+
+.action-btn.approve,
+.btn-copy-unsubscribe {
+  color: #3b7a4c;
+  background: rgba(90, 158, 110, 0.1);
+  border: 1px solid rgba(90, 158, 110, 0.2);
+}
+.action-btn.approve:hover,
+.btn-copy-unsubscribe:hover {
+  background: rgba(90, 158, 110, 0.2);
+  transform: translateY(-1px);
+}
+
+.action-btn.delete,
+.btn-icon.btn-delete,
+.btn-delete {
+  color: #ac4747;
+  background: rgba(196, 90, 90, 0.1);
+  border: 1px solid rgba(196, 90, 90, 0.2);
+}
+.action-btn.delete:hover,
+.btn-icon.btn-delete:hover,
+.btn-delete:hover {
+  background: rgba(196, 90, 90, 0.2);
+  transform: translateY(-1px);
+}
+.action-btn:active,
+.btn-icon:active,
+.btn-delete:active,
+.btn-copy-unsubscribe:active { transform: translateY(0); }
+
+/* Icon-only buttons (messages toolbar, subscriber row) */
+.btn-icon,
+.btn-delete {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--r-md);
+}
+.btn-icon i,
+.btn-delete i { font-size: 14px; }
+.btn-icon.btn-resolve {
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+}
+.btn-icon.btn-resolve:hover {
+  color: var(--accent);
+  border-color: var(--border);
+  background: var(--surface);
+}
+.btn-icon.btn-resolve.active { color: #3b7a4c; background: var(--surface); }
+
+/* ── Login ─────────────────────────────────────── */
 .login-card {
   max-width: 400px;
   width: 100%;
@@ -93,200 +669,25 @@ main {
   transform: translateY(15px);
   animation: fadeUpCard 0.6s var(--ease-out-expo) forwards;
 }
-
-@keyframes fadeUpCard {
-  to { opacity: 1; transform: translateY(0); }
-}
-
 .login-card h3 {
   font-family: var(--serif);
   font-weight: 400;
   font-size: 22px;
   margin-bottom: 8px;
 }
-
 .login-card p {
   font-size: 13px;
   color: var(--muted);
   margin-bottom: 24px;
 }
 
-.admin-columns {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  margin-top: 16px;
-}
-
-@media (max-width: 900px) {
-  .admin-columns {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-}
-
-.column-title {
-  font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 400;
-  margin-bottom: 16px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.column-count {
-  font-family: var(--sans);
-  background: var(--surface-raised);
-  color: var(--text);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: var(--r-full);
-}
-
-.comment-list {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.admin-comment-item {
-  background: var(--bg-raised);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--r-md);
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  transition: border-color 0.25s ease;
-}
-
-.admin-comment-item:hover {
-  border-color: var(--border);
-}
-
-.admin-comment-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-.admin-comment-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.admin-comment-author {
-  font-weight: 600;
-  font-size: 13px;
-}
-
-.admin-comment-project {
-  font-size: 11px;
-  color: var(--accent);
-  font-weight: 500;
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.admin-comment-date {
-  font-size: 11px;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.admin-comment-body {
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--text);
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.admin-comment-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  margin-top: 4px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-subtle);
-}
-
-.action-btn {
-  font-family: var(--sans);
-  font-size: 11.5px;
-  font-weight: 500;
-  padding: 6px 14px;
-  border-radius: var(--r-md);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  transition: all 0.2s ease;
-}
-
-.action-btn.approve {
-  background: rgba(90, 158, 110, 0.1);
-  color: #3b7a4c;
-  border: 1px solid rgba(90, 158, 110, 0.2);
-}
-
-.action-btn.approve:hover {
-  background: rgba(90, 158, 110, 0.2);
-  transform: translateY(-1px);
-}
-
-.action-btn.delete {
-  background: rgba(196, 90, 90, 0.1);
-  color: #ac4747;
-  border: 1px solid rgba(196, 90, 90, 0.2);
-}
-
-.action-btn.delete:hover {
-  background: rgba(196, 90, 90, 0.2);
-  transform: translateY(-1px);
-}
-
-.action-btn:active {
-  transform: translateY(0);
-}
-
-.alert-message {
-  padding: 10px 14px;
-  border-radius: var(--r-sm);
-  font-size: 12.5px;
-  margin-bottom: 16px;
-  display: none;
-}
-
-.alert-message.error {
-  background: rgba(220, 38, 38, 0.1);
-  color: #b91c1c;
-  border: 1px solid rgba(220, 38, 38, 0.2);
-}
-
-.empty-state {
-  text-align: center;
-  padding: 32px 16px;
-  font-size: 13px;
-  color: var(--muted);
-  background: var(--bg-subtle);
-  border: 1px dashed var(--border);
-  border-radius: var(--r-md);
-}
-
-/* Form Styles */
+/* ── Form (login) ───────────────────────────────── */
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-bottom: 16px;
 }
-
 .form-group label {
   font-size: 11px;
   font-weight: 500;
@@ -294,7 +695,6 @@ main {
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-
 .form-group input {
   font-family: var(--sans);
   font-size: 13.5px;
@@ -306,12 +706,10 @@ main {
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
-
 .form-group input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-subtle);
 }
-
 .submit-btn {
   font-family: var(--sans);
   font-size: 13px;
@@ -329,14 +727,40 @@ main {
   width: 100%;
   transition: opacity 0.3s ease, transform 0.3s var(--ease-out-expo);
 }
+.submit-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+.submit-btn:active { transform: translateY(0); }
 
-.submit-btn:hover {
-  opacity: 0.88;
-  transform: translateY(-1px);
+/* ── Alert / empty state ────────────────────────── */
+.alert-message {
+  padding: 10px 14px;
+  border-radius: var(--r-sm);
+  font-size: 12.5px;
+  margin-bottom: 16px;
+  display: none;
+}
+.alert-message.error {
+  background: rgba(220, 38, 38, 0.1);
+  color: #b91c1c;
+  border: 1px solid rgba(220, 38, 38, 0.2);
+}
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+  font-size: 13px;
+  color: var(--muted);
+  background: var(--bg-subtle);
+  border: 1px dashed var(--border);
+  border-radius: var(--r-md);
 }
 
-.submit-btn:active {
-  transform: translateY(0);
+/* ── Responsive ─────────────────────────────────── */
+@media (max-width: 880px) {
+  .admin-tabs { flex-wrap: wrap; }
+  .views-summary-grid { grid-template-columns: 1fr; gap: 24px; }
+}
+@media (max-width: 480px) {
+  .admin-card { padding: 18px; }
+  .login-card { margin: 28px auto; padding: 24px; }
 }
 </style>
 </head>
@@ -362,7 +786,7 @@ main {
     <div class="brand-panel" id="brandPanel" aria-hidden="true">
       <div class="divider"></div>
       <div class="intro">
-        Správa a moderování komentářů u projektů portfolio webu.
+        Administrace portfolio webu, statistiky a obsah.
       </div>
       <nav class="links">
           <a href="./about.html" target="_self" rel="noopener noreferrer"><i class="ph ph-user"></i>O mně</a>
@@ -396,7 +820,7 @@ main {
     <!-- MAIN DASHBOARD -->
     <section id="dashboard-container" class="admin-section" style="display: none;">
       <div class="admin-kicker">
-        <span id="admin-panel-kicker-text">Správa komentářů</span>
+        <span id="admin-panel-kicker-text">Administrace webu</span>
         <button id="logout-btn" class="logout-btn-link">
           Odhlásit <i class="ph ph-sign-out"></i>
         </button>
@@ -405,10 +829,7 @@ main {
       <h2>Administrační panel</h2>
 
       <div class="admin-tabs">
-        <button class="admin-tab-btn active" id="tab-comments-btn" onclick="switchTab('comments')">
-          <i class="ph ph-chat-centered-text"></i> Komentáře
-        </button>
-        <button class="admin-tab-btn" id="tab-likes-btn" onclick="switchTab('likes')">
+        <button class="admin-tab-btn active" id="tab-likes-btn" onclick="switchTab('likes')">
           <i class="ph ph-heart"></i> Statistiky lajků
         </button>
         <button class="admin-tab-btn" id="tab-messages-btn" onclick="switchTab('messages')">
@@ -425,148 +846,161 @@ main {
         </button>
       </div>
       
-      <!-- TAB 1: COMMENTS -->
-      <div id="comments-tab-content" class="admin-tab-content active">
-        <div class="admin-columns">
-          <!-- COMENTS AWAITING APPROVAL -->
-          <div>
-            <h3 class="column-title">
-              Ke schválení
-              <span id="unapproved-count" class="column-count">0</span>
-            </h3>
-            <div id="unapproved-list" class="comment-list">
-              <!-- Dynamic comments -->
+      <!-- TAB 1: LIKES -->
+      <div id="likes-tab-content" class="admin-tab-content active">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <i class="ph ph-heart"></i>
+            <div>
+              <div class="admin-card-title">Nejoblíbenější média</div>
+              <div class="admin-card-desc">Přehled návštěvnosti a lajků u jednotlivých projektů, seřeno podle počtu lajků.</div>
             </div>
+            <span class="column-count">Celkem lajků: <strong id="total-likes-count">0</strong></span>
           </div>
-          
-          <!-- APPROVED COMMENTS -->
-          <div>
-            <h3 class="column-title">
-              Schválené
-              <span id="approved-count" class="column-count">0</span>
-            </h3>
-            <div id="approved-list" class="comment-list">
-              <!-- Dynamic comments -->
-            </div>
+          <div id="likes-list-container">
+            <!-- Dynamic likes table/cards -->
           </div>
         </div>
       </div>
 
-      <!-- TAB 2: LIKES -->
-      <div id="likes-tab-content" class="admin-tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px;">
-          <h3 class="column-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
-            Nejoblíbenější média
-          </h3>
-          <span class="column-count" style="font-size: 12px; font-weight: 500;">Celkem lajků: <strong id="total-likes-count">0</strong></span>
-        </div>
-        <div id="likes-list-container">
-          <!-- Dynamic likes table/cards -->
-        </div>
-      </div>
-
-      <!-- TAB 3: MESSAGES -->
+      <!-- TAB 2: MESSAGES -->
       <div id="messages-tab-content" class="admin-tab-content">
-        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 20px;">
-          <h3 class="column-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
-            Inbox zpráv z formuláře
-          </h3>
-          <span class="column-count" style="font-size: 12px; font-weight: 500;">Celkem zpráv: <strong id="total-messages-count">0</strong></span>
-        </div>
-        <div id="messages-list" class="message-list">
-          <!-- Dynamic messages -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <i class="ph ph-envelope-simple"></i>
+            <div>
+              <div class="admin-card-title">Inbox zpráv z formuláře</div>
+              <div class="admin-card-desc">Zprávy z kontaktního formuláře. Označení jako vyřešené a smazání je trvalé.</div>
+            </div>
+            <span class="column-count">Celkem zpráv: <strong id="total-messages-count">0</strong></span>
+          </div>
+          <div id="messages-list" class="message-list">
+            <!-- Dynamic messages -->
+          </div>
         </div>
       </div>
 
-      <!-- TAB 4: PAGE VIEWS -->
+      <!-- TAB 3: PAGE VIEWS -->
       <div id="views-tab-content" class="admin-tab-content">
-        <div class="views-summary-grid">
-          <div class="views-card">
-            <div class="views-card-label">Celková návštěvnost</div>
-            <div class="views-card-value" id="views-total-count">0</div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <i class="ph ph-chart-bar"></i>
+            <div>
+              <div class="admin-card-title">Návštěvnost webu</div>
+              <div class="admin-card-desc">Celková návštěvnost a zobrazení jednotlivých stranek a projektů.</div>
+            </div>
           </div>
-          <div class="views-card">
-            <div class="views-card-label">Unikátní stránky</div>
-            <div class="views-card-value" id="views-pages-count">0</div>
+          <div class="views-summary-grid">
+            <div class="views-card">
+              <div class="views-card-label">Celková návštěvnost</div>
+              <div class="views-card-value" id="views-total-count">0</div>
+            </div>
+            <div class="views-card">
+              <div class="views-card-label">Unikátní stránky</div>
+              <div class="views-card-value" id="views-pages-count">0</div>
+            </div>
           </div>
         </div>
-        <h3 class="column-title" style="margin-top: 24px; margin-bottom: 12px;">Zobrazení stránek a projektů</h3>
-        <div id="views-chart-container" class="views-chart-list">
-          <!-- Dynamic bar chart list -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <i class="ph ph-list"></i>
+            <div>
+              <div class="admin-card-title">Zobrazení stránek a projektů</div>
+              <div class="admin-card-desc">Rozdělení návštěvnosti podle stránek a jednotlivých projektů.</div>
+            </div>
+          </div>
+          <div id="views-chart-container" class="views-chart-list">
+            <!-- Dynamic bar chart list -->
+          </div>
         </div>
       </div>
 
-      <!-- TAB 5: SETTINGS (CMS LIGHT) -->
+      <!-- TAB 4: SETTINGS (CMS LIGHT) -->
       <div id="settings-tab-content" class="admin-tab-content">
-        <h3 class="column-title" style="margin-bottom: 16px;">Obsah a nastavení webu</h3>
-        <form class="settings-form" id="settings-admin-form" onsubmit="return false;">
-          <div class="settings-group">
-            <label for="setting-home-intro">Úvodní text (Home portfolio)</label>
-            <input type="text" id="setting-home-intro" placeholder="Kameraman, fotograf a student filmové tvorby.">
-            <div class="field-help">Krátké intro zobrazené na úvodní stránce index.html</div>
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <i class="ph ph-sliders"></i>
+            <div>
+              <div class="admin-card-title">Obsah a nastavení webu</div>
+              <div class="admin-card-desc">Editujte úvodní texty, bio a odkazy na portfolio.</div>
+            </div>
           </div>
-          <div class="settings-group">
-            <label for="setting-about-sidebar-intro">Bio v sidebaru (About / O mně)</label>
-            <textarea id="setting-about-sidebar-intro" placeholder="Kameraman, fotograf a student filmové tvorby..."></textarea>
-            <div class="field-help">Krátké věty pod jménem v panelu stránky o mně (about.html).</div>
-          </div>
-          <div class="settings-group">
-            <label for="setting-about-bio">Hlavní bio profilu (About / O mně)</label>
-            <textarea id="setting-about-bio" style="min-height: 120px;" placeholder="Studuji filmovou tvorbu a mou největší vášní je..."></textarea>
-            <div class="field-help">Hlavní dlouhý text o vás na stránce about.html (můžete použít dva prázdné řádky pro nový odstavec).</div>
-          </div>
-          <div class="settings-group">
-            <label for="setting-contact-email">Kontaktní e-mail</label>
-            <input type="email" id="setting-contact-email" placeholder="levinskyj.cine@gmail.com">
-            <div class="field-help">Globální e-mailová adresa používaná v mailto odkazech a popiscích.</div>
-          </div>
-          <div class="settings-group">
-            <label for="setting-instagram-link">Instagram odkaz</label>
-            <input type="url" id="setting-instagram-link" placeholder="https://www.instagram.com/levinskyj.cine/">
-            <div class="field-help">Odkaz na váš profil na Instagramu.</div>
-          </div>
-          <div class="settings-group">
-            <label for="setting-youtube-link">YouTube odkaz</label>
-            <input type="url" id="setting-youtube-link" placeholder="https://www.youtube.com/@LevinskyJ">
-            <div class="field-help">Odkaz na váš kanál na YouTube.</div>
-          </div>
-          
-          <div class="settings-submit-row">
-            <span class="settings-status-message" id="settings-status-msg">Změny byly úspěšně uloženy.</span>
-            <button type="submit" class="btn-secondary" id="settings-save-btn" onclick="saveSiteSettings()">
-              <i class="ph ph-floppy-disk"></i> Uložit nastavení
-            </button>
-          </div>
-        </form>
+          <form class="settings-form" id="settings-admin-form" onsubmit="return false;">
+            <div class="settings-group">
+              <label for="setting-home-intro">Úvodní text (Home portfolio)</label>
+              <input type="text" id="setting-home-intro" placeholder="Kameraman, fotograf a student filmové tvorby.">
+              <div class="field-help">Krátké intro zobrazené na úvodní stránce index.html</div>
+            </div>
+            <div class="settings-group">
+              <label for="setting-about-sidebar-intro">Bio v sidebaru (About / O mně)</label>
+              <textarea id="setting-about-sidebar-intro" placeholder="Kameraman, fotograf a student filmové tvorby..."></textarea>
+              <div class="field-help">Krátké věty pod jménem v panelu stránky o mně (about.html).</div>
+            </div>
+            <div class="settings-group">
+              <label for="setting-about-bio">Hlavní bio profilu (About / O mně)</label>
+              <textarea id="setting-about-bio" style="min-height: 120px;" placeholder="Studuji filmovou tvorbu a mou největší vášní je..."></textarea>
+              <div class="field-help">Hlavní dlouhý text o vás na stránce about.html (můžete použít dva prázdné řádky pro nový odstavec).</div>
+            </div>
+            <div class="settings-group">
+              <label for="setting-contact-email">Kontaktní e-mail</label>
+              <input type="email" id="setting-contact-email" placeholder="levinskyj.cine@gmail.com">
+              <div class="field-help">Globální e-mailová adresa používaná v mailto odkazech a popiscích.</div>
+            </div>
+            <div class="settings-group">
+              <label for="setting-instagram-link">Instagram odkaz</label>
+              <input type="url" id="setting-instagram-link" placeholder="https://www.instagram.com/levinskyj.cine/">
+              <div class="field-help">Odkaz na váš profil na Instagramu.</div>
+            </div>
+            <div class="settings-group">
+              <label for="setting-youtube-link">YouTube odkaz</label>
+              <input type="url" id="setting-youtube-link" placeholder="https://www.youtube.com/@LevinskyJ">
+              <div class="field-help">Odkaz na váš kanál na YouTube.</div>
+            </div>
+            
+            <div class="settings-submit-row">
+              <span class="settings-status-message" id="settings-status-msg">Změny byly úspěšně uloženy.</span>
+              <button type="submit" class="admin-btn admin-btn--primary" id="settings-save-btn" onclick="saveSiteSettings()">
+                <i class="ph ph-floppy-disk"></i> Uložit nastavení
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
-      <!-- TAB 6: SUBSCRIBERS -->
+      <!-- TAB 5: SUBSCRIBERS -->
       <div id="subscribers-tab-content" class="admin-tab-content">
-        <div class="subscribers-controls">
-          <h3 class="column-title" style="margin-bottom: 0; display: flex; align-items: center; gap: 8px;">
-            Odběratelé newsletteru
-            <span id="subscribers-count" class="column-count">0</span>
-          </h3>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <button class="btn-secondary" onclick="copySubscribersEmails()">
-              <i class="ph ph-copy"></i> Kopírovat e-maily
-            </button>
-            <div id="copy-toast-area" class="copy-toast-container"></div>
+<div class="admin-card">
+  <div class="admin-card-header">
+    <i class="ph ph-users"></i>
+    <div>
+      <div class="admin-card-title">Odběratelé newsletteru</div>
+      <div class="admin-card-desc">Správa odběratelů newsletteru — kopírování e-mailů a oudhlášovacích odkazů.</div>
+    </div>
+    <span id="subscribers-count" class="column-count">0</span>
+  </div>
+  <div class="subscribers-controls">
+    <div class="controls">
+      <button class="admin-btn admin-btn--secondary" onclick="copySubscribersEmails()">
+        <i class="ph ph-copy"></i> Kopírovat e-maily
+      </button>
+      <div id="copy-toast-area" class="copy-toast-container"></div>
+    </div>
+  </div>
+          <div class="likes-table-container">
+            <table class="likes-table admin-table">
+              <thead>
+                <tr>
+                  <th>E-mail</th>
+                  <th>Datum přihlášení</th>
+                  <th style="width: 150px; text-align: center;">Odhlášení</th>
+                  <th style="width: 80px; text-align: center;">Akce</th>
+                </tr>
+              </thead>
+              <tbody id="subscribers-list-body">
+                <!-- Dynamic subscribers -->
+              </tbody>
+            </table>
           </div>
-        </div>
-        <div class="likes-table-container">
-          <table class="likes-table">
-            <thead>
-              <tr>
-                <th>E-mail</th>
-                <th>Datum přihlášení</th>
-                <th style="width: 80px; text-align: center;">Akce</th>
-              </tr>
-            </thead>
-            <tbody id="subscribers-list-body">
-              <!-- Dynamic subscribers -->
-            </tbody>
-          </table>
         </div>
       </div>
     </section>
@@ -601,16 +1035,14 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 // State variables
 let currentPassword = localStorage.getItem('admin_password') || '';
 let loadedProjects = {};
-let allComments = [];
 let allLikes = [];
 let allMessages = [];
 let allViews = [];
 let allSubscribers = [];
-let commentsChannel = null;
 let likesChannel = null;
 let messagesChannel = null;
 let subscribersChannel = null;
-let activeTab = 'comments';
+let activeTab = 'likes';
 
 // DOM Elements
 const loginContainer = document.getElementById('login-container');
@@ -619,11 +1051,6 @@ const loginForm = document.getElementById('login-form');
 const loginError = document.getElementById('login-error');
 const adminPassInput = document.getElementById('admin-pass-input');
 const logoutBtn = document.getElementById('logout-btn');
-
-const unapprovedList = document.getElementById('unapproved-list');
-const approvedList = document.getElementById('approved-list');
-const unapprovedCount = document.getElementById('unapproved-count');
-const approvedCount = document.getElementById('approved-count');
 
 // Helper to escape HTML tags to prevent XSS
 function escapeHTML(str) {
@@ -680,122 +1107,11 @@ async function loadProjectsJSON() {
   }
 }
 
-// Fetch Comments from DB
-async function fetchCommentsFromDB() {
-  if (!currentPassword) return false;
-  
-  try {
-    const { data, error } = await supabaseClient.rpc('get_all_comments_admin', { 
-      admin_password: currentPassword 
-    });
-    
-    if (error) {
-      console.error('RPC get_all_comments_admin error:', error);
-      return false;
-    }
-    
-    allComments = data || [];
-    return true;
-  } catch (err) {
-    console.error('Error fetching comments:', err);
-    return false;
-  }
-}
-
-// Render dynamic elements
-function renderComments() {
-  const unapproved = allComments.filter(c => !c.approved);
-  const approved = allComments.filter(c => c.approved);
-
-  unapprovedCount.textContent = unapproved.length;
-  approvedCount.textContent = approved.length;
-
-  // Render unapproved
-  if (unapproved.length === 0) {
-    unapprovedList.innerHTML = '<div class="empty-state">Žádné komentáře ke schválení.</div>';
-  } else {
-    unapprovedList.innerHTML = unapproved.map(c => `
-      <div class="admin-comment-item" id="comment-${c.id}">
-        <div class="admin-comment-header">
-          <div class="admin-comment-meta">
-            <span class="admin-comment-author">${escapeHTML(c.name)}</span>
-            <span class="admin-comment-project">
-              <i class="ph ph-folder"></i> ${escapeHTML(loadedProjects[c.project_id]?.title || ('Projekt ID: ' + c.project_id))}
-            </span>
-          </div>
-          <span class="admin-comment-date">${formatCommentDate(c.created_at)}</span>
-        </div>
-        <div class="admin-comment-body">${escapeHTML(c.body).replace(/\n/g, '<br>')}</div>
-        <div class="admin-comment-actions">
-          <button class="action-btn delete" onclick="moderateComment('${c.id}', 'delete')">
-            <i class="ph ph-trash"></i> Smazat
-          </button>
-          <button class="action-btn approve" onclick="moderateComment('${c.id}', 'approve')">
-            <i class="ph ph-check"></i> Schválit
-          </button>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  // Render approved
-  if (approved.length === 0) {
-    approvedList.innerHTML = '<div class="empty-state">Žádné schválené komentáře.</div>';
-  } else {
-    approvedList.innerHTML = approved.map(c => `
-      <div class="admin-comment-item" id="comment-${c.id}">
-        <div class="admin-comment-header">
-          <div class="admin-comment-meta">
-            <span class="admin-comment-author">${escapeHTML(c.name)}</span>
-            <span class="admin-comment-project">
-              <i class="ph ph-folder"></i> ${escapeHTML(loadedProjects[c.project_id]?.title || ('Projekt ID: ' + c.project_id))}
-            </span>
-          </div>
-          <span class="admin-comment-date">${formatCommentDate(c.created_at)}</span>
-        </div>
-        <div class="admin-comment-body">${escapeHTML(c.body).replace(/\n/g, '<br>')}</div>
-        <div class="admin-comment-actions">
-          <button class="action-btn delete" onclick="moderateComment('${c.id}', 'delete')">
-            <i class="ph ph-trash"></i> Smazat
-          </button>
-        </div>
-      </div>
-    `).join('');
-  }
-}
-
-// Perform moderation action
-async function moderateComment(commentId, action) {
-  const commentEl = document.getElementById(`comment-${commentId}`);
-  if (commentEl) commentEl.style.opacity = '0.5';
-
-  try {
-    const { error } = await supabaseClient.rpc('moderate_comment', {
-      comment_id: commentId,
-      action_type: action,
-      admin_password: currentPassword
-    });
-
-    if (error) {
-      alert(`Nepodařilo se provést akci: ${error.message}`);
-      if (commentEl) commentEl.style.opacity = '1';
-    } else {
-      // Realtime subscription will handle reload, but we can also do fetch + local update just in case
-      await updateData();
-    }
-  } catch (err) {
-    console.error('Error moderating comment:', err);
-    alert('Chyba při komunikaci se serverem.');
-    if (commentEl) commentEl.style.opacity = '1';
-  }
-}
-
 // Tab Switching
 function switchTab(tabId) {
   activeTab = tabId;
-  const tabs = ['comments', 'likes', 'messages', 'views', 'settings', 'subscribers'];
+  const tabs = ['likes', 'messages', 'views', 'settings', 'subscribers'];
   const kickers = {
-    'comments': 'Správa komentářů',
     'likes': 'Statistiky lajků',
     'messages': 'Inbox zpráv',
     'views': 'Návštěvnost webu',
@@ -869,16 +1185,16 @@ async function fetchLikesFromDB() {
   if (!currentPassword) return false;
   
   try {
-    const { data: likes, error } = await supabaseClient
-      .from('likes')
-      .select('project_id, media_src');
+    const { data, error } = await supabaseClient.rpc('get_all_likes_admin', { 
+      admin_password: currentPassword 
+    });
       
     if (error) {
       console.error('Error fetching likes:', error);
       return false;
     }
     
-    allLikes = likes || [];
+    allLikes = data || [];
     return true;
   } catch (err) {
     console.error('Error fetching likes:', err);
@@ -901,80 +1217,42 @@ function renderLikes() {
     return;
   }
 
-  // Group likes by media_src
+  // Group likes by project_id
   const groups = {};
   allLikes.forEach(l => {
-    if (!l.media_src) return;
-    if (!groups[l.media_src]) {
-      groups[l.media_src] = {
-        media_src: l.media_src,
+    if (!l.project_id) return;
+    if (!groups[l.project_id]) {
+      groups[l.project_id] = {
         project_id: l.project_id,
         count: 0
       };
     }
-    groups[l.media_src].count++;
+    groups[l.project_id].count++;
   });
 
-  // Sort descending
+  // Sort descending by count
   const sorted = Object.values(groups).sort((a, b) => b.count - a.count);
 
   let html = `
     <div class="likes-table-container">
-      <table class="likes-table">
+      <table class="likes-table admin-table">
         <thead>
           <tr>
-            <th style="width: 80px;">Náhled</th>
             <th>Projekt</th>
-            <th>Média / Cesta</th>
-            <th style="width: 100px; text-align: right;">Lajky</th>
+            <th style="width: 120px; text-align: right;">Celkem lajků</th>
           </tr>
         </thead>
         <tbody>
   `;
 
   sorted.forEach(item => {
-    const details = findMediaDetails(item.media_src, item.project_id);
-    const projectName = details ? details.project.title : (loadedProjects[item.project_id]?.title || ('Projekt ID: ' + item.project_id));
-    
-    let fileName = item.media_src;
-    try {
-      const parts = item.media_src.split('/');
-      fileName = parts[parts.length - 1];
-    } catch(e){}
-
-    const mediaLabel = details && details.media.title ? details.media.title : 'Bez názvu';
-    
-    // Preview rendering
-    let previewHtml = '';
-    const resolvedPath = item.media_src;
-    const isVideo = details ? details.media.type === 'video' : (item.media_src.endsWith('.mp4') || item.media_src.endsWith('.webm'));
-    
-    const previewImg = details ? (details.media.thumbnail || details.media.poster || (details.media.type === 'photo' ? details.media.src : '')) : '';
-
-    if (previewImg) {
-      previewHtml = `<img src="${encodeURI(previewImg)}" alt="${escapeHTML(mediaLabel)}" loading="lazy">`;
-      if (isVideo) {
-        previewHtml += `<div class="likes-media-preview-icon"><i class="ph-fill ph-play"></i></div>`;
-      }
-    } else if (isVideo) {
-      previewHtml = `<div class="likes-media-preview-icon"><i class="ph-fill ph-play"></i></div>`;
-    } else {
-      previewHtml = `<div class="likes-media-preview-icon"><i class="ph ph-image"></i></div>`;
-    }
+    const project = loadedProjects[item.project_id];
+    const projectName = project ? project.title : `Projekt ID: ${item.project_id}`;
 
     html += `
       <tr>
         <td>
-          <a href="${encodeURI(resolvedPath)}" target="_blank" class="likes-media-preview" title="Otevřít v novém okně">
-            ${previewHtml}
-          </a>
-        </td>
-        <td>
           <div class="likes-project-name">${escapeHTML(projectName)}</div>
-        </td>
-        <td>
-          <div style="font-weight: 500; font-size: 13px; color: var(--text);">${escapeHTML(mediaLabel)}</div>
-          <div class="likes-file-path" title="${escapeHTML(item.media_src)}">${escapeHTML(fileName)}</div>
         </td>
         <td style="text-align: right;">
           <span class="likes-count-badge">
@@ -1024,7 +1302,7 @@ function renderMessages() {
   if (totalCountEl) totalCountEl.textContent = allMessages.length;
   
   if (allMessages.length === 0) {
-    listContainer.innerHTML = '<div style="color:var(--muted); font-size:13px; padding:12px 0;">Žádné zprávy.</div>';
+    listContainer.innerHTML = '<div class="empty-state">Žádné zprávy.</div>';
     return;
   }
   
@@ -1132,7 +1410,7 @@ function renderViews() {
   
   if (allViews.length === 0) {
     if (uniquePagesEl) uniquePagesEl.textContent = '0';
-    chartContainer.innerHTML = '<div style="color:var(--muted); font-size:13px;">Žádná zobrazení nezaznamenána.</div>';
+    chartContainer.innerHTML = '<div class="empty-state">Žádná zobrazení nezaznamenána.</div>';
     return;
   }
   
@@ -1182,7 +1460,7 @@ function renderViews() {
     return `
       <div class="views-chart-item">
         <div class="views-chart-item-header">
-          <span class="views-chart-page-title">${escapeHTML(grp.title)} <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px;">${escapeHTML(grp.sub)}</span></span>
+          <span class="views-chart-page-title">${escapeHTML(grp.title)}<span class="views-chart-page-sub">${escapeHTML(grp.sub)}</span></span>
           <span class="views-chart-page-count">${grp.count}x</span>
         </div>
         <div class="views-chart-bar-container">
@@ -1286,7 +1564,7 @@ function renderSubscribers() {
   if (totalCountEl) totalCountEl.textContent = allSubscribers.length;
   
   if (allSubscribers.length === 0) {
-    listBody.innerHTML = '<tr><td colspan="3" class="empty-state" style="text-align:center;padding:24px;color:var(--muted);">Žádní odběratelé.</td></tr>';
+    listBody.innerHTML = '<tr><td colspan="4" class="empty-state" style="padding:24px;">Žádní odběratelé.</td></tr>';
     return;
   }
   
@@ -1295,11 +1573,20 @@ function renderSubscribers() {
   listBody.innerHTML = sorted.map(sub => {
     const date = new Date(sub.created_at);
     const formattedDate = `${date.getDate()}. ${date.getMonth() + 1}. ${date.getFullYear()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const unsubscribeUrl = `https://levinskyj.art/unsubscribe.html?token=${sub.unsubscribe_token || ''}`;
     
     return `
       <tr class="subscriber-row" id="sub-row-${sub.id}">
-        <td><span style="font-weight: 500;">${escapeHTML(sub.email)}</span></td>
-        <td><span style="color: var(--muted);">${formattedDate}</span></td>
+        <td>${escapeHTML(sub.email)}</td>
+        <td>${formattedDate}</td>
+        <td style="text-align: center;">
+          <button class="btn-copy-unsubscribe" title="Kopírovat odkaz na odhlášení" onclick="copyUnsubscribeLink('${sub.unsubscribe_token || ''}', ${sub.id})">
+            <i class="ph ph-copy"></i> Kopírovat odkaz
+          </button>
+          <span class="copy-success-badge" id="copy-success-${sub.id}" style="display: none;">
+            <i class="ph ph-check"></i> Zkopírováno
+          </span>
+        </td>
         <td style="text-align: center;">
           <button class="btn-delete" title="Smazat odběratele" onclick="deleteSubscriber(${sub.id})">
             <i class="ph ph-trash"></i>
@@ -1325,7 +1612,7 @@ async function deleteSubscriber(subId) {
   try {
     const { error } = await supabaseClient.rpc('delete_subscriber_admin', {
       admin_password: currentPassword,
-      sub_id: subId
+      subscriber_id: subId
     });
     if (error) throw error;
     await updateSubscribersData();
@@ -1353,32 +1640,57 @@ function copySubscribersEmails() {
   });
 }
 
+function copyUnsubscribeLink(token, subscriberId) {
+  if (!token) {
+    alert('Chyba: Token pro odhlášení není dostupný.');
+    return;
+  }
+  
+  const unsubscribeUrl = `https://levinskyj.art/unsubscribe.html?token=${token}`;
+  
+  navigator.clipboard.writeText(unsubscribeUrl).then(() => {
+    // Hide all success badges first
+    document.querySelectorAll('.copy-success-badge').forEach(badge => {
+      badge.style.display = 'none';
+    });
+    
+    // Show all copy buttons
+    document.querySelectorAll('.btn-copy-unsubscribe').forEach(btn => {
+      btn.style.display = 'inline-flex';
+    });
+    
+    // Hide this specific copy button and show success badge
+    const btn = event.target.closest('.btn-copy-unsubscribe');
+    const successBadge = document.getElementById(`copy-success-${subscriberId}`);
+    
+    if (btn) btn.style.display = 'none';
+    if (successBadge) {
+      successBadge.style.display = 'inline-flex';
+      
+      // Reset after 3 seconds
+      setTimeout(() => {
+        successBadge.style.display = 'none';
+        if (btn) btn.style.display = 'inline-flex';
+      }, 3000);
+    }
+  }).catch(err => {
+    console.error('Could not copy unsubscribe link: ', err);
+    alert('Chyba při kopírování odkazu.');
+  });
+}
+
 // Setup Realtime subscriptions
 function initRealtime() {
-  if (commentsChannel) supabaseClient.removeChannel(commentsChannel);
   if (likesChannel) supabaseClient.removeChannel(likesChannel);
   if (messagesChannel) supabaseClient.removeChannel(messagesChannel);
   if (subscribersChannel) supabaseClient.removeChannel(subscribersChannel);
-  
-  commentsChannel = supabaseClient
-    .channel('admin-comments-changes')
-    .on('postgres_changes', {
-      event: '*',
-      schema: 'public',
-      table: 'comments'
-    }, () => {
-      fetchCommentsFromDB().then(success => {
-        if (success) renderComments();
-      });
-    })
-    .subscribe();
 
   likesChannel = supabaseClient
     .channel('admin-likes-changes')
     .on('postgres_changes', {
       event: '*',
       schema: 'public',
-      table: 'likes'
+      table: 'project_likes'
     }, () => {
       fetchLikesFromDB().then(success => {
         if (success) renderLikes();
@@ -1414,21 +1726,19 @@ function initRealtime() {
 }
 
 async function updateData() {
-  const [successComments, successLikes, successMessages, successViews, successSubscribers] = await Promise.all([
-    fetchCommentsFromDB(),
+  const [successLikes, successMessages, successViews, successSubscribers] = await Promise.all([
     fetchLikesFromDB(),
     fetchMessagesFromDB(),
     fetchViewsFromDB(),
     fetchSubscribersFromDB()
   ]);
   
-  if (successComments) renderComments();
   if (successLikes) renderLikes();
   if (successMessages) renderMessages();
   if (successViews) renderViews();
   if (successSubscribers) renderSubscribers();
   
-  return successComments;
+  return successLikes;
 }
 
 // Bootstrapping
@@ -1465,7 +1775,7 @@ if (loginForm) {
     const inputPass = adminPassInput.value;
     
     try {
-      const { data, error } = await supabaseClient.rpc('get_all_comments_admin', { 
+      const { data, error } = await supabaseClient.rpc('get_all_likes_admin', { 
         admin_password: inputPass 
       });
       
@@ -1502,10 +1812,6 @@ if (logoutBtn) {
   logoutBtn.addEventListener('click', () => {
     localStorage.removeItem('admin_password');
     currentPassword = '';
-    if (commentsChannel) {
-      supabaseClient.removeChannel(commentsChannel);
-      commentsChannel = null;
-    }
     if (likesChannel) {
       supabaseClient.removeChannel(likesChannel);
       likesChannel = null;

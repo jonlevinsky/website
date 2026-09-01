@@ -739,57 +739,468 @@ async function initTracker() {
 }
 
 function initNewsletter() {
-  document.addEventListener('submit', async (e) => {
-    const form = e.target.closest('.newsletter-form');
-    if (!form) return;
-    
+  // ── Inject modal styles (single source of truth, injected once) ──
+  const styleId = 'newsletter-modal-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      /* Footer trigger button */
+      .footer-newsletter { margin-top: 16px; }
+      .newsletter-trigger {
+        font-family: var(--sans);
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--muted);
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 6px 12px;
+        border-radius: var(--r-full);
+        transition: color 0.3s ease, background 0.3s ease;
+        letter-spacing: 0.02em;
+      }
+      .newsletter-trigger:hover {
+        color: var(--accent);
+        background: var(--accent-subtle);
+      }
+      .newsletter-trigger i { font-size: 15px; }
+
+      /* Modal overlay */
+      .nl-overlay {
+        position: fixed; inset: 0;
+        background: rgba(28, 25, 23, 0.45);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        z-index: 9998;
+        display: flex; align-items: center; justify-content: center;
+        opacity: 0; pointer-events: none;
+        transition: opacity 0.35s var(--ease-out-expo);
+      }
+      .nl-overlay.open { opacity: 1; pointer-events: auto; }
+
+      /* Modal card */
+      .nl-modal {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 36px 32px 32px;
+        width: 420px; max-width: calc(100vw - 40px);
+        position: relative;
+        box-shadow:
+          0 24px 80px rgba(28, 25, 23, 0.18),
+          0 4px 16px rgba(28, 25, 23, 0.08);
+        transform: scale(0.95) translateY(12px);
+        transition: transform 0.4s var(--ease-out-expo);
+      }
+      .nl-overlay.open .nl-modal {
+        transform: scale(1) translateY(0);
+      }
+
+      /* Close button */
+      .nl-close {
+        position: absolute; top: 14px; right: 14px;
+        width: 32px; height: 32px;
+        display: flex; align-items: center; justify-content: center;
+        border-radius: var(--r-full);
+        color: var(--muted);
+        background: none; border: none;
+        cursor: pointer;
+        font-size: 18px;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+      .nl-close:hover {
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      /* Content */
+      .nl-icon {
+        width: 44px; height: 44px;
+        border-radius: var(--r-md);
+        background: var(--accent-subtle);
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 16px;
+      }
+      .nl-icon i { font-size: 22px; color: var(--accent); }
+      .nl-title {
+        font-family: var(--serif);
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 6px;
+      }
+      .nl-desc {
+        font-size: 13.5px;
+        color: var(--muted);
+        line-height: 1.55;
+        margin-bottom: 20px;
+      }
+
+      /* Already-subscribed note */
+      .nl-already {
+        display: none;
+        font-size: 12.5px;
+        color: var(--muted);
+        background: var(--surface);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--r-sm);
+        padding: 8px 12px;
+        margin-bottom: 14px;
+        line-height: 1.45;
+        gap: 6px;
+        align-items: center;
+      }
+      .nl-already.visible { display: flex; }
+      .nl-already i { font-size: 14px; color: var(--accent); flex-shrink: 0; }
+
+      /* Form row */
+      .nl-form { display: flex; gap: 8px; }
+      .nl-input {
+        flex: 1;
+        font-family: var(--sans);
+        font-size: 13.5px;
+        padding: 10px 14px;
+        border: 1px solid var(--border);
+        border-radius: var(--r-sm);
+        background: var(--bg-subtle);
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.25s ease, box-shadow 0.25s ease;
+      }
+      .nl-input::placeholder { color: var(--muted); opacity: 0.6; }
+      .nl-input:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-subtle);
+      }
+      .nl-submit {
+        display: flex; align-items: center; justify-content: center;
+        width: 42px; height: 42px;
+        border-radius: var(--r-sm);
+        background: var(--accent);
+        color: var(--text-on-accent);
+        border: none; cursor: pointer;
+        font-size: 16px;
+        transition: opacity 0.2s ease, transform 0.2s ease;
+        flex-shrink: 0;
+      }
+      .nl-submit:hover { opacity: 0.88; transform: scale(1.04); }
+      .nl-submit:active { transform: scale(0.97); }
+      .nl-submit:disabled { opacity: 0.5; cursor: default; transform: none; }
+      .nl-submit i { font-size: 17px; }
+
+      /* Status */
+      .nl-status {
+        font-size: 13px;
+        margin-top: 12px;
+        min-height: 0;
+        opacity: 0;
+        transform: translateY(-4px);
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      .nl-status.show { opacity: 1; transform: translateY(0); }
+      .nl-status.success { color: var(--accent); }
+      .nl-status.error { color: #b33a3a; }
+
+      /* Responsive */
+      @media (max-width: 480px) {
+        .nl-modal { padding: 28px 24px 24px; }
+        .nl-title { font-size: 20px; }
+        .nl-form { flex-direction: column; }
+        .nl-submit { width: 100%; height: 42px; border-radius: var(--r-sm); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  // ── Inject modal HTML (single source of truth) ──
+  if (!document.getElementById('newsletterModal')) {
+    const modal = document.createElement('div');
+    modal.id = 'newsletterModal';
+    modal.innerHTML = `
+      <div class="nl-overlay" role="dialog" aria-modal="true" aria-labelledby="nlTitle">
+        <div class="nl-modal">
+          <button class="nl-close" type="button" aria-label="Zavřít">
+            <i class="ph ph-x"></i>
+          </button>
+          <div class="nl-icon">
+            <i class="ph ph-newspaper"></i>
+          </div>
+          <h2 class="nl-title" id="nlTitle">Newsletter</h2>
+          <p class="nl-desc">Přihlas se k odběru novinek z portfolia. Žádný spam — jen to nejdůležitější.</p>
+          <div class="nl-already" id="nlAlready">
+            <i class="ph ph-check-circle"></i>
+            <span>Už jsi přihlášený/a</span>
+          </div>
+          <form class="nl-form" id="nlForm" onsubmit="return false;">
+            <input class="nl-input" type="email" id="nlEmail" placeholder="Tvůj e-mail..." required autocomplete="email">
+            <button class="nl-submit" type="submit" aria-label="Odebírat">
+              <i class="ph ph-paper-plane-tilt"></i>
+            </button>
+          </form>
+          <div class="nl-status" id="nlStatus"></div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  // ── References ──
+  const overlay = document.querySelector('#newsletterModal .nl-overlay');
+  const closeBtn = document.querySelector('#newsletterModal .nl-close');
+  const nlForm = document.getElementById('nlForm');
+  const nlEmail = document.getElementById('nlEmail');
+  const nlStatus = document.getElementById('nlStatus');
+  const nlSubmit = document.querySelector('.nl-submit');
+  const nlAlready = document.getElementById('nlAlready');
+
+  function openModal() {
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // Check if already subscribed
+    if (localStorage.getItem('newsletter_subscribed') === '1') {
+      nlAlready.classList.add('visible');
+    } else {
+      nlAlready.classList.remove('visible');
+    }
+    // Reset status & focus
+    nlStatus.textContent = '';
+    nlStatus.className = 'nl-status';
+    setTimeout(() => nlEmail.focus(), 350);
+  }
+
+  function closeModal() {
+    overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ── Open modal on footer trigger click ──
+  document.addEventListener('click', (e) => {
+    const trigger = e.target.closest('.newsletter-trigger');
+    if (!trigger) return;
+    openModal();
+  });
+
+  // ── Close on overlay click ──
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+
+  // ── Close button ──
+  closeBtn.addEventListener('click', closeModal);
+
+  // ── ESC key ──
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && overlay.classList.contains('open')) {
+      closeModal();
+    }
+  });
+
+  // ── Form submission (Supabase logic unchanged) ──
+  nlForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const emailInput = form.querySelector('input[type="email"]');
-    const statusDiv = form.parentNode.querySelector('.newsletter-status');
-    const submitBtn = form.querySelector('button');
-    
-    if (!emailInput || !statusDiv) return;
-    
-    const email = emailInput.value.trim();
+    const email = nlEmail.value.trim();
     if (!email) return;
 
-    if (submitBtn) submitBtn.disabled = true;
-    statusDiv.textContent = 'Přihlašuji...';
-    statusDiv.className = 'newsletter-status';
+    nlSubmit.disabled = true;
+    nlStatus.innerHTML = '<span style="opacity: 0.7;">Přihlašuji...</span>';
+    nlStatus.className = 'nl-status show';
 
     try {
       if (typeof supabaseClient === 'undefined') {
-        throw new Error('Supabase client is not initialized.');
+        throw new Error('Supabase není dostupný. Zkus to prosím později.');
       }
-      
+
       const { error } = await supabaseClient
         .from('subscribers')
         .insert({ email });
-        
+
       if (error) {
         if (error.code === '23505') {
           throw new Error('Tento e-mail už byl přihlášen k odběru.');
         }
         throw error;
       }
-      
-      statusDiv.textContent = 'Díky za odběr!';
-      statusDiv.className = 'newsletter-status success';
-      emailInput.value = '';
+
+      localStorage.setItem('newsletter_subscribed', '1');
+      nlAlready.classList.add('visible');
+      nlStatus.innerHTML = '✓ Díky za odběr! Brzy dostaneš novinky.';
+      nlStatus.className = 'nl-status show success';
+      nlEmail.value = '';
+
+      // Show unsubscribe hint after a beat
+      setTimeout(() => {
+        nlStatus.innerHTML = '✓ Díky za odběr! <small style="display: block; margin-top: 6px; opacity: 0.7; font-size: 12px;">Odhlásit se můžeš z každého emailu.</small>';
+      }, 2200);
     } catch (err) {
-      console.error(err);
-      statusDiv.textContent = err.message || 'Něco se pokazilo. Zkuste to prosím znovu.';
-      statusDiv.className = 'newsletter-status error';
+      console.error('Newsletter error:', err);
+      nlStatus.textContent = '✗ ' + (err.message || 'Něco se pokazilo. Zkuste to prosím znovu.');
+      nlStatus.className = 'nl-status show error';
     } finally {
-      if (submitBtn) submitBtn.disabled = false;
+      nlSubmit.disabled = false;
     }
   });
+}
+
+// Browser fingerprinting for likes
+async function getUserFingerprint() {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.textBaseline = 'top';
+  ctx.font = '14px Arial';
+  ctx.fillText('fingerprint', 2, 2);
+  const canvasData = canvas.toDataURL();
+  
+  const data = [
+    navigator.userAgent,
+    navigator.language,
+    screen.width + 'x' + screen.height,
+    new Date().getTimezoneOffset(),
+    canvasData
+  ].join('|');
+  
+  const msgUint8 = new TextEncoder().encode(data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
+}
+
+// Initialize likes functionality for individual media items
+async function initMediaLikes() {
+  const params = new URLSearchParams(window.location.search);
+  const projectId = params.get('id');
+  if (!projectId) return;
+  
+  // Check if Supabase client is available
+  if (typeof supabaseClient === 'undefined') {
+    console.warn('Supabase client not initialized, skipping likes initialization');
+    return;
+  }
+  
+  try {
+    const fingerprint = await getUserFingerprint();
+    const likeBtns = document.querySelectorAll('.tile-like-btn');
+    
+    if (likeBtns.length === 0) return;
+    
+    // Load likes for all media items
+    for (const btn of likeBtns) {
+      const mediaSrc = btn.dataset.mediaSrc;
+      if (!mediaSrc) continue;
+      
+      try {
+        // Load like count
+        const { data: countData, error: countError } = await supabaseClient
+          .rpc('get_media_likes_count', { 
+            p_project_id: projectId, 
+            p_media_src: mediaSrc 
+          });
+        
+        if (!countError && countData !== null) {
+          btn.querySelector('.like-count').textContent = countData;
+        }
+        
+        // Check if user liked this media
+        const { data: likedData, error: likedError } = await supabaseClient
+          .rpc('check_user_liked_media', { 
+            p_project_id: projectId, 
+            p_media_src: mediaSrc,
+            p_user_fingerprint: fingerprint 
+          });
+        
+        if (!likedError && likedData) {
+          btn.classList.add('liked');
+          const icon = btn.querySelector('i');
+          icon.classList.remove('ph');
+          icon.classList.add('ph-fill', 'ph-heart');
+        }
+        
+        // Add click handler (only once)
+        if (!btn.dataset.listenerAttached) {
+          btn.dataset.listenerAttached = 'true';
+          
+          btn.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            if (btn.disabled) return;
+            btn.disabled = true;
+            
+            console.log('Toggle like - before:', { 
+              projectId, 
+              mediaSrc, 
+              fingerprint,
+              currentlyLiked: btn.classList.contains('liked')
+            });
+            
+            try {
+              const { data, error } = await supabaseClient
+                .rpc('toggle_media_like', {
+                  p_project_id: projectId,
+                  p_media_src: mediaSrc,
+                  p_user_fingerprint: fingerprint
+                });
+              
+              if (error) throw error;
+              
+              const isLiked = data.liked;
+              const newCount = data.count;
+              
+              console.log('Toggle like - after:', { isLiked, newCount, data });
+              
+              btn.querySelector('.like-count').textContent = newCount;
+              
+              if (isLiked) {
+                btn.classList.add('liked');
+                const icon = btn.querySelector('i');
+                icon.classList.remove('ph');
+                icon.classList.add('ph-fill', 'ph-heart');
+                
+                // Animation
+                btn.style.transform = 'scale(1.15)';
+                setTimeout(() => { btn.style.transform = ''; }, 200);
+              } else {
+                btn.classList.remove('liked');
+                const icon = btn.querySelector('i');
+                icon.classList.remove('ph-fill');
+                icon.classList.add('ph', 'ph-heart');
+                
+                // Animation
+                btn.style.transform = 'scale(0.9)';
+                setTimeout(() => { btn.style.transform = ''; }, 200);
+              }
+            } catch (err) {
+              console.error('Error toggling like:', err);
+            } finally {
+              btn.disabled = false;
+            }
+          });
+        }
+        
+      } catch (err) {
+        console.error('Error loading likes for media:', mediaSrc, err);
+      }
+    }
+    
+  } catch (err) {
+    console.error('Error initializing media likes:', err);
+  }
 }
 
 function initSupabaseFeatures() {
   applySiteSettings();
   initTracker();
   initNewsletter();
+  
+  // Initialize likes on project page for individual media items
+  if (window.location.pathname.includes('project.html')) {
+    // Delay to ensure gallery is rendered
+    setTimeout(() => {
+      initMediaLikes();
+    }, 500);
+  }
 }
 
 // Call on startup
