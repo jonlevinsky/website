@@ -1106,39 +1106,71 @@ function initNewsletter() {
   });
 }
 
-// Browser fingerprinting for likes
+// Helper to canonicalize media_src paths
+function normalizeMediaSrc(src) {
+  if (!src) return '';
+  try {
+    return decodeURIComponent(src);
+  } catch (e) {
+    return src;
+  }
+}
+
+// Browser fingerprinting for likes (with robust fallback)
 async function getUserFingerprint() {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx.textBaseline = 'top';
-  ctx.font = '14px Arial';
-  ctx.fillText('fingerprint', 2, 2);
-  const canvasData = canvas.toDataURL();
-  
-  const data = [
-    navigator.userAgent,
-    navigator.language,
-    screen.width + 'x' + screen.height,
-    new Date().getTimezoneOffset(),
-    canvasData
-  ].join('|');
-  
-  const msgUint8 = new TextEncoder().encode(data);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex;
+  try {
+    let canvasData = '';
+    try {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.textBaseline = 'top';
+        ctx.font = '14px Arial';
+        ctx.fillText('fingerprint', 2, 2);
+        canvasData = canvas.toDataURL();
+      }
+    } catch (e) {}
+
+    const data = [
+      navigator.userAgent || '',
+      navigator.language || '',
+      screen.width + 'x' + screen.height,
+      new Date().getTimezoneOffset(),
+      canvasData
+    ].join('|');
+
+    if (window.crypto && crypto.subtle) {
+      const msgUint8 = new TextEncoder().encode(data);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+  } catch (err) {
+    console.warn('Fingerprint computation fallback used:', err);
+  }
+
+  // Fallback to persistent local storage ID
+  let anonId = localStorage.getItem('anon_user_fp');
+  if (!anonId) {
+    anonId = 'anon_' + Math.random().toString(36).substring(2) + Date.now().toString(36);
+    localStorage.setItem('anon_user_fp', anonId);
+  }
+  return anonId;
 }
 
 // Initialize likes functionality for individual media items
-async function initMediaLikes() {
+async function initMediaLikes(retryCount = 0) {
   const params = new URLSearchParams(window.location.search);
   const projectId = params.get('id');
   if (!projectId) return;
   
-  // Check if Supabase client is available
-  if (typeof supabaseClient === 'undefined') {
-    console.warn('Supabase client not initialized, skipping likes initialization');
+  // Check if Supabase client is available (with retry)
+  if (typeof supabaseClient === 'undefined' || !supabaseClient) {
+    if (retryCount < 5) {
+      setTimeout(() => initMediaLikes(retryCount + 1), 300);
+    } else {
+      console.warn('Supabase client not initialized, skipping likes initialization');
+    }
     return;
   }
   
@@ -1146,12 +1178,18 @@ async function initMediaLikes() {
     const fingerprint = await getUserFingerprint();
     const likeBtns = document.querySelectorAll('.tile-like-btn');
     
-    if (likeBtns.length === 0) return;
+    if (likeBtns.length === 0) {
+      if (retryCount < 5) {
+        setTimeout(() => initMediaLikes(retryCount + 1), 300);
+      }
+      return;
+    }
     
     // Load likes for all media items
     for (const btn of likeBtns) {
-      const mediaSrc = btn.dataset.mediaSrc;
-      if (!mediaSrc) continue;
+      const rawMediaSrc = btn.dataset.mediaSrc;
+      if (!rawMediaSrc) continue;
+      const mediaSrc = normalizeMediaSrc(rawMediaSrc);
       
       try {
         // Load like count
@@ -1176,8 +1214,10 @@ async function initMediaLikes() {
         if (!likedError && likedData) {
           btn.classList.add('liked');
           const icon = btn.querySelector('i');
-          icon.classList.remove('ph');
-          icon.classList.add('ph-fill', 'ph-heart');
+          if (icon) {
+            icon.classList.remove('ph');
+            icon.classList.add('ph-fill', 'ph-heart');
+          }
         }
         
         // Add click handler (only once)
@@ -1188,13 +1228,6 @@ async function initMediaLikes() {
             e.stopPropagation();
             if (btn.disabled) return;
             btn.disabled = true;
-            
-            console.log('Toggle like - before:', { 
-              projectId, 
-              mediaSrc, 
-              fingerprint,
-              currentlyLiked: btn.classList.contains('liked')
-            });
             
             try {
               const { data, error } = await supabaseClient
@@ -1209,26 +1242,24 @@ async function initMediaLikes() {
               const isLiked = data.liked;
               const newCount = data.count;
               
-              console.log('Toggle like - after:', { isLiked, newCount, data });
+              const countEl = btn.querySelector('.like-count');
+              if (countEl) countEl.textContent = newCount;
               
-              btn.querySelector('.like-count').textContent = newCount;
-              
+              const icon = btn.querySelector('i');
               if (isLiked) {
                 btn.classList.add('liked');
-                const icon = btn.querySelector('i');
-                icon.classList.remove('ph');
-                icon.classList.add('ph-fill', 'ph-heart');
-                
-                // Animation
+                if (icon) {
+                  icon.classList.remove('ph');
+                  icon.classList.add('ph-fill', 'ph-heart');
+                }
                 btn.style.transform = 'scale(1.15)';
                 setTimeout(() => { btn.style.transform = ''; }, 200);
               } else {
                 btn.classList.remove('liked');
-                const icon = btn.querySelector('i');
-                icon.classList.remove('ph-fill');
-                icon.classList.add('ph', 'ph-heart');
-                
-                // Animation
+                if (icon) {
+                  icon.classList.remove('ph-fill');
+                  icon.classList.add('ph', 'ph-heart');
+                }
                 btn.style.transform = 'scale(0.9)';
                 setTimeout(() => { btn.style.transform = ''; }, 200);
               }
