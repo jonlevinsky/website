@@ -1295,6 +1295,137 @@ function initSupabaseFeatures() {
   }
 }
 
+// ── Web Audio API ASMR Sound Engine ──
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) {
+      audioCtx = new AudioContextClass();
+    }
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume().catch(() => {});
+  }
+  return audioCtx;
+}
+
+function playAsmrSound(type) {
+  if (localStorage.getItem('site_sound_muted') === 'true') return;
+  const ctx = getAudioContext();
+  if (!ctx) return;
+
+  const now = ctx.currentTime;
+
+  try {
+    if (type === 'shutter' || type === 'like') {
+      // Camera shutter click (sine pitch drop + noise burst)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(850, now);
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.04);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.04);
+
+      // Secondary metallic mechanical click
+      setTimeout(() => {
+        if (!ctx) return;
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.type = 'triangle';
+        osc2.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc2.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.025);
+        gain2.gain.setValueAtTime(0.12, ctx.currentTime);
+        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.025);
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.start();
+        osc2.stop(ctx.currentTime + 0.025);
+      }, 25);
+
+    } else if (type === 'dial' || type === 'filter') {
+      // Camera dial click (crisp wood/metal click)
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(1400, now);
+      osc.frequency.exponentialRampToValueAtTime(300, now + 0.015);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.015);
+
+    } else if (type === 'pop' || type === 'modal') {
+      // Soft lens aperture pop / modal open
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(880, now + 0.03);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now);
+      osc.stop(now + 0.03);
+
+    } else if (type === 'whoosh' || type === 'newsletter') {
+      // Paper / envelope slide whoosh (filtered noise)
+      const bufferSize = ctx.sampleRate * 0.08;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = Math.random() * 2 - 1;
+      }
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = buffer;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(600, now);
+      filter.frequency.exponentialRampToValueAtTime(1800, now + 0.08);
+      filter.Q.value = 3;
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+      whiteNoise.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      whiteNoise.start(now);
+      whiteNoise.stop(now + 0.08);
+    }
+  } catch (e) {}
+}
+
+// ── Attach sound triggers to user UI actions ──
+document.addEventListener('click', (e) => {
+  // Unlock AudioContext on first user click
+  getAudioContext();
+
+  // Filter category pills click
+  if (e.target.closest('.filter-row a')) {
+    playAsmrSound('dial');
+  }
+  // Like button click
+  else if (e.target.closest('.tile-like-btn')) {
+    playAsmrSound('shutter');
+  }
+  // Newsletter modal trigger
+  else if (e.target.closest('.newsletter-trigger')) {
+    playAsmrSound('whoosh');
+  }
+});
+
 // Call on startup
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
