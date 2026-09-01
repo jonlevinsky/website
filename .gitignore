@@ -8,5 +8,6 @@ package.json
 .eslintrc.json
 fonts
 newsletter_config.json
+supabase_setup.sql
 newsletter.log
 last_sent_project_id.txt
