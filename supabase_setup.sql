@@ -335,6 +335,7 @@ CREATE POLICY "Veřejné odstranění vlastního lajku" ON public.project_likes
   FOR DELETE USING (true);
 
 -- RPC: Získat počet liků pro konkrétní médium
+DROP FUNCTION IF EXISTS get_media_likes_count(text, text);
 CREATE OR REPLACE FUNCTION get_media_likes_count(p_project_id text, p_media_src text)
 RETURNS bigint
 LANGUAGE plpgsql
@@ -342,16 +343,28 @@ SECURITY DEFINER
 AS $$
 DECLARE
   like_count bigint;
+  clean_src text;
+  fn text;
 BEGIN
+  clean_src := replace(p_media_src, '%25', '%');
+  fn := split_part(clean_src, '/', -1);
+
   SELECT COUNT(*) INTO like_count
   FROM public.project_likes
-  WHERE project_id = p_project_id AND media_src = p_media_src;
+  WHERE project_id = p_project_id 
+    AND (
+      media_src = p_media_src 
+      OR media_src = clean_src
+      OR replace(media_src, '%25', '%') = clean_src
+      OR (fn != '' AND media_src LIKE '%' || fn)
+    );
   
   RETURN like_count;
 END;
 $$;
 
 -- RPC: Zjistit, zda uživatel dal médiu lajk
+DROP FUNCTION IF EXISTS check_user_liked_media(text, text, text);
 CREATE OR REPLACE FUNCTION check_user_liked_media(p_project_id text, p_media_src text, p_user_fingerprint text)
 RETURNS boolean
 LANGUAGE plpgsql
@@ -359,12 +372,22 @@ SECURITY DEFINER
 AS $$
 DECLARE
   liked boolean;
+  clean_src text;
+  fn text;
 BEGIN
+  clean_src := replace(p_media_src, '%25', '%');
+  fn := split_part(clean_src, '/', -1);
+
   SELECT EXISTS(
     SELECT 1 FROM public.project_likes
     WHERE project_id = p_project_id 
-      AND media_src = p_media_src 
       AND user_fingerprint = p_user_fingerprint
+      AND (
+        media_src = p_media_src 
+        OR media_src = clean_src
+        OR replace(media_src, '%25', '%') = clean_src
+        OR (fn != '' AND media_src LIKE '%' || fn)
+      )
   ) INTO liked;
   
   RETURN liked;
@@ -372,6 +395,7 @@ END;
 $$;
 
 -- RPC: Přepnout stav lajku pro médium (toggle like)
+DROP FUNCTION IF EXISTS toggle_media_like(text, text, text);
 CREATE OR REPLACE FUNCTION toggle_media_like(p_project_id text, p_media_src text, p_user_fingerprint text)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -381,13 +405,23 @@ DECLARE
   existing_like uuid;
   new_count bigint;
   is_liked boolean;
+  clean_src text;
+  fn text;
 BEGIN
+  clean_src := replace(p_media_src, '%25', '%');
+  fn := split_part(clean_src, '/', -1);
+
   -- Zjistit, zda lajk existuje
   SELECT id INTO existing_like
   FROM public.project_likes
   WHERE project_id = p_project_id 
-    AND media_src = p_media_src 
-    AND user_fingerprint = p_user_fingerprint;
+    AND user_fingerprint = p_user_fingerprint
+    AND (
+      media_src = p_media_src 
+      OR media_src = clean_src
+      OR replace(media_src, '%25', '%') = clean_src
+      OR (fn != '' AND media_src LIKE '%' || fn)
+    );
   
   IF existing_like IS NOT NULL THEN
     -- Lajk existuje, odstraníme ho
@@ -403,7 +437,13 @@ BEGIN
   -- Spočítat nový počet liků pro toto médium
   SELECT COUNT(*) INTO new_count
   FROM public.project_likes
-  WHERE project_id = p_project_id AND media_src = p_media_src;
+  WHERE project_id = p_project_id 
+    AND (
+      media_src = p_media_src 
+      OR media_src = clean_src
+      OR replace(media_src, '%25', '%') = clean_src
+      OR (fn != '' AND media_src LIKE '%' || fn)
+    );
   
   RETURN jsonb_build_object(
     'liked', is_liked,

@@ -1817,12 +1817,12 @@ function displayProject(project) {
     if (m.type === 'photo') {
       const photoSrc = m.thumbnail || m.src;
       const lqipAttr = m.lqip ? ' style="background-image:url(' + m.lqip + ')"' : '';
-      gallery += '<div class="tile photo-tile" data-index="' + i + '" data-type="photo" data-media-src="' + encodeURI(m.src) + '" tabindex="0" role="button" aria-label="Fotografie: ' + (m.title || 'bez popisku') + ' – zvětšit obrázek">' +
+      gallery += '<div class="tile photo-tile" data-index="' + i + '" data-type="photo" data-media-src="' + m.src + '" tabindex="0" role="button" aria-label="Fotografie: ' + (m.title || 'bez popisku') + ' – zvětšit obrázek">' +
         '<div class="px-wrap">' +
         (m.lqip ? '<div class="lqip-bg" style="background-image:url(' + m.lqip + ')"></div>' : '') +
         '<img src="' + (photoSrc ? encodeURI(photoSrc) : photoSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async" style="opacity:0;transition:opacity 0.4s ease" onload="this.style.opacity=\'1\';this.classList.add(\'loaded\');const lq=this.previousElementSibling;if(lq&&lq.classList.contains(\'lqip-bg\'))lq.classList.add(\'hidden\');" onerror="imgErrorFallback(this)">' +
         '</div>' +
-        '<button class="tile-like-btn" data-media-src="' + encodeURI(m.src) + '" aria-label="Lajknout" onclick="event.stopPropagation();">' +
+        '<button class="tile-like-btn" data-media-src="' + m.src + '" aria-label="Lajknout" onclick="event.stopPropagation();">' +
         '<i class="ph ph-heart"></i>' +
         '<span class="like-count">0</span>' +
         '</button>' +
@@ -1831,7 +1831,7 @@ function displayProject(project) {
       const thumbSrc = m.thumbnail || m.poster || '';
       const thumbImg = thumbSrc ? '<div class="px-wrap"><img src="' + encodeURI(thumbSrc) + '" alt="' + (m.title || '') + '" loading="lazy" decoding="async"></div>' : '';
 
-      gallery += '<div class="tile video-tile" data-index="' + i + '" data-type="video" data-src="' + encodeURI(m.src) + '" data-media-src="' + encodeURI(m.src) + '" tabindex="0" role="button" aria-label="Video: ' + (m.title || 'bez popisku') + ' – spustit video">' +
+      gallery += '<div class="tile video-tile" data-index="' + i + '" data-type="video" data-src="' + encodeURI(m.src) + '" data-media-src="' + m.src + '" tabindex="0" role="button" aria-label="Video: ' + (m.title || 'bez popisku') + ' – spustit video">' +
         '<div class="tile-thumb" id="thumb-' + i + '">' +
         '<div class="video-overlay"></div>' +
         thumbImg +
@@ -1841,7 +1841,7 @@ function displayProject(project) {
         '</div>' +
         '<div class="video-badge"><i class="ph ph-play"></i></div>' +
         '</div>' +
-        '<button class="tile-like-btn" data-media-src="' + encodeURI(m.src) + '" aria-label="Lajknout" onclick="event.stopPropagation();">' +
+        '<button class="tile-like-btn" data-media-src="' + m.src + '" aria-label="Lajknout" onclick="event.stopPropagation();">' +
         '<i class="ph ph-heart"></i>' +
         '<span class="like-count">0</span>' +
         '</button>' +
