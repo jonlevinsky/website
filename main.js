@@ -1318,7 +1318,7 @@ function playMp3Sound(filename) {
   const path = `media/audio/${filename}`;
   if (!audioCache[path]) {
     const audio = new Audio(path);
-    audio.volume = 0.65;
+    audio.volume = 0.1;
     audioCache[path] = audio;
   }
   const audio = audioCache[path];
@@ -1357,7 +1357,7 @@ function playAsmrSound(type) {
     const path = `media/audio/${mp3File}`;
     if (!audioCache[path]) {
       const audio = new Audio(path);
-      audio.volume = 0.7;
+      audio.volume = 0.1;
       audioCache[path] = audio;
     }
     const audio = audioCache[path];
@@ -1394,7 +1394,7 @@ function synthAsmrSound(type) {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(950, now);
       osc.frequency.exponentialRampToValueAtTime(140, now + 0.05);
-      gain.gain.setValueAtTime(0.65, now);
+      gain.gain.setValueAtTime(0.08, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -1409,7 +1409,7 @@ function synthAsmrSound(type) {
         osc2.type = 'triangle';
         osc2.frequency.setValueAtTime(1300, ctx.currentTime);
         osc2.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.03);
-        gain2.gain.setValueAtTime(0.5, ctx.currentTime);
+        gain2.gain.setValueAtTime(0.06, ctx.currentTime);
         gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.03);
         osc2.connect(gain2);
         gain2.connect(ctx.destination);
@@ -1424,7 +1424,7 @@ function synthAsmrSound(type) {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(1500, now);
       osc.frequency.exponentialRampToValueAtTime(350, now + 0.02);
-      gain.gain.setValueAtTime(0.55, now);
+      gain.gain.setValueAtTime(0.07, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.02);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -1438,7 +1438,7 @@ function synthAsmrSound(type) {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(350, now);
       osc.frequency.exponentialRampToValueAtTime(950, now + 0.04);
-      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.setValueAtTime(0.06, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
       osc.connect(gain);
       gain.connect(ctx.destination);
@@ -1463,7 +1463,7 @@ function synthAsmrSound(type) {
       filter.Q.value = 2.5;
 
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.4, now);
+      gain.gain.setValueAtTime(0.05, now);
       gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
 
       whiteNoise.connect(filter);

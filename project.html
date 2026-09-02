@@ -390,6 +390,20 @@ main {
   text-align: center;
 }
 
+/* Active / Playing Video Tile state — hide all non-player overlays */
+.tile.video-tile.playing .tile-like-btn,
+.tile.video-tile.playing .video-info,
+.tile.video-tile.playing .video-overlay,
+.tile.video-tile.playing .video-badge,
+.tile.video-tile.playing .mob-play-hint,
+.tile.video-tile.playing .flyout,
+.tile.video-tile.playing .tile-caption {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
 /* Film Perforations -> Removed */
 
 .flyout {
@@ -519,6 +533,8 @@ main {
 }
 
 .player video {
+  position: relative !important;
+  z-index: 2 !important;
   width: 100%;
   height: auto;
   max-height: calc(100vh - 180px);
@@ -734,12 +750,71 @@ main {
 .controls-right { margin-left: auto; display: flex; align-items: center; gap: 4px; }
 
 .player.is-fs {
-  position: fixed; inset: 0;
-  width: 100vw; height: 100vh;
-  max-width: none; max-height: none;
-  border-radius: 0; z-index: 2000;
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0 !important;
+  z-index: 99999 !important;
+  background: #000 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
 }
-.player.is-fs video { max-height: 100vh; height: 100%; object-fit: contain; }
+.player.is-fs video {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100vh !important;
+  max-height: 100dvh !important;
+  object-fit: contain !important;
+}
+.player.is-fs .player-ambient-canvas {
+  position: absolute !important;
+  inset: -120px !important;
+  width: calc(100% + 240px) !important;
+  height: calc(100% + 240px) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  display: block !important;
+  opacity: 1 !important;
+}
+.player.is-fs .player-ambient-canvas.off {
+  opacity: 0 !important;
+  display: none !important;
+}
+.player.is-fs .controls {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 100000 !important;
+  padding: 32px 20px 16px !important;
+  background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.45) 50%, transparent 100%) !important;
+}
+.player.is-fs .controls-right {
+  position: relative !important;
+  z-index: 100010 !important;
+}
+.player.is-fs .ctrl-btn {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  min-height: 48px !important;
+}
+.player.is-fs .vol-wrap {
+  display: flex !important;
+}
+.player.is-fs .settings-panel {
+  z-index: 100050 !important;
+  bottom: 80px !important;
+  right: 20px !important;
+}
 
 .player-loading {
   position: absolute; top: 50%; left: 50%;
@@ -1128,49 +1203,141 @@ main {
     display: flex; align-items: center; justify-content: center;
   }
   .mob-play-hint i { font-size: 22px; color: #fff; }
-  .tile.video-tile.playing .mob-play-hint { opacity: 0; }
+  .tile.video-tile.playing .mob-play-hint {
+    display: none !important;
+    opacity: 0 !important;
+  }
 
   .tile.video-tile .tile-thumb .player {
     position: absolute; inset: 0;
     width: 100% !important; max-width: 100% !important;
     height: 100% !important;
     border-radius: var(--r-lg) !important;
-    z-index: 5;
+    z-index: 15;
+    pointer-events: auto;
   }
   .tile.video-tile .tile-thumb .player .yt-big-play {
     width: 72px; height: 72px; border-radius: 50%;
     background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center;
-    z-index: 7; opacity: 1;
+    z-index: 18; opacity: 0;
     transition: transform 0.28s var(--ease-out-expo), opacity 0.28s ease;
+    pointer-events: none;
   }
   .tile.video-tile .tile-thumb .player.paused .yt-big-play { opacity: 1; }
+  .tile.video-tile .tile-thumb .player:not(.paused) .yt-big-play { opacity: 0 !important; pointer-events: none !important; }
+  .tile.video-tile .tile-thumb .player .play-flash,
+  .tile.video-tile .tile-thumb .player .kb-feedback {
+    pointer-events: none !important;
+    z-index: 18;
+  }
   .tile.video-tile .tile-thumb .player .yt-big-play i { font-size: 34px; }
-  .tile.video-tile .tile-thumb .player .controls { opacity: 1; z-index: 8; padding: 12px; bottom: 8px; }
-  .tile.video-tile .tile-thumb .player .ctrl-btn { width: 48px; height: 48px; border-radius: 10px; }
-  .tile.video-tile .tile-thumb .player .time-wrap { font-size: 13px; }
-  .tile.video-tile .tile-thumb .yt-progress { height: 26px; }
-  .tile.video-tile .yt-progress { height: 22px; }
+  .tile.video-tile .tile-thumb .player .controls {
+    opacity: 1;
+    z-index: 25;
+    padding: 10px 10px 8px;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+    pointer-events: auto;
+  }
+  .tile.video-tile .tile-thumb .player .controls-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    width: 100%;
+    z-index: 30;
+  }
+  .tile.video-tile .tile-thumb .player .controls-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    z-index: 35;
+    pointer-events: auto;
+  }
+  .tile.video-tile .tile-thumb .player .ctrl-btn,
+  .tile.video-tile .ctrl-btn {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 35;
+    pointer-events: auto;
+    touch-action: manipulation;
+    padding: 0;
+  }
+  .tile.video-tile .tile-thumb .player .ctrl-btn i { font-size: 20px; }
+  .tile.video-tile .tile-thumb .yt-progress,
+  .tile.video-tile .yt-progress {
+    height: 32px;
+    margin-bottom: 2px;
+    position: relative;
+    z-index: 30;
+    touch-action: none;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+  }
   .tile.video-tile .yt-thumb {
-    width: 14px; height: 14px;
+    width: 16px; height: 16px;
     transform: translate(-50%, -50%) scale(1) !important;
   }
-  .tile.video-tile .ctrl-btn { width: 44px; height: 44px; }
   .tile.video-tile .vol-wrap { display: none; }
-  .tile.video-tile .time-wrap { font-size: 12px; }
+  .tile.video-tile .tile-thumb .player .time-wrap,
+  .tile.video-tile .time-wrap {
+    font-size: 11px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0 8px;
+    margin-left: 2px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+  }
 
   .tile.video-tile .tile-thumb .player .settings-panel {
     position: absolute;
-    bottom: 60px;
-    right: 4px;
-    min-width: 190px;
+    bottom: 58px;
+    right: 8px;
+    min-width: 200px;
     max-width: calc(100vw - 32px);
-    font-size: 12px;
+    font-size: 13px;
+    z-index: 100;
+    pointer-events: auto;
   }
-  .tile.video-tile .tile-thumb .player .settings-item { padding: 7px 12px; font-size: 12px; }
-  .tile.video-tile .tile-thumb .player .settings-opt-row { padding: 7px 12px 7px 18px; font-size: 12px; }
-  .tile.video-tile .tile-thumb .player .settings-sub-header { font-size: 12px; padding: 2px 4px 6px 0; }
+  .tile.video-tile .tile-thumb .player .settings-item {
+    padding: 11px 14px;
+    font-size: 13px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .tile.video-tile .tile-thumb .player .settings-opt-row {
+    padding: 11px 14px 11px 20px;
+    font-size: 13px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+  .tile.video-tile .tile-thumb .player .settings-sub-header {
+    font-size: 13px;
+    padding: 4px 8px 8px 4px;
+  }
+  .tile.video-tile .tile-thumb .player .settings-back {
+    width: 40px;
+    height: 40px;
+  }
   .tile.video-tile .tile-thumb .player .sub-overlay {
-    bottom: 72px;
+    bottom: 68px;
     padding: 0 16px;
   }
   .tile.video-tile .tile-thumb .player .sub-overlay span {
@@ -1178,19 +1345,13 @@ main {
     padding: 4px 10px;
     max-width: 90%;
   }
-  .tile.video-tile .tile-thumb .player .time-wrap {
-    font-size: 11px;
-    height: 28px;
-    line-height: 28px;
-    padding: 0 6px;
-  }
-  .tile.video-tile .tile-thumb .player .controls-row { gap: 0; }
   .tile.video-tile .tile-thumb .player .player-loading { width: 28px; height: 28px; }
-  .tile.video-tile .tile-thumb .player .controls { bottom: 4px; padding: 10px 8px; }
-  .tile.video-tile .tile-thumb .player .yt-progress { height: 20px; }
 }
 
-/* Ambient Lighting */
+/* ─── AMBIENT LIGHTING ──────────────────────────────── */
+body { overflow-x: hidden; }
+
+/* Modal Lightbox Ambient Canvas */
 .ambient-canvas {
   position: absolute;
   inset: -160px;
@@ -1207,9 +1368,36 @@ main {
   opacity: 1;
 }
 
-.ambient-canvas.off {
+.ambient-canvas.off,
+.player-ambient-canvas.off {
   opacity: 0 !important;
+  display: none !important;
   transition: opacity 0.6s ease;
+}
+
+/* Fullscreen Player Ambient Canvas (YouTube-style Fullscreen Ambient Glow) */
+.player-ambient-canvas {
+  position: absolute !important;
+  inset: -120px;
+  width: calc(100% + 240px);
+  height: calc(100% + 240px);
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 0;
+  transition: opacity 1s ease;
+  filter: blur(140px) saturate(1.4) brightness(0.65);
+  will-change: opacity;
+  display: none;
+}
+
+.player.is-fs .player-ambient-canvas {
+  display: block;
+  opacity: 1;
+}
+
+.player.is-fs .player-ambient-canvas.off {
+  opacity: 0 !important;
+  display: none !important;
 }
 
 /* ─── SETTINGS PANEL (YouTube-style) ────────────────── */
@@ -2004,43 +2192,66 @@ let ambientFrameCount = 0;
 
 function toggleAmbient() {
   ambientEnabled = !ambientEnabled;
-  const canvas = document.getElementById('ambient-canvas');
-  if (canvas) canvas.classList.toggle('off', !ambientEnabled);
+  document.querySelectorAll('#ambient-canvas, .player-ambient-canvas').forEach(c => {
+    c.classList.toggle('off', !ambientEnabled);
+  });
   document.querySelectorAll('#ambient-on, #ambient-off').forEach(el => {
     el.classList.toggle('active', (ambientEnabled && el.id === 'ambient-on') || (!ambientEnabled && el.id === 'ambient-off'));
   });
-  const val = document.getElementById('ambient-val');
-  if (val) val.textContent = ambientEnabled ? 'On' : 'Off';
-  if (ambientEnabled && modal.classList.contains('open')) {
+  document.querySelectorAll('#ambient-val').forEach(val => {
+    val.textContent = ambientEnabled ? 'On' : 'Off';
+  });
+  if (ambientEnabled && (document.querySelector('.player.is-fs') || modal.classList.contains('open'))) {
     startAmbient();
   } else {
     stopAmbient();
   }
 }
 
-function getAmbientCanvas() {
-  const c = document.getElementById('ambient-canvas');
-  if (!c) return null;
-  if (!ambientCtx) ambientCtx = c.getContext('2d');
-  return c;
+function getAmbientTarget() {
+  // Priority 1: Fullscreen Player (.player.is-fs)
+  const fsPlayer = document.querySelector('.player.is-fs');
+  if (fsPlayer) {
+    const c = fsPlayer.querySelector('.player-ambient-canvas') || document.getElementById('ambient-canvas');
+    const vid = fsPlayer.querySelector('video');
+    if (!c || !vid) return null;
+    return { canvas: c, vid: vid, isFs: true };
+  }
+
+  // Priority 2: Modal Lightbox (.modal.open)
+  if (modal.classList.contains('open')) {
+    const c = document.getElementById('ambient-canvas');
+    if (!c) return null;
+    const vid = modalContent ? modalContent.querySelector('#vid') : document.querySelector('#vid');
+    return { canvas: c, vid: vid, isModal: true };
+  }
+
+  // Normal grid tiles -> No Ambient Mode!
+  return null;
 }
 
 function resizeAmbient() {
-  const c = getAmbientCanvas();
-  if (!c) return;
-  const inner = document.querySelector('.modal-inner');
-  if (!inner) return;
-  const rect = inner.getBoundingClientRect();
-  c.width = rect.width + 160;
-  c.height = rect.height + 160;
+  const target = getAmbientTarget();
+  if (!target || !target.canvas) return;
+  const c = target.canvas;
+  if (target.isFs) {
+    c.width = Math.round((window.innerWidth || 300) / 2);
+    c.height = Math.round((window.innerHeight || 200) / 2);
+  } else if (target.isModal) {
+    const inner = document.querySelector('.modal-inner');
+    if (!inner) return;
+    const rect = inner.getBoundingClientRect();
+    c.width = rect.width + 160;
+    c.height = rect.height + 160;
+  }
 }
 
 function drawAmbient() {
   if (!ambientEnabled) { ambientRaf = null; return; }
-  const c = getAmbientCanvas();
-  if (!c || !ambientCtx) return;
+  const target = getAmbientTarget();
+  if (!target || !target.canvas) { ambientRaf = null; return; }
 
-  const vid = document.querySelector('#vid');
+  const { canvas: c, vid, isFs, isModal } = target;
   const isVideo = !!(vid && vid.readyState >= 2);
 
   if (isVideo) {
@@ -2056,7 +2267,7 @@ function drawAmbient() {
   let source = null;
   if (isVideo) {
     source = vid;
-  } else if (currentPhotoImg && currentPhotoImg.complete && currentPhotoImg.naturalWidth) {
+  } else if (isModal && currentPhotoImg && currentPhotoImg.complete && currentPhotoImg.naturalWidth) {
     source = currentPhotoImg;
   }
 
@@ -2068,9 +2279,15 @@ function drawAmbient() {
   }
 
   try {
-    ambientCtx.imageSmoothingEnabled = true;
-    ambientCtx.imageSmoothingQuality = 'low';
-    ambientCtx.drawImage(source, 0, 0, c.width, c.height);
+    if (c.width === 0 || c.height === 0) {
+      resizeAmbient();
+    }
+    const ctx = c.getContext('2d');
+    if (ctx) {
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'low';
+      ctx.drawImage(source, 0, 0, c.width, c.height);
+    }
   } catch(e) {}
 
   if (isVideo) {
@@ -2082,21 +2299,28 @@ function drawAmbient() {
 }
 
 function repaintAmbient() {
-  const c = getAmbientCanvas();
-  if (!c || !ambientCtx || !ambientEnabled) return;
-  const vid = document.querySelector('#vid');
+  const target = getAmbientTarget();
+  if (!target || !target.canvas || !ambientEnabled) return;
+  const { canvas: c, vid, isModal } = target;
   const hasVideo = vid && vid.readyState >= 2;
-  if (!hasVideo && currentPhotoImg && currentPhotoImg.complete && currentPhotoImg.naturalWidth) {
+  if (!hasVideo && isModal && currentPhotoImg && currentPhotoImg.complete && currentPhotoImg.naturalWidth) {
     try {
-      ambientCtx.imageSmoothingEnabled = true;
-      ambientCtx.imageSmoothingQuality = 'low';
-      ambientCtx.drawImage(currentPhotoImg, 0, 0, c.width, c.height);
+      const ctx = c.getContext('2d');
+      if (ctx) {
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'low';
+        ctx.drawImage(currentPhotoImg, 0, 0, c.width, c.height);
+      }
     } catch(e) {}
   }
 }
 
 function startAmbient() {
-  if (!ambientEnabled || ambientRaf) return;
+  if (!ambientEnabled) return;
+  if (ambientRaf) {
+    cancelAnimationFrame(ambientRaf);
+    ambientRaf = null;
+  }
   ambientFrameCount = 0;
   resizeAmbient();
   ambientRaf = requestAnimationFrame(drawAmbient);
@@ -2261,6 +2485,7 @@ function buildPlayer(src, sources) {
     ? sources.map((q, i) => '<div class="settings-opt-row' + (i === 0 ? ' active' : '') + '" data-quality="' + i + '" data-src="' + encodeURI(q.src) + '"><span>' + q.label + '</span><span class="check"></span></div>').join('')
     : '';
   return '<div class="player paused" id="player">' +
+    '<canvas class="player-ambient-canvas' + (ambientEnabled ? '' : ' off') + '" id="player-ambient"></canvas>' +
     '<video id="vid" crossorigin="anonymous" src="' + s + '" playsinline preload="metadata" controlsList="nodownload"></video>' +
     '<div class="sub-overlay" id="sub-overlay"><span id="sub-text"></span></div>' +
     '<div class="player-loading" id="player-loading"></div>' +
@@ -2313,7 +2538,7 @@ function buildPlayer(src, sources) {
     '<div class="settings-item" data-menu="speed"><span><i class="ph ph-clock"></i> Speed</span><span class="settings-item-value"><span id="speed-val">Normal</span><span class="chevron"></span></span></div>' +
     '<div class="settings-item" data-menu="quality" id="quality-menu-item" style="' + (!qOpts ? 'display:none' : '') + '"><span><i class="ph ph-monitor"></i> Quality</span><span class="settings-item-value"><span id="quality-val">Auto</span><span class="chevron"></span></span></div>' +
     '<div class="settings-item" data-menu="subtitles"><span><i class="ph ph-closed-captioning"></i> Subtitles</span><span class="settings-item-value"><span id="subs-val">Off</span><span class="chevron"></span></span></div>' +
-    '<div class="settings-item" data-menu="ambient"><span><i class="ph ph-lightbulb"></i> Ambient</span><span class="settings-item-value"><span id="ambient-val">On</span><span class="chevron"></span></span></div>' +
+    '<div class="settings-item" data-menu="ambient"><span><i class="ph ph-lightbulb"></i> Ambient</span><span class="settings-item-value"><span id="ambient-val">' + (ambientEnabled ? 'On' : 'Off') + '</span><span class="chevron"></span></span></div>' +
     '</div>' +
     '<div class="settings-sub" id="sub-speed">' +
     '<div class="settings-sub-header"><button class="settings-back" data-back="speed"><i class="ph ph-caret-left"></i></button><span class="settings-sub-title">Speed</span></div>' +
@@ -2336,8 +2561,8 @@ function buildPlayer(src, sources) {
     '</div>' +
     '<div class="settings-sub" id="sub-ambient">' +
     '<div class="settings-sub-header"><button class="settings-back" data-back="ambient"><i class="ph ph-caret-left"></i></button><span class="settings-sub-title">Ambient</span></div>' +
-    '<div class="settings-opt-row active" id="ambient-on"><span>On</span><span class="check"></span></div>' +
-    '<div class="settings-opt-row" id="ambient-off"><span>Off</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row' + (ambientEnabled ? ' active' : '') + '" id="ambient-on"><span>On</span><span class="check"></span></div>' +
+    '<div class="settings-opt-row' + (!ambientEnabled ? ' active' : '') + '" id="ambient-off"><span>Off</span><span class="check"></span></div>' +
     '</div>' +
     '</div>' +
     '<input type="file" id="sub-file-input" accept=".vtt,.srt,.ass" style="display:none">' +
@@ -2446,8 +2671,19 @@ function initPlayerIn(root) {
   }
 
   function toggleFs() {
-    if (!isFs) player?.requestFullscreen?.().catch(()=>{});
-    else document.exitFullscreen?.().catch(()=>{});
+    if (!isFs) {
+      if (player?.requestFullscreen) {
+        player.requestFullscreen().catch(() => {
+          if (vid?.webkitEnterFullscreen) vid.webkitEnterFullscreen();
+        });
+      } else if (vid?.webkitEnterFullscreen) {
+        vid.webkitEnterFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+      else if (document.webkitExitFullscreen) document.webkitExitFullscreen().catch(() => {});
+      else if (vid?.webkitExitFullscreen) vid.webkitExitFullscreen();
+    }
   }
 
   function showMenu(id) {
@@ -2674,12 +2910,23 @@ function initPlayerIn(root) {
     updateVolIcon();
   });
 
-  document.addEventListener('fullscreenchange', () => {
-    isFs = !!document.fullscreenElement;
+  const onFsChange = () => {
+    isFs = !!(document.fullscreenElement || document.webkitFullscreenElement || vid?.webkitDisplayingFullscreen);
     player?.classList.toggle('is-fs', isFs);
     updateFsIcon();
-    if (!isFs) controls?.classList.add('active');
-  });
+    if (isFs && ambientEnabled) {
+      startAmbient();
+    } else if (!isFs) {
+      if (!modal.classList.contains('open')) stopAmbient();
+      controls?.classList.add('active');
+    }
+  };
+  document.addEventListener('fullscreenchange', onFsChange);
+  document.addEventListener('webkitfullscreenchange', onFsChange);
+  if (vid) {
+    vid.addEventListener('webkitbeginfullscreen', onFsChange);
+    vid.addEventListener('webkitendfullscreen', onFsChange);
+  }
 
   updatePlayIcon(); updateVolIcon(); updateFsIcon(); showControls();
   return { togglePlay, toggleMute, toggleFs, seekBy, setVolume, setSpeed, selectSubTrack, loadSubtitleFile };
