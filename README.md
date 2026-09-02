@@ -72,6 +72,39 @@ Tmavě modrý akcent (<code style="background: #f0ece6; padding: 1px 5px; border
 
 ---
 
+## 📜 Changelog
+
+### 🚀 v2.5.0 — Supabase Backend, ASMR Zvukový Engine & Fullscreen Ambient *(Září 2026)*
+- **Videopřehrávač & Mobilní UX**: Oprava překrývání tlačítek lajkování a ovládací lišty přehrávače na mobilních zařízeních. Zvětšení dotykových plošek na min. 44×44 px.
+- **YouTube-style Fullscreen Ambient Mode**: Podsvícení dynamicky přebírající barvy videa zářící v celoobrazovkovém režimu (`.player.is-fs`) s možností vypnutí/zapnutí.
+- **Web Audio API ASMR Zvuky**: Integrován zvukový engine s MP3 i syntetickou zpětnou vazbou (závěrka, volič režimů, pops, whoosh) vyladěný na nerušivou hlasitost.
+- **Supabase & Režim Údržby**: Systém lajkování s RPC funkcemi, anonymním hlasováním a administrací. Vzdálený Maintenance Mode a odhlášení z newsletteru.
+
+### 🎨 v2.4.0 — Klientské Galerie, Typografie Outfit & Design Manual *(Červen – Srpen 2026)*
+- **Klientské Galerie**: Automatizovaný systém soukromých zašifrovaných galerií (*Balabenka 9.A/9.B/9.C*, *Kristián & Viktor*).
+- **Design Manual & Typografie**: Přechod na geometrický font **Outfit**, vytvoření manuálu značky (`design-manual.html`), optimalizace animací a přístupnosti.
+- **Metadata**: Automatická generace `sitemap.xml`, `robots.txt` a OpenGraph obalů.
+
+### 🎛️ v2.3.0 — CMF / Nothing Skeuomorphic Aesthetic *(Květen – Červen 2026)*
+- **Cmf / Nothing Design**: Transparentní skleněné prvky (backdrop blur), technická mřížka a skeuomorfní detaily.
+- **LQIP Načítání**: Rozostřené náhledy v nízkém rozlišení pro bleskový start galerií před načtením plných médií.
+
+### 🛠️ v2.2.0 — Portfolio Builder & Admin Dashboard *(Duben 2026)*
+- **Portfolio Builder (`builder.html`)**: Vývoj administrace pro správy projektů, hromadné úpravy (Bulk edit) a mass generování LQIP.
+- **Lokální Server**: JSON data persistence a správa recenzí.
+
+### 📐 v2.1.0 — Vertikální Video & SEO Základy *(Leden – Březen 2026)*
+- **Vertikální Video**: Podpora pro 9:16 formát (Reels/TikTok) a responzivní poměry stran.
+- **Struktura & SEO**: Optimalizace cest a SEO tagů.
+
+### 🎉 v2.0.0 — Architektonický Restart Portfolia *(Září 2025 – Leden 2026)*
+- **Nová Generace Webových Stránek**: Kompletní přestavba webu na dynamické portfolio s 4K prezentací fotografií a videa.
+
+### 📜 v1.0.0 – v1.5.0 — Raný Vývoj *(Listopad 2023 – Červenec 2024)*
+- **První Commit (5. 11. 2023)**: Vznik repozitáře, mobilní styly, prototypy Dark/Light režimu a statické stránky.
+
+---
+
 ## 🧱 Struktura projektu
 
 <pre style="background: #f7f4ef; border: 1px solid #e2ddd6; border-radius: 8px; padding: 16px; font-size: 0.85em; line-height: 1.7; overflow-x: auto;">
