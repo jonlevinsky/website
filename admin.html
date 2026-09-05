@@ -753,6 +753,87 @@ main {
   border-radius: var(--r-md);
 }
 
+/* ── Secure Galleries ──────────────────────────── */
+.gallery-admin-card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.25s ease;
+}
+.gallery-admin-card:hover { border-color: var(--accent); }
+.gallery-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.gallery-card-info h4 {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+  margin: 0 0 4px 0;
+}
+.gallery-card-subtitle {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 400;
+}
+.gallery-card-intro {
+  font-size: 12.5px;
+  color: var(--text);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.gallery-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin-top: 10px;
+}
+.gallery-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--r-full);
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--border-subtle);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.gallery-badge--slug {
+  font-family: monospace;
+  background: rgba(44, 62, 80, 0.08);
+  color: var(--accent);
+  border-color: var(--border);
+  font-weight: 600;
+}
+.gallery-card-meta {
+  font-size: 11.5px;
+  color: var(--muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  word-break: break-all;
+}
+.gallery-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 /* ── Responsive ─────────────────────────────────── */
 @media (max-width: 880px) {
   .admin-tabs { flex-wrap: wrap; }
@@ -843,6 +924,9 @@ main {
         </button>
         <button class="admin-tab-btn" id="tab-subscribers-btn" onclick="switchTab('subscribers')">
           <i class="ph ph-users"></i> Odběratelé
+        </button>
+        <button class="admin-tab-btn" id="tab-galleries-btn" onclick="switchTab('galleries')">
+          <i class="ph ph-lock-key"></i> Secure Galerie
         </button>
       </div>
       
@@ -1018,6 +1102,23 @@ main {
           </div>
         </div>
       </div>
+
+      <!-- TAB 6: SECURE GALLERIES -->
+      <div id="galleries-tab-content" class="admin-tab-content">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <i class="ph ph-lock-key"></i>
+            <div>
+              <div class="admin-card-title">Zabezpečené klientské galerie</div>
+              <div class="admin-card-desc">Přehled galerií v Supabase databázi, počet fotek/videí, sekce a přímé odkazování pro klienty.</div>
+            </div>
+            <span class="column-count">Celkem galerií: <strong id="total-galleries-count">0</strong></span>
+          </div>
+          <div id="galleries-list-container">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- FOOTER -->
@@ -1054,9 +1155,11 @@ let allLikes = [];
 let allMessages = [];
 let allViews = [];
 let allSubscribers = [];
+let allGalleries = [];
 let likesChannel = null;
 let messagesChannel = null;
 let subscribersChannel = null;
+let galleriesChannel = null;
 let activeTab = 'likes';
 
 // DOM Elements
@@ -1125,13 +1228,14 @@ async function loadProjectsJSON() {
 // Tab Switching
 function switchTab(tabId) {
   activeTab = tabId;
-  const tabs = ['likes', 'messages', 'views', 'settings', 'subscribers'];
+  const tabs = ['likes', 'messages', 'views', 'settings', 'subscribers', 'galleries'];
   const kickers = {
     'likes': 'Statistiky lajků',
     'messages': 'Inbox zpráv',
     'views': 'Návštěvnost webu',
     'settings': 'Obsah webu',
-    'subscribers': 'Odběratelé newsletteru'
+    'subscribers': 'Odběratelé newsletteru',
+    'galleries': 'Zabezpečené galerie'
   };
 
   const kickerText = document.getElementById('admin-panel-kicker-text');
@@ -1161,6 +1265,8 @@ function switchTab(tabId) {
     loadSiteSettings();
   } else if (tabId === 'subscribers') {
     updateSubscribersData();
+  } else if (tabId === 'galleries') {
+    updateGalleriesData();
   }
 }
 
@@ -1769,11 +1875,153 @@ function copyUnsubscribeLink(token, subscriberId) {
   });
 }
 
+// --- Secure Galleries ---
+async function updateGalleriesData() {
+  const container = document.getElementById('galleries-list-container');
+  const totalCountEl = document.getElementById('total-galleries-count');
+  
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/galleries?select=*,gallery_sections(*),gallery_items(*)&order=created_at.desc`, {
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      }
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error ${res.status}`);
+    }
+
+    const data = await res.json();
+    allGalleries = data || [];
+    
+    if (totalCountEl) {
+      totalCountEl.textContent = allGalleries.length;
+    }
+
+    renderGalleries();
+  } catch (err) {
+    console.error('Error updating galleries:', err);
+    if (container) {
+      container.innerHTML = '<div class="empty-state">Chyba při načítání galerií.</div>';
+    }
+  }
+}
+
+function renderGalleries() {
+  const container = document.getElementById('galleries-list-container');
+  const totalCountEl = document.getElementById('total-galleries-count');
+  if (!container) return;
+
+  if (totalCountEl) totalCountEl.textContent = allGalleries.length;
+
+  if (allGalleries.length === 0) {
+    container.innerHTML = '<div class="empty-state">Žádné galerie v databázi.</div>';
+    return;
+  }
+
+  container.innerHTML = allGalleries.map(gal => {
+    const items = gal.gallery_items || [];
+    const sections = gal.gallery_sections || [];
+    
+    const imgCount = items.filter(i => i.type === 'image' || i.type === 'photo' || i.type !== 'video').length;
+    const vidCount = items.filter(i => i.type === 'video').length;
+    const secCount = sections.length;
+
+    const folderPath = gal.folder_path ? gal.folder_path.replace(/^\/+|\/+$/g, '') : '';
+    const relativeUrl = folderPath 
+      ? `./secure-gallery/${folderPath}/?g=${encodeURIComponent(gal.slug || gal.id)}`
+      : `./secure-gallery/?g=${encodeURIComponent(gal.slug || gal.id)}`;
+
+    const fullUrl = new URL(relativeUrl, window.location.href).href;
+    const introText = gal.intro_text || gal.intro || gal.description || '';
+
+    return `
+      <div class="gallery-admin-card" id="gal-card-${gal.id}">
+        <div class="gallery-card-top">
+          <div class="gallery-card-info">
+            <h4>${escapeHTML(gal.title || 'Bez názvu')}</h4>
+            ${gal.subtitle ? `<div class="gallery-card-subtitle">${escapeHTML(gal.subtitle)}</div>` : ''}
+            ${introText ? `<div class="gallery-card-intro">${escapeHTML(introText)}</div>` : ''}
+            <div class="gallery-card-badges">
+              <span class="gallery-badge gallery-badge--slug" title="Slug"><i class="ph ph-link"></i> ${escapeHTML(gal.slug || 'N/A')}</span>
+              <span class="gallery-badge"><i class="ph ph-image"></i> ${imgCount} fotek</span>
+              <span class="gallery-badge"><i class="ph ph-video-camera"></i> ${vidCount} videí</span>
+              <span class="gallery-badge"><i class="ph ph-folders"></i> ${secCount} sekcí</span>
+            </div>
+          </div>
+          <div class="gallery-card-actions">
+            <a href="${relativeUrl}" target="_blank" rel="noopener" class="admin-btn admin-btn--secondary">
+              <i class="ph ph-arrow-square-out"></i> Otevřít
+            </a>
+            <button class="admin-btn admin-btn--secondary" onclick="copyGalleryLink(this, '${escapeHTML(fullUrl)}')">
+              <i class="ph ph-copy"></i> Kopírovat odkaz
+            </button>
+            <button class="admin-btn admin-btn--danger" onclick="deleteGallery('${gal.id}')">
+              <i class="ph ph-trash"></i> Smazat
+            </button>
+          </div>
+        </div>
+        <div class="gallery-card-meta">
+          <span><strong>Salt:</strong> <code>${escapeHTML(gal.salt || 'N/A')}</code></span>
+          <span><strong>Iterace:</strong> <code>${gal.iterations || gal.kdf_iterations || gal.pbkdf2_iterations || 600000}</code></span>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function copyGalleryLink(btn, url) {
+  navigator.clipboard.writeText(url).then(() => {
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="ph ph-check"></i> Zkopírováno!';
+    btn.classList.remove('admin-btn--secondary');
+    btn.classList.add('admin-btn--success');
+    setTimeout(() => {
+      btn.innerHTML = originalHTML;
+      btn.classList.remove('admin-btn--success');
+      btn.classList.add('admin-btn--secondary');
+    }, 2000);
+  }).catch(err => {
+    console.error('Could not copy link:', err);
+    alert('Chyba při kopírování odkazu.');
+  });
+}
+
+async function deleteGallery(galleryId) {
+  if (!confirm('Opravdu chcete tuto galerii trvale smazat? Tato akce je nevratná.')) return;
+
+  const card = document.getElementById(`gal-card-${galleryId}`);
+  if (card) card.style.opacity = '0.5';
+
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/galleries?id=eq.${galleryId}`, {
+      method: 'DELETE',
+      headers: {
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      }
+    });
+
+    if (!res.ok) {
+      const { error } = await supabaseClient.from('galleries').delete().eq('id', galleryId);
+      if (error) throw error;
+    }
+
+    await updateGalleriesData();
+  } catch (err) {
+    console.error('Error deleting gallery:', err);
+    alert('Chyba při mazání galerie.');
+    if (card) card.style.opacity = '';
+  }
+}
+
 // Setup Realtime subscriptions
 function initRealtime() {
   if (likesChannel) supabaseClient.removeChannel(likesChannel);
   if (messagesChannel) supabaseClient.removeChannel(messagesChannel);
   if (subscribersChannel) supabaseClient.removeChannel(subscribersChannel);
+  if (galleriesChannel) supabaseClient.removeChannel(galleriesChannel);
 
   likesChannel = supabaseClient
     .channel('admin-likes-changes')
@@ -1813,6 +2061,17 @@ function initRealtime() {
       });
     })
     .subscribe();
+
+  galleriesChannel = supabaseClient
+    .channel('admin-galleries-changes')
+    .on('postgres_changes', {
+      event: '*',
+      schema: 'public',
+      table: 'galleries'
+    }, () => {
+      updateGalleriesData();
+    })
+    .subscribe();
 }
 
 async function updateData() {
@@ -1827,6 +2086,7 @@ async function updateData() {
   if (successMessages) renderMessages();
   if (successViews) renderViews();
   if (successSubscribers) renderSubscribers();
+  updateGalleriesData();
   
   return successLikes;
 }
@@ -1913,6 +2173,10 @@ if (logoutBtn) {
     if (subscribersChannel) {
       supabaseClient.removeChannel(subscribersChannel);
       subscribersChannel = null;
+    }
+    if (galleriesChannel) {
+      supabaseClient.removeChannel(galleriesChannel);
+      galleriesChannel = null;
     }
     dashboardContainer.style.display = 'none';
     loginContainer.style.display = 'block';
