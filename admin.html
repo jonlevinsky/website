@@ -1963,6 +1963,19 @@ function renderGalleries() {
           </div>
         </div>
         <div class="gallery-card-meta">
+          <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px; width:100%;">
+            <strong>Heslo:</strong>
+            <code id="passcode-text-${gal.id}" style="font-family:monospace; background:var(--surface); padding:2px 8px; border-radius:4px; border:1px solid var(--border-subtle); letter-spacing:1px;">••••••••</code>
+            <button class="admin-btn admin-btn--secondary" style="padding:2px 8px; font-size:11px;" onclick="togglePasscodeReveal('${gal.id}', '${escapeHTML(gal.passcode || '')}')" id="passcode-btn-${gal.id}">
+              <i class="ph ph-eye"></i> Zobrazit heslo
+            </button>
+            <button class="admin-btn admin-btn--secondary" style="padding:2px 8px; font-size:11px;" onclick="copyPasscode('${escapeHTML(gal.passcode || '')}', this)">
+              <i class="ph ph-copy"></i> Zkopírovat heslo
+            </button>
+            <button class="admin-btn admin-btn--secondary" style="padding:2px 8px; font-size:11px;" onclick="editPasscode('${gal.id}', '${escapeHTML(gal.passcode || '')}')">
+              <i class="ph ph-pencil"></i> Upravit
+            </button>
+          </div>
           <span><strong>Salt:</strong> <code>${escapeHTML(gal.salt || 'N/A')}</code></span>
           <span><strong>Iterace:</strong> <code>${gal.iterations || gal.kdf_iterations || gal.pbkdf2_iterations || 600000}</code></span>
         </div>
@@ -1986,6 +1999,69 @@ function copyGalleryLink(btn, url) {
     console.error('Could not copy link:', err);
     alert('Chyba při kopírování odkazu.');
   });
+}
+
+function togglePasscodeReveal(galId, passcode) {
+  const textEl = document.getElementById(`passcode-text-${galId}`);
+  const btnEl = document.getElementById(`passcode-btn-${galId}`);
+  if (!textEl || !btnEl) return;
+
+  const isHidden = textEl.textContent === '••••••••';
+  if (isHidden) {
+    textEl.textContent = passcode || '(Není nastaveno)';
+    btnEl.innerHTML = '<i class="ph ph-eye-slash"></i> Skrýt heslo';
+  } else {
+    textEl.textContent = '••••••••';
+    btnEl.innerHTML = '<i class="ph ph-eye"></i> Zobrazit heslo';
+  }
+}
+
+function copyPasscode(passcode, btn) {
+  if (!passcode) {
+    alert('Heslo není u této galerie uloženo.');
+    return;
+  }
+
+  navigator.clipboard.writeText(passcode).then(() => {
+    const originalHTML = btn.innerHTML;
+    btn.innerHTML = '<i class="ph ph-check"></i> Zkopírováno!';
+    btn.classList.remove('admin-btn--secondary');
+    btn.classList.add('admin-btn--success');
+    setTimeout(() => {
+      btn.innerHTML = originalHTML;
+      btn.classList.remove('admin-btn--success');
+      btn.classList.add('admin-btn--secondary');
+    }, 2000);
+  }).catch(err => {
+    console.error('Could not copy passcode:', err);
+    alert('Chyba při kopírování hesla.');
+  });
+}
+
+async function editPasscode(galId, currentPasscode) {
+  const newPass = prompt('Zadejte heslo pro galerii:', currentPasscode);
+  if (newPass === null) return;
+
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/galleries?id=eq.${galId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': supabaseKey,
+        'Authorization': `Bearer ${supabaseKey}`
+      },
+      body: JSON.stringify({ passcode: newPass })
+    });
+
+    if (!res.ok) {
+      throw new Error(`HTTP error ${res.status}`);
+    }
+
+    await updateGalleriesData();
+  } catch (err) {
+    console.error('Error updating passcode:', err);
+    alert('Chyba při ukládání hesla.');
+  }
 }
 
 async function deleteGallery(galleryId) {
