@@ -971,8 +971,11 @@ main {
             <i class="ph ph-chart-bar"></i>
             <div>
               <div class="admin-card-title">Návštěvnost webu</div>
-              <div class="admin-card-desc">Celková návštěvnost a zobrazení jednotlivých stranek a projektů.</div>
+              <div class="admin-card-desc">Celková návštěvnost a zobrazení jednotlivých stránek a projektů.</div>
             </div>
+            <button class="admin-btn admin-btn--secondary" style="margin-left:auto; font-size:11.5px; padding:4px 10px;" onclick="cleanOldPageViews()">
+              <i class="ph ph-broom"></i> Promazat stará data (>90 dní)
+            </button>
           </div>
           <div class="views-summary-grid">
             <div class="views-card">
@@ -1580,15 +1583,30 @@ async function deleteMessage(messageId) {
   }
 }
 
+let viewsSummaryData = null;
+
 // --- Page Views ---
 async function fetchViewsFromDB() {
   if (!currentPassword) return false;
   try {
+    // Attempt high-performance summary RPC first
+    const { data: summaryData, error: summaryError } = await supabaseClient.rpc('get_page_views_summary_admin', {
+      admin_password: currentPassword
+    });
+
+    if (!summaryError && summaryData) {
+      viewsSummaryData = summaryData;
+      allViews = [];
+      return true;
+    }
+
+    // Fallback to legacy raw views RPC if summary RPC is not created yet
     const { data, error } = await supabaseClient.rpc('get_page_views_admin', {
       admin_password: currentPassword
     });
     if (error) throw error;
     allViews = data || [];
+    viewsSummaryData = null;
     return true;
   } catch (e) {
     if (!(e && (e.code === 'P0001' || (e.message && e.message.includes('Neplatné heslo'))))) {
@@ -1598,12 +1616,85 @@ async function fetchViewsFromDB() {
   }
 }
 
+async function cleanOldPageViews() {
+  if (!confirm('Opravdu chcete smazat záznamy o návštěvnosti starší než 90 dní?')) return;
+  try {
+    const { data, error } = await supabaseClient.rpc('clean_old_page_views_admin', {
+      admin_password: currentPassword,
+      days_to_keep: 90
+    });
+    if (error) throw error;
+    alert(`Úspěšně promazáno ${data || 0} starých záznamů.`);
+    await updateViewsData();
+  } catch (err) {
+    console.error('Error cleaning old page views:', err);
+    alert('Chyba při promazávání záznamů.');
+  }
+}
+
 function renderViews() {
   const totalCountEl = document.getElementById('views-total-count');
   const uniquePagesEl = document.getElementById('views-pages-count');
   const chartContainer = document.getElementById('views-chart-container');
   if (!chartContainer) return;
   
+  if (viewsSummaryData) {
+    const totalViews = viewsSummaryData.total_views || 0;
+    const uniquePages = viewsSummaryData.unique_pages || 0;
+    const rows = viewsSummaryData.views_by_page || [];
+
+    if (totalCountEl) totalCountEl.textContent = totalViews;
+    if (uniquePagesEl) uniquePagesEl.textContent = uniquePages;
+
+    if (rows.length === 0) {
+      chartContainer.innerHTML = '<div class="empty-state">Žádná zobrazení nezaznamenána.</div>';
+      return;
+    }
+
+    const maxCount = rows[0]?.view_count || 1;
+    chartContainer.innerHTML = rows.map(row => {
+      const cnt = row.view_count || 0;
+      const pct = (cnt / maxCount) * 100;
+      let title = '';
+      let sub = '';
+      const path = row.page_path || '';
+
+      if (row.project_id) {
+        const p = loadedProjects[row.project_id];
+        title = p ? `Projekt: ${p.title}` : `Projekt ID: ${row.project_id}`;
+        sub = `project.html?id=${row.project_id}`;
+      } else {
+        const lowerPath = path.toLowerCase();
+        if (lowerPath.endsWith('about.html')) {
+          title = 'O mně (about.html)';
+        } else if (lowerPath.endsWith('contact.html')) {
+          title = 'Kontakt (contact.html)';
+        } else if (lowerPath.endsWith('admin.html')) {
+          title = 'Administrace (admin.html)';
+        } else if (lowerPath.endsWith('index.html') || path === '/' || path === '') {
+          title = 'Úvodní stránka (index.html)';
+        } else {
+          const filename = path.split('/').pop() || path;
+          title = `${filename || 'Hlavní stránka'}`;
+        }
+        sub = path;
+      }
+
+      return `
+        <div class="views-chart-item">
+          <div class="views-chart-item-header">
+            <span class="views-chart-page-title">${escapeHTML(title)}<span class="views-chart-page-sub">${escapeHTML(sub)}</span></span>
+            <span class="views-chart-page-count">${cnt}x</span>
+          </div>
+          <div class="views-chart-bar-container">
+            <div class="views-chart-bar" style="width: ${pct}%"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+    return;
+  }
+
   if (totalCountEl) totalCountEl.textContent = allViews.length;
   
   if (allViews.length === 0) {

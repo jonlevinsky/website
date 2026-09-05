@@ -142,6 +142,70 @@ BEGIN
 END;
 $$;
 
+-- RPC: Agregovaný souhrn návštěvnosti pro admin panel (vysoko-výkonnostní dotaz)
+DROP FUNCTION IF EXISTS get_page_views_summary_admin(text);
+CREATE OR REPLACE FUNCTION get_page_views_summary_admin(admin_password text)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_total_views bigint;
+  v_unique_pages bigint;
+  v_rows jsonb;
+BEGIN
+  IF NOT verify_admin_password(admin_password) THEN
+    RAISE EXCEPTION 'Neplatné heslo.';
+  END IF;
+
+  SELECT COUNT(*) INTO v_total_views FROM public.page_views;
+  
+  SELECT COUNT(DISTINCT COALESCE(project_id::text, page_path)) INTO v_unique_pages FROM public.page_views;
+
+  SELECT jsonb_agg(
+    jsonb_build_object(
+      'page_path', page_path,
+      'project_id', project_id,
+      'view_count', cnt
+    )
+  ) INTO v_rows
+  FROM (
+    SELECT page_path, project_id, COUNT(*) as cnt
+    FROM public.page_views
+    GROUP BY page_path, project_id
+    ORDER BY cnt DESC
+  ) sub;
+
+  RETURN jsonb_build_object(
+    'total_views', v_total_views,
+    'unique_pages', v_unique_pages,
+    'views_by_page', COALESCE(v_rows, '[]'::jsonb)
+  );
+END;
+$$;
+
+-- RPC: Promazání starých záznamů návštěvnosti
+DROP FUNCTION IF EXISTS clean_old_page_views_admin(text, int);
+CREATE OR REPLACE FUNCTION clean_old_page_views_admin(admin_password text, days_to_keep int DEFAULT 90)
+RETURNS int
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+  v_deleted_count int;
+BEGIN
+  IF NOT verify_admin_password(admin_password) THEN
+    RAISE EXCEPTION 'Neplatné heslo.';
+  END IF;
+
+  DELETE FROM public.page_views
+  WHERE created_at < NOW() - (days_to_keep || ' days')::interval;
+
+  GET DIAGNOSTICS v_deleted_count = ROW_COUNT;
+  RETURN v_deleted_count;
+END;
+$$;
+
 -- =====================================================================
 -- 4. FUNKCE 3: OBSAH WEBU (CMS LIGHT)
 -- =====================================================================
