@@ -1739,6 +1739,7 @@ async function saveSiteSettings() {
 
 // --- Subscribers ---
 async function fetchSubscribersFromDB() {
+  if (!currentPassword) return false;
   try {
     const { data, error } = await supabaseClient.rpc('get_subscribers_admin', {
       admin_password: currentPassword
@@ -1747,7 +1748,11 @@ async function fetchSubscribersFromDB() {
     allSubscribers = data || [];
     return true;
   } catch (e) {
-    console.error('Error fetching subscribers:', e);
+    if (e && (e.code === 'P0001' || (e.message && e.message.includes('Neplatné heslo')))) {
+      console.log('Načtení odběratelů vyžaduje platné přihlášení administrátora.');
+    } else {
+      console.error('Error fetching subscribers:', e);
+    }
     return false;
   }
 }
