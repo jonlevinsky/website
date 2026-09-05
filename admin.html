@@ -1473,6 +1473,7 @@ async function updateLikesData() {
 
 // --- Messages ---
 async function fetchMessagesFromDB() {
+  if (!currentPassword) return false;
   try {
     const { data, error } = await supabaseClient.rpc('get_contact_messages_admin', {
       admin_password: currentPassword
@@ -1481,7 +1482,9 @@ async function fetchMessagesFromDB() {
     allMessages = data || [];
     return true;
   } catch (e) {
-    console.error('Error fetching messages:', e);
+    if (!(e && (e.code === 'P0001' || (e.message && e.message.includes('Neplatné heslo'))))) {
+      console.error('Error fetching messages:', e);
+    }
     return false;
   }
 }
@@ -1579,6 +1582,7 @@ async function deleteMessage(messageId) {
 
 // --- Page Views ---
 async function fetchViewsFromDB() {
+  if (!currentPassword) return false;
   try {
     const { data, error } = await supabaseClient.rpc('get_page_views_admin', {
       admin_password: currentPassword
@@ -1587,7 +1591,9 @@ async function fetchViewsFromDB() {
     allViews = data || [];
     return true;
   } catch (e) {
-    console.error('Error fetching page views:', e);
+    if (!(e && (e.code === 'P0001' || (e.message && e.message.includes('Neplatné heslo'))))) {
+      console.error('Error fetching page views:', e);
+    }
     return false;
   }
 }
@@ -2177,16 +2183,18 @@ async function initPage() {
   await loadProjectsJSON();
   
   if (currentPassword) {
-    const success = await updateData();
-    if (success) {
+    // Validate password with probe RPC call before fetching all data
+    const { error } = await supabaseClient.rpc('get_all_likes_admin', { admin_password: currentPassword });
+    if (!error) {
       dashboardContainer.style.display = 'block';
+      await updateData();
       initRealtime();
     } else {
-      // Password invalid
+      // Password invalid or expired
       localStorage.removeItem('admin_password');
       currentPassword = '';
       loginContainer.style.display = 'block';
-      loginError.textContent = 'Uložené administrátorské heslo je neplatné.';
+      loginError.textContent = 'Uložené administrátorské heslo je neplatné. Přihlaste se prosím znova.';
       loginError.style.display = 'block';
     }
   } else {
