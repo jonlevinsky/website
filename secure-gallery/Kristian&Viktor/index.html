@@ -2822,8 +2822,22 @@ async function decryptBytes(encryptedBuf, key) {
   const ct = encryptedBuf.slice(12);
   return window.crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce }, key, ct);
 }
+function normalizeMediaPath(path) {
+  if (!path) return path;
+  if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('blob:')) return path;
+  const currentPath = decodeURIComponent(window.location.pathname);
+  const slashIdx = path.lastIndexOf('/files/');
+  if (slashIdx > 0) {
+    const folderPrefix = path.substring(0, slashIdx);
+    if (currentPath.includes(folderPrefix)) {
+      return path.substring(slashIdx + 1);
+    }
+  }
+  return path;
+}
+
 async function fetchAndDecrypt(path, onProgress) {
-  const resp = await fetch(path);
+  const resp = await fetch(normalizeMediaPath(path));
   if (!resp.ok) throw new Error('Chyba stahování: ' + path);
   const contentLength = +resp.headers.get('Content-Length') || 0;
   const reader = resp.body.getReader();
@@ -4539,7 +4553,7 @@ function hideDecryptProgress() {
 
 // ─── Enhanced fetchAndDecrypt with progress ───
 async function fetchAndDecryptProgress(path, onProgress, onChunk) {
-  const resp = await fetch(path);
+  const resp = await fetch(normalizeMediaPath(path));
   if (!resp.ok) throw new Error('Chyba stahování: ' + path);
   const contentLength = +(resp.headers.get('Content-Length') || 0);
   const reader = resp.body.getReader();
