@@ -1,192 +1,390 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Odhlášení z newsletteru — Jan Levínský">
-<meta name="theme-color" content="#2c3e50">
-<meta name="robots" content="noindex, nofollow">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Odhlášení z newsletteru — Jan Levínský">
+  <meta name="theme-color" content="#2c3e50">
+  <meta name="robots" content="noindex, nofollow">
 
-<title>Odhlášení z newsletteru — Jan Levínský</title>
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+  <title>Odhlášení z newsletteru — Jan Levínský</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+  
+  <link rel="stylesheet" href="style.css">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
-:root {
-  --bg: #0a0a0a;
-  --surface: #1a1a1a;
-  --text: #f5f5f7;
-  --text-muted: #98989d;
-  --accent: #007aff;
-  --error: #ff3b30;
-  --success: #34c759;
-  --r-md: 12px;
-}
+  <style>
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+    /* Fixed top header matching portfolio design system */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(250, 248, 245, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+    }
 
-body {
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  line-height: 1.6;
-}
+    .header-container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-.container {
-  max-width: 500px;
-  width: 100%;
-  background: var(--surface);
-  border-radius: var(--r-md);
-  padding: 48px 32px;
-  text-align: center;
-}
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      font-family: var(--serif);
+      font-size: 1.25rem;
+      font-weight: 500;
+      transition: opacity 0.2s ease;
+    }
 
-.icon {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto 24px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-}
+    .logo-link:hover {
+      opacity: 0.85;
+    }
 
-h1 {
-  font-family: 'Bricolage Grotesque', sans-serif;
-  font-size: 28px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  line-height: 1.2;
-}
+    .logo-link img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+    }
 
-p {
-  color: var(--text-muted);
-  font-size: 16px;
-  margin-bottom: 24px;
-}
+    .logo-link span {
+      font-family: var(--serif);
+      color: var(--text);
+    }
 
-.status {
-  padding: 16px 20px;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  font-size: 15px;
-  font-weight: 500;
-  display: none;
-}
+    .logo-link span em {
+      font-style: italic;
+      color: var(--accent);
+    }
 
-.status.loading {
-  display: block;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-muted);
-}
+    .header-back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-family: var(--sans);
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: var(--r-full);
+      background: var(--bg-raised);
+      transition: all 0.25s var(--ease-out-expo);
+    }
 
-.status.success {
-  display: block;
-  background: rgba(52, 199, 89, 0.15);
-  color: var(--success);
-}
+    .header-back-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--text-on-accent);
+      transform: translateY(-1px);
+    }
 
-.status.error {
-  display: block;
-  background: rgba(255, 59, 48, 0.15);
-  color: var(--error);
-}
+    .header-back-btn i {
+      font-size: 14px;
+      transition: transform 0.25s ease;
+    }
 
-.btn {
-  display: inline-block;
-  padding: 14px 32px;
-  background: var(--accent);
-  color: white;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-  cursor: pointer;
-  border: none;
-  font-size: 16px;
-  font-family: inherit;
-}
+    .header-back-btn:hover i {
+      transform: translateX(-2px);
+    }
 
-.btn:hover {
-  transform: translateY(-2px);
-  opacity: 0.9;
-}
+    /* Page container */
+    main.unsubscribe-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 100px 24px 40px;
+    }
 
-.btn:active {
-  transform: translateY(0);
-}
+    /* Centered Card Container */
+    .unsubscribe-card {
+      max-width: 520px;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 48px 36px;
+      text-align: center;
+      box-shadow: 0 12px 36px rgba(28, 25, 23, 0.05), 0 2px 8px rgba(28, 25, 23, 0.03);
+      opacity: 0;
+      animation: fadeUp 0.7s var(--ease-out-expo) forwards;
+    }
 
-.btn.secondary {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--text);
-}
+    /* Icon Badge */
+    .icon-badge {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      border-radius: var(--r-full);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      background: var(--bg-raised);
+      color: var(--accent);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.3s ease;
+    }
 
-.spinner {
-  width: 20px;
-  height: 20px;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  border-top-color: var(--text);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 8px;
-}
+    .icon-badge.success-badge {
+      background: rgba(44, 62, 80, 0.1);
+      color: var(--accent);
+      border-color: rgba(44, 62, 80, 0.2);
+    }
 
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
+    .icon-badge.error-badge {
+      background: rgba(185, 28, 28, 0.08);
+      color: #b91c1c;
+      border-color: rgba(185, 28, 28, 0.2);
+    }
 
-#content {
-  display: none;
-}
+    /* Kicker */
+    .card-kicker {
+      font-family: var(--sans);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
 
-#content.visible {
-  display: block;
-}
-</style>
+    /* Title */
+    .card-title {
+      font-family: var(--serif);
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1.2;
+      letter-spacing: -0.015em;
+      margin-bottom: 14px;
+    }
+
+    /* Description */
+    .card-description {
+      font-family: var(--sans);
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 300;
+      margin-bottom: 32px;
+    }
+
+    /* Actions Layout */
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Pill Buttons */
+    .btn-pill-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 32px;
+      background: var(--accent);
+      color: var(--text-on-accent);
+      border-radius: var(--r-full);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      max-width: 320px;
+      transition: background-color 0.25s ease, transform 0.25s var(--ease-out-expo), box-shadow 0.25s ease, opacity 0.25s ease;
+      box-shadow: 0 4px 12px rgba(44, 62, 80, 0.15);
+    }
+
+    .btn-pill-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(44, 62, 80, 0.25);
+    }
+
+    .btn-pill-primary:active {
+      transform: translateY(0);
+    }
+
+    .btn-pill-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-pill-secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: var(--bg-raised);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--r-full);
+      font-family: var(--sans);
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      width: 100%;
+      max-width: 320px;
+      transition: all 0.25s var(--ease-out-expo);
+    }
+
+    .btn-pill-secondary:hover {
+      background: var(--surface-raised);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    .btn-pill-secondary:active {
+      transform: translateY(0);
+    }
+
+    /* Status Container */
+    .status-box {
+      padding: 14px 20px;
+      border-radius: var(--r-md);
+      margin-bottom: 24px;
+      font-size: 14px;
+      font-weight: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .status-box.loading {
+      display: flex;
+      background: var(--bg-raised);
+      color: var(--muted);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .status-box.error {
+      display: flex;
+      background: rgba(185, 28, 28, 0.08);
+      color: #b91c1c;
+      border: 1px solid rgba(185, 28, 28, 0.2);
+    }
+
+    /* Theme Spinner */
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      .unsubscribe-card {
+        padding: 36px 20px;
+      }
+      .card-title {
+        font-size: 24px;
+      }
+      .btn-pill-primary, .btn-pill-secondary {
+        max-width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-  <div class="icon">📧</div>
-  
-  <div id="content">
-    <h1 id="title">Odhlášení z newsletteru</h1>
-    <p id="description">Opravdu se chceš odhlásit? Už nedostaneš aktualizace o nových projektech a obsahu.</p>
+<header class="site-header">
+  <div class="header-container">
+    <a href="./index.html" class="logo-link">
+      <img src="./media/logo.png" alt="Jan Levínský logo">
+      <span>Jan <em>Levínský</em></span>
+    </a>
+    <a href="./index.html" class="header-back-btn">
+      <i class="ph ph-arrow-left"></i> Zpět na web
+    </a>
+  </div>
+</header>
+
+<main class="unsubscribe-page">
+  <div class="unsubscribe-card">
+    <div id="icon-container" class="icon-badge">
+      <i class="ph ph-envelope-simple-open"></i>
+    </div>
     
-    <div id="status" class="status"></div>
+    <div id="kicker" class="card-kicker">ODHLÁŠENÍ Z NEWSLETTERU</div>
+    <h1 id="title" class="card-title">Odhlásit z odběru novinek?</h1>
+    <p id="description" class="card-description">
+      Už nedostaneš žádné aktualizace o nových fotoprojektech a novinkách.
+    </p>
     
-    <div id="actions">
-      <button id="unsubscribe-btn" class="btn">Odhlásit se</button>
-      <br><br>
-      <a href="index.html" class="btn secondary">Zpět na portfolio</a>
+    <div id="status" class="status-box"></div>
+    
+    <div id="actions" class="card-actions">
+      <button id="unsubscribe-btn" class="btn-pill-primary">
+        Potvrdit odhlášení
+      </button>
+      <a href="./index.html" class="btn-pill-secondary">
+        <i class="ph ph-arrow-left"></i> Zpět na web
+      </a>
     </div>
   </div>
-</div>
+</main>
 
 <script>
 const supabaseUrl = 'https://jmxpqcsywnlbmfrylnhw.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpteHBxY3N5d25sYm1mcnlsbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODkwNjcsImV4cCI6MjEwMzc2NTA2N30.pFgifOtNk2tLGJLEYeughUByfT6um85kfO2r7OopEtA';
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-const content = document.getElementById('content');
+const iconContainer = document.getElementById('icon-container');
+const kicker = document.getElementById('kicker');
 const title = document.getElementById('title');
 const description = document.getElementById('description');
 const status = document.getElementById('status');
@@ -198,17 +396,17 @@ const params = new URLSearchParams(window.location.search);
 const token = params.get('token');
 
 if (!token) {
-  content.classList.add('visible');
-  title.textContent = 'Chybný odkaz';
-  description.textContent = 'Tento odkaz není platný. Zkontroluj, že jsi použil kompletní URL z emailu.';
-  actions.innerHTML = '<a href="index.html" class="btn">Zpět na portfolio</a>';
+  iconContainer.className = 'icon-badge error-badge';
+  iconContainer.innerHTML = '<i class="ph ph-warning-circle"></i>';
+  kicker.textContent = 'CHYBA ODKAZU';
+  title.textContent = 'Neplatný nebo expirovaný odkaz';
+  description.textContent = 'Tento odkaz není platný nebo vypršel. Zkontroluj, zda jsi použil kompletní URL z e-mailu, nebo se vrať na hlavní stránku.';
+  actions.innerHTML = '<a href="./index.html" class="btn-pill-primary"><i class="ph ph-arrow-left"></i> Zpět na hlavní stranu</a>';
 } else {
-  content.classList.add('visible');
-  
   unsubscribeBtn.addEventListener('click', async () => {
     unsubscribeBtn.disabled = true;
-    status.className = 'status loading';
-    status.innerHTML = '<span class="spinner"></span>Odhlašuji...';
+    status.className = 'status-box loading';
+    status.innerHTML = '<span class="spinner"></span> <span>Zpracovávám požadavek...</span>';
     
     try {
       const { data, error } = await supabaseClient
@@ -219,18 +417,22 @@ if (!token) {
       const result = data[0];
       
       if (result.success) {
-        title.textContent = 'Odhlášení proběhlo úspěšně';
-        description.textContent = 'Už nedostaneš žádné další newslettery. Pokud to bylo omylem, můžeš se znovu přihlásit na homepage.';
-        status.className = 'status success';
-        status.textContent = '✓ ' + result.message;
-        actions.innerHTML = '<a href="index.html" class="btn">Zpět na portfolio</a>';
+        iconContainer.className = 'icon-badge success-badge';
+        iconContainer.innerHTML = '<i class="ph ph-check-circle"></i>';
+        kicker.textContent = 'POTVRZENO';
+        title.textContent = 'Úspěšně odhlášeno';
+        description.textContent = 'Byl jsi odhlášen z odběru novinek. Kdykoliv se můžeš znovu přihlásit na hlavní stránce.';
+        status.style.display = 'none';
+        actions.innerHTML = '<a href="./index.html" class="btn-pill-primary"><i class="ph ph-arrow-left"></i> Zpět na hlavní stranu</a>';
       } else {
         throw new Error(result.message);
       }
     } catch (err) {
       console.error('Unsubscribe error:', err);
-      status.className = 'status error';
-      status.textContent = '✗ ' + (err.message || 'Něco se pokazilo. Zkus to prosím znovu.');
+      iconContainer.className = 'icon-badge error-badge';
+      iconContainer.innerHTML = '<i class="ph ph-warning-circle"></i>';
+      status.className = 'status-box error';
+      status.innerHTML = '<span>' + (err.message || 'Něco se pokazilo. Zkus to prosím znovu.') + '</span>';
       unsubscribeBtn.disabled = false;
     }
   });
