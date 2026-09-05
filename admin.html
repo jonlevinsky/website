@@ -1787,7 +1787,7 @@ function renderSubscribers() {
         <td>${escapeHTML(sub.email)}</td>
         <td>${formattedDate}</td>
         <td style="text-align: center;">
-          <button class="btn-copy-unsubscribe" title="Kopírovat odkaz na odhlášení" onclick="copyUnsubscribeLink('${sub.unsubscribe_token || ''}', ${sub.id})">
+          <button class="btn-copy-unsubscribe" title="Kopírovat odkaz na odhlášení" onclick="copyUnsubscribeLink('${sub.unsubscribe_token || ''}', '${sub.id}')">
             <i class="ph ph-copy"></i> Kopírovat odkaz
           </button>
           <span class="copy-success-badge" id="copy-success-${sub.id}" style="display: none;">
@@ -1795,7 +1795,7 @@ function renderSubscribers() {
           </span>
         </td>
         <td style="text-align: center;">
-          <button class="btn-delete" title="Smazat odběratele" onclick="deleteSubscriber(${sub.id})">
+          <button class="btn-delete" title="Smazat odběratele" onclick="deleteSubscriber('${sub.id}')">
             <i class="ph ph-trash"></i>
           </button>
         </td>
