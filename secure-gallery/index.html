@@ -13,9 +13,11 @@
 
 :root {
   --md-primary: #8b6914;
+  --md-sys-color-primary: var(--md-primary);
+  --accent-gold: #c4956a;
   --md-on-primary: #ffffff;
-  --md-primary-container: ##ffffff6e;
-  --md-secondary-container: ##ffffff6e;
+  --md-primary-container: #ffffff6e;
+  --md-secondary-container: #ffffff6e;
   --md-surface: #faf8f5;
   --md-surface-variant: #f0ece6;
   --md-surface-container: #f5f2ee;
@@ -782,6 +784,42 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .g-item img { position: relative; z-index: 1; }
 .item-badge { position: absolute; top: 12px; left: 12px; background: rgba(28,25,23,0.55); backdrop-filter: blur(12px); padding: 6px 12px; border-radius: var(--r-full); font-family: var(--sans); font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--md-primary); text-transform: uppercase; border: 1px solid color-mix(in srgb, var(--md-primary) 25%, transparent); z-index: 3; display: inline-flex; align-items: center; gap: 5px; }
 .item-badge svg { width: 12px; height: 12px; fill: currentColor; }
+
+/* Grid Item Variant Badges (Hover) */
+.grid-variant-badges {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.25s ease, transform 0.25s ease, right 0.3s ease;
+  z-index: 5;
+  pointer-events: none;
+}
+.g-item:hover .grid-variant-badges {
+  opacity: 1;
+  transform: translateY(0);
+}
+.grid-variant-badge {
+  background: rgba(28, 25, 23, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+.g-item.downloaded .grid-variant-badges { right: 84px; }
+body.selecting .grid-variant-badges { right: 44px; }
+body.selecting .g-item.downloaded .grid-variant-badges { right: 116px; }
 .g-item-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(28,25,23,0.75) 0%, rgba(28,25,23,0) 55%); opacity: 0; transition-property: opacity; transition-duration: 0.4s; transition-timing-function: ease; display: flex; flex-direction: column; justify-content: flex-end; padding: 16px; z-index: 2; }
 .g-item:hover .g-item-overlay { opacity: 1; }
 .g-item-name { font-family: var(--sans); font-size: 13px; font-weight: 500; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -839,8 +877,87 @@ body.selecting .select-ring { display: flex; }
 #lightbox { position: fixed; inset: 0; z-index: var(--z-lightbox); background: rgba(250,248,245,0.98); display: none; flex-direction: column; opacity: 0; transition-property: opacity; transition-duration: 0.4s; transition-timing-function: ease; }
 #lightbox.open { display: flex; opacity: 1; }
 
-.lb-top { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--md-outline); background: var(--md-surface-container); backdrop-filter: blur(20px); transition-property: background-color, border-color; transition-duration: 0.4s; transition-timing-function: ease; }
+.lb-top { position: relative; display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--md-outline); background: var(--md-surface-container); backdrop-filter: blur(20px); transition-property: background-color, border-color; transition-duration: 0.4s; transition-timing-function: ease; gap: 12px; flex-wrap: wrap; }
 .lb-title { font-family: var(--sans); font-size: 13px; font-weight: 400; color: var(--md-on-surface-variant); letter-spacing: 0.03em; }
+
+/* Lightbox Variant Selector */
+#lb-variant-selector {
+  display: none;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: var(--md-surface-container-high);
+  border: 1px solid var(--md-outline);
+  border-radius: var(--r-full);
+  padding: 3px 4px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-border);
+}
+#lb-variant-selector:empty {
+  display: none !important;
+}
+#lb-variant-selector:hover {
+  box-shadow: var(--md-elevation-2);
+  border-color: color-mix(in srgb, var(--md-primary) 40%, var(--md-outline));
+}
+
+.variant-pill {
+  background: transparent;
+  border: none;
+  color: var(--md-on-surface-variant);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: var(--r-full);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+}
+.variant-pill svg {
+  flex-shrink: 0;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+.variant-pill span {
+  display: inline-block;
+  max-width: 120px;
+  opacity: 1;
+  transition: max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+#lb-variant-selector:not(:hover) .variant-pill:not(.active) span {
+  max-width: 0;
+  opacity: 0;
+}
+#lb-variant-selector:not(:hover) .variant-pill:not(.active) {
+  padding: 5px 8px;
+}
+.variant-pill:hover {
+  background: color-mix(in srgb, var(--md-primary) 12%, transparent);
+  color: var(--md-on-surface);
+}
+.variant-pill:hover svg {
+  transform: scale(1.1);
+}
+.variant-pill.active {
+  background: var(--md-sys-color-primary, var(--accent-gold, var(--md-primary)));
+  color: var(--md-on-primary, #ffffff);
+  font-weight: 600;
+  box-shadow: var(--md-elevation-1);
+}
+.variant-pill:active {
+  transform: scale(0.95);
+}
 
 /* Lightbox Chapter Badge & Dots Dividers */
 .lb-chapter-badge {
@@ -1184,21 +1301,127 @@ body.selecting .select-ring { display: flex; }
 #toast .toast-icon { width: 18px; height: 18px; border-radius: var(--r-full); background: var(--md-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 #toast .toast-icon svg { width: 10px; height: 10px; fill: var(--md-on-primary); }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .g-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); grid-auto-rows: 160px; gap: 8px; padding: 0 12px 32px; }
-  .g-item { min-height: 160px; }
-  .g-header { padding: 16px 12px; }
-  .g-hero { padding: 24px 12px 16px; }
+/* Responsive & Mobile Touch Cleanup & Optimization */
+@media (hover: none), (max-width: 768px) {
+  /* 1. Header & Hero Section */
+  .g-header { padding: 16px 16px 8px; }
+  .g-hero { padding: 16px 16px 8px; }
   .g-hero h2 { font-size: 28px; }
-  .g-filters { padding: 0 12px 16px; }
+  .g-filters {
+    padding: 0 16px 16px;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .g-filters::-webkit-scrollbar { display: none; }
   .g-footer { padding: 48px 12px 100px; }
-  .lb-top { padding: 12px 16px; }
+
+  /* 2. Bento Grid */
+  .g-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 150px;
+    gap: 8px;
+    padding: 0 12px 32px;
+  }
+  .g-item { min-height: 150px; }
+  .g-item img { object-fit: cover; width: 100%; height: 100%; }
+  .g-item-overlay { padding: 8px 10px; }
+  .g-item-name { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+
+  /* Bento Grid Mobile Badges */
+  .grid-variant-badges {
+    display: none !important;
+  }
+
+  /* 3. Lightbox Top Bar & Variant Selector */
+  .lb-top {
+    padding: 10px 12px;
+    gap: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .lb-title {
+    max-width: 50vw;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  #lb-variant-selector {
+    position: static;
+    transform: none;
+    margin: 6px auto 0;
+    width: 100%;
+    justify-content: center;
+    max-width: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 3px 6px;
+    gap: 4px;
+    order: 2;
+  }
+  #lb-variant-selector::-webkit-scrollbar { display: none; }
+  #lb-variant-selector .variant-pill {
+    padding: 4px 10px !important;
+    min-height: 32px;
+    display: inline-flex !important;
+    align-items: center;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+  #lb-variant-selector .variant-pill span {
+    max-width: 100px !important;
+    opacity: 1 !important;
+    display: inline-block !important;
+  }
+
   .lb-stage { padding: 8px; }
-  .lb-nav { width: 40px; height: 40px; font-size: 14px; }
+  .lb-nav {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+    background: rgba(28,25,23,0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: 50%;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    top: 50%;
+    transform: translateY(-50%);
+  }
   .lb-nav.prev { left: 8px; }
   .lb-nav.next { right: 8px; }
-  .lock-card { padding: 36px 24px; border-radius: var(--r-lg); }
+  .lb-nav:hover { transform: translateY(-50%) scale(1.05); }
+
+  /* 4. Selection & Floating Navigation Safe Areas & Stacking */
+  #selection-bar {
+    z-index: 200;
+    padding: 10px 16px;
+    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    gap: 12px;
+  }
+  .mobile-chapter-bar {
+    z-index: 45;
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+  .mobile-chapter-drawer {
+    z-index: 250;
+  }
+
+  /* 5. Modals & Cards */
+  .lock-card,
+  .tip-card-inner,
+  .contact-card-inner,
+  .help-card {
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 24px 18px;
+    -webkit-overflow-scrolling: touch;
+  }
   .lock-title { font-size: 26px; }
   .custom-video-container video { max-height: calc(100vh - 160px); }
   .video-controls { padding: 30px 12px 12px; }
@@ -1207,7 +1430,6 @@ body.selecting .select-ring { display: flex; }
   .ctrl-btn.play-btn { width: 40px; height: 40px; }
   .time-display { font-size: 11px; min-width: 70px; }
   .speed-btn { display: none; }
-  #selection-bar { padding: 10px 16px; gap: 12px; }
   .btn-primary { padding: 8px 16px; font-size: 11px; }
 }
 
@@ -1216,6 +1438,7 @@ body.selecting .select-ring { display: flex; }
   .g-item { min-height: 140px; }
   .g-hero h2 { font-size: 24px; }
   .btn-ghost { padding: 8px 14px; font-size: 11px; }
+  .lb-title { max-width: 40vw; }
 }
 
 .g-item { touch-action: manipulation; }
@@ -1864,17 +2087,19 @@ svg {
     <div class="lock-label">Zabezpečený přístup</div>
     <div class="lock-title" id="lock-name">Klientská galerie</div>
     <div class="lock-subtitle">Jan Levínský</div>
-    <div class="field-wrap" style="margin-bottom:12px;">
-      <input type="text" id="name-input" placeholder="Vaše jméno (nepovinné)" autocomplete="name">
-    </div>
-    <div class="field-wrap">
-      <input type="password" id="password-input" placeholder="Zadejte heslo" autocomplete="current-password">
-      <button type="button" class="password-toggle hover-icon-eye" id="pwd-toggle" onclick="togglePassword()" title="Zobrazit heslo">
-        <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-        <svg id="eye-off-icon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-      </button>
-    </div>
-    <button class="btn-unlock hover-icon-download" id="unlock-btn" onclick="unlock()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; margin-top:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Odemknout galerii</button>
+    <form id="lock-form" onsubmit="event.preventDefault(); unlock();">
+      <div class="field-wrap" style="margin-bottom:12px;">
+        <input type="text" id="name-input" placeholder="Vaše jméno (nepovinné)" autocomplete="name" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); unlock(); }">
+      </div>
+      <div class="field-wrap">
+        <input type="password" id="password-input" placeholder="Zadejte heslo" autocomplete="current-password" onkeydown="if(event.key === 'Enter'){ event.preventDefault(); unlock(); }">
+        <button type="button" class="password-toggle hover-icon-eye" id="pwd-toggle" onclick="togglePassword()" title="Zobrazit heslo">
+          <svg id="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg id="eye-off-icon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </button>
+      </div>
+      <button class="btn-unlock hover-icon-download" id="unlock-btn" onclick="unlock()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; margin-top:-2px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Odemknout galerii</button>
+    </form>
     <div class="lock-error" id="lock-error"></div>
     <div class="lock-footer">Cinematography & Photography</div>
   </div>
@@ -2618,6 +2843,7 @@ svg {
         <span class="ch-title" id="lb-ch-title">Přípravy & Ranní káva</span>
       </div>
     </div>
+    <div id="lb-variant-selector" style="display:none;"></div>
     <div style="display: flex; gap: 8px; align-items: center;">
       <button class="btn-ghost hover-icon-download" id="lb-dl-btn" onclick="downloadCurrentFull()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -3123,7 +3349,53 @@ function createItemElement(item, idx) {
   el.dataset.itemId = item.id;
   const sizeStr = (item.size/1024/1024).toFixed(1) + ' MB';
   const infoText = item.time ? (item.time + ' · ' + sizeStr) : sizeStr;
-  el.innerHTML = (item.type === 'video' ? '<div class="item-badge"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Video</div>' : '') + (isDl ? '<div class="dl-indicator"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Staženo</div>' : '') + '<div class="select-ring"></div><div class="g-item-overlay"><div class="g-item-name">' + item.name + '</div><div class="g-item-info">' + infoText + '</div></div>';
+
+  const variants = item.variants;
+  const variantKeys = variants && typeof variants === 'object' ? Object.keys(variants) : [];
+  let variantBadgesHTML = '';
+
+  if (variantKeys.length > 1) {
+    const standardOrder = ['color', 'bw', 'sepia', 'art'];
+    const sortedKeys = variantKeys.slice().sort((a, b) => {
+      const ia = standardOrder.indexOf(a);
+      const ib = standardOrder.indexOf(b);
+      if (ia !== -1 && ib !== -1) return ia - ib;
+      if (ia !== -1) return -1;
+      if (ib !== -1) return 1;
+      return a.localeCompare(b);
+    });
+
+    const GRID_VARIANT_ICONS = {
+      color: {
+        title: 'Barevná',
+        icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10c0-1.5-1.2-2.5-2.7-2.5H16a2 2 0 0 1-2-2v-1.5C14 4.5 12.8 2 12 2z"/><circle cx="7.5" cy="10.5" r="1" fill="currentColor"/><circle cx="12" cy="7.5" r="1" fill="currentColor"/><circle cx="16.5" cy="10.5" r="1" fill="currentColor"/><circle cx="10.5" cy="15.5" r="1" fill="currentColor"/></svg>'
+      },
+      bw: {
+        title: 'Černobílá',
+        icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20a10 10 0 0 0 0-20z" fill="currentColor"/></svg>'
+      },
+      sepia: {
+        title: 'Sépie',
+        icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'
+      },
+      art: {
+        title: 'Art',
+        icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>'
+      }
+    };
+
+    let badges = '';
+    sortedKeys.forEach(k => {
+      const def = GRID_VARIANT_ICONS[k] || { title: k, icon: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' };
+      badges += `<span class="grid-variant-badge" title="${def.title}">${def.icon}</span>`;
+    });
+    variantBadgesHTML = `<div class="grid-variant-badges">${badges}</div>`;
+  }
+
+  el.innerHTML = (item.type === 'video' ? '<div class="item-badge"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Video</div>' : '') +
+    (isDl ? '<div class="dl-indicator"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>Staženo</div>' : '') +
+    variantBadgesHTML +
+    '<div class="select-ring"></div><div class="g-item-overlay"><div class="g-item-name">' + item.name + '</div><div class="g-item-info">' + infoText + '</div></div>';
   el.addEventListener('click', () => {
     if (isSelecting) {
       if (selectedItems.has(item.id)) selectedItems.delete(item.id);
@@ -3148,27 +3420,20 @@ function getSectionTargetY(secEl) {
 }
 
 function getTimelineScrollBounds() {
-  if (!manifest?.sections?.length) return { startScrollY: 0, chapterScrollRange: 1 };
+  if (!manifest?.sections?.length) return { startScrollY: 0, endScrollY: 1, chapterScrollRange: 1 };
   
-  const firstSecEl = document.getElementById('section-' + manifest.sections[0].id);
+  const sections = manifest.sections;
+  const firstSecEl = document.getElementById('section-' + sections[0].id);
+  const lastSecEl = document.getElementById('section-' + sections[sections.length - 1].id);
+
   const startScrollY = firstSecEl ? getSectionTargetY(firstSecEl) : 0;
   const docMaxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-  const endScrollY = Math.max(startScrollY + 10, docMaxScroll);
+  const lastSecTargetY = lastSecEl ? getSectionTargetY(lastSecEl) : docMaxScroll;
+  
+  const endScrollY = Math.max(startScrollY + 10, lastSecTargetY, docMaxScroll);
   const chapterScrollRange = Math.max(1, endScrollY - startScrollY);
 
   return { startScrollY, endScrollY, chapterScrollRange };
-}
-
-function initGalleryResizeObserver() {
-  if (galleryResizeObserver) return;
-  const target = document.getElementById('gallery-shell') || document.body;
-  if (typeof ResizeObserver !== 'undefined') {
-    galleryResizeObserver = new ResizeObserver(() => {
-      updateChapterMarkerPositions();
-      updateRightTimelineScroll();
-    });
-    galleryResizeObserver.observe(target);
-  }
 }
 
 function updateChapterMarkerPositions() {
@@ -3176,8 +3441,8 @@ function updateChapterMarkerPositions() {
   if (!container || !manifest?.sections?.length) return;
 
   const { startScrollY, chapterScrollRange } = getTimelineScrollBounds();
-
   const sections = manifest.sections;
+
   sections.forEach((sec, idx) => {
     const secEl = document.getElementById('section-' + sec.id);
     const marker = container.querySelector(`.chapter-scroll-marker[data-sec-id="${sec.id}"]`);
@@ -3210,6 +3475,28 @@ function updateRightTimelineScroll() {
   const sections = manifest.sections;
   let currentActiveId = null;
 
+  const docMaxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  const isAtBottom = (window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight - 60);
+
+  if (isAtBottom && sections.length > 0) {
+    currentActiveId = sections[sections.length - 1].id;
+  } else {
+    // Determine active section based on scroll position (the last section whose targetY <= currentScroll + 140)
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      const secEl = document.getElementById('section-' + sec.id);
+      if (secEl) {
+        const secTargetY = getSectionTargetY(secEl);
+        if (currentScroll + 140 >= secTargetY) {
+          currentActiveId = sec.id;
+        }
+      }
+    }
+    if (!currentActiveId && sections.length > 0) {
+      currentActiveId = sections[0].id;
+    }
+  }
+
   sections.forEach(sec => {
     const secEl = document.getElementById('section-' + sec.id);
     const marker = document.querySelector(`.chapter-scroll-marker[data-sec-id="${sec.id}"]`);
@@ -3217,21 +3504,9 @@ function updateRightTimelineScroll() {
       const secTargetY = getSectionTargetY(secEl);
       const markerRatio = Math.max(0, Math.min(1, (secTargetY - startScrollY) / chapterScrollRange));
       const markerPct = markerRatio * 100;
-
       marker.classList.toggle('passed', pct >= markerPct - 0.5);
-
-      const rect = secEl.getBoundingClientRect();
-      if (rect.top <= 120 && rect.bottom >= 100) {
-        currentActiveId = sec.id;
-      }
     }
   });
-
-  if (!currentActiveId && sections.length > 0) {
-    if (currentScroll < startScrollY + 20) {
-      currentActiveId = sections[0].id;
-    }
-  }
 
   if (currentActiveId) {
     document.querySelectorAll('.chapter-scroll-marker').forEach(m => {
@@ -3751,6 +4026,12 @@ function openLightbox(idx) {
   const targetSlideIdx = lightboxSlides.findIndex(s => s.type === 'item' && s.originalIndex === idx);
   lbSlideIndex = targetSlideIdx >= 0 ? targetSlideIdx : 0;
 
+  const variantSel = document.getElementById('lb-variant-selector');
+  if (variantSel) {
+    variantSel.style.display = 'none';
+    variantSel.innerHTML = '';
+  }
+
   document.getElementById('lightbox').classList.add('open');
   document.body.classList.add('lightbox-open');
   document.body.style.overflow = 'hidden';
@@ -3872,9 +4153,15 @@ async function showLightboxSlide(slideIdx) {
   const chTitleEl = document.getElementById('lb-ch-title');
   const filenameEl = document.getElementById('lb-filename');
 
+  const variantSel = document.getElementById('lb-variant-selector');
+
   if (slide.type === 'chapter_divider') {
     if (contentEl) contentEl.style.display = 'none';
     if (cardSlideEl) cardSlideEl.style.display = 'flex';
+    if (variantSel) {
+      variantSel.style.display = 'none';
+      variantSel.innerHTML = '';
+    }
 
     const sec = slide.section;
     const secIdx = slide.sectionIndex;
@@ -3959,16 +4246,165 @@ async function showLightboxSlide(slideIdx) {
     }
 
     if (item.type === 'video') {
+      if (variantSel) {
+        variantSel.style.display = 'none';
+        variantSel.innerHTML = '';
+      }
       const overlay = document.createElement('div');
       overlay.className = 'video-decrypt-overlay';
       overlay.id = 'vid-overlay';
       overlay.innerHTML = '<button class="btn-primary hover-icon-play" style="font-size:13px; padding:14px 28px;" onclick="playCurrentVideo()">Dešifrovat a přehrát</button><p>Z důvodu silného šifrování se video musí nejprve celé bezpečně načíst do paměti.</p>';
       contentEl.appendChild(overlay);
     } else {
+      const variants = item.variants;
+      const variantKeys = variants && typeof variants === 'object' ? Object.keys(variants) : [];
+
       const img = document.createElement('img');
       img.src = thumbUrl;
       img.style.borderRadius = 'var(--r-md)';
       contentEl.appendChild(img);
+
+      if (variantSel) {
+        if (variantKeys.length > 1) {
+          const standardOrder = ['color', 'bw', 'sepia', 'art'];
+          const sortedKeys = variantKeys.slice().sort((a, b) => {
+            const ia = standardOrder.indexOf(a);
+            const ib = standardOrder.indexOf(b);
+            if (ia !== -1 && ib !== -1) return ia - ib;
+            if (ia !== -1) return -1;
+            if (ib !== -1) return 1;
+            return a.localeCompare(b);
+          });
+
+          if (!item._selectedVariant || !variantKeys.includes(item._selectedVariant)) {
+            item._selectedVariant = variantKeys.includes('color') ? 'color' : sortedKeys[0];
+          }
+
+          const VARIANT_DEFS = {
+            color: {
+              label: 'Barevná',
+              icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10c0-1.5-1.2-2.5-2.7-2.5H16a2 2 0 0 1-2-2v-1.5C14 4.5 12.8 2 12 2z"/><circle cx="7.5" cy="10.5" r="1" fill="currentColor"/><circle cx="12" cy="7.5" r="1" fill="currentColor"/><circle cx="16.5" cy="10.5" r="1" fill="currentColor"/><circle cx="10.5" cy="15.5" r="1" fill="currentColor"/></svg>'
+            },
+            bw: {
+              label: 'Černobílá',
+              icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2v20a10 10 0 0 0 0-20z" fill="currentColor"/></svg>'
+            },
+            sepia: {
+              label: 'Sépie',
+              icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>'
+            },
+            art: {
+              label: 'Art',
+              icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3z"/></svg>'
+            }
+          };
+
+          let buttonsHTML = '';
+          sortedKeys.forEach(k => {
+            const def = VARIANT_DEFS[k] || { label: k, icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>' };
+            const activeClass = (item._selectedVariant === k) ? ' active' : '';
+            buttonsHTML += `<button class="variant-pill${activeClass}" data-variant="${k}" onclick="switchVariant('${k}')">${def.icon}<span>${def.label}</span></button>`;
+          });
+
+          variantSel.innerHTML = buttonsHTML;
+          variantSel.style.display = 'inline-flex';
+
+          await switchVariant(item._selectedVariant);
+        } else {
+          variantSel.style.display = 'none';
+          variantSel.innerHTML = '';
+          item._selectedVariant = 'color';
+        }
+      } else {
+        item._selectedVariant = 'color';
+      }
+    }
+  }
+}
+
+async function switchVariant(variantKey) {
+  const slide = lightboxSlides ? lightboxSlides[lbSlideIndex] : null;
+  if (!slide || slide.type !== 'item') return;
+  const item = slide.item;
+  if (!item || (item.type !== 'image' && !item.variants)) return;
+
+  const variants = item.variants;
+  const variantKeys = variants && typeof variants === 'object' ? Object.keys(variants) : [];
+  if (variantKeys.length <= 1) return;
+
+  item._selectedVariant = variantKey;
+
+  const selector = document.getElementById('lb-variant-selector');
+  if (selector) {
+    selector.querySelectorAll('.variant-pill').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.variant === variantKey);
+    });
+  }
+
+  const contentEl = document.getElementById('lb-content');
+  if (!contentEl) return;
+
+  const variantObj = item.variants?.[variantKey];
+  const variantPath = variantObj?.thumb || variantObj?.full;
+
+  if (variantPath) {
+    try {
+      let blobUrl = blobCache.get('var-thumb-' + item.id + '-' + variantKey);
+      if (!blobUrl) {
+        if (lbThumbURLs.get(item.id) && (variantPath === item.thumb || variantPath === item.full)) {
+          blobUrl = lbThumbURLs.get(item.id);
+        } else {
+          showDecryptProgress('Načítání varianty...');
+          const dec = await fetchAndDecrypt(variantPath);
+          const blob = new Blob([dec], { type: 'image/jpeg' });
+          blobUrl = URL.createObjectURL(blob);
+          blobCache.set('var-thumb-' + item.id + '-' + variantKey, blobUrl, dec.byteLength);
+        }
+      }
+
+      const oldImgs = Array.from(contentEl.querySelectorAll('img'));
+      const currentImg = oldImgs[oldImgs.length - 1];
+      if (currentImg && currentImg.src === blobUrl) return;
+
+      const newImg = document.createElement('img');
+      newImg.src = blobUrl;
+      newImg.style.borderRadius = 'var(--r-md)';
+
+      if (currentImg) {
+        if (newImg.decode) {
+          try { await newImg.decode(); } catch (e) {}
+        } else if (!newImg.complete) {
+          await new Promise(resolve => { newImg.onload = resolve; newImg.onerror = resolve; });
+        }
+
+        newImg.style.position = 'absolute';
+        newImg.style.opacity = '0';
+        newImg.style.transition = 'opacity 0.35s ease-out';
+
+        contentEl.appendChild(newImg);
+        void newImg.offsetWidth;
+
+        oldImgs.forEach(img => {
+          img.style.transition = 'opacity 0.35s ease-out';
+          img.style.opacity = '0';
+        });
+        newImg.style.opacity = '1';
+
+        setTimeout(() => {
+          oldImgs.forEach(img => {
+            if (img.parentNode === contentEl) contentEl.removeChild(img);
+          });
+          newImg.style.position = '';
+          newImg.style.opacity = '';
+          newImg.style.transition = '';
+        }, 360);
+      } else {
+        contentEl.appendChild(newImg);
+      }
+    } catch (e) {
+      console.error('Failed to load variant file:', e);
+    } finally {
+      hideDecryptProgress();
     }
   }
 }
@@ -4011,26 +4447,46 @@ async function playCurrentVideo() {
 async function downloadCurrentFull() {
   const item = filteredItems[lbIndex];
   if (!item) { console.error('No item at lbIndex:', lbIndex); showToast('Chyba: soubor nenalezen'); return; }
-  console.log('downloadCurrentFull called for:', item.name, 'wasFirstDownload:', !localStorage.getItem('gallery-has-downloaded'));
+
+  const selectedVariant = item._selectedVariant || 'color';
+  console.log('downloadCurrentFull called for:', item.name, 'variant:', selectedVariant);
+
   const btn = document.getElementById('lb-dl-btn');
   const progBox = document.getElementById('lb-progress');
   const progBar = document.getElementById('lb-bar');
-  const wasFirstDownload = !localStorage.getItem('gallery-has-downloaded');
+
   btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Stahuji...';
   btn.disabled = true;
   progBox.classList.add('active');
+
   try {
-    console.log('Starting fetchAndDecrypt for:', item.name);
-    const dec = await fetchAndDecrypt(item.full, (pct) => { progBar.style.width = (pct * 100) + '%'; });
-    console.log('Decrypted successfully, size:', dec.byteLength);
-    triggerDownload(dec, item.name, item.ext, item.id);
-    showToast('Staženo: ' + item.name);
-    // Tip card auto-show disabled by user request
+    const variantFull = item.variants?.[selectedVariant]?.full;
+
+    if (variantFull) {
+      console.log('Fetching pre-encrypted full variant:', variantFull);
+      const dec = await fetchAndDecrypt(variantFull, (pct) => { progBar.style.width = (pct * 100) + '%'; });
+
+      let baseName = item.name;
+      let ext = item.ext || 'jpg';
+      if (baseName.includes('.')) {
+        const parts = baseName.split('.');
+        ext = parts.pop();
+        baseName = parts.join('.');
+      }
+      const filename = selectedVariant === 'color' ? item.name : `${baseName}_${selectedVariant}.${ext}`;
+      triggerDownload(dec, filename, ext, item.id);
+      showToast('Staženo: ' + filename);
+
+    } else {
+      const dec = await fetchAndDecrypt(item.full, (pct) => { progBar.style.width = (pct * 100) + '%'; });
+      triggerDownload(dec, item.name, item.ext, item.id);
+      showToast('Staženo: ' + item.name);
+    }
+
   } catch(e) {
     console.error('downloadCurrentFull error:', e);
     showToast('Chyba stahování: ' + (e.message || e));
   } finally {
-    console.log('downloadCurrentFull finally - resetting UI');
     const current = filteredItems[lbIndex];
     const dl = current && isDownloaded(current.id);
     btn.classList.toggle('downloaded', !!dl);
@@ -4141,10 +4597,10 @@ function closeContactCard() {
 }
 
 function triggerDownload(buffer, filename, ext, itemId) {
-  console.log('triggerDownload called for:', filename, 'size:', buffer.byteLength);
+  console.log('triggerDownload called for:', filename, 'size:', buffer.byteLength || buffer.size);
   const mimeTypes = { jpg:'image/jpeg', jpeg:'image/jpeg', png:'image/png', mp4:'video/mp4', mov:'video/quicktime' };
   const mime = mimeTypes[ext] || 'application/octet-stream';
-  const blob = new Blob([buffer], { type: mime });
+  const blob = buffer instanceof Blob ? buffer : new Blob([buffer], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

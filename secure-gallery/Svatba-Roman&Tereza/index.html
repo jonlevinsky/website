@@ -3420,27 +3420,20 @@ function getSectionTargetY(secEl) {
 }
 
 function getTimelineScrollBounds() {
-  if (!manifest?.sections?.length) return { startScrollY: 0, chapterScrollRange: 1 };
+  if (!manifest?.sections?.length) return { startScrollY: 0, endScrollY: 1, chapterScrollRange: 1 };
   
-  const firstSecEl = document.getElementById('section-' + manifest.sections[0].id);
+  const sections = manifest.sections;
+  const firstSecEl = document.getElementById('section-' + sections[0].id);
+  const lastSecEl = document.getElementById('section-' + sections[sections.length - 1].id);
+
   const startScrollY = firstSecEl ? getSectionTargetY(firstSecEl) : 0;
   const docMaxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-  const endScrollY = Math.max(startScrollY + 10, docMaxScroll);
+  const lastSecTargetY = lastSecEl ? getSectionTargetY(lastSecEl) : docMaxScroll;
+  
+  const endScrollY = Math.max(startScrollY + 10, lastSecTargetY, docMaxScroll);
   const chapterScrollRange = Math.max(1, endScrollY - startScrollY);
 
   return { startScrollY, endScrollY, chapterScrollRange };
-}
-
-function initGalleryResizeObserver() {
-  if (galleryResizeObserver) return;
-  const target = document.getElementById('gallery-shell') || document.body;
-  if (typeof ResizeObserver !== 'undefined') {
-    galleryResizeObserver = new ResizeObserver(() => {
-      updateChapterMarkerPositions();
-      updateRightTimelineScroll();
-    });
-    galleryResizeObserver.observe(target);
-  }
 }
 
 function updateChapterMarkerPositions() {
@@ -3448,8 +3441,8 @@ function updateChapterMarkerPositions() {
   if (!container || !manifest?.sections?.length) return;
 
   const { startScrollY, chapterScrollRange } = getTimelineScrollBounds();
-
   const sections = manifest.sections;
+
   sections.forEach((sec, idx) => {
     const secEl = document.getElementById('section-' + sec.id);
     const marker = container.querySelector(`.chapter-scroll-marker[data-sec-id="${sec.id}"]`);
@@ -3482,6 +3475,28 @@ function updateRightTimelineScroll() {
   const sections = manifest.sections;
   let currentActiveId = null;
 
+  const docMaxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  const isAtBottom = (window.scrollY + window.innerHeight) >= (document.documentElement.scrollHeight - 60);
+
+  if (isAtBottom && sections.length > 0) {
+    currentActiveId = sections[sections.length - 1].id;
+  } else {
+    // Determine active section based on scroll position (the last section whose targetY <= currentScroll + 140)
+    for (let i = 0; i < sections.length; i++) {
+      const sec = sections[i];
+      const secEl = document.getElementById('section-' + sec.id);
+      if (secEl) {
+        const secTargetY = getSectionTargetY(secEl);
+        if (currentScroll + 140 >= secTargetY) {
+          currentActiveId = sec.id;
+        }
+      }
+    }
+    if (!currentActiveId && sections.length > 0) {
+      currentActiveId = sections[0].id;
+    }
+  }
+
   sections.forEach(sec => {
     const secEl = document.getElementById('section-' + sec.id);
     const marker = document.querySelector(`.chapter-scroll-marker[data-sec-id="${sec.id}"]`);
@@ -3489,21 +3504,9 @@ function updateRightTimelineScroll() {
       const secTargetY = getSectionTargetY(secEl);
       const markerRatio = Math.max(0, Math.min(1, (secTargetY - startScrollY) / chapterScrollRange));
       const markerPct = markerRatio * 100;
-
       marker.classList.toggle('passed', pct >= markerPct - 0.5);
-
-      const rect = secEl.getBoundingClientRect();
-      if (rect.top <= 120 && rect.bottom >= 100) {
-        currentActiveId = sec.id;
-      }
     }
   });
-
-  if (!currentActiveId && sections.length > 0) {
-    if (currentScroll < startScrollY + 20) {
-      currentActiveId = sections[0].id;
-    }
-  }
 
   if (currentActiveId) {
     document.querySelectorAll('.chapter-scroll-marker').forEach(m => {
