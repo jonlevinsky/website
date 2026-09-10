@@ -3609,7 +3609,7 @@ function renderGallery() {
             e.stopPropagation();
             const secEl = document.getElementById('section-' + sec.id);
             if (secEl) {
-              window.scrollTo({ top: Math.max(0, secEl.offsetTop - 70), behavior: 'smooth' });
+              window.scrollTo({ top: getSectionTargetY(secEl), behavior: 'smooth' });
             }
           };
 
@@ -3639,7 +3639,7 @@ function renderGallery() {
             toggleMobileChapterDrawer();
             const secEl = document.getElementById('section-' + sec.id);
             if (secEl) {
-              window.scrollTo({ top: Math.max(0, secEl.offsetTop - 70), behavior: 'smooth' });
+              window.scrollTo({ top: getSectionTargetY(secEl), behavior: 'smooth' });
             }
           };
           mobDrawerNodes.appendChild(mobBtn);
