@@ -3710,6 +3710,14 @@ function renderGallery() {
       updateChapterMarkerPositions();
       updateRightTimelineScroll();
     }, 150);
+    setTimeout(() => {
+      updateChapterMarkerPositions();
+      updateRightTimelineScroll();
+    }, 600);
+    setTimeout(() => {
+      updateChapterMarkerPositions();
+      updateRightTimelineScroll();
+    }, 2000);
 
   } else {
     if (rightNav) rightNav.style.display = 'none';
@@ -3749,6 +3757,8 @@ async function loadThumb(item, el) {
           el.classList.remove('portrait');
         }
       }
+      updateChapterMarkerPositions();
+      updateRightTimelineScroll();
     };
     el.insertBefore(img, el.firstChild);
 
