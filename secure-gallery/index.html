@@ -2950,6 +2950,7 @@ async function loadManifestFromSupabase(slugOrId) {
     });
 
     return {
+      slug: gal.slug || slugOrId,
       version: gal.version || 2,
       title: gal.title,
       subtitle: gal.subtitle,
@@ -3058,14 +3059,17 @@ function normalizeMediaPath(path) {
   if (filesIdx !== -1) {
     const cleanRelativePath = path.substring(filesIdx);
     const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('g') || urlParams.get('gallery') || (typeof activeGallerySlug !== 'undefined' ? activeGallerySlug : '');
+    const slug = (typeof manifest !== 'undefined' && manifest?.slug) || (typeof activeGallerySlug !== 'undefined' ? activeGallerySlug : '') || urlParams.get('g') || urlParams.get('gallery') || '';
     
     const currentLoc = window.location.href.split('?')[0].split('#')[0];
     const baseDir = currentLoc.substring(0, currentLoc.lastIndexOf('/') + 1);
     
     const decodedPath = decodeURIComponent(currentLoc);
-    if (slug && !decodedPath.includes('/' + slug + '/') && !decodedPath.endsWith('/' + slug)) {
-      return new URL(`${slug}/${cleanRelativePath}`, baseDir).href;
+    if (slug) {
+      const slugDecoded = decodeURIComponent(slug);
+      if (!decodedPath.includes('/' + slugDecoded + '/') && !decodedPath.endsWith('/' + slugDecoded)) {
+        return new URL(`${encodeURIComponent(slugDecoded)}/${cleanRelativePath}`, baseDir).href;
+      }
     }
     
     return new URL(cleanRelativePath, baseDir).href;
