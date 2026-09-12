@@ -2894,9 +2894,11 @@ svg {
 <script>
 const SUPABASE_URL = "https://jmxpqcsywnlbmfrylnhw.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpteHBxY3N5d25sYm1mcnlsbmh3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxODkwNjcsImV4cCI6MjEwMzc2NTA2N30.pFgifOtNk2tLGJLEYeughUByfT6um85kfO2r7OopEtA";
+let activeGallerySlug = "";
 
 async function loadManifestFromSupabase(slugOrId) {
   if (!slugOrId) return null;
+  activeGallerySlug = slugOrId;
   const headers = {
     'apikey': SUPABASE_KEY,
     'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -3055,8 +3057,17 @@ function normalizeMediaPath(path) {
   const filesIdx = path.indexOf('files/');
   if (filesIdx !== -1) {
     const cleanRelativePath = path.substring(filesIdx);
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('g') || urlParams.get('gallery') || (typeof activeGallerySlug !== 'undefined' ? activeGallerySlug : '');
+    
     const currentLoc = window.location.href.split('?')[0].split('#')[0];
     const baseDir = currentLoc.substring(0, currentLoc.lastIndexOf('/') + 1);
+    
+    const decodedPath = decodeURIComponent(currentLoc);
+    if (slug && !decodedPath.includes('/' + slug + '/') && !decodedPath.endsWith('/' + slug)) {
+      return new URL(`${slug}/${cleanRelativePath}`, baseDir).href;
+    }
+    
     return new URL(cleanRelativePath, baseDir).href;
   }
   return path;
