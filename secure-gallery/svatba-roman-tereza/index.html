@@ -1331,7 +1331,14 @@ body.selecting .select-ring { display: flex; }
 
   /* Bento Grid Mobile Badges */
   .grid-variant-badges {
-    display: none !important;
+    display: flex !important;
+    opacity: 1 !important;
+    transform: none !important;
+    background: rgba(28, 25, 23, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 3px 5px;
+    border-radius: var(--r-full);
   }
 
   /* 3. Lightbox Top Bar & Variant Selector */
@@ -1342,6 +1349,8 @@ body.selecting .select-ring { display: flex; }
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    z-index: 50;
+    position: relative;
   }
   .lb-title {
     max-width: 50vw;
@@ -1353,7 +1362,7 @@ body.selecting .select-ring { display: flex; }
     position: relative;
     left: 0;
     transform: none;
-    margin: 8px auto 4px;
+    margin: 4px auto 2px;
     width: 100%;
     justify-content: center;
     max-width: 100%;
@@ -1364,6 +1373,7 @@ body.selecting .select-ring { display: flex; }
     padding: 4px 8px;
     gap: 6px;
     order: 3;
+    z-index: 60;
   }
   #lb-variant-selector[style*="display: inline-flex"],
   #lb-variant-selector[style*="display: flex"] {
