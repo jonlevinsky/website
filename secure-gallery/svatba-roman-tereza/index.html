@@ -1350,9 +1350,10 @@ body.selecting .select-ring { display: flex; }
     overflow: hidden;
   }
   #lb-variant-selector {
-    position: static;
+    position: relative;
+    left: 0;
     transform: none;
-    margin: 6px auto 0;
+    margin: 8px auto 4px;
     width: 100%;
     justify-content: center;
     max-width: 100%;
@@ -1360,21 +1361,25 @@ body.selecting .select-ring { display: flex; }
     scrollbar-width: none;
     flex-wrap: nowrap;
     -webkit-overflow-scrolling: touch;
-    padding: 3px 6px;
-    gap: 4px;
-    order: 2;
+    padding: 4px 8px;
+    gap: 6px;
+    order: 3;
+  }
+  #lb-variant-selector[style*="display: inline-flex"],
+  #lb-variant-selector[style*="display: flex"] {
+    display: flex !important;
   }
   #lb-variant-selector::-webkit-scrollbar { display: none; }
   #lb-variant-selector .variant-pill {
-    padding: 4px 10px !important;
-    min-height: 32px;
+    padding: 6px 12px !important;
+    min-height: 34px;
     display: inline-flex !important;
     align-items: center;
     flex-shrink: 0;
-    font-size: 11px;
+    font-size: 12px;
   }
   #lb-variant-selector .variant-pill span {
-    max-width: 100px !important;
+    max-width: 120px !important;
     opacity: 1 !important;
     display: inline-block !important;
   }
